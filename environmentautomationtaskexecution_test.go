@@ -85,10 +85,10 @@ func TestEnvironmentAutomationTaskExecutionNewListWithOptionalParams(t *testing.
 	_, err := client.EnvironmentAutomations.TaskExecutions.NewList(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionNewListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilter{
-			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseUnspecified, gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhasePending, gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseRunning}),
-			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			TaskReferences: gitpod.F([]string{"string", "string", "string"}),
+			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseUnspecified}),
+			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			TaskReferences: gitpod.F([]string{"string"}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionNewListParamsPagination{
 			Token:    gitpod.F("token"),
@@ -172,14 +172,6 @@ func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusWithOptional
 			FailureMessage: "failureMessage",
 			LogURL:         "logUrl",
 			Steps: []gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyStep{{
-				ID:             gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				FailureMessage: gitpod.F("failureMessage"),
-				Phase:          gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyStepsPhaseTaskExecutionPhaseUnspecified),
-			}, {
-				ID:             gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				FailureMessage: gitpod.F("failureMessage"),
-				Phase:          gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyStepsPhaseTaskExecutionPhaseUnspecified),
-			}, {
 				ID:             gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 				FailureMessage: gitpod.F("failureMessage"),
 				Phase:          gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyStepsPhaseTaskExecutionPhaseUnspecified),

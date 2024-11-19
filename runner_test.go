@@ -90,8 +90,8 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 	_, err := client.Runners.List(context.TODO(), gitpod.RunnerListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.RunnerListParamsFilter{
-			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Kinds:      gitpod.F([]gitpod.RunnerListParamsFilterKind{gitpod.RunnerListParamsFilterKindRunnerKindUnspecified, gitpod.RunnerListParamsFilterKindRunnerKindLocal, gitpod.RunnerListParamsFilterKindRunnerKindRemote}),
+			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Kinds:      gitpod.F([]gitpod.RunnerListParamsFilterKind{gitpod.RunnerListParamsFilterKindRunnerKindUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
 			Token:    gitpod.F("token"),

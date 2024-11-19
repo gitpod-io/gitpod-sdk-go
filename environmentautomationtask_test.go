@@ -27,7 +27,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.EnvironmentAutomations.Tasks.Update(context.TODO(), gitpod.EnvironmentAutomationTaskUpdateParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		DependsOn:              gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		DependsOn:              gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		Metadata:               gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadata{}),
 		Spec:                   gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnion](gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnknown(map[string]interface{}{})),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
@@ -109,9 +109,9 @@ func TestEnvironmentAutomationTaskNewListWithOptionalParams(t *testing.T) {
 	_, err := client.EnvironmentAutomations.Tasks.NewList(context.TODO(), gitpod.EnvironmentAutomationTaskNewListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskNewListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskNewListParamsFilter{
-			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			References:     gitpod.F([]string{"x", "x", "x"}),
-			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			References:     gitpod.F([]string{"x"}),
+			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskNewListParamsPagination{
 			Token:    gitpod.F("token"),

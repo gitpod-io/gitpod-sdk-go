@@ -33,14 +33,6 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 						"key":   "key",
 						"value": "value",
 					},
-					"1": map[string]interface{}{
-						"key":   "key",
-						"value": "value",
-					},
-					"2": map[string]interface{}{
-						"key":   "key",
-						"value": "value",
-					},
 				},
 				"description": "xxx",
 				"displayName": "xxx",

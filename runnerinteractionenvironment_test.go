@@ -53,7 +53,7 @@ func TestRunnerInteractionEnvironmentListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.RunnerInteractions.Environments.List(context.TODO(), gitpod.RunnerInteractionEnvironmentListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionEnvironmentListParamsConnectProtocolVersion1),
-		EnvironmentIDs:         gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		EnvironmentIDs:         gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		Pagination: gitpod.F(gitpod.RunnerInteractionEnvironmentListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(0)),
@@ -101,18 +101,12 @@ func TestRunnerInteractionEnvironmentUpdateStatusWithOptionalParams(t *testing.T
 					ChangedFiles: gitpod.F([]gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusContentGitChangedFile{{
 						ChangeType: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified),
 						Path:       gitpod.F("path"),
-					}, {
-						ChangeType: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified),
-						Path:       gitpod.F("path"),
-					}, {
-						ChangeType: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified),
-						Path:       gitpod.F("path"),
 					}}),
 					CloneURL:             gitpod.F("cloneUrl"),
 					LatestCommit:         gitpod.F("latestCommit"),
 					TotalChangedFiles:    gitpod.F(int64(0)),
 					TotalUnpushedCommits: gitpod.F(int64(0)),
-					UnpushedCommits:      gitpod.F([]string{"string", "string", "string"}),
+					UnpushedCommits:      gitpod.F([]string{"string"}),
 				}),
 				Phase:          gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusContentPhaseContentPhaseUnspecified),
 				Session:        gitpod.F("session"),
@@ -137,18 +131,12 @@ func TestRunnerInteractionEnvironmentUpdateStatusWithOptionalParams(t *testing.T
 				Ports: gitpod.F([]gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusEnvironmentURLsPort{{
 					Port: gitpod.F(int64(1)),
 					URL:  gitpod.F("url"),
-				}, {
-					Port: gitpod.F(int64(1)),
-					URL:  gitpod.F("url"),
-				}, {
-					Port: gitpod.F(int64(1)),
-					URL:  gitpod.F("url"),
 				}}),
 				SSH: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusEnvironmentURLsSSH{
 					URL: gitpod.F("url"),
 				}),
 			}),
-			FailureMessage: gitpod.F([]string{"string", "string", "string"}),
+			FailureMessage: gitpod.F([]string{"string"}),
 			Machine: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusMachine{
 				FailureMessage: gitpod.F("failureMessage"),
 				Phase:          gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusMachinePhasePhaseUnspecified),
@@ -171,29 +159,13 @@ func TestRunnerInteractionEnvironmentUpdateStatusWithOptionalParams(t *testing.T
 				Phase:          gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSecretsPhaseContentPhaseUnspecified),
 				SecretName:     gitpod.F("secretName"),
 				WarningMessage: gitpod.F("warningMessage"),
-			}, {
-				FailureMessage: gitpod.F("failureMessage"),
-				Phase:          gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSecretsPhaseContentPhaseUnspecified),
-				SecretName:     gitpod.F("secretName"),
-				WarningMessage: gitpod.F("warningMessage"),
-			}, {
-				FailureMessage: gitpod.F("failureMessage"),
-				Phase:          gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSecretsPhaseContentPhaseUnspecified),
-				SecretName:     gitpod.F("secretName"),
-				WarningMessage: gitpod.F("warningMessage"),
 			}}),
 			SSHPublicKeys: gitpod.F([]gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKey{{
 				ID:    gitpod.F("id"),
 				Phase: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKeysPhaseContentPhaseUnspecified),
-			}, {
-				ID:    gitpod.F("id"),
-				Phase: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKeysPhaseContentPhaseUnspecified),
-			}, {
-				ID:    gitpod.F("id"),
-				Phase: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKeysPhaseContentPhaseUnspecified),
 			}}),
 			StatusVersion:  gitpod.F[gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion](shared.UnionString("string")),
-			WarningMessage: gitpod.F([]string{"string", "string", "string"}),
+			WarningMessage: gitpod.F([]string{"string"}),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
