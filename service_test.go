@@ -110,9 +110,9 @@ func TestServiceListNewWithOptionalParams(t *testing.T) {
 	_, err := client.Services.ListNew(context.TODO(), gitpod.ServiceListNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.ServiceListNewParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.ServiceListNewParamsFilter{
-			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			References:     gitpod.F([]string{"x", "x", "x"}),
-			ServiceIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			References:     gitpod.F([]string{"x"}),
+			ServiceIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.ServiceListNewParamsPagination{
 			Token:    gitpod.F("token"),

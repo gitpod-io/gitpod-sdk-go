@@ -81,7 +81,7 @@ func TestRunnerInteractionListRunnerEnvironmentClassesWithOptionalParams(t *test
 	_, err := client.RunnerInteractions.ListRunnerEnvironmentClasses(context.TODO(), gitpod.RunnerInteractionListRunnerEnvironmentClassesParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionListRunnerEnvironmentClassesParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.RunnerInteractionListRunnerEnvironmentClassesParamsFilter{
-			EnvironmentClassIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			EnvironmentClassIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerInteractionListRunnerEnvironmentClassesParamsPagination{
 			Token:    gitpod.F("token"),
@@ -113,7 +113,7 @@ func TestRunnerInteractionListRunnerScmIntegrationsWithOptionalParams(t *testing
 	_, err := client.RunnerInteractions.ListRunnerScmIntegrations(context.TODO(), gitpod.RunnerInteractionListRunnerScmIntegrationsParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionListRunnerScmIntegrationsParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.RunnerInteractionListRunnerScmIntegrationsParamsFilter{
-			ScmIntegrationIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ScmIntegrationIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerInteractionListRunnerScmIntegrationsParamsPagination{
 			Token:    gitpod.F("token"),
@@ -202,20 +202,6 @@ func TestRunnerInteractionSendResponseWithOptionalParams(t *testing.T) {
 						"type":  "type",
 						"value": "file.txt",
 					},
-					"1": map[string]interface{}{
-						"debug": map[string]interface{}{
-							"foo": "bar",
-						},
-						"type":  "type",
-						"value": "file.txt",
-					},
-					"2": map[string]interface{}{
-						"debug": map[string]interface{}{
-							"foo": "bar",
-						},
-						"type":  "type",
-						"value": "file.txt",
-					},
 				},
 				"message": "message",
 			},
@@ -252,44 +238,6 @@ func TestRunnerInteractionSignupWithOptionalParams(t *testing.T) {
 			Configuration: gitpod.F([]gitpod.RunnerInteractionSignupParamsEnvironmentClassesConfiguration{{
 				Key:   gitpod.F("key"),
 				Value: gitpod.F("value"),
-			}, {
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}, {
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}}),
-			Description: gitpod.F("xxx"),
-			DisplayName: gitpod.F("xxx"),
-			Enabled:     gitpod.F(true),
-			RunnerID:    gitpod.F("runnerId"),
-		}, {
-			ID: gitpod.F("id"),
-			Configuration: gitpod.F([]gitpod.RunnerInteractionSignupParamsEnvironmentClassesConfiguration{{
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}, {
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}, {
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}}),
-			Description: gitpod.F("xxx"),
-			DisplayName: gitpod.F("xxx"),
-			Enabled:     gitpod.F(true),
-			RunnerID:    gitpod.F("runnerId"),
-		}, {
-			ID: gitpod.F("id"),
-			Configuration: gitpod.F([]gitpod.RunnerInteractionSignupParamsEnvironmentClassesConfiguration{{
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}, {
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
-			}, {
-				Key:   gitpod.F("key"),
-				Value: gitpod.F("value"),
 			}}),
 			Description: gitpod.F("xxx"),
 			DisplayName: gitpod.F("xxx"),
@@ -322,32 +270,10 @@ func TestRunnerInteractionUpdateRunnerConfigurationSchemaWithOptionalParams(t *t
 	_, err := client.RunnerInteractions.UpdateRunnerConfigurationSchema(context.TODO(), gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConnectProtocolVersion1),
 		ConfigSchema: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchema{
-			EnvironmentClasses: gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassUnion{gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown(map[string]interface{}{}), gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown(map[string]interface{}{}), gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown(map[string]interface{}{})}),
-			RunnerConfig:       gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnion{gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown(map[string]interface{}{}), gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown(map[string]interface{}{}), gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown(map[string]interface{}{})}),
+			EnvironmentClasses: gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassUnion{gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown(map[string]interface{}{})}),
+			RunnerConfig:       gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnion{gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown(map[string]interface{}{})}),
 			Scm: gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScm{{
-				DefaultHosts: gitpod.F([]string{"string", "string", "string"}),
-				Name:         gitpod.F("name"),
-				OAuth: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScmOAuth{
-					CallbackURL: gitpod.F("callbackUrl"),
-				}),
-				Pat: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScmPat{
-					Description: gitpod.F("description"),
-					DocsLink:    gitpod.F("docsLink"),
-				}),
-				ScmID: gitpod.F("scmId"),
-			}, {
-				DefaultHosts: gitpod.F([]string{"string", "string", "string"}),
-				Name:         gitpod.F("name"),
-				OAuth: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScmOAuth{
-					CallbackURL: gitpod.F("callbackUrl"),
-				}),
-				Pat: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScmPat{
-					Description: gitpod.F("description"),
-					DocsLink:    gitpod.F("docsLink"),
-				}),
-				ScmID: gitpod.F("scmId"),
-			}, {
-				DefaultHosts: gitpod.F([]string{"string", "string", "string"}),
+				DefaultHosts: gitpod.F([]string{"string"}),
 				Name:         gitpod.F("name"),
 				OAuth: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScmOAuth{
 					CallbackURL: gitpod.F("callbackUrl"),
@@ -385,7 +311,7 @@ func TestRunnerInteractionUpdateStatusWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.RunnerInteractions.UpdateStatus(context.TODO(), gitpod.RunnerInteractionUpdateStatusParams{
 		Body: gitpod.RunnerInteractionUpdateStatusParamsBody{
-			AdditionalInfo:     []gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnion{gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnknown(map[string]interface{}{}), gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnknown(map[string]interface{}{}), gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnknown(map[string]interface{}{})},
+			AdditionalInfo:     []gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnion{gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnknown(map[string]interface{}{})},
 			DegredationMessage: "degredationMessage",
 			LogURL:             "https://example.com",
 			Region:             "region",

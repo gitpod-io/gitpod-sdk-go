@@ -27,7 +27,7 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 	_, err := client.PersonalAccessTokens.List(context.TODO(), gitpod.PersonalAccessTokenListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.PersonalAccessTokenListParamsFilter{
-			UserIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			UserIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.PersonalAccessTokenListParamsPagination{
 			Token:    gitpod.F("token"),

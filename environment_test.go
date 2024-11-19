@@ -37,7 +37,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{})}),
+					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{})}),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -54,24 +54,10 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Admission: gitpod.F(gitpod.EnvironmentNewParamsSpecPortsAdmissionAdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
-			}, {
-				Admission: gitpod.F(gitpod.EnvironmentNewParamsSpecPortsAdmissionAdmissionLevelUnspecified),
-				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
-			}, {
-				Admission: gitpod.F(gitpod.EnvironmentNewParamsSpecPortsAdmissionAdmissionLevelUnspecified),
-				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecretUnion{gitpod.EnvironmentNewParamsSpecSecretsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewParamsSpecSecretsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewParamsSpecSecretsUnknown(map[string]interface{}{})}),
+			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecretUnion{gitpod.EnvironmentNewParamsSpecSecretsUnknown(map[string]interface{}{})}),
 			SpecVersion: gitpod.F[gitpod.EnvironmentNewParamsSpecSpecVersionUnion](shared.UnionString("string")),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewParamsSpecSSHPublicKey{{
-				ID:    gitpod.F("id"),
-				Value: gitpod.F("value"),
-			}, {
-				ID:    gitpod.F("id"),
-				Value: gitpod.F("value"),
-			}, {
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
 			}}),
@@ -129,10 +115,10 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.List(context.TODO(), gitpod.EnvironmentListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.EnvironmentListParamsFilter{
-			CreatorIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			ProjectIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			RunnerIDs:    gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			StatusPhases: gitpod.F([]gitpod.EnvironmentListParamsFilterStatusPhase{gitpod.EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUnspecified, gitpod.EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseCreating, gitpod.EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStarting}),
+			CreatorIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ProjectIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerIDs:    gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			StatusPhases: gitpod.F([]gitpod.EnvironmentListParamsFilterStatusPhase{gitpod.EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUnspecified}),
 		}),
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.EnvironmentListParamsPagination{
@@ -174,7 +160,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{})}),
+					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{})}),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -191,24 +177,10 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Admission: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecPortsAdmissionAdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
-			}, {
-				Admission: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecPortsAdmissionAdmissionLevelUnspecified),
-				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
-			}, {
-				Admission: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecPortsAdmissionAdmissionLevelUnspecified),
-				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecretUnion{gitpod.EnvironmentNewFromProjectParamsSpecSecretsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewFromProjectParamsSpecSecretsUnknown(map[string]interface{}{}), gitpod.EnvironmentNewFromProjectParamsSpecSecretsUnknown(map[string]interface{}{})}),
+			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecretUnion{gitpod.EnvironmentNewFromProjectParamsSpecSecretsUnknown(map[string]interface{}{})}),
 			SpecVersion: gitpod.F[gitpod.EnvironmentNewFromProjectParamsSpecSpecVersionUnion](shared.UnionString("string")),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSSHPublicKey{{
-				ID:    gitpod.F("id"),
-				Value: gitpod.F("value"),
-			}, {
-				ID:    gitpod.F("id"),
-				Value: gitpod.F("value"),
-			}, {
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
 			}}),

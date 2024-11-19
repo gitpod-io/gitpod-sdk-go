@@ -27,7 +27,7 @@ func TestTaskNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Tasks.New(context.TODO(), gitpod.TaskNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.TaskNewParamsConnectProtocolVersion1),
-		DependsOn:              gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e", "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		DependsOn:              gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Metadata: gitpod.F(gitpod.TaskNewParamsMetadata{
 			CreatedAt: gitpod.F(time.Now()),
@@ -38,7 +38,7 @@ func TestTaskNewWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]gitpod.TaskNewParamsMetadataTriggeredByUnion{gitpod.TaskNewParamsMetadataTriggeredByUnknown(map[string]interface{}{}), gitpod.TaskNewParamsMetadataTriggeredByUnknown(map[string]interface{}{}), gitpod.TaskNewParamsMetadataTriggeredByUnknown(map[string]interface{}{})}),
+			TriggeredBy: gitpod.F([]gitpod.TaskNewParamsMetadataTriggeredByUnion{gitpod.TaskNewParamsMetadataTriggeredByUnknown(map[string]interface{}{})}),
 		}),
 		Spec: gitpod.F(gitpod.TaskNewParamsSpec{
 			Command: gitpod.F("command"),
