@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -37,6 +38,12 @@ func NewRunnerConfigurationConfigurationSchemaService(opts ...option.RequestOpti
 
 // GetRunnerConfigurationSchema retrieves the latest Runner configuration schema
 func (r *RunnerConfigurationConfigurationSchemaService) New(ctx context.Context, params RunnerConfigurationConfigurationSchemaNewParams, opts ...option.RequestOption) (res *RunnerConfigurationConfigurationSchemaNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -45,6 +52,12 @@ func (r *RunnerConfigurationConfigurationSchemaService) New(ctx context.Context,
 
 // GetRunnerConfigurationSchema retrieves the latest Runner configuration schema
 func (r *RunnerConfigurationConfigurationSchemaService) Get(ctx context.Context, params RunnerConfigurationConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationConfigurationSchemaGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)

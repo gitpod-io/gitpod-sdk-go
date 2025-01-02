@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -37,6 +38,12 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 
 // CreateProject creates a new Project.
 func (r *ProjectService) New(ctx context.Context, params ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -45,6 +52,12 @@ func (r *ProjectService) New(ctx context.Context, params ProjectNewParams, opts 
 
 // GetProject retrieves a single Project.
 func (r *ProjectService) Get(ctx context.Context, params ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/GetProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
@@ -53,6 +66,12 @@ func (r *ProjectService) Get(ctx context.Context, params ProjectGetParams, opts 
 
 // CreateProject creates a new Project using an environment as template.
 func (r *ProjectService) NewFromEnvironment(ctx context.Context, params ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 
@@ -36,6 +37,12 @@ func NewRunnerConfigurationHostAuthenticationTokenService(opts ...option.Request
 
 // GetHostAuthenticationToken
 func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -44,6 +51,12 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Cont
 
 // GetHostAuthenticationToken
 func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenGetParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
@@ -52,6 +65,12 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Cont
 
 // UpdateHostAuthenticationToken
 func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenUpdateResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -60,6 +79,12 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.C
 
 // ListHostAuthenticationTokens
 func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListHostAuthenticationTokens"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -68,6 +93,12 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Con
 
 // DeleteHostAuthenticationToken
 func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

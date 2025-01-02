@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -34,6 +35,12 @@ func NewOrganizationMemberService(opts ...option.RequestOption) (r *Organization
 
 // ListMembers lists all members of the specified organization.
 func (r *OrganizationMemberService) List(ctx context.Context, params OrganizationMemberListParams, opts ...option.RequestOption) (res *OrganizationMemberListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/ListMembers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

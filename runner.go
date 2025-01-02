@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -40,6 +41,12 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 // short-lived and must be renewed every 30 seconds. Runners can be registered for
 // an entire organisation or a single user.
 func (r *RunnerService) New(ctx context.Context, params RunnerNewParams, opts ...option.RequestOption) (res *RunnerNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -48,6 +55,12 @@ func (r *RunnerService) New(ctx context.Context, params RunnerNewParams, opts ..
 
 // GetRunner returns a single runner.
 func (r *RunnerService) Get(ctx context.Context, params RunnerGetParams, opts ...option.RequestOption) (res *RunnerGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/GetRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
@@ -56,6 +69,12 @@ func (r *RunnerService) Get(ctx context.Context, params RunnerGetParams, opts ..
 
 // ListRunners returns all runners registered in the scope.
 func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *RunnerListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ListRunners"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -67,6 +86,12 @@ func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts 
 // that the user should visit to authenticate, or indicate that Personal Access
 // Tokens are supported.
 func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, params RunnerCheckAuthenticationForHostParams, opts ...option.RequestOption) (res *RunnerCheckAuthenticationForHostResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CheckAuthenticationForHost"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -77,6 +102,12 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, params R
 // runner. Use this call to renew an outdated token - this does not expire any
 // previouly issued tokens.
 func (r *RunnerService) NewRunnerToken(ctx context.Context, params RunnerNewRunnerTokenParams, opts ...option.RequestOption) (res *RunnerNewRunnerTokenResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -85,6 +116,12 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, params RunnerNewRunn
 
 // DeleteRunner deletes an environment runner.
 func (r *RunnerService) DeleteRunner(ctx context.Context, params RunnerDeleteRunnerParams, opts ...option.RequestOption) (res *RunnerDeleteRunnerResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/DeleteRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -93,6 +130,12 @@ func (r *RunnerService) DeleteRunner(ctx context.Context, params RunnerDeleteRun
 
 // GetRunner returns a single runner.
 func (r *RunnerService) GetRunner(ctx context.Context, params RunnerGetRunnerParams, opts ...option.RequestOption) (res *RunnerGetRunnerResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/GetRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -112,6 +155,12 @@ func (r *RunnerService) GetRunner(ctx context.Context, params RunnerGetRunnerPar
 //   - NOT_FOUND if the repository or branch indicated by the context URL does not
 //     exist
 func (r *RunnerService) ParseContextURL(ctx context.Context, params RunnerParseContextURLParams, opts ...option.RequestOption) (res *RunnerParseContextURLResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -120,6 +169,12 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, params RunnerParseC
 
 // UpdateRunner updates an environment runner.
 func (r *RunnerService) UpdateRunner(ctx context.Context, params RunnerUpdateRunnerParams, opts ...option.RequestOption) (res *RunnerUpdateRunnerResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/UpdateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

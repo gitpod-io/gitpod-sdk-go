@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -34,6 +35,12 @@ func NewPersonalAccessTokenService(opts ...option.RequestOption) (r *PersonalAcc
 
 // ListPersonalAccessTokens
 func (r *PersonalAccessTokenService) List(ctx context.Context, params PersonalAccessTokenListParams, opts ...option.RequestOption) (res *PersonalAccessTokenListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/ListPersonalAccessTokens"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -42,6 +49,12 @@ func (r *PersonalAccessTokenService) List(ctx context.Context, params PersonalAc
 
 // DeletePersonalAccessToken
 func (r *PersonalAccessTokenService) Delete(ctx context.Context, params PersonalAccessTokenDeleteParams, opts ...option.RequestOption) (res *PersonalAccessTokenDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

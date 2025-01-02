@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -36,6 +37,12 @@ func NewOrganizationInviteService(opts ...option.RequestOption) (r *Organization
 // CreateOrganizationInvite creates an invite for the organization. Any existing
 // OrganizationInvites are invalidated and can no longer be used.
 func (r *OrganizationInviteService) New(ctx context.Context, params OrganizationInviteNewParams, opts ...option.RequestOption) (res *OrganizationInviteNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateOrganizationInvite"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -45,6 +52,12 @@ func (r *OrganizationInviteService) New(ctx context.Context, params Organization
 // GetOrganizationInvite retrieves invite for the organization. If no invite
 // exists, a new one is created.
 func (r *OrganizationInviteService) Get(ctx context.Context, params OrganizationInviteGetParams, opts ...option.RequestOption) (res *OrganizationInviteGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInvite"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
