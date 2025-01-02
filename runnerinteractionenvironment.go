@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"reflect"
 	"time"
@@ -37,6 +38,12 @@ func NewRunnerInteractionEnvironmentService(opts ...option.RequestOption) (r *Ru
 
 // GetRunnerEnvironment returns the environment given it is owned by the runner.
 func (r *RunnerInteractionEnvironmentService) Get(ctx context.Context, params RunnerInteractionEnvironmentGetParams, opts ...option.RequestOption) (res *RunnerInteractionEnvironmentGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/GetRunnerEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -45,6 +52,12 @@ func (r *RunnerInteractionEnvironmentService) Get(ctx context.Context, params Ru
 
 // ListRunnerEnvironments returns the environments this runner is responsible for.
 func (r *RunnerInteractionEnvironmentService) List(ctx context.Context, params RunnerInteractionEnvironmentListParams, opts ...option.RequestOption) (res *RunnerInteractionEnvironmentListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/ListRunnerEnvironments"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -54,6 +67,12 @@ func (r *RunnerInteractionEnvironmentService) List(ctx context.Context, params R
 // UpdateRunnerEnvironmentStatus updates the status of an environment this runner
 // is responsible for.
 func (r *RunnerInteractionEnvironmentService) UpdateStatus(ctx context.Context, params RunnerInteractionEnvironmentUpdateStatusParams, opts ...option.RequestOption) (res *RunnerInteractionEnvironmentUpdateStatusResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/UpdateRunnerEnvironmentStatus"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

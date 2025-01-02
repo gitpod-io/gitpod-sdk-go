@@ -5,6 +5,7 @@ package gitpod
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"mime/multipart"
 	"net/http"
 	"reflect"
@@ -40,6 +41,12 @@ func NewRunnerInteractionService(opts ...option.RequestOption) (r *RunnerInterac
 // GetRunnerHostAuthenticationToken returns an authentication token for the given
 // host.
 func (r *RunnerInteractionService) GetHostAuthenticationTokenValue(ctx context.Context, params RunnerInteractionGetHostAuthenticationTokenValueParams, opts ...option.RequestOption) (res *RunnerInteractionGetHostAuthenticationTokenValueResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/GetHostAuthenticationTokenValue"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -48,6 +55,12 @@ func (r *RunnerInteractionService) GetHostAuthenticationTokenValue(ctx context.C
 
 // GetLatestVersion returns the latest version of the runner.
 func (r *RunnerInteractionService) GetLatestVersion(ctx context.Context, params RunnerInteractionGetLatestVersionParams, opts ...option.RequestOption) (res *RunnerInteractionGetLatestVersionResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/GetLatestVersion"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -57,6 +70,12 @@ func (r *RunnerInteractionService) GetLatestVersion(ctx context.Context, params 
 // ListRunnerEnvironmentClasses returns the environment classes configured for the
 // runner.
 func (r *RunnerInteractionService) ListRunnerEnvironmentClasses(ctx context.Context, params RunnerInteractionListRunnerEnvironmentClassesParams, opts ...option.RequestOption) (res *RunnerInteractionListRunnerEnvironmentClassesResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/ListRunnerEnvironmentClasses"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -65,6 +84,12 @@ func (r *RunnerInteractionService) ListRunnerEnvironmentClasses(ctx context.Cont
 
 // ListRunnerSCMIntegrations
 func (r *RunnerInteractionService) ListRunnerScmIntegrations(ctx context.Context, params RunnerInteractionListRunnerScmIntegrationsParams, opts ...option.RequestOption) (res *RunnerInteractionListRunnerScmIntegrationsResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/ListRunnerSCMIntegrations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -74,6 +99,12 @@ func (r *RunnerInteractionService) ListRunnerScmIntegrations(ctx context.Context
 // MarkRunnerActive marks a runner as available. This must be called every 30
 // seconds to keep the runner active.
 func (r *RunnerInteractionService) MarkActive(ctx context.Context, params RunnerInteractionMarkActiveParams, opts ...option.RequestOption) (res *RunnerInteractionMarkActiveResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/MarkRunnerActive"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -82,6 +113,12 @@ func (r *RunnerInteractionService) MarkActive(ctx context.Context, params Runner
 
 // SendResponse sends a response to a request.
 func (r *RunnerInteractionService) SendResponse(ctx context.Context, params RunnerInteractionSendResponseParams, opts ...option.RequestOption) (res *RunnerInteractionSendResponseResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/SendResponse"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -91,6 +128,12 @@ func (r *RunnerInteractionService) SendResponse(ctx context.Context, params Runn
 // Signup is called by a runner to sign up with the backend. This is the first call
 // a runner makes.
 func (r *RunnerInteractionService) Signup(ctx context.Context, params RunnerInteractionSignupParams, opts ...option.RequestOption) (res *RunnerInteractionSignupResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/Signup"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -99,6 +142,12 @@ func (r *RunnerInteractionService) Signup(ctx context.Context, params RunnerInte
 
 // UpdateRunnerConfigurationSchema updates the runner's configuration schema.
 func (r *RunnerInteractionService) UpdateRunnerConfigurationSchema(ctx context.Context, params RunnerInteractionUpdateRunnerConfigurationSchemaParams, opts ...option.RequestOption) (res *RunnerInteractionUpdateRunnerConfigurationSchemaResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/UpdateRunnerConfigurationSchema"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -107,6 +156,12 @@ func (r *RunnerInteractionService) UpdateRunnerConfigurationSchema(ctx context.C
 
 // UpdateRunnerStatus updates the status of the runner.
 func (r *RunnerInteractionService) UpdateStatus(ctx context.Context, params RunnerInteractionUpdateStatusParams, opts ...option.RequestOption) (res *RunnerInteractionUpdateStatusResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerInteractionService/UpdateRunnerStatus"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

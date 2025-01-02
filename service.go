@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -39,6 +40,12 @@ func NewServiceService(opts ...option.RequestOption) (r *ServiceService) {
 
 // UpdateService
 func (r *ServiceService) Update(ctx context.Context, params ServiceUpdateParams, opts ...option.RequestOption) (res *ServiceUpdateResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -47,6 +54,12 @@ func (r *ServiceService) Update(ctx context.Context, params ServiceUpdateParams,
 
 // ListServices
 func (r *ServiceService) List(ctx context.Context, params ServiceListParams, opts ...option.RequestOption) (res *ServiceListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListServices"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
@@ -56,6 +69,12 @@ func (r *ServiceService) List(ctx context.Context, params ServiceListParams, opt
 // DeleteService deletes a service. This call does not block until the service is
 // deleted. If the service is not stopped it will be stopped before deletion.
 func (r *ServiceService) Delete(ctx context.Context, params ServiceDeleteParams, opts ...option.RequestOption) (res *ServiceDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -64,6 +83,12 @@ func (r *ServiceService) Delete(ctx context.Context, params ServiceDeleteParams,
 
 // ListServices
 func (r *ServiceService) ListNew(ctx context.Context, params ServiceListNewParams, opts ...option.RequestOption) (res *ServiceListNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListServices"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -74,6 +99,12 @@ func (r *ServiceService) ListNew(ctx context.Context, params ServiceListNewParam
 // started. This call will not error if the service is already running or has been
 // started.
 func (r *ServiceService) Start(ctx context.Context, params ServiceStartParams, opts ...option.RequestOption) (res *ServiceStartResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StartService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -84,6 +115,12 @@ func (r *ServiceService) Start(ctx context.Context, params ServiceStartParams, o
 // stopped. This call will not error if the service is already stopped or has been
 // stopped.
 func (r *ServiceService) Stop(ctx context.Context, params ServiceStopParams, opts ...option.RequestOption) (res *ServiceStopResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

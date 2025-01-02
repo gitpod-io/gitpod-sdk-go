@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -34,6 +35,12 @@ func NewOrganizationInviteSummaryService(opts ...option.RequestOption) (r *Organ
 // GetOrganizationInviteSummary retrieves a summary of the organization based on an
 // Invite ID. Used to discover which organization an invite is for.
 func (r *OrganizationInviteSummaryService) Get(ctx context.Context, params OrganizationInviteSummaryGetParams, opts ...option.RequestOption) (res *OrganizationInviteSummaryGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)

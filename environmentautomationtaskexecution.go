@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -40,6 +41,12 @@ func NewEnvironmentAutomationTaskExecutionService(opts ...option.RequestOption) 
 
 // GetTaskExecution
 func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, params EnvironmentAutomationTaskExecutionGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
@@ -48,6 +55,12 @@ func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, par
 
 // ListTaskExecutions
 func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
@@ -56,6 +69,12 @@ func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, pa
 
 // ListTaskExecutions
 func (r *EnvironmentAutomationTaskExecutionService) NewList(ctx context.Context, params EnvironmentAutomationTaskExecutionNewListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionNewListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -64,6 +83,12 @@ func (r *EnvironmentAutomationTaskExecutionService) NewList(ctx context.Context,
 
 // GetTaskExecution
 func (r *EnvironmentAutomationTaskExecutionService) NewGet(ctx context.Context, params EnvironmentAutomationTaskExecutionNewGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionNewGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -72,6 +97,12 @@ func (r *EnvironmentAutomationTaskExecutionService) NewGet(ctx context.Context, 
 
 // StopTaskExecution
 func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, params EnvironmentAutomationTaskExecutionStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionStopResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
@@ -81,6 +112,12 @@ func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, pa
 // UpdateTaskExecutionStatus updates the status of a task execution. Only the
 // environment executing a task execution is expected to call this function.
 func (r *EnvironmentAutomationTaskExecutionService) UpdateTaskExecutionStatus(ctx context.Context, params EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateTaskExecutionStatus"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
