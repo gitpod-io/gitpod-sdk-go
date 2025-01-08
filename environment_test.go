@@ -62,7 +62,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Value: gitpod.F("value"),
 			}}),
 			Timeout: gitpod.F(gitpod.EnvironmentNewParamsSpecTimeout{
-				Disconnected: gitpod.F("disconnected"),
+				Disconnected: gitpod.F("+9125115.360s"),
 			}),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
@@ -185,7 +185,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Value: gitpod.F("value"),
 			}}),
 			Timeout: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecTimeout{
-				Disconnected: gitpod.F("disconnected"),
+				Disconnected: gitpod.F("+9125115.360s"),
 			}),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
