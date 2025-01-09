@@ -1,4 +1,4 @@
-module github.com/gitpod-io/flex-api-go
+module github.com/gitpod-io/flex-go
 
 go 1.22
 

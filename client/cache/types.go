@@ -5,8 +5,8 @@ import (
 	"log/slog"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/flex-api-go/v1"
-	"github.com/gitpod-io/flex-api-go/v1/v1connect"
+	v1 "github.com/gitpod-io/flex-go/v1"
+	"github.com/gitpod-io/flex-go/v1/v1connect"
 	"google.golang.org/protobuf/proto"
 )
 

@@ -7,13 +7,13 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	"github.com/gitpod-io/flex-api-go/client/cache"
-	v1 "github.com/gitpod-io/flex-api-go/v1"
+	"github.com/gitpod-io/flex-go/client/cache"
+	v1 "github.com/gitpod-io/flex-go/v1"
 	"github.com/google/go-cmp/cmp"
 	"go.uber.org/mock/gomock"
 )
 
-//go:generate go run go.uber.org/mock/mockgen@v0.5.0 -package cache_test -destination cache_mock_test.go github.com/gitpod-io/flex-api-go/client/cache Invalidator,EventStream
+//go:generate go run go.uber.org/mock/mockgen@v0.5.0 -package cache_test -destination cache_mock_test.go github.com/gitpod-io/flex-go/client/cache Invalidator,EventStream
 
 func TestInvalidateFromEventService(t *testing.T) {
 	t.Parallel()

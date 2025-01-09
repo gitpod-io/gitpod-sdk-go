@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	v1 "github.com/gitpod-io/flex-api-go/v1"
+	v1 "github.com/gitpod-io/flex-go/v1"
 	"github.com/google/go-cmp/cmp"
 	"github.com/hashicorp/golang-lru/v2/expirable"
 	"google.golang.org/protobuf/testing/protocmp"

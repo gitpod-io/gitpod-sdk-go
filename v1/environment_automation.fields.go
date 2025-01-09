@@ -3,7 +3,7 @@
 package v1
 
 import (
-	logfields "github.com/gitpod-io/flex-api-go/tools/logfields"
+	logfields "github.com/gitpod-io/flex-go/tools/logfields"
 )
 
 func (x *ServiceMetadata) LogFields() logfields.Collection {

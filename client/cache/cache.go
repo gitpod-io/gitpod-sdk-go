@@ -14,8 +14,8 @@ import (
 	"time"
 
 	"connectrpc.com/connect"
-	v1 "github.com/gitpod-io/flex-api-go/v1"
-	"github.com/gitpod-io/flex-api-go/v1/v1connect"
+	v1 "github.com/gitpod-io/flex-go/v1"
+	"github.com/gitpod-io/flex-go/v1/v1connect"
 	"github.com/hashicorp/golang-lru/v2/expirable"
 	"golang.org/x/sync/singleflight"
 	"google.golang.org/protobuf/proto"
