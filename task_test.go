@@ -38,7 +38,7 @@ func TestTaskNewWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]gitpod.TaskNewParamsMetadataTriggeredByUnion{gitpod.TaskNewParamsMetadataTriggeredByUnknown(map[string]interface{}{})}),
+			TriggeredBy: gitpod.F([]gitpod.TaskNewParamsMetadataTriggeredBy{{}}),
 		}),
 		Spec: gitpod.F(gitpod.TaskNewParamsSpec{
 			Command: gitpod.F("command"),

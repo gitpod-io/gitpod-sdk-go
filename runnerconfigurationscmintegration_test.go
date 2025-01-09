@@ -25,14 +25,7 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.RunnerConfigurations.ScmIntegration.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
-		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBody{
-			Host:                       "host",
-			OAuthClientID:              "oauthClientId",
-			OAuthPlaintextClientSecret: "oauthPlaintextClientSecret",
-			Pat:                        true,
-			RunnerID:                   "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			ScmID:                      "scmId",
-		},
+		Body:                   gitpod.RunnerConfigurationScmIntegrationNewParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

@@ -25,12 +25,7 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.Update(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassUpdateParams{
-		Body: gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBody{
-			Description:        "xxx",
-			DisplayName:        "xxx",
-			Enabled:            true,
-			EnvironmentClassID: "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		},
+		Body:                   gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

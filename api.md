@@ -172,11 +172,11 @@ Methods:
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationValidateResponseUnion">RunnerConfigurationValidateResponseUnion</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationValidateResponse">RunnerConfigurationValidateResponse</a>
 
 Methods:
 
-- <code title="post /gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration">client.RunnerConfigurations.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationValidateParams">RunnerConfigurationValidateParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationValidateResponseUnion">RunnerConfigurationValidateResponseUnion</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration">client.RunnerConfigurations.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationService.Validate">Validate</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationValidateParams">RunnerConfigurationValidateParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#RunnerConfigurationValidateResponse">RunnerConfigurationValidateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## HostAuthenticationTokens
 

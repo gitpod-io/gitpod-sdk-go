@@ -3,8 +3,10 @@
 package gitpod_test
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"io"
 	"os"
 	"testing"
 
@@ -168,46 +170,7 @@ func TestRunnerInteractionSendResponseWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.RunnerInteractions.SendResponse(context.TODO(), gitpod.RunnerInteractionSendResponseParams{
-		Body: gitpod.RunnerInteractionSendResponseParamsBody{
-			CallCheckAuthenticationForHost: map[string]interface{}{
-				"resp": map[string]interface{}{
-					"authenticated":     true,
-					"authenticationUrl": "authenticationUrl",
-					"patSupported":      true,
-				},
-			},
-			CallParseContext: map[string]interface{}{
-				"resp": map[string]interface{}{
-					"git": map[string]interface{}{
-						"branch":            "branch",
-						"cloneUrl":          "cloneUrl",
-						"commit":            "commit",
-						"host":              "host",
-						"owner":             "owner",
-						"repo":              "repo",
-						"upstreamRemoteUrl": "upstreamRemoteUrl",
-					},
-					"originalContextUrl": "originalContextUrl",
-				},
-			},
-			CallPing:           map[string]interface{}{},
-			CallValidateConfig: map[string]interface{}{},
-			Error: map[string]interface{}{
-				"code": "ERROR_CODE_UNSPECIFIED",
-				"details": map[string]interface{}{
-					"0": map[string]interface{}{
-						"debug": map[string]interface{}{
-							"foo": "bar",
-						},
-						"type":  "type",
-						"value": "file.txt",
-					},
-				},
-				"message": "message",
-			},
-			RequestID: "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			RunnerID:  "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-		},
+		Body:                   gitpod.RunnerInteractionSendResponseParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionSendResponseParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -270,8 +233,8 @@ func TestRunnerInteractionUpdateRunnerConfigurationSchemaWithOptionalParams(t *t
 	_, err := client.RunnerInteractions.UpdateRunnerConfigurationSchema(context.TODO(), gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConnectProtocolVersion1),
 		ConfigSchema: gitpod.F(gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchema{
-			EnvironmentClasses: gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassUnion{gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown(map[string]interface{}{})}),
-			RunnerConfig:       gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnion{gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown(map[string]interface{}{})}),
+			EnvironmentClasses: gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClass{{}}),
+			RunnerConfig:       gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfig{{}}),
 			Scm: gitpod.F([]gitpod.RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScm{{
 				DefaultHosts: gitpod.F([]string{"string"}),
 				Name:         gitpod.F("name"),
@@ -310,15 +273,7 @@ func TestRunnerInteractionUpdateStatusWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.RunnerInteractions.UpdateStatus(context.TODO(), gitpod.RunnerInteractionUpdateStatusParams{
-		Body: gitpod.RunnerInteractionUpdateStatusParamsBody{
-			AdditionalInfo:     []gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnion{gitpod.RunnerInteractionUpdateStatusParamsBodyAdditionalInfoUnknown(map[string]interface{}{})},
-			DegredationMessage: "degredationMessage",
-			LogURL:             "https://example.com",
-			Region:             "region",
-			RunnerID:           "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			SystemDetails:      "systemDetails",
-			Version:            "version",
-		},
+		Body:                   gitpod.RunnerInteractionUpdateStatusParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerInteractionUpdateStatusParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

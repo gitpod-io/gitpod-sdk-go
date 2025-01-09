@@ -573,8 +573,8 @@ func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecDesiredPha
 }
 
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlan struct {
-	Steps []EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion `json:"steps"`
-	JSON  environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanJSON         `json:"-"`
+	Steps []EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep `json:"steps"`
+	JSON  environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanJSON   `json:"-"`
 }
 
 // environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanJSON contains
@@ -594,17 +594,24 @@ func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanJSON) 
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnknown],
-// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnknown]
-// or
-// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnknown].
-type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion interface {
-	implementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion()
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep struct {
+	JSON environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion)(nil)).Elem(), "")
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatus struct {
@@ -1226,8 +1233,8 @@ func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredP
 }
 
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlan struct {
-	Steps []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion `json:"steps"`
-	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON         `json:"-"`
+	Steps []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep `json:"steps"`
+	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON   `json:"-"`
 }
 
 // environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON
@@ -1247,17 +1254,24 @@ func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnknown],
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnknown]
-// or
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnknown].
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion interface {
-	implementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion()
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep struct {
+	JSON environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion)(nil)).Elem(), "")
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
@@ -1879,8 +1893,8 @@ func (r EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesir
 }
 
 type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlan struct {
-	Steps []EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnion `json:"steps"`
-	JSON  environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON         `json:"-"`
+	Steps []EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep `json:"steps"`
+	JSON  environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON   `json:"-"`
 }
 
 // environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON
@@ -1900,17 +1914,24 @@ func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJ
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnknown],
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnknown]
-// or
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnknown].
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnion interface {
-	implementsEnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnion()
+type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep struct {
+	JSON environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepsUnion)(nil)).Elem(), "")
+// environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep]
+type environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatus struct {
@@ -2506,8 +2527,8 @@ func (r EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecDesired
 }
 
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlan struct {
-	Steps []EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnion `json:"steps"`
-	JSON  environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanJSON         `json:"-"`
+	Steps []EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStep `json:"steps"`
+	JSON  environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanJSON   `json:"-"`
 }
 
 // environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanJSON
@@ -2527,17 +2548,24 @@ func (r environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanJSO
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnknown],
-// [EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnknown]
-// or
-// [EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnknown].
-type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnion interface {
-	implementsEnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnion()
+type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStep struct {
+	JSON environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepsUnion)(nil)).Elem(), "")
+// environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStep]
+type environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanStepJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatus struct {

@@ -151,8 +151,8 @@ func init() {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectNewResponseProjectInitializer struct {
-	Specs []ProjectNewResponseProjectInitializerSpecsUnion `json:"specs"`
-	JSON  projectNewResponseProjectInitializerJSON         `json:"-"`
+	Specs []ProjectNewResponseProjectInitializerSpec `json:"specs"`
+	JSON  projectNewResponseProjectInitializerJSON   `json:"-"`
 }
 
 // projectNewResponseProjectInitializerJSON contains the JSON metadata for the
@@ -171,15 +171,23 @@ func (r projectNewResponseProjectInitializerJSON) RawJSON() string {
 	return r.raw
 }
 
-// Union satisfied by [ProjectNewResponseProjectInitializerSpecsUnknown],
-// [ProjectNewResponseProjectInitializerSpecsUnknown] or
-// [ProjectNewResponseProjectInitializerSpecsUnknown].
-type ProjectNewResponseProjectInitializerSpecsUnion interface {
-	implementsProjectNewResponseProjectInitializerSpecsUnion()
+type ProjectNewResponseProjectInitializerSpec struct {
+	JSON projectNewResponseProjectInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ProjectNewResponseProjectInitializerSpecsUnion)(nil)).Elem(), "")
+// projectNewResponseProjectInitializerSpecJSON contains the JSON metadata for the
+// struct [ProjectNewResponseProjectInitializerSpec]
+type projectNewResponseProjectInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 type ProjectNewResponseProjectMetadata struct {
@@ -580,8 +588,8 @@ func init() {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectGetResponseProjectInitializer struct {
-	Specs []ProjectGetResponseProjectInitializerSpecsUnion `json:"specs"`
-	JSON  projectGetResponseProjectInitializerJSON         `json:"-"`
+	Specs []ProjectGetResponseProjectInitializerSpec `json:"specs"`
+	JSON  projectGetResponseProjectInitializerJSON   `json:"-"`
 }
 
 // projectGetResponseProjectInitializerJSON contains the JSON metadata for the
@@ -600,15 +608,23 @@ func (r projectGetResponseProjectInitializerJSON) RawJSON() string {
 	return r.raw
 }
 
-// Union satisfied by [ProjectGetResponseProjectInitializerSpecsUnknown],
-// [ProjectGetResponseProjectInitializerSpecsUnknown] or
-// [ProjectGetResponseProjectInitializerSpecsUnknown].
-type ProjectGetResponseProjectInitializerSpecsUnion interface {
-	implementsProjectGetResponseProjectInitializerSpecsUnion()
+type ProjectGetResponseProjectInitializerSpec struct {
+	JSON projectGetResponseProjectInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ProjectGetResponseProjectInitializerSpecsUnion)(nil)).Elem(), "")
+// projectGetResponseProjectInitializerSpecJSON contains the JSON metadata for the
+// struct [ProjectGetResponseProjectInitializerSpec]
+type projectGetResponseProjectInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 type ProjectGetResponseProjectMetadata struct {
@@ -1010,8 +1026,8 @@ func init() {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectNewFromEnvironmentResponseProjectInitializer struct {
-	Specs []ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion `json:"specs"`
-	JSON  projectNewFromEnvironmentResponseProjectInitializerJSON         `json:"-"`
+	Specs []ProjectNewFromEnvironmentResponseProjectInitializerSpec `json:"specs"`
+	JSON  projectNewFromEnvironmentResponseProjectInitializerJSON   `json:"-"`
 }
 
 // projectNewFromEnvironmentResponseProjectInitializerJSON contains the JSON
@@ -1030,16 +1046,24 @@ func (r projectNewFromEnvironmentResponseProjectInitializerJSON) RawJSON() strin
 	return r.raw
 }
 
-// Union satisfied by
-// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnknown],
-// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnknown] or
-// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnknown].
-type ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion interface {
-	implementsProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion()
+type ProjectNewFromEnvironmentResponseProjectInitializerSpec struct {
+	JSON projectNewFromEnvironmentResponseProjectInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion)(nil)).Elem(), "")
+// projectNewFromEnvironmentResponseProjectInitializerSpecJSON contains the JSON
+// metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpec]
+type projectNewFromEnvironmentResponseProjectInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewFromEnvironmentResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 type ProjectNewFromEnvironmentResponseProjectMetadata struct {
@@ -1398,18 +1422,18 @@ type ProjectNewParamsEnvironmentClassUnion interface {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectNewParamsInitializer struct {
-	Specs param.Field[[]ProjectNewParamsInitializerSpecUnion] `json:"specs"`
+	Specs param.Field[[]ProjectNewParamsInitializerSpec] `json:"specs"`
 }
 
 func (r ProjectNewParamsInitializer) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by [ProjectNewParamsInitializerSpecsUnknown],
-// [ProjectNewParamsInitializerSpecsUnknown],
-// [ProjectNewParamsInitializerSpecsUnknown].
-type ProjectNewParamsInitializerSpecUnion interface {
-	implementsProjectNewParamsInitializerSpecUnion()
+type ProjectNewParamsInitializerSpec struct {
+}
+
+func (r ProjectNewParamsInitializerSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
