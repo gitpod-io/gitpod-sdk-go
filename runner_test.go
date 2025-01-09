@@ -248,11 +248,7 @@ func TestRunnerUpdateRunnerWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Runners.UpdateRunner(context.TODO(), gitpod.RunnerUpdateRunnerParams{
-		Body: gitpod.RunnerUpdateRunnerParamsBody{
-			Name:     "xxx",
-			RunnerID: "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			Spec:     gitpod.RunnerUpdateRunnerParamsBodySpecUnknown(map[string]interface{}{}),
-		},
+		Body:                   gitpod.RunnerUpdateRunnerParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerUpdateRunnerParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

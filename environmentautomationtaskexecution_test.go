@@ -167,16 +167,7 @@ func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusWithOptional
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.EnvironmentAutomations.TaskExecutions.UpdateTaskExecutionStatus(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams{
-		Body: gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody{
-			ID:             "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			FailureMessage: "failureMessage",
-			LogURL:         "logUrl",
-			Steps: []gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyStep{{
-				ID:             gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				FailureMessage: gitpod.F("failureMessage"),
-				Phase:          gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyStepsPhaseTaskExecutionPhaseUnspecified),
-			}},
-		},
+		Body:                   gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"reflect"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
 	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
@@ -86,9 +85,9 @@ func (r runnerConfigurationConfigurationSchemaNewResponseJSON) RawJSON() string 
 }
 
 type RunnerConfigurationConfigurationSchemaNewResponseSchema struct {
-	EnvironmentClasses []RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnion `json:"environmentClasses"`
-	RunnerConfig       []RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnion       `json:"runnerConfig"`
-	Scm                []RunnerConfigurationConfigurationSchemaNewResponseSchemaScm                     `json:"scm"`
+	EnvironmentClasses []RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClass `json:"environmentClasses"`
+	RunnerConfig       []RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfig     `json:"runnerConfig"`
+	Scm                []RunnerConfigurationConfigurationSchemaNewResponseSchemaScm              `json:"scm"`
 	// The schema version
 	Version string                                                      `json:"version"`
 	JSON    runnerConfigurationConfigurationSchemaNewResponseSchemaJSON `json:"-"`
@@ -114,35 +113,44 @@ func (r runnerConfigurationConfigurationSchemaNewResponseSchemaJSON) RawJSON() s
 	return r.raw
 }
 
-// Union satisfied by
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnknown]
-// or
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnknown].
-type RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnion interface {
-	implementsRunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnion()
+type RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClass struct {
+	JSON runnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassesUnion)(nil)).Elem(), "")
+// runnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClass]
+type runnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
-// Union satisfied by
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnknown] or
-// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnknown].
-type RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnion interface {
-	implementsRunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnion()
+func (r *RunnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigUnion)(nil)).Elem(), "")
+func (r runnerConfigurationConfigurationSchemaNewResponseSchemaEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfig struct {
+	JSON runnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigJSON `json:"-"`
+}
+
+// runnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigJSON contains
+// the JSON metadata for the struct
+// [RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfig]
+type runnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfig) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationConfigurationSchemaNewResponseSchemaRunnerConfigJSON) RawJSON() string {
+	return r.raw
 }
 
 type RunnerConfigurationConfigurationSchemaNewResponseSchemaScm struct {
@@ -248,9 +256,9 @@ func (r runnerConfigurationConfigurationSchemaGetResponseJSON) RawJSON() string 
 }
 
 type RunnerConfigurationConfigurationSchemaGetResponseSchema struct {
-	EnvironmentClasses []RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnion `json:"environmentClasses"`
-	RunnerConfig       []RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnion       `json:"runnerConfig"`
-	Scm                []RunnerConfigurationConfigurationSchemaGetResponseSchemaScm                     `json:"scm"`
+	EnvironmentClasses []RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClass `json:"environmentClasses"`
+	RunnerConfig       []RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfig     `json:"runnerConfig"`
+	Scm                []RunnerConfigurationConfigurationSchemaGetResponseSchemaScm              `json:"scm"`
 	// The schema version
 	Version string                                                      `json:"version"`
 	JSON    runnerConfigurationConfigurationSchemaGetResponseSchemaJSON `json:"-"`
@@ -276,35 +284,44 @@ func (r runnerConfigurationConfigurationSchemaGetResponseSchemaJSON) RawJSON() s
 	return r.raw
 }
 
-// Union satisfied by
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnknown]
-// or
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnknown].
-type RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnion interface {
-	implementsRunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnion()
+type RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClass struct {
+	JSON runnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassesUnion)(nil)).Elem(), "")
+// runnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClass]
+type runnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
-// Union satisfied by
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnknown],
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnknown] or
-// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnknown].
-type RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnion interface {
-	implementsRunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnion()
+func (r *RunnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigUnion)(nil)).Elem(), "")
+func (r runnerConfigurationConfigurationSchemaGetResponseSchemaEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfig struct {
+	JSON runnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigJSON `json:"-"`
+}
+
+// runnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigJSON contains
+// the JSON metadata for the struct
+// [RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfig]
+type runnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfig) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationConfigurationSchemaGetResponseSchemaRunnerConfigJSON) RawJSON() string {
+	return r.raw
 }
 
 type RunnerConfigurationConfigurationSchemaGetResponseSchemaScm struct {

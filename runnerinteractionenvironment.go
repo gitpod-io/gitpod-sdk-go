@@ -335,7 +335,7 @@ type RunnerInteractionEnvironmentGetResponseEnvironmentSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports []RunnerInteractionEnvironmentGetResponseEnvironmentSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnion `json:"secrets"`
+	Secrets []RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -451,8 +451,8 @@ func (r runnerInteractionEnvironmentGetResponseEnvironmentSpecContentJSON) RawJS
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializer struct {
-	Specs []RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion `json:"specs"`
-	JSON  runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerJSON         `json:"-"`
+	Specs []RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpec `json:"specs"`
+	JSON  runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerJSON   `json:"-"`
 }
 
 // runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerJSON
@@ -472,17 +472,24 @@ func (r runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializer
 	return r.raw
 }
 
-// Union satisfied by
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnknown],
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnknown]
-// or
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnknown].
-type RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion interface {
-	implementsRunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion()
+type RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpec struct {
+	JSON runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion)(nil)).Elem(), "")
+// runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecJSON
+// contains the JSON metadata for the struct
+// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpec]
+type runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionEnvironmentGetResponseEnvironmentSpecContentInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 // Phase is the desired phase of the environment
@@ -607,17 +614,24 @@ func (r RunnerInteractionEnvironmentGetResponseEnvironmentSpecPortsAdmission) Is
 	return false
 }
 
-// Union satisfied by
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnknown],
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnknown],
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnknown] or
-// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnknown].
-type RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnion interface {
-	implementsRunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnion()
+type RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecret struct {
+	JSON runnerInteractionEnvironmentGetResponseEnvironmentSpecSecretJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecretsUnion)(nil)).Elem(), "")
+// runnerInteractionEnvironmentGetResponseEnvironmentSpecSecretJSON contains the
+// JSON metadata for the struct
+// [RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecret]
+type runnerInteractionEnvironmentGetResponseEnvironmentSpecSecretJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionEnvironmentGetResponseEnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionEnvironmentGetResponseEnvironmentSpecSecretJSON) RawJSON() string {
+	return r.raw
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't
@@ -1010,7 +1024,7 @@ type RunnerInteractionEnvironmentListResponseEnvironmentsSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports []RunnerInteractionEnvironmentListResponseEnvironmentsSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnion `json:"secrets"`
+	Secrets []RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -1127,8 +1141,8 @@ func (r runnerInteractionEnvironmentListResponseEnvironmentsSpecContentJSON) Raw
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializer struct {
-	Specs []RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion `json:"specs"`
-	JSON  runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerJSON         `json:"-"`
+	Specs []RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpec `json:"specs"`
+	JSON  runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerJSON   `json:"-"`
 }
 
 // runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerJSON
@@ -1148,17 +1162,24 @@ func (r runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializ
 	return r.raw
 }
 
-// Union satisfied by
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnknown],
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnknown]
-// or
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnknown].
-type RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion interface {
-	implementsRunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion()
+type RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpec struct {
+	JSON runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion)(nil)).Elem(), "")
+// runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecJSON
+// contains the JSON metadata for the struct
+// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpec]
+type runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionEnvironmentListResponseEnvironmentsSpecContentInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 // Phase is the desired phase of the environment
@@ -1283,17 +1304,24 @@ func (r RunnerInteractionEnvironmentListResponseEnvironmentsSpecPortsAdmission) 
 	return false
 }
 
-// Union satisfied by
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnknown],
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnknown],
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnknown] or
-// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnknown].
-type RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnion interface {
-	implementsRunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnion()
+type RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecret struct {
+	JSON runnerInteractionEnvironmentListResponseEnvironmentsSpecSecretJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecretsUnion)(nil)).Elem(), "")
+// runnerInteractionEnvironmentListResponseEnvironmentsSpecSecretJSON contains the
+// JSON metadata for the struct
+// [RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecret]
+type runnerInteractionEnvironmentListResponseEnvironmentsSpecSecretJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionEnvironmentListResponseEnvironmentsSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionEnvironmentListResponseEnvironmentsSpecSecretJSON) RawJSON() string {
+	return r.raw
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't

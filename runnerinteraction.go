@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"mime/multipart"
 	"net/http"
-	"reflect"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apiform"
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -347,8 +346,8 @@ type RunnerInteractionListRunnerScmIntegrationsResponse struct {
 	// pagination contains the pagination options for listing SCM integrations
 	Pagination RunnerInteractionListRunnerScmIntegrationsResponsePagination `json:"pagination"`
 	// The SCM integrations configured for the runner
-	ScmIntegrations []RunnerInteractionListRunnerScmIntegrationsResponseScmIntegrationsUnion `json:"scmIntegrations"`
-	JSON            runnerInteractionListRunnerScmIntegrationsResponseJSON                   `json:"-"`
+	ScmIntegrations []RunnerInteractionListRunnerScmIntegrationsResponseScmIntegration `json:"scmIntegrations"`
+	JSON            runnerInteractionListRunnerScmIntegrationsResponseJSON             `json:"-"`
 }
 
 // runnerInteractionListRunnerScmIntegrationsResponseJSON contains the JSON
@@ -393,15 +392,24 @@ func (r runnerInteractionListRunnerScmIntegrationsResponsePaginationJSON) RawJSO
 	return r.raw
 }
 
-// Union satisfied by
-// [RunnerInteractionListRunnerScmIntegrationsResponseScmIntegrationsUnknown] or
-// [RunnerInteractionListRunnerScmIntegrationsResponseScmIntegrationsUnknown].
-type RunnerInteractionListRunnerScmIntegrationsResponseScmIntegrationsUnion interface {
-	implementsRunnerInteractionListRunnerScmIntegrationsResponseScmIntegrationsUnion()
+type RunnerInteractionListRunnerScmIntegrationsResponseScmIntegration struct {
+	JSON runnerInteractionListRunnerScmIntegrationsResponseScmIntegrationJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerInteractionListRunnerScmIntegrationsResponseScmIntegrationsUnion)(nil)).Elem(), "")
+// runnerInteractionListRunnerScmIntegrationsResponseScmIntegrationJSON contains
+// the JSON metadata for the struct
+// [RunnerInteractionListRunnerScmIntegrationsResponseScmIntegration]
+type runnerInteractionListRunnerScmIntegrationsResponseScmIntegrationJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionListRunnerScmIntegrationsResponseScmIntegration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionListRunnerScmIntegrationsResponseScmIntegrationJSON) RawJSON() string {
+	return r.raw
 }
 
 type RunnerInteractionMarkActiveResponse = interface{}
@@ -774,9 +782,9 @@ func (r RunnerInteractionUpdateRunnerConfigurationSchemaParamsConnectProtocolVer
 
 // config_schema is the schema for the runner's configuration
 type RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchema struct {
-	EnvironmentClasses param.Field[[]RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassUnion] `json:"environmentClasses"`
-	RunnerConfig       param.Field[[]RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnion]     `json:"runnerConfig"`
-	Scm                param.Field[[]RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScm]                   `json:"scm"`
+	EnvironmentClasses param.Field[[]RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClass] `json:"environmentClasses"`
+	RunnerConfig       param.Field[[]RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfig]     `json:"runnerConfig"`
+	Scm                param.Field[[]RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScm]              `json:"scm"`
 	// The schema version
 	Version param.Field[string] `json:"version"`
 }
@@ -785,26 +793,18 @@ func (r RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchema) Mars
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassesUnknown].
-type RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassUnion interface {
-	implementsRunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClassUnion()
+type RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClass struct {
 }
 
-// Satisfied by
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown],
-// [RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnknown].
-type RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnion interface {
-	implementsRunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfigUnion()
+func (r RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaEnvironmentClass) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfig struct {
+}
+
+func (r RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaRunnerConfig) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerInteractionUpdateRunnerConfigurationSchemaParamsConfigSchemaScm struct {

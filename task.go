@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -232,8 +231,8 @@ type TaskNewResponseTaskMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []TaskNewResponseTaskMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        taskNewResponseTaskMetadataJSON               `json:"-"`
+	TriggeredBy []TaskNewResponseTaskMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        taskNewResponseTaskMetadataJSON          `json:"-"`
 }
 
 // taskNewResponseTaskMetadataJSON contains the JSON metadata for the struct
@@ -303,16 +302,27 @@ func (r TaskNewResponseTaskMetadataCreatorPrincipal) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [TaskNewResponseTaskMetadataTriggeredByUnknown],
-// [TaskNewResponseTaskMetadataTriggeredByUnknown],
-// [TaskNewResponseTaskMetadataTriggeredByUnknown] or
-// [TaskNewResponseTaskMetadataTriggeredByUnknown].
-type TaskNewResponseTaskMetadataTriggeredByUnion interface {
-	implementsTaskNewResponseTaskMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type TaskNewResponseTaskMetadataTriggeredBy struct {
+	JSON taskNewResponseTaskMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*TaskNewResponseTaskMetadataTriggeredByUnion)(nil)).Elem(), "")
+// taskNewResponseTaskMetadataTriggeredByJSON contains the JSON metadata for the
+// struct [TaskNewResponseTaskMetadataTriggeredBy]
+type taskNewResponseTaskMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TaskNewResponseTaskMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r taskNewResponseTaskMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type TaskNewResponseTaskSpec struct {
@@ -491,8 +501,8 @@ type TaskGetResponseTaskMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []TaskGetResponseTaskMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        taskGetResponseTaskMetadataJSON               `json:"-"`
+	TriggeredBy []TaskGetResponseTaskMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        taskGetResponseTaskMetadataJSON          `json:"-"`
 }
 
 // taskGetResponseTaskMetadataJSON contains the JSON metadata for the struct
@@ -562,16 +572,27 @@ func (r TaskGetResponseTaskMetadataCreatorPrincipal) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [TaskGetResponseTaskMetadataTriggeredByUnknown],
-// [TaskGetResponseTaskMetadataTriggeredByUnknown],
-// [TaskGetResponseTaskMetadataTriggeredByUnknown] or
-// [TaskGetResponseTaskMetadataTriggeredByUnknown].
-type TaskGetResponseTaskMetadataTriggeredByUnion interface {
-	implementsTaskGetResponseTaskMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type TaskGetResponseTaskMetadataTriggeredBy struct {
+	JSON taskGetResponseTaskMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*TaskGetResponseTaskMetadataTriggeredByUnion)(nil)).Elem(), "")
+// taskGetResponseTaskMetadataTriggeredByJSON contains the JSON metadata for the
+// struct [TaskGetResponseTaskMetadataTriggeredBy]
+type taskGetResponseTaskMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TaskGetResponseTaskMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r taskGetResponseTaskMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type TaskGetResponseTaskSpec struct {
@@ -751,8 +772,8 @@ type TaskGetNewResponseTaskMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []TaskGetNewResponseTaskMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        taskGetNewResponseTaskMetadataJSON               `json:"-"`
+	TriggeredBy []TaskGetNewResponseTaskMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        taskGetNewResponseTaskMetadataJSON          `json:"-"`
 }
 
 // taskGetNewResponseTaskMetadataJSON contains the JSON metadata for the struct
@@ -822,16 +843,27 @@ func (r TaskGetNewResponseTaskMetadataCreatorPrincipal) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [TaskGetNewResponseTaskMetadataTriggeredByUnknown],
-// [TaskGetNewResponseTaskMetadataTriggeredByUnknown],
-// [TaskGetNewResponseTaskMetadataTriggeredByUnknown] or
-// [TaskGetNewResponseTaskMetadataTriggeredByUnknown].
-type TaskGetNewResponseTaskMetadataTriggeredByUnion interface {
-	implementsTaskGetNewResponseTaskMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type TaskGetNewResponseTaskMetadataTriggeredBy struct {
+	JSON taskGetNewResponseTaskMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*TaskGetNewResponseTaskMetadataTriggeredByUnion)(nil)).Elem(), "")
+// taskGetNewResponseTaskMetadataTriggeredByJSON contains the JSON metadata for the
+// struct [TaskGetNewResponseTaskMetadataTriggeredBy]
+type taskGetNewResponseTaskMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TaskGetNewResponseTaskMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r taskGetNewResponseTaskMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type TaskGetNewResponseTaskSpec struct {
@@ -990,7 +1022,7 @@ type TaskNewParamsMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference param.Field[string] `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy param.Field[[]TaskNewParamsMetadataTriggeredByUnion] `json:"triggeredBy"`
+	TriggeredBy param.Field[[]TaskNewParamsMetadataTriggeredBy] `json:"triggeredBy"`
 }
 
 func (r TaskNewParamsMetadata) MarshalJSON() (data []byte, err error) {
@@ -1029,12 +1061,15 @@ func (r TaskNewParamsMetadataCreatorPrincipal) IsKnown() bool {
 	return false
 }
 
-// Satisfied by [TaskNewParamsMetadataTriggeredByUnknown],
-// [TaskNewParamsMetadataTriggeredByUnknown],
-// [TaskNewParamsMetadataTriggeredByUnknown],
-// [TaskNewParamsMetadataTriggeredByUnknown].
-type TaskNewParamsMetadataTriggeredByUnion interface {
-	implementsTaskNewParamsMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type TaskNewParamsMetadataTriggeredBy struct {
+}
+
+func (r TaskNewParamsMetadataTriggeredBy) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type TaskNewParamsSpec struct {

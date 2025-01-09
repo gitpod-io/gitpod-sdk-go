@@ -25,23 +25,7 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.RunnerConfigurations.Validate(context.TODO(), gitpod.RunnerConfigurationValidateParams{
-		Body: gitpod.RunnerConfigurationValidateParamsBody{
-			EnvironmentClass: map[string]interface{}{
-				"id": "id",
-				"configuration": map[string]interface{}{
-					"0": map[string]interface{}{
-						"key":   "key",
-						"value": "value",
-					},
-				},
-				"description": "xxx",
-				"displayName": "xxx",
-				"enabled":     true,
-				"runnerId":    "runnerId",
-			},
-			RunnerID:       "182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e",
-			ScmIntegration: map[string]interface{}{},
-		},
+		Body:                   gitpod.RunnerConfigurationValidateParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationValidateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

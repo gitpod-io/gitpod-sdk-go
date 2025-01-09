@@ -37,7 +37,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{})}),
+					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpec{{}}),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -55,7 +55,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecretUnion{gitpod.EnvironmentNewParamsSpecSecretsUnknown(map[string]interface{}{})}),
+			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecret{{}}),
 			SpecVersion: gitpod.F[gitpod.EnvironmentNewParamsSpecSpecVersionUnion](shared.UnionString("string")),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),
@@ -160,7 +160,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown(map[string]interface{}{})}),
+					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpec{{}}),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -178,7 +178,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecretUnion{gitpod.EnvironmentNewFromProjectParamsSpecSecretsUnknown(map[string]interface{}{})}),
+			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecret{{}}),
 			SpecVersion: gitpod.F[gitpod.EnvironmentNewFromProjectParamsSpecSpecVersionUnion](shared.UnionString("string")),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),

@@ -367,7 +367,7 @@ type EnvironmentNewResponseEnvironmentSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports []EnvironmentNewResponseEnvironmentSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []EnvironmentNewResponseEnvironmentSpecSecretsUnion `json:"secrets"`
+	Secrets []EnvironmentNewResponseEnvironmentSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -481,8 +481,8 @@ func (r environmentNewResponseEnvironmentSpecContentJSON) RawJSON() string {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type EnvironmentNewResponseEnvironmentSpecContentInitializer struct {
-	Specs []EnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnion `json:"specs"`
-	JSON  environmentNewResponseEnvironmentSpecContentInitializerJSON         `json:"-"`
+	Specs []EnvironmentNewResponseEnvironmentSpecContentInitializerSpec `json:"specs"`
+	JSON  environmentNewResponseEnvironmentSpecContentInitializerJSON   `json:"-"`
 }
 
 // environmentNewResponseEnvironmentSpecContentInitializerJSON contains the JSON
@@ -502,16 +502,24 @@ func (r environmentNewResponseEnvironmentSpecContentInitializerJSON) RawJSON() s
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnknown],
-// [EnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnknown] or
-// [EnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnknown].
-type EnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnion interface {
-	implementsEnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnion()
+type EnvironmentNewResponseEnvironmentSpecContentInitializerSpec struct {
+	JSON environmentNewResponseEnvironmentSpecContentInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentNewResponseEnvironmentSpecContentInitializerSpecsUnion)(nil)).Elem(), "")
+// environmentNewResponseEnvironmentSpecContentInitializerSpecJSON contains the
+// JSON metadata for the struct
+// [EnvironmentNewResponseEnvironmentSpecContentInitializerSpec]
+type environmentNewResponseEnvironmentSpecContentInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentNewResponseEnvironmentSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentNewResponseEnvironmentSpecContentInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 // Phase is the desired phase of the environment
@@ -633,16 +641,23 @@ func (r EnvironmentNewResponseEnvironmentSpecPortsAdmission) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [EnvironmentNewResponseEnvironmentSpecSecretsUnknown],
-// [EnvironmentNewResponseEnvironmentSpecSecretsUnknown],
-// [EnvironmentNewResponseEnvironmentSpecSecretsUnknown] or
-// [EnvironmentNewResponseEnvironmentSpecSecretsUnknown].
-type EnvironmentNewResponseEnvironmentSpecSecretsUnion interface {
-	implementsEnvironmentNewResponseEnvironmentSpecSecretsUnion()
+type EnvironmentNewResponseEnvironmentSpecSecret struct {
+	JSON environmentNewResponseEnvironmentSpecSecretJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentNewResponseEnvironmentSpecSecretsUnion)(nil)).Elem(), "")
+// environmentNewResponseEnvironmentSpecSecretJSON contains the JSON metadata for
+// the struct [EnvironmentNewResponseEnvironmentSpecSecret]
+type environmentNewResponseEnvironmentSpecSecretJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentNewResponseEnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentNewResponseEnvironmentSpecSecretJSON) RawJSON() string {
+	return r.raw
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't
@@ -1800,7 +1815,7 @@ type EnvironmentGetResponseEnvironmentSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports []EnvironmentGetResponseEnvironmentSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []EnvironmentGetResponseEnvironmentSpecSecretsUnion `json:"secrets"`
+	Secrets []EnvironmentGetResponseEnvironmentSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -1914,8 +1929,8 @@ func (r environmentGetResponseEnvironmentSpecContentJSON) RawJSON() string {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type EnvironmentGetResponseEnvironmentSpecContentInitializer struct {
-	Specs []EnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion `json:"specs"`
-	JSON  environmentGetResponseEnvironmentSpecContentInitializerJSON         `json:"-"`
+	Specs []EnvironmentGetResponseEnvironmentSpecContentInitializerSpec `json:"specs"`
+	JSON  environmentGetResponseEnvironmentSpecContentInitializerJSON   `json:"-"`
 }
 
 // environmentGetResponseEnvironmentSpecContentInitializerJSON contains the JSON
@@ -1935,16 +1950,24 @@ func (r environmentGetResponseEnvironmentSpecContentInitializerJSON) RawJSON() s
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnknown],
-// [EnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnknown] or
-// [EnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnknown].
-type EnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion interface {
-	implementsEnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion()
+type EnvironmentGetResponseEnvironmentSpecContentInitializerSpec struct {
+	JSON environmentGetResponseEnvironmentSpecContentInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentGetResponseEnvironmentSpecContentInitializerSpecsUnion)(nil)).Elem(), "")
+// environmentGetResponseEnvironmentSpecContentInitializerSpecJSON contains the
+// JSON metadata for the struct
+// [EnvironmentGetResponseEnvironmentSpecContentInitializerSpec]
+type environmentGetResponseEnvironmentSpecContentInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentGetResponseEnvironmentSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentGetResponseEnvironmentSpecContentInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 // Phase is the desired phase of the environment
@@ -2066,16 +2089,23 @@ func (r EnvironmentGetResponseEnvironmentSpecPortsAdmission) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [EnvironmentGetResponseEnvironmentSpecSecretsUnknown],
-// [EnvironmentGetResponseEnvironmentSpecSecretsUnknown],
-// [EnvironmentGetResponseEnvironmentSpecSecretsUnknown] or
-// [EnvironmentGetResponseEnvironmentSpecSecretsUnknown].
-type EnvironmentGetResponseEnvironmentSpecSecretsUnion interface {
-	implementsEnvironmentGetResponseEnvironmentSpecSecretsUnion()
+type EnvironmentGetResponseEnvironmentSpecSecret struct {
+	JSON environmentGetResponseEnvironmentSpecSecretJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentGetResponseEnvironmentSpecSecretsUnion)(nil)).Elem(), "")
+// environmentGetResponseEnvironmentSpecSecretJSON contains the JSON metadata for
+// the struct [EnvironmentGetResponseEnvironmentSpecSecret]
+type environmentGetResponseEnvironmentSpecSecretJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentGetResponseEnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentGetResponseEnvironmentSpecSecretJSON) RawJSON() string {
+	return r.raw
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't
@@ -3236,7 +3266,7 @@ type EnvironmentListResponseEnvironmentsSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports []EnvironmentListResponseEnvironmentsSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []EnvironmentListResponseEnvironmentsSpecSecretsUnion `json:"secrets"`
+	Secrets []EnvironmentListResponseEnvironmentsSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -3350,8 +3380,8 @@ func (r environmentListResponseEnvironmentsSpecContentJSON) RawJSON() string {
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type EnvironmentListResponseEnvironmentsSpecContentInitializer struct {
-	Specs []EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion `json:"specs"`
-	JSON  environmentListResponseEnvironmentsSpecContentInitializerJSON         `json:"-"`
+	Specs []EnvironmentListResponseEnvironmentsSpecContentInitializerSpec `json:"specs"`
+	JSON  environmentListResponseEnvironmentsSpecContentInitializerJSON   `json:"-"`
 }
 
 // environmentListResponseEnvironmentsSpecContentInitializerJSON contains the JSON
@@ -3371,16 +3401,24 @@ func (r environmentListResponseEnvironmentsSpecContentInitializerJSON) RawJSON()
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnknown],
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnknown] or
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnknown].
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion interface {
-	implementsEnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion()
+type EnvironmentListResponseEnvironmentsSpecContentInitializerSpec struct {
+	JSON environmentListResponseEnvironmentsSpecContentInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion)(nil)).Elem(), "")
+// environmentListResponseEnvironmentsSpecContentInitializerSpecJSON contains the
+// JSON metadata for the struct
+// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpec]
+type environmentListResponseEnvironmentsSpecContentInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentListResponseEnvironmentsSpecContentInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 // Phase is the desired phase of the environment
@@ -3502,16 +3540,23 @@ func (r EnvironmentListResponseEnvironmentsSpecPortsAdmission) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [EnvironmentListResponseEnvironmentsSpecSecretsUnknown],
-// [EnvironmentListResponseEnvironmentsSpecSecretsUnknown],
-// [EnvironmentListResponseEnvironmentsSpecSecretsUnknown] or
-// [EnvironmentListResponseEnvironmentsSpecSecretsUnknown].
-type EnvironmentListResponseEnvironmentsSpecSecretsUnion interface {
-	implementsEnvironmentListResponseEnvironmentsSpecSecretsUnion()
+type EnvironmentListResponseEnvironmentsSpecSecret struct {
+	JSON environmentListResponseEnvironmentsSpecSecretJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentListResponseEnvironmentsSpecSecretsUnion)(nil)).Elem(), "")
+// environmentListResponseEnvironmentsSpecSecretJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseEnvironmentsSpecSecret]
+type environmentListResponseEnvironmentsSpecSecretJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentListResponseEnvironmentsSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentListResponseEnvironmentsSpecSecretJSON) RawJSON() string {
+	return r.raw
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't
@@ -4697,7 +4742,7 @@ type EnvironmentNewFromProjectResponseEnvironmentSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports []EnvironmentNewFromProjectResponseEnvironmentSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnion `json:"secrets"`
+	Secrets []EnvironmentNewFromProjectResponseEnvironmentSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -4813,8 +4858,8 @@ func (r environmentNewFromProjectResponseEnvironmentSpecContentJSON) RawJSON() s
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializer struct {
-	Specs []EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnion `json:"specs"`
-	JSON  environmentNewFromProjectResponseEnvironmentSpecContentInitializerJSON         `json:"-"`
+	Specs []EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpec `json:"specs"`
+	JSON  environmentNewFromProjectResponseEnvironmentSpecContentInitializerJSON   `json:"-"`
 }
 
 // environmentNewFromProjectResponseEnvironmentSpecContentInitializerJSON contains
@@ -4834,17 +4879,24 @@ func (r environmentNewFromProjectResponseEnvironmentSpecContentInitializerJSON) 
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnknown],
-// [EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnknown]
-// or
-// [EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnknown].
-type EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnion interface {
-	implementsEnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnion()
+type EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpec struct {
+	JSON environmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecsUnion)(nil)).Elem(), "")
+// environmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecJSON
+// contains the JSON metadata for the struct
+// [EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpec]
+type environmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentNewFromProjectResponseEnvironmentSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentNewFromProjectResponseEnvironmentSpecContentInitializerSpecJSON) RawJSON() string {
+	return r.raw
 }
 
 // Phase is the desired phase of the environment
@@ -4968,17 +5020,23 @@ func (r EnvironmentNewFromProjectResponseEnvironmentSpecPortsAdmission) IsKnown(
 	return false
 }
 
-// Union satisfied by
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnknown],
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnknown],
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnknown] or
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnknown].
-type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnion interface {
-	implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnion()
+type EnvironmentNewFromProjectResponseEnvironmentSpecSecret struct {
+	JSON environmentNewFromProjectResponseEnvironmentSpecSecretJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnion)(nil)).Elem(), "")
+// environmentNewFromProjectResponseEnvironmentSpecSecretJSON contains the JSON
+// metadata for the struct [EnvironmentNewFromProjectResponseEnvironmentSpecSecret]
+type environmentNewFromProjectResponseEnvironmentSpecSecretJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentNewFromProjectResponseEnvironmentSpecSecretJSON) RawJSON() string {
+	return r.raw
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't
@@ -5941,7 +5999,7 @@ type EnvironmentNewParamsSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports param.Field[[]EnvironmentNewParamsSpecPort] `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets param.Field[[]EnvironmentNewParamsSpecSecretUnion] `json:"secrets"`
+	Secrets param.Field[[]EnvironmentNewParamsSpecSecret] `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -6002,18 +6060,18 @@ func (r EnvironmentNewParamsSpecContent) MarshalJSON() (data []byte, err error) 
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type EnvironmentNewParamsSpecContentInitializer struct {
-	Specs param.Field[[]EnvironmentNewParamsSpecContentInitializerSpecUnion] `json:"specs"`
+	Specs param.Field[[]EnvironmentNewParamsSpecContentInitializerSpec] `json:"specs"`
 }
 
 func (r EnvironmentNewParamsSpecContentInitializer) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by [EnvironmentNewParamsSpecContentInitializerSpecsUnknown],
-// [EnvironmentNewParamsSpecContentInitializerSpecsUnknown],
-// [EnvironmentNewParamsSpecContentInitializerSpecsUnknown].
-type EnvironmentNewParamsSpecContentInitializerSpecUnion interface {
-	implementsEnvironmentNewParamsSpecContentInitializerSpecUnion()
+type EnvironmentNewParamsSpecContentInitializerSpec struct {
+}
+
+func (r EnvironmentNewParamsSpecContentInitializerSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Phase is the desired phase of the environment
@@ -6092,12 +6150,11 @@ func (r EnvironmentNewParamsSpecPortsAdmission) IsKnown() bool {
 	return false
 }
 
-// Satisfied by [EnvironmentNewParamsSpecSecretsUnknown],
-// [EnvironmentNewParamsSpecSecretsUnknown],
-// [EnvironmentNewParamsSpecSecretsUnknown],
-// [EnvironmentNewParamsSpecSecretsUnknown].
-type EnvironmentNewParamsSpecSecretUnion interface {
-	implementsEnvironmentNewParamsSpecSecretUnion()
+type EnvironmentNewParamsSpecSecret struct {
+}
+
+func (r EnvironmentNewParamsSpecSecret) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't
@@ -6347,7 +6404,7 @@ type EnvironmentNewFromProjectParamsSpec struct {
 	// ports is the set of ports which ought to be exposed to the internet
 	Ports param.Field[[]EnvironmentNewFromProjectParamsSpecPort] `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets param.Field[[]EnvironmentNewFromProjectParamsSpecSecretUnion] `json:"secrets"`
+	Secrets param.Field[[]EnvironmentNewFromProjectParamsSpecSecret] `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -6408,19 +6465,18 @@ func (r EnvironmentNewFromProjectParamsSpecContent) MarshalJSON() (data []byte, 
 
 // EnvironmentInitializer specifies how an environment is to be initialized
 type EnvironmentNewFromProjectParamsSpecContentInitializer struct {
-	Specs param.Field[[]EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion] `json:"specs"`
+	Specs param.Field[[]EnvironmentNewFromProjectParamsSpecContentInitializerSpec] `json:"specs"`
 }
 
 func (r EnvironmentNewFromProjectParamsSpecContentInitializer) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by
-// [EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown],
-// [EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown],
-// [EnvironmentNewFromProjectParamsSpecContentInitializerSpecsUnknown].
-type EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion interface {
-	implementsEnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion()
+type EnvironmentNewFromProjectParamsSpecContentInitializerSpec struct {
+}
+
+func (r EnvironmentNewFromProjectParamsSpecContentInitializerSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Phase is the desired phase of the environment
@@ -6499,12 +6555,11 @@ func (r EnvironmentNewFromProjectParamsSpecPortsAdmission) IsKnown() bool {
 	return false
 }
 
-// Satisfied by [EnvironmentNewFromProjectParamsSpecSecretsUnknown],
-// [EnvironmentNewFromProjectParamsSpecSecretsUnknown],
-// [EnvironmentNewFromProjectParamsSpecSecretsUnknown],
-// [EnvironmentNewFromProjectParamsSpecSecretsUnknown].
-type EnvironmentNewFromProjectParamsSpecSecretUnion interface {
-	implementsEnvironmentNewFromProjectParamsSpecSecretUnion()
+type EnvironmentNewFromProjectParamsSpecSecret struct {
+}
+
+func (r EnvironmentNewFromProjectParamsSpecSecret) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // version of the spec. The value of this field has no semantic meaning (e.g. don't

@@ -27,7 +27,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
 		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassUnknown(map[string]interface{}{})),
 		Initializer: gitpod.F(gitpod.ProjectNewParamsInitializer{
-			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpecUnion{gitpod.ProjectNewParamsInitializerSpecsUnknown(map[string]interface{}{})}),
+			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpec{{}}),
 		}),
 		ConnectProtocolVersion: gitpod.F(gitpod.ProjectNewParamsConnectProtocolVersion1),
 		AutomationsFilePath:    gitpod.F("automationsFilePath"),

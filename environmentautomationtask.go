@@ -291,8 +291,8 @@ type EnvironmentAutomationTaskListResponseTasksMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        environmentAutomationTaskListResponseTasksMetadataJSON               `json:"-"`
+	TriggeredBy []EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        environmentAutomationTaskListResponseTasksMetadataJSON          `json:"-"`
 }
 
 // environmentAutomationTaskListResponseTasksMetadataJSON contains the JSON
@@ -363,17 +363,28 @@ func (r EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal) IsKn
 	return false
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnknown],
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnknown],
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnknown] or
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnknown].
-type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion interface {
-	implementsEnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy struct {
+	JSON environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion)(nil)).Elem(), "")
+// environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON contains the
+// JSON metadata for the struct
+// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy]
+type environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskListResponseTasksSpec struct {
@@ -580,8 +591,8 @@ type EnvironmentAutomationTaskNewListResponseTasksMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        environmentAutomationTaskNewListResponseTasksMetadataJSON               `json:"-"`
+	TriggeredBy []EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        environmentAutomationTaskNewListResponseTasksMetadataJSON          `json:"-"`
 }
 
 // environmentAutomationTaskNewListResponseTasksMetadataJSON contains the JSON
@@ -652,17 +663,28 @@ func (r EnvironmentAutomationTaskNewListResponseTasksMetadataCreatorPrincipal) I
 	return false
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnknown],
-// [EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnknown],
-// [EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnknown] or
-// [EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnknown].
-type EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnion interface {
-	implementsEnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredBy struct {
+	JSON environmentAutomationTaskNewListResponseTasksMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredByUnion)(nil)).Elem(), "")
+// environmentAutomationTaskNewListResponseTasksMetadataTriggeredByJSON contains
+// the JSON metadata for the struct
+// [EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredBy]
+type environmentAutomationTaskNewListResponseTasksMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewListResponseTasksMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewListResponseTasksMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskNewListResponseTasksSpec struct {
@@ -1135,8 +1157,8 @@ func (r EnvironmentAutomationTaskStartResponseTaskExecutionSpecDesiredPhase) IsK
 }
 
 type EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlan struct {
-	Steps []EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnion `json:"steps"`
-	JSON  environmentAutomationTaskStartResponseTaskExecutionSpecPlanJSON         `json:"-"`
+	Steps []EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStep `json:"steps"`
+	JSON  environmentAutomationTaskStartResponseTaskExecutionSpecPlanJSON   `json:"-"`
 }
 
 // environmentAutomationTaskStartResponseTaskExecutionSpecPlanJSON contains the
@@ -1156,16 +1178,24 @@ func (r environmentAutomationTaskStartResponseTaskExecutionSpecPlanJSON) RawJSON
 	return r.raw
 }
 
-// Union satisfied by
-// [EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnknown],
-// [EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnknown] or
-// [EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnknown].
-type EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnion interface {
-	implementsEnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnion()
+type EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStep struct {
+	JSON environmentAutomationTaskStartResponseTaskExecutionSpecPlanStepJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsUnion)(nil)).Elem(), "")
+// environmentAutomationTaskStartResponseTaskExecutionSpecPlanStepJSON contains the
+// JSON metadata for the struct
+// [EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStep]
+type environmentAutomationTaskStartResponseTaskExecutionSpecPlanStepJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskStartResponseTaskExecutionSpecPlanStepJSON) RawJSON() string {
+	return r.raw
 }
 
 type EnvironmentAutomationTaskStartResponseTaskExecutionStatus struct {

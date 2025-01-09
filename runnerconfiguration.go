@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"reflect"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
@@ -43,7 +42,7 @@ func NewRunnerConfigurationService(opts ...option.RequestOption) (r *RunnerConfi
 
 // ValidateRunnerConfiguration validates a runner configuration (e.g. environment
 // class, SCM integration) with the runner.
-func (r *RunnerConfigurationService) Validate(ctx context.Context, params RunnerConfigurationValidateParams, opts ...option.RequestOption) (res *RunnerConfigurationValidateResponseUnion, err error) {
+func (r *RunnerConfigurationService) Validate(ctx context.Context, params RunnerConfigurationValidateParams, opts ...option.RequestOption) (res *RunnerConfigurationValidateResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
 	}
@@ -56,15 +55,23 @@ func (r *RunnerConfigurationService) Validate(ctx context.Context, params Runner
 	return
 }
 
-// Union satisfied by [RunnerConfigurationValidateResponseUnknown],
-// [RunnerConfigurationValidateResponseUnknown] or
-// [RunnerConfigurationValidateResponseUnknown].
-type RunnerConfigurationValidateResponseUnion interface {
-	implementsRunnerConfigurationValidateResponseUnion()
+type RunnerConfigurationValidateResponse struct {
+	JSON runnerConfigurationValidateResponseJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*RunnerConfigurationValidateResponseUnion)(nil)).Elem(), "")
+// runnerConfigurationValidateResponseJSON contains the JSON metadata for the
+// struct [RunnerConfigurationValidateResponse]
+type runnerConfigurationValidateResponseJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseJSON) RawJSON() string {
+	return r.raw
 }
 
 type RunnerConfigurationValidateParams struct {

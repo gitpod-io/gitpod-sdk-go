@@ -308,8 +308,8 @@ type ServiceListResponseServicesMetadata struct {
 	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
-	TriggeredBy []ServiceListResponseServicesMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        serviceListResponseServicesMetadataJSON               `json:"-"`
+	TriggeredBy []ServiceListResponseServicesMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        serviceListResponseServicesMetadataJSON          `json:"-"`
 }
 
 // serviceListResponseServicesMetadataJSON contains the JSON metadata for the
@@ -379,16 +379,27 @@ func (r ServiceListResponseServicesMetadataCreatorPrincipal) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [ServiceListResponseServicesMetadataTriggeredByUnknown],
-// [ServiceListResponseServicesMetadataTriggeredByUnknown],
-// [ServiceListResponseServicesMetadataTriggeredByUnknown] or
-// [ServiceListResponseServicesMetadataTriggeredByUnknown].
-type ServiceListResponseServicesMetadataTriggeredByUnion interface {
-	implementsServiceListResponseServicesMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type ServiceListResponseServicesMetadataTriggeredBy struct {
+	JSON serviceListResponseServicesMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ServiceListResponseServicesMetadataTriggeredByUnion)(nil)).Elem(), "")
+// serviceListResponseServicesMetadataTriggeredByJSON contains the JSON metadata
+// for the struct [ServiceListResponseServicesMetadataTriggeredBy]
+type serviceListResponseServicesMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ServiceListResponseServicesMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r serviceListResponseServicesMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type ServiceListResponseServicesSpec struct {
@@ -785,8 +796,8 @@ type ServiceListNewResponseServicesMetadata struct {
 	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
-	TriggeredBy []ServiceListNewResponseServicesMetadataTriggeredByUnion `json:"triggeredBy"`
-	JSON        serviceListNewResponseServicesMetadataJSON               `json:"-"`
+	TriggeredBy []ServiceListNewResponseServicesMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        serviceListNewResponseServicesMetadataJSON          `json:"-"`
 }
 
 // serviceListNewResponseServicesMetadataJSON contains the JSON metadata for the
@@ -856,16 +867,27 @@ func (r ServiceListNewResponseServicesMetadataCreatorPrincipal) IsKnown() bool {
 	return false
 }
 
-// Union satisfied by [ServiceListNewResponseServicesMetadataTriggeredByUnknown],
-// [ServiceListNewResponseServicesMetadataTriggeredByUnknown],
-// [ServiceListNewResponseServicesMetadataTriggeredByUnknown] or
-// [ServiceListNewResponseServicesMetadataTriggeredByUnknown].
-type ServiceListNewResponseServicesMetadataTriggeredByUnion interface {
-	implementsServiceListNewResponseServicesMetadataTriggeredByUnion()
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the devcontainer has started.
+type ServiceListNewResponseServicesMetadataTriggeredBy struct {
+	JSON serviceListNewResponseServicesMetadataTriggeredByJSON `json:"-"`
 }
 
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ServiceListNewResponseServicesMetadataTriggeredByUnion)(nil)).Elem(), "")
+// serviceListNewResponseServicesMetadataTriggeredByJSON contains the JSON metadata
+// for the struct [ServiceListNewResponseServicesMetadataTriggeredBy]
+type serviceListNewResponseServicesMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ServiceListNewResponseServicesMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r serviceListNewResponseServicesMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
 }
 
 type ServiceListNewResponseServicesSpec struct {
