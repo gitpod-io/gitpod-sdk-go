@@ -7,8 +7,8 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/testing/protocmp"
 
-	"github.com/gitpod-io/flex-go/client"
-	v1 "github.com/gitpod-io/flex-go/v1"
+	"github.com/gitpod-io/flex-sdk-go/client"
+	v1 "github.com/gitpod-io/flex-sdk-go/v1"
 )
 
 func TestReadAutomationsFile(t *testing.T) {

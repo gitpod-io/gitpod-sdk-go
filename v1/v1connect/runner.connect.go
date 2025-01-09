@@ -8,7 +8,7 @@ import (
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
-	v1 "github.com/gitpod-io/flex-go/v1"
+	v1 "github.com/gitpod-io/flex-sdk-go/v1"
 	http "net/http"
 	strings "strings"
 )

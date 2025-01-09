@@ -3,7 +3,7 @@
 package v1
 
 import (
-	logfields "github.com/gitpod-io/flex-go/tools/logfields"
+	logfields "github.com/gitpod-io/flex-sdk-go/tools/logfields"
 )
 
 func (x *UpdateOrganizationRequest) LogFields() logfields.Collection {

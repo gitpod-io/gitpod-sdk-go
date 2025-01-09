@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/gitpod-io/flex-go/tools/logfields"
+	"github.com/gitpod-io/flex-sdk-go/tools/logfields"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	logfieldsImport = protogen.GoImportPath("github.com/gitpod-io/flex-go/tools/logfields")
+	logfieldsImport = protogen.GoImportPath("github.com/gitpod-io/flex-sdk-go/tools/logfields")
 
 	EntryRef      = logfieldsImport.Ident("Entry")
 	CollectionRef = logfieldsImport.Ident("Collection")

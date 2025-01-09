@@ -8,8 +8,8 @@ import (
 	"connectrpc.com/otelconnect"
 	"go.uber.org/mock/gomock"
 
-	"github.com/gitpod-io/flex-go/client/mock"
-	"github.com/gitpod-io/flex-go/v1/v1connect"
+	"github.com/gitpod-io/flex-sdk-go/client/mock"
+	"github.com/gitpod-io/flex-sdk-go/v1/v1connect"
 )
 
 type options struct {

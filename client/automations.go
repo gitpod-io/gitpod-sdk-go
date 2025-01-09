@@ -11,8 +11,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"gopkg.in/yaml.v3"
 
-	"github.com/gitpod-io/flex-go/client/cache"
-	v1 "github.com/gitpod-io/flex-go/v1"
+	"github.com/gitpod-io/flex-sdk-go/client/cache"
+	v1 "github.com/gitpod-io/flex-sdk-go/v1"
 )
 
 // ReadAutomationsFile reads an AutomationsFile from the provided io.Reader.

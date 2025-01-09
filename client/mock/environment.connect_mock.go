@@ -14,7 +14,7 @@ import (
 	reflect "reflect"
 
 	connect "connectrpc.com/connect"
-	v1 "github.com/gitpod-io/flex-go/v1"
+	v1 "github.com/gitpod-io/flex-sdk-go/v1"
 	gomock "go.uber.org/mock/gomock"
 )
 

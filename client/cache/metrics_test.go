@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	v1 "github.com/gitpod-io/flex-go/v1"
+	v1 "github.com/gitpod-io/flex-sdk-go/v1"
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
