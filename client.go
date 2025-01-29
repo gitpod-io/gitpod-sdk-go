@@ -14,20 +14,16 @@ import (
 // interacting with the gitpod API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options                []option.RequestOption
-	Services               *ServiceService
-	AutomationsFiles       *AutomationsFileService
-	Tasks                  *TaskService
-	Editors                *EditorService
-	EnvironmentAutomations *EnvironmentAutomationService
-	Environments           *EnvironmentService
-	EnvironmentClasses     *EnvironmentClassService
-	Organizations          *OrganizationService
-	Projects               *ProjectService
-	RunnerConfigurations   *RunnerConfigurationService
-	RunnerInteractions     *RunnerInteractionService
-	Runners                *RunnerService
-	PersonalAccessTokens   *PersonalAccessTokenService
+	Options              []option.RequestOption
+	AutomationsFiles     *AutomationsFileService
+	Editors              *EditorService
+	Environments         *EnvironmentService
+	EnvironmentClasses   *EnvironmentClassService
+	Organizations        *OrganizationService
+	Projects             *ProjectService
+	RunnerConfigurations *RunnerConfigurationService
+	Runners              *RunnerService
+	PersonalAccessTokens *PersonalAccessTokenService
 }
 
 // NewClient generates a new client with the default option read from the
@@ -40,17 +36,13 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r = &Client{Options: opts}
 
-	r.Services = NewServiceService(opts...)
 	r.AutomationsFiles = NewAutomationsFileService(opts...)
-	r.Tasks = NewTaskService(opts...)
 	r.Editors = NewEditorService(opts...)
-	r.EnvironmentAutomations = NewEnvironmentAutomationService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.EnvironmentClasses = NewEnvironmentClassService(opts...)
 	r.Organizations = NewOrganizationService(opts...)
 	r.Projects = NewProjectService(opts...)
 	r.RunnerConfigurations = NewRunnerConfigurationService(opts...)
-	r.RunnerInteractions = NewRunnerInteractionService(opts...)
 	r.Runners = NewRunnerService(opts...)
 	r.PersonalAccessTokens = NewPersonalAccessTokenService(opts...)
 

@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
+func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,9 +24,12 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.EnvironmentAutomations.TaskExecutions.Get(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1),
+	_, err := client.Environments.Automations.Services.Update(context.TODO(), gitpod.EnvironmentAutomationServiceUpdateParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Metadata:               gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsMetadata{}),
+		Spec:                   gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsSpec{}),
+		Status:                 gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsStatus{}),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -38,7 +41,7 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) {
+func TestEnvironmentAutomationServiceListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -49,15 +52,14 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.EnvironmentAutomations.TaskExecutions.List(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionListParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1),
-		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsFilter{
+	_, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsConnectProtocolVersion1),
+		Filter: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified}),
-			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			TaskReferences: gitpod.F([]string{"string"}),
+			References:     gitpod.F([]string{"x"}),
+			ServiceIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
-		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsPagination{
+		Pagination: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(0)),
 		}),
@@ -72,7 +74,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionNewGetWithOptionalParams(t *testing.T) {
+func TestEnvironmentAutomationServiceDeleteWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -83,8 +85,34 @@ func TestEnvironmentAutomationTaskExecutionNewGetWithOptionalParams(t *testing.T
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.EnvironmentAutomations.TaskExecutions.NewGet(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionNewGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionNewGetParamsConnectProtocolVersion1),
+	_, err := client.Environments.Automations.Services.Delete(context.TODO(), gitpod.EnvironmentAutomationServiceDeleteParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1),
+		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Force:                  gitpod.F(true),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestEnvironmentAutomationServiceStartWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Environments.Automations.Services.Start(context.TODO(), gitpod.EnvironmentAutomationServiceStartParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceStartParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -97,7 +125,7 @@ func TestEnvironmentAutomationTaskExecutionNewGetWithOptionalParams(t *testing.T
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) {
+func TestEnvironmentAutomationServiceStopWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -108,34 +136,9 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.EnvironmentAutomations.TaskExecutions.Stop(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionStopParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1),
+	_, err := client.Environments.Automations.Services.Stop(context.TODO(), gitpod.EnvironmentAutomationServiceStopParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceStopParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-	)
-	_, err := client.EnvironmentAutomations.TaskExecutions.UpdateTaskExecutionStatus(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams{
-		Body:                   gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody{},
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

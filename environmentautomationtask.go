@@ -36,6 +36,20 @@ func NewEnvironmentAutomationTaskService(opts ...option.RequestOption) (r *Envir
 	return
 }
 
+// CreateTask
+func (r *EnvironmentAutomationTaskService) New(ctx context.Context, params EnvironmentAutomationTaskNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentAutomationService/CreateTask"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
 // UpdateTask
 func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, params EnvironmentAutomationTaskUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskUpdateResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
@@ -91,6 +105,294 @@ func (r *EnvironmentAutomationTaskService) Start(ctx context.Context, params Env
 	path := "gitpod.v1.EnvironmentAutomationService/StartTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
+}
+
+type EnvironmentAutomationTaskNewResponse struct {
+	Task EnvironmentAutomationTaskNewResponseTask `json:"task"`
+	JSON environmentAutomationTaskNewResponseJSON `json:"-"`
+}
+
+// environmentAutomationTaskNewResponseJSON contains the JSON metadata for the
+// struct [EnvironmentAutomationTaskNewResponse]
+type environmentAutomationTaskNewResponseJSON struct {
+	Task        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskNewResponseTask struct {
+	ID string `json:"id" format:"uuid"`
+	// dependencies specifies the IDs of the automations this task depends on.
+	DependsOn     []string                                         `json:"dependsOn" format:"uuid"`
+	EnvironmentID string                                           `json:"environmentId" format:"uuid"`
+	Metadata      EnvironmentAutomationTaskNewResponseTaskMetadata `json:"metadata"`
+	Spec          EnvironmentAutomationTaskNewResponseTaskSpec     `json:"spec"`
+	JSON          environmentAutomationTaskNewResponseTaskJSON     `json:"-"`
+}
+
+// environmentAutomationTaskNewResponseTaskJSON contains the JSON metadata for the
+// struct [EnvironmentAutomationTaskNewResponseTask]
+type environmentAutomationTaskNewResponseTaskJSON struct {
+	ID            apijson.Field
+	DependsOn     apijson.Field
+	EnvironmentID apijson.Field
+	Metadata      apijson.Field
+	Spec          apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewResponseTask) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewResponseTaskJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskNewResponseTaskMetadata struct {
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	CreatedAt time.Time `json:"createdAt" format:"date-time"`
+	// creator describes the principal who created the task.
+	Creator EnvironmentAutomationTaskNewResponseTaskMetadataCreator `json:"creator"`
+	// description is a user-facing description for the task. It can be used to provide
+	// context and documentation for the task.
+	Description string `json:"description"`
+	// name is a user-facing name for the task. Unlike the reference, this field is not
+	// unique, and not referenced by the system. This is a short descriptive name for
+	// the task.
+	Name string `json:"name"`
+	// reference is a user-facing identifier for the task which must be unique on the
+	// environment. It is used to express dependencies between tasks, and to identify
+	// the task in user interactions (e.g. the CLI).
+	Reference string `json:"reference"`
+	// triggered_by is a list of trigger that start the task.
+	TriggeredBy []EnvironmentAutomationTaskNewResponseTaskMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        environmentAutomationTaskNewResponseTaskMetadataJSON          `json:"-"`
+}
+
+// environmentAutomationTaskNewResponseTaskMetadataJSON contains the JSON metadata
+// for the struct [EnvironmentAutomationTaskNewResponseTaskMetadata]
+type environmentAutomationTaskNewResponseTaskMetadataJSON struct {
+	CreatedAt   apijson.Field
+	Creator     apijson.Field
+	Description apijson.Field
+	Name        apijson.Field
+	Reference   apijson.Field
+	TriggeredBy apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewResponseTaskMetadata) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewResponseTaskMetadataJSON) RawJSON() string {
+	return r.raw
+}
+
+// creator describes the principal who created the task.
+type EnvironmentAutomationTaskNewResponseTaskMetadataCreator struct {
+	// id is the UUID of the subject
+	ID string `json:"id"`
+	// Principal is the principal of the subject
+	Principal EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal `json:"principal"`
+	JSON      environmentAutomationTaskNewResponseTaskMetadataCreatorJSON      `json:"-"`
+}
+
+// environmentAutomationTaskNewResponseTaskMetadataCreatorJSON contains the JSON
+// metadata for the struct
+// [EnvironmentAutomationTaskNewResponseTaskMetadataCreator]
+type environmentAutomationTaskNewResponseTaskMetadataCreatorJSON struct {
+	ID          apijson.Field
+	Principal   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewResponseTaskMetadataCreator) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewResponseTaskMetadataCreatorJSON) RawJSON() string {
+	return r.raw
+}
+
+// Principal is the principal of the subject
+type EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal string
+
+const (
+	EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+)
+
+func (r EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipal) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskNewResponseTaskMetadataCreatorPrincipalPrincipalServiceAccount:
+		return true
+	}
+	return false
+}
+
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the dev container has started.
+type EnvironmentAutomationTaskNewResponseTaskMetadataTriggeredBy struct {
+	JSON environmentAutomationTaskNewResponseTaskMetadataTriggeredByJSON `json:"-"`
+}
+
+// environmentAutomationTaskNewResponseTaskMetadataTriggeredByJSON contains the
+// JSON metadata for the struct
+// [EnvironmentAutomationTaskNewResponseTaskMetadataTriggeredBy]
+type environmentAutomationTaskNewResponseTaskMetadataTriggeredByJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewResponseTaskMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewResponseTaskMetadataTriggeredByJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskNewResponseTaskSpec struct {
+	// command contains the command the task should execute
+	Command string `json:"command"`
+	// runs_on specifies the environment the task should run on.
+	RunsOn EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion `json:"runsOn"`
+	JSON   environmentAutomationTaskNewResponseTaskSpecJSON        `json:"-"`
+}
+
+// environmentAutomationTaskNewResponseTaskSpecJSON contains the JSON metadata for
+// the struct [EnvironmentAutomationTaskNewResponseTaskSpec]
+type environmentAutomationTaskNewResponseTaskSpecJSON struct {
+	Command     apijson.Field
+	RunsOn      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskNewResponseTaskSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskNewResponseTaskSpecJSON) RawJSON() string {
+	return r.raw
+}
+
+// runs_on specifies the environment the task should run on.
+//
+// Union satisfied by [EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnknown]
+// or [EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnknown].
+type EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion interface {
+	implementsEnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion()
+}
+
+func init() {
+	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion)(nil)).Elem(), "")
 }
 
 type EnvironmentAutomationTaskUpdateResponse = interface{}
@@ -1036,6 +1338,209 @@ func (r EnvironmentAutomationTaskStartResponseTaskExecutionStatusStepsPhase) IsK
 		return true
 	}
 	return false
+}
+
+type EnvironmentAutomationTaskNewParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	DependsOn              param.Field[[]string]                                                 `json:"dependsOn" format:"uuid"`
+	EnvironmentID          param.Field[string]                                                   `json:"environmentId" format:"uuid"`
+	Metadata               param.Field[EnvironmentAutomationTaskNewParamsMetadata]               `json:"metadata"`
+	Spec                   param.Field[EnvironmentAutomationTaskNewParamsSpec]                   `json:"spec"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r EnvironmentAutomationTaskNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationTaskNewParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationTaskNewParamsConnectProtocolVersion1 EnvironmentAutomationTaskNewParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationTaskNewParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskNewParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type EnvironmentAutomationTaskNewParamsMetadata struct {
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	CreatedAt param.Field[time.Time] `json:"createdAt" format:"date-time"`
+	// creator describes the principal who created the task.
+	Creator param.Field[EnvironmentAutomationTaskNewParamsMetadataCreator] `json:"creator"`
+	// description is a user-facing description for the task. It can be used to provide
+	// context and documentation for the task.
+	Description param.Field[string] `json:"description"`
+	// name is a user-facing name for the task. Unlike the reference, this field is not
+	// unique, and not referenced by the system. This is a short descriptive name for
+	// the task.
+	Name param.Field[string] `json:"name"`
+	// reference is a user-facing identifier for the task which must be unique on the
+	// environment. It is used to express dependencies between tasks, and to identify
+	// the task in user interactions (e.g. the CLI).
+	Reference param.Field[string] `json:"reference"`
+	// triggered_by is a list of trigger that start the task.
+	TriggeredBy param.Field[[]EnvironmentAutomationTaskNewParamsMetadataTriggeredBy] `json:"triggeredBy"`
+}
+
+func (r EnvironmentAutomationTaskNewParamsMetadata) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// creator describes the principal who created the task.
+type EnvironmentAutomationTaskNewParamsMetadataCreator struct {
+	// id is the UUID of the subject
+	ID param.Field[string] `json:"id"`
+	// Principal is the principal of the subject
+	Principal param.Field[EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal] `json:"principal"`
+}
+
+func (r EnvironmentAutomationTaskNewParamsMetadataCreator) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Principal is the principal of the subject
+type EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal string
+
+const (
+	EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+)
+
+func (r EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipal) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalServiceAccount:
+		return true
+	}
+	return false
+}
+
+// An AutomationTrigger represents a trigger for an automation action. The
+// `post_environment_start` field indicates that the automation should be triggered
+// after the environment has started. The `post_devcontainer_start` field indicates
+// that the automation should be triggered after the dev container has started.
+type EnvironmentAutomationTaskNewParamsMetadataTriggeredBy struct {
+}
+
+func (r EnvironmentAutomationTaskNewParamsMetadataTriggeredBy) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentAutomationTaskNewParamsSpec struct {
+	// command contains the command the task should execute
+	Command param.Field[string] `json:"command"`
+	// runs_on specifies the environment the task should run on.
+	RunsOn param.Field[EnvironmentAutomationTaskNewParamsSpecRunsOnUnion] `json:"runsOn"`
+}
+
+func (r EnvironmentAutomationTaskNewParamsSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// runs_on specifies the environment the task should run on.
+//
+// Satisfied by [EnvironmentAutomationTaskNewParamsSpecRunsOnUnknown],
+// [EnvironmentAutomationTaskNewParamsSpecRunsOnUnknown].
+type EnvironmentAutomationTaskNewParamsSpecRunsOnUnion interface {
+	implementsEnvironmentAutomationTaskNewParamsSpecRunsOnUnion()
 }
 
 type EnvironmentAutomationTaskUpdateParams struct {
