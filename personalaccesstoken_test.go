@@ -23,7 +23,6 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.PersonalAccessTokens.List(context.TODO(), gitpod.PersonalAccessTokenListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenListParamsConnectProtocolVersion1),
@@ -55,7 +54,6 @@ func TestPersonalAccessTokenDeleteWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.PersonalAccessTokens.Delete(context.TODO(), gitpod.PersonalAccessTokenDeleteParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenDeleteParamsConnectProtocolVersion1),

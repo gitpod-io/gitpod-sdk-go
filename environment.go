@@ -6,15 +6,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/shared"
-	"github.com/tidwall/gjson"
 )
 
 // EnvironmentService contains methods and other services that help with
@@ -98,8 +95,9 @@ func (r *EnvironmentService) NewFromProject(ctx context.Context, params Environm
 	return
 }
 
-// StartEnvironment starts an environment. This function is idempotent, i.e. if the
-// environment is already running no error is returned.
+// StartEnvironment starts an environment. This function is idempotent, i.e. if
+//
+// the environment is already running no error is returned.
 func (r *EnvironmentService) Start(ctx context.Context, params EnvironmentStartParams, opts ...option.RequestOption) (res *EnvironmentStartResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
@@ -138,12 +136,15 @@ func (r environmentNewResponseJSON) RawJSON() string {
 // +resource get environment
 type EnvironmentNewResponseEnvironment struct {
 	// ID is a unique identifier of this environment. No other environment with the
+	//
 	// same name must be managed by this environment manager
 	ID string `json:"id"`
 	// EnvironmentMetadata is data associated with an environment that's required for
+	//
 	// other parts of the system to function
 	Metadata EnvironmentNewResponseEnvironmentMetadata `json:"metadata"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
+	//
 	// start
 	Spec EnvironmentNewResponseEnvironmentSpec `json:"spec"`
 	// EnvironmentStatus describes an environment status
@@ -171,12 +172,15 @@ func (r environmentNewResponseEnvironmentJSON) RawJSON() string {
 }
 
 // EnvironmentMetadata is data associated with an environment that's required for
+//
 // other parts of the system to function
 type EnvironmentNewResponseEnvironmentMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
+	//
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -268,6 +272,7 @@ type EnvironmentNewResponseEnvironmentMetadata struct {
 	// creator is the identity of the creator of the environment
 	Creator EnvironmentNewResponseEnvironmentMetadataCreator `json:"creator"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -361,6 +366,7 @@ type EnvironmentNewResponseEnvironmentMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// original_context_url is the normalized URL from which the environment was
+	//
 	// created
 	OriginalContextURL string `json:"originalContextUrl"`
 	// If the Environment was started from a project, the project_id will reference the
@@ -442,6 +448,7 @@ func (r EnvironmentNewResponseEnvironmentMetadataCreatorPrincipal) IsKnown() boo
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
+//
 // start
 type EnvironmentNewResponseEnvironmentSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
@@ -463,7 +470,7 @@ type EnvironmentNewResponseEnvironmentSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion EnvironmentNewResponseEnvironmentSpecSpecVersionUnion `json:"specVersion" format:"int64"`
+	SpecVersion string `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys []EnvironmentNewResponseEnvironmentSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -517,8 +524,9 @@ func (r EnvironmentNewResponseEnvironmentSpecAdmission) IsKnown() bool {
 // automations_file is the automations file spec of the environment
 type EnvironmentNewResponseEnvironmentSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root. path must not be absolute (start with a
-	// /):
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
@@ -761,30 +769,6 @@ func (r environmentNewResponseEnvironmentSpecSecretJSON) RawJSON() string {
 	return r.raw
 }
 
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentNewResponseEnvironmentSpecSpecVersionUnion interface {
-	ImplementsEnvironmentNewResponseEnvironmentSpecSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentNewResponseEnvironmentSpecSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentNewResponseEnvironmentSpecSSHPublicKey struct {
 	// id is the unique identifier of the public key
 	ID string `json:"id"`
@@ -899,19 +883,24 @@ type EnvironmentNewResponseEnvironmentStatus struct {
 	Content EnvironmentNewResponseEnvironmentStatusContent `json:"content"`
 	// devcontainer contains the status of the devcontainer.
 	Devcontainer EnvironmentNewResponseEnvironmentStatusDevcontainer `json:"devcontainer"`
-	// environment_url contains the URL at which the environment can be accessed. This
-	// field is only set if the environment is running.
+	// environment_url contains the URL at which the environment can be accessed.
+	//
+	// This field is only set if the environment is running.
 	EnvironmentURLs EnvironmentNewResponseEnvironmentStatusEnvironmentURLs `json:"environmentUrls"`
 	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// non-empty
+	//
+	// the environment has failed to operate and will likely transition to a stopped
+	// state.
 	FailureMessage []string `json:"failureMessage"`
 	// machine contains the status of the environment machine
 	Machine EnvironmentNewResponseEnvironmentStatusMachine `json:"machine"`
 	// the phase of an environment is a simple, high-level summary of where the
+	//
 	// environment is in its lifecycle
 	Phase EnvironmentNewResponseEnvironmentStatusPhase `json:"phase"`
 	// RunnerACK is the acknowledgement from the runner that is has received the
+	//
 	// environment spec.
 	RunnerAck EnvironmentNewResponseEnvironmentStatusRunnerAck `json:"runnerAck"`
 	// secrets contains the status of the environment secrets
@@ -923,7 +912,7 @@ type EnvironmentNewResponseEnvironmentStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentNewResponseEnvironmentStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion" format:"int64"`
 	// warning_message contains warnings, e.g. when the environment is present but not
 	// in the expected state.
 	WarningMessage []string                                    `json:"warningMessage"`
@@ -960,11 +949,13 @@ func (r environmentNewResponseEnvironmentStatusJSON) RawJSON() string {
 
 // EnvironmentActivitySignal used to signal activity for an environment.
 type EnvironmentNewResponseEnvironmentStatusActivitySignal struct {
-	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
-	// should be a human-readable string that describes the source of the activity
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations".
+	//
+	// It should be a human-readable string that describes the source of the activity
 	// signal.
 	Source string `json:"source"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1082,6 +1073,7 @@ type EnvironmentNewResponseEnvironmentStatusAutomationsFile struct {
 	// environment.
 	AutomationsFilePresence EnvironmentNewResponseEnvironmentStatusAutomationsFileAutomationsFilePresence `json:"automationsFilePresence"`
 	// failure_message contains the reason the automations file failed to be applied.
+	//
 	// This is only set if the phase is FAILED.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the automations file.
@@ -1199,6 +1191,7 @@ type EnvironmentNewResponseEnvironmentStatusContentGit struct {
 	// branch is branch we're currently on
 	Branch string `json:"branch"`
 	// changed_files is an array of changed files in the environment, possibly
+	//
 	// truncated
 	ChangedFiles []EnvironmentNewResponseEnvironmentStatusContentGitChangedFile `json:"changedFiles"`
 	// clone_url is the repository url as you would pass it to "git clone". Only HTTPS
@@ -1210,6 +1203,7 @@ type EnvironmentNewResponseEnvironmentStatusContentGit struct {
 	// the total number of unpushed changes
 	TotalUnpushedCommits int64 `json:"totalUnpushedCommits"`
 	// unpushed_commits is an array of unpushed changes in the environment, possibly
+	//
 	// truncated
 	UnpushedCommits []string                                              `json:"unpushedCommits"`
 	JSON            environmentNewResponseEnvironmentStatusContentGitJSON `json:"-"`
@@ -1406,8 +1400,9 @@ func (r EnvironmentNewResponseEnvironmentStatusDevcontainerPhase) IsKnown() bool
 	return false
 }
 
-// environment_url contains the URL at which the environment can be accessed. This
-// field is only set if the environment is running.
+// environment_url contains the URL at which the environment can be accessed.
+//
+// This field is only set if the environment is running.
 type EnvironmentNewResponseEnvironmentStatusEnvironmentURLs struct {
 	// logs is the URL at which the environment logs can be accessed.
 	Logs  string                                                       `json:"logs"`
@@ -1493,6 +1488,7 @@ type EnvironmentNewResponseEnvironmentStatusMachine struct {
 	// session is the session that is currently active in the machine.
 	Session string `json:"session"`
 	// timeout contains the reason the environment has timed out. If this field is
+	//
 	// empty, the environment has not timed out.
 	Timeout string `json:"timeout"`
 	// versions contains the versions of components in the machine.
@@ -1571,6 +1567,7 @@ func (r environmentNewResponseEnvironmentStatusMachineVersionsJSON) RawJSON() st
 }
 
 // the phase of an environment is a simple, high-level summary of where the
+//
 // environment is in its lifecycle
 type EnvironmentNewResponseEnvironmentStatusPhase string
 
@@ -1595,12 +1592,13 @@ func (r EnvironmentNewResponseEnvironmentStatusPhase) IsKnown() bool {
 }
 
 // RunnerACK is the acknowledgement from the runner that is has received the
+//
 // environment spec.
 type EnvironmentNewResponseEnvironmentStatusRunnerAck struct {
-	Message     string                                                           `json:"message"`
-	SpecVersion EnvironmentNewResponseEnvironmentStatusRunnerAckSpecVersionUnion `json:"specVersion" format:"int64"`
-	StatusCode  EnvironmentNewResponseEnvironmentStatusRunnerAckStatusCode       `json:"statusCode"`
-	JSON        environmentNewResponseEnvironmentStatusRunnerAckJSON             `json:"-"`
+	Message     string                                                     `json:"message"`
+	SpecVersion string                                                     `json:"specVersion" format:"int64"`
+	StatusCode  EnvironmentNewResponseEnvironmentStatusRunnerAckStatusCode `json:"statusCode"`
+	JSON        environmentNewResponseEnvironmentStatusRunnerAckJSON       `json:"-"`
 }
 
 // environmentNewResponseEnvironmentStatusRunnerAckJSON contains the JSON metadata
@@ -1619,26 +1617,6 @@ func (r *EnvironmentNewResponseEnvironmentStatusRunnerAck) UnmarshalJSON(data []
 
 func (r environmentNewResponseEnvironmentStatusRunnerAckJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentNewResponseEnvironmentStatusRunnerAckSpecVersionUnion interface {
-	ImplementsEnvironmentNewResponseEnvironmentStatusRunnerAckSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentNewResponseEnvironmentStatusRunnerAckSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
 }
 
 type EnvironmentNewResponseEnvironmentStatusRunnerAckStatusCode string
@@ -1755,32 +1733,6 @@ func (r EnvironmentNewResponseEnvironmentStatusSSHPublicKeysPhase) IsKnown() boo
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their status has different versions. The value of this field has no semantic
-// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
-// impose a partial order. If a.status_version < b.status_version then a was the
-// status before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentNewResponseEnvironmentStatusStatusVersionUnion interface {
-	ImplementsEnvironmentNewResponseEnvironmentStatusStatusVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentNewResponseEnvironmentStatusStatusVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentGetResponse struct {
 	// +resource get environment
 	Environment EnvironmentGetResponseEnvironment `json:"environment"`
@@ -1806,12 +1758,15 @@ func (r environmentGetResponseJSON) RawJSON() string {
 // +resource get environment
 type EnvironmentGetResponseEnvironment struct {
 	// ID is a unique identifier of this environment. No other environment with the
+	//
 	// same name must be managed by this environment manager
 	ID string `json:"id"`
 	// EnvironmentMetadata is data associated with an environment that's required for
+	//
 	// other parts of the system to function
 	Metadata EnvironmentGetResponseEnvironmentMetadata `json:"metadata"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
+	//
 	// start
 	Spec EnvironmentGetResponseEnvironmentSpec `json:"spec"`
 	// EnvironmentStatus describes an environment status
@@ -1839,12 +1794,15 @@ func (r environmentGetResponseEnvironmentJSON) RawJSON() string {
 }
 
 // EnvironmentMetadata is data associated with an environment that's required for
+//
 // other parts of the system to function
 type EnvironmentGetResponseEnvironmentMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
+	//
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1936,6 +1894,7 @@ type EnvironmentGetResponseEnvironmentMetadata struct {
 	// creator is the identity of the creator of the environment
 	Creator EnvironmentGetResponseEnvironmentMetadataCreator `json:"creator"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2029,6 +1988,7 @@ type EnvironmentGetResponseEnvironmentMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// original_context_url is the normalized URL from which the environment was
+	//
 	// created
 	OriginalContextURL string `json:"originalContextUrl"`
 	// If the Environment was started from a project, the project_id will reference the
@@ -2110,6 +2070,7 @@ func (r EnvironmentGetResponseEnvironmentMetadataCreatorPrincipal) IsKnown() boo
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
+//
 // start
 type EnvironmentGetResponseEnvironmentSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
@@ -2131,7 +2092,7 @@ type EnvironmentGetResponseEnvironmentSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion EnvironmentGetResponseEnvironmentSpecSpecVersionUnion `json:"specVersion" format:"int64"`
+	SpecVersion string `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys []EnvironmentGetResponseEnvironmentSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -2185,8 +2146,9 @@ func (r EnvironmentGetResponseEnvironmentSpecAdmission) IsKnown() bool {
 // automations_file is the automations file spec of the environment
 type EnvironmentGetResponseEnvironmentSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root. path must not be absolute (start with a
-	// /):
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
@@ -2429,30 +2391,6 @@ func (r environmentGetResponseEnvironmentSpecSecretJSON) RawJSON() string {
 	return r.raw
 }
 
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentGetResponseEnvironmentSpecSpecVersionUnion interface {
-	ImplementsEnvironmentGetResponseEnvironmentSpecSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentGetResponseEnvironmentSpecSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentGetResponseEnvironmentSpecSSHPublicKey struct {
 	// id is the unique identifier of the public key
 	ID string `json:"id"`
@@ -2567,19 +2505,24 @@ type EnvironmentGetResponseEnvironmentStatus struct {
 	Content EnvironmentGetResponseEnvironmentStatusContent `json:"content"`
 	// devcontainer contains the status of the devcontainer.
 	Devcontainer EnvironmentGetResponseEnvironmentStatusDevcontainer `json:"devcontainer"`
-	// environment_url contains the URL at which the environment can be accessed. This
-	// field is only set if the environment is running.
+	// environment_url contains the URL at which the environment can be accessed.
+	//
+	// This field is only set if the environment is running.
 	EnvironmentURLs EnvironmentGetResponseEnvironmentStatusEnvironmentURLs `json:"environmentUrls"`
 	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// non-empty
+	//
+	// the environment has failed to operate and will likely transition to a stopped
+	// state.
 	FailureMessage []string `json:"failureMessage"`
 	// machine contains the status of the environment machine
 	Machine EnvironmentGetResponseEnvironmentStatusMachine `json:"machine"`
 	// the phase of an environment is a simple, high-level summary of where the
+	//
 	// environment is in its lifecycle
 	Phase EnvironmentGetResponseEnvironmentStatusPhase `json:"phase"`
 	// RunnerACK is the acknowledgement from the runner that is has received the
+	//
 	// environment spec.
 	RunnerAck EnvironmentGetResponseEnvironmentStatusRunnerAck `json:"runnerAck"`
 	// secrets contains the status of the environment secrets
@@ -2591,7 +2534,7 @@ type EnvironmentGetResponseEnvironmentStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentGetResponseEnvironmentStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion" format:"int64"`
 	// warning_message contains warnings, e.g. when the environment is present but not
 	// in the expected state.
 	WarningMessage []string                                    `json:"warningMessage"`
@@ -2628,11 +2571,13 @@ func (r environmentGetResponseEnvironmentStatusJSON) RawJSON() string {
 
 // EnvironmentActivitySignal used to signal activity for an environment.
 type EnvironmentGetResponseEnvironmentStatusActivitySignal struct {
-	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
-	// should be a human-readable string that describes the source of the activity
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations".
+	//
+	// It should be a human-readable string that describes the source of the activity
 	// signal.
 	Source string `json:"source"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2750,6 +2695,7 @@ type EnvironmentGetResponseEnvironmentStatusAutomationsFile struct {
 	// environment.
 	AutomationsFilePresence EnvironmentGetResponseEnvironmentStatusAutomationsFileAutomationsFilePresence `json:"automationsFilePresence"`
 	// failure_message contains the reason the automations file failed to be applied.
+	//
 	// This is only set if the phase is FAILED.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the automations file.
@@ -2867,6 +2813,7 @@ type EnvironmentGetResponseEnvironmentStatusContentGit struct {
 	// branch is branch we're currently on
 	Branch string `json:"branch"`
 	// changed_files is an array of changed files in the environment, possibly
+	//
 	// truncated
 	ChangedFiles []EnvironmentGetResponseEnvironmentStatusContentGitChangedFile `json:"changedFiles"`
 	// clone_url is the repository url as you would pass it to "git clone". Only HTTPS
@@ -2878,6 +2825,7 @@ type EnvironmentGetResponseEnvironmentStatusContentGit struct {
 	// the total number of unpushed changes
 	TotalUnpushedCommits int64 `json:"totalUnpushedCommits"`
 	// unpushed_commits is an array of unpushed changes in the environment, possibly
+	//
 	// truncated
 	UnpushedCommits []string                                              `json:"unpushedCommits"`
 	JSON            environmentGetResponseEnvironmentStatusContentGitJSON `json:"-"`
@@ -3074,8 +3022,9 @@ func (r EnvironmentGetResponseEnvironmentStatusDevcontainerPhase) IsKnown() bool
 	return false
 }
 
-// environment_url contains the URL at which the environment can be accessed. This
-// field is only set if the environment is running.
+// environment_url contains the URL at which the environment can be accessed.
+//
+// This field is only set if the environment is running.
 type EnvironmentGetResponseEnvironmentStatusEnvironmentURLs struct {
 	// logs is the URL at which the environment logs can be accessed.
 	Logs  string                                                       `json:"logs"`
@@ -3161,6 +3110,7 @@ type EnvironmentGetResponseEnvironmentStatusMachine struct {
 	// session is the session that is currently active in the machine.
 	Session string `json:"session"`
 	// timeout contains the reason the environment has timed out. If this field is
+	//
 	// empty, the environment has not timed out.
 	Timeout string `json:"timeout"`
 	// versions contains the versions of components in the machine.
@@ -3239,6 +3189,7 @@ func (r environmentGetResponseEnvironmentStatusMachineVersionsJSON) RawJSON() st
 }
 
 // the phase of an environment is a simple, high-level summary of where the
+//
 // environment is in its lifecycle
 type EnvironmentGetResponseEnvironmentStatusPhase string
 
@@ -3263,12 +3214,13 @@ func (r EnvironmentGetResponseEnvironmentStatusPhase) IsKnown() bool {
 }
 
 // RunnerACK is the acknowledgement from the runner that is has received the
+//
 // environment spec.
 type EnvironmentGetResponseEnvironmentStatusRunnerAck struct {
-	Message     string                                                           `json:"message"`
-	SpecVersion EnvironmentGetResponseEnvironmentStatusRunnerAckSpecVersionUnion `json:"specVersion" format:"int64"`
-	StatusCode  EnvironmentGetResponseEnvironmentStatusRunnerAckStatusCode       `json:"statusCode"`
-	JSON        environmentGetResponseEnvironmentStatusRunnerAckJSON             `json:"-"`
+	Message     string                                                     `json:"message"`
+	SpecVersion string                                                     `json:"specVersion" format:"int64"`
+	StatusCode  EnvironmentGetResponseEnvironmentStatusRunnerAckStatusCode `json:"statusCode"`
+	JSON        environmentGetResponseEnvironmentStatusRunnerAckJSON       `json:"-"`
 }
 
 // environmentGetResponseEnvironmentStatusRunnerAckJSON contains the JSON metadata
@@ -3287,26 +3239,6 @@ func (r *EnvironmentGetResponseEnvironmentStatusRunnerAck) UnmarshalJSON(data []
 
 func (r environmentGetResponseEnvironmentStatusRunnerAckJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentGetResponseEnvironmentStatusRunnerAckSpecVersionUnion interface {
-	ImplementsEnvironmentGetResponseEnvironmentStatusRunnerAckSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentGetResponseEnvironmentStatusRunnerAckSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
 }
 
 type EnvironmentGetResponseEnvironmentStatusRunnerAckStatusCode string
@@ -3423,32 +3355,6 @@ func (r EnvironmentGetResponseEnvironmentStatusSSHPublicKeysPhase) IsKnown() boo
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their status has different versions. The value of this field has no semantic
-// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
-// impose a partial order. If a.status_version < b.status_version then a was the
-// status before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentGetResponseEnvironmentStatusStatusVersionUnion interface {
-	ImplementsEnvironmentGetResponseEnvironmentStatusStatusVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentGetResponseEnvironmentStatusStatusVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentListResponse struct {
 	// environments are the environments that matched the query
 	Environments []EnvironmentListResponseEnvironment `json:"environments"`
@@ -3477,12 +3383,15 @@ func (r environmentListResponseJSON) RawJSON() string {
 // +resource get environment
 type EnvironmentListResponseEnvironment struct {
 	// ID is a unique identifier of this environment. No other environment with the
+	//
 	// same name must be managed by this environment manager
 	ID string `json:"id"`
 	// EnvironmentMetadata is data associated with an environment that's required for
+	//
 	// other parts of the system to function
 	Metadata EnvironmentListResponseEnvironmentsMetadata `json:"metadata"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
+	//
 	// start
 	Spec EnvironmentListResponseEnvironmentsSpec `json:"spec"`
 	// EnvironmentStatus describes an environment status
@@ -3510,12 +3419,15 @@ func (r environmentListResponseEnvironmentJSON) RawJSON() string {
 }
 
 // EnvironmentMetadata is data associated with an environment that's required for
+//
 // other parts of the system to function
 type EnvironmentListResponseEnvironmentsMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
+	//
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -3607,6 +3519,7 @@ type EnvironmentListResponseEnvironmentsMetadata struct {
 	// creator is the identity of the creator of the environment
 	Creator EnvironmentListResponseEnvironmentsMetadataCreator `json:"creator"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -3700,6 +3613,7 @@ type EnvironmentListResponseEnvironmentsMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// original_context_url is the normalized URL from which the environment was
+	//
 	// created
 	OriginalContextURL string `json:"originalContextUrl"`
 	// If the Environment was started from a project, the project_id will reference the
@@ -3781,6 +3695,7 @@ func (r EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal) IsKnown() b
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
+//
 // start
 type EnvironmentListResponseEnvironmentsSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
@@ -3802,7 +3717,7 @@ type EnvironmentListResponseEnvironmentsSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion EnvironmentListResponseEnvironmentsSpecSpecVersionUnion `json:"specVersion" format:"int64"`
+	SpecVersion string `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys []EnvironmentListResponseEnvironmentsSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -3856,8 +3771,9 @@ func (r EnvironmentListResponseEnvironmentsSpecAdmission) IsKnown() bool {
 // automations_file is the automations file spec of the environment
 type EnvironmentListResponseEnvironmentsSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root. path must not be absolute (start with a
-	// /):
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
@@ -4100,30 +4016,6 @@ func (r environmentListResponseEnvironmentsSpecSecretJSON) RawJSON() string {
 	return r.raw
 }
 
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentListResponseEnvironmentsSpecSpecVersionUnion interface {
-	ImplementsEnvironmentListResponseEnvironmentsSpecSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentListResponseEnvironmentsSpecSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentListResponseEnvironmentsSpecSSHPublicKey struct {
 	// id is the unique identifier of the public key
 	ID string `json:"id"`
@@ -4238,19 +4130,24 @@ type EnvironmentListResponseEnvironmentsStatus struct {
 	Content EnvironmentListResponseEnvironmentsStatusContent `json:"content"`
 	// devcontainer contains the status of the devcontainer.
 	Devcontainer EnvironmentListResponseEnvironmentsStatusDevcontainer `json:"devcontainer"`
-	// environment_url contains the URL at which the environment can be accessed. This
-	// field is only set if the environment is running.
+	// environment_url contains the URL at which the environment can be accessed.
+	//
+	// This field is only set if the environment is running.
 	EnvironmentURLs EnvironmentListResponseEnvironmentsStatusEnvironmentURLs `json:"environmentUrls"`
 	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// non-empty
+	//
+	// the environment has failed to operate and will likely transition to a stopped
+	// state.
 	FailureMessage []string `json:"failureMessage"`
 	// machine contains the status of the environment machine
 	Machine EnvironmentListResponseEnvironmentsStatusMachine `json:"machine"`
 	// the phase of an environment is a simple, high-level summary of where the
+	//
 	// environment is in its lifecycle
 	Phase EnvironmentListResponseEnvironmentsStatusPhase `json:"phase"`
 	// RunnerACK is the acknowledgement from the runner that is has received the
+	//
 	// environment spec.
 	RunnerAck EnvironmentListResponseEnvironmentsStatusRunnerAck `json:"runnerAck"`
 	// secrets contains the status of the environment secrets
@@ -4262,7 +4159,7 @@ type EnvironmentListResponseEnvironmentsStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentListResponseEnvironmentsStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion" format:"int64"`
 	// warning_message contains warnings, e.g. when the environment is present but not
 	// in the expected state.
 	WarningMessage []string                                      `json:"warningMessage"`
@@ -4299,11 +4196,13 @@ func (r environmentListResponseEnvironmentsStatusJSON) RawJSON() string {
 
 // EnvironmentActivitySignal used to signal activity for an environment.
 type EnvironmentListResponseEnvironmentsStatusActivitySignal struct {
-	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
-	// should be a human-readable string that describes the source of the activity
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations".
+	//
+	// It should be a human-readable string that describes the source of the activity
 	// signal.
 	Source string `json:"source"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -4422,6 +4321,7 @@ type EnvironmentListResponseEnvironmentsStatusAutomationsFile struct {
 	// environment.
 	AutomationsFilePresence EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence `json:"automationsFilePresence"`
 	// failure_message contains the reason the automations file failed to be applied.
+	//
 	// This is only set if the phase is FAILED.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the automations file.
@@ -4540,6 +4440,7 @@ type EnvironmentListResponseEnvironmentsStatusContentGit struct {
 	// branch is branch we're currently on
 	Branch string `json:"branch"`
 	// changed_files is an array of changed files in the environment, possibly
+	//
 	// truncated
 	ChangedFiles []EnvironmentListResponseEnvironmentsStatusContentGitChangedFile `json:"changedFiles"`
 	// clone_url is the repository url as you would pass it to "git clone". Only HTTPS
@@ -4551,6 +4452,7 @@ type EnvironmentListResponseEnvironmentsStatusContentGit struct {
 	// the total number of unpushed changes
 	TotalUnpushedCommits int64 `json:"totalUnpushedCommits"`
 	// unpushed_commits is an array of unpushed changes in the environment, possibly
+	//
 	// truncated
 	UnpushedCommits []string                                                `json:"unpushedCommits"`
 	JSON            environmentListResponseEnvironmentsStatusContentGitJSON `json:"-"`
@@ -4747,8 +4649,9 @@ func (r EnvironmentListResponseEnvironmentsStatusDevcontainerPhase) IsKnown() bo
 	return false
 }
 
-// environment_url contains the URL at which the environment can be accessed. This
-// field is only set if the environment is running.
+// environment_url contains the URL at which the environment can be accessed.
+//
+// This field is only set if the environment is running.
 type EnvironmentListResponseEnvironmentsStatusEnvironmentURLs struct {
 	// logs is the URL at which the environment logs can be accessed.
 	Logs  string                                                         `json:"logs"`
@@ -4835,6 +4738,7 @@ type EnvironmentListResponseEnvironmentsStatusMachine struct {
 	// session is the session that is currently active in the machine.
 	Session string `json:"session"`
 	// timeout contains the reason the environment has timed out. If this field is
+	//
 	// empty, the environment has not timed out.
 	Timeout string `json:"timeout"`
 	// versions contains the versions of components in the machine.
@@ -4914,6 +4818,7 @@ func (r environmentListResponseEnvironmentsStatusMachineVersionsJSON) RawJSON() 
 }
 
 // the phase of an environment is a simple, high-level summary of where the
+//
 // environment is in its lifecycle
 type EnvironmentListResponseEnvironmentsStatusPhase string
 
@@ -4938,12 +4843,13 @@ func (r EnvironmentListResponseEnvironmentsStatusPhase) IsKnown() bool {
 }
 
 // RunnerACK is the acknowledgement from the runner that is has received the
+//
 // environment spec.
 type EnvironmentListResponseEnvironmentsStatusRunnerAck struct {
-	Message     string                                                             `json:"message"`
-	SpecVersion EnvironmentListResponseEnvironmentsStatusRunnerAckSpecVersionUnion `json:"specVersion" format:"int64"`
-	StatusCode  EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode       `json:"statusCode"`
-	JSON        environmentListResponseEnvironmentsStatusRunnerAckJSON             `json:"-"`
+	Message     string                                                       `json:"message"`
+	SpecVersion string                                                       `json:"specVersion" format:"int64"`
+	StatusCode  EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode `json:"statusCode"`
+	JSON        environmentListResponseEnvironmentsStatusRunnerAckJSON       `json:"-"`
 }
 
 // environmentListResponseEnvironmentsStatusRunnerAckJSON contains the JSON
@@ -4962,26 +4868,6 @@ func (r *EnvironmentListResponseEnvironmentsStatusRunnerAck) UnmarshalJSON(data 
 
 func (r environmentListResponseEnvironmentsStatusRunnerAckJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentListResponseEnvironmentsStatusRunnerAckSpecVersionUnion interface {
-	ImplementsEnvironmentListResponseEnvironmentsStatusRunnerAckSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentListResponseEnvironmentsStatusRunnerAckSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
 }
 
 type EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode string
@@ -5098,36 +4984,11 @@ func (r EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase) IsKnown() b
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their status has different versions. The value of this field has no semantic
-// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
-// impose a partial order. If a.status_version < b.status_version then a was the
-// status before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentListResponseEnvironmentsStatusStatusVersionUnion interface {
-	ImplementsEnvironmentListResponseEnvironmentsStatusStatusVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentListResponseEnvironmentsStatusStatusVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 // pagination contains the pagination options for listing environments
 type EnvironmentListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                `json:"nextToken"`
 	JSON      environmentListResponsePaginationJSON `json:"-"`
 }
@@ -5173,12 +5034,15 @@ func (r environmentNewFromProjectResponseJSON) RawJSON() string {
 // +resource get environment
 type EnvironmentNewFromProjectResponseEnvironment struct {
 	// ID is a unique identifier of this environment. No other environment with the
+	//
 	// same name must be managed by this environment manager
 	ID string `json:"id"`
 	// EnvironmentMetadata is data associated with an environment that's required for
+	//
 	// other parts of the system to function
 	Metadata EnvironmentNewFromProjectResponseEnvironmentMetadata `json:"metadata"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
+	//
 	// start
 	Spec EnvironmentNewFromProjectResponseEnvironmentSpec `json:"spec"`
 	// EnvironmentStatus describes an environment status
@@ -5206,12 +5070,15 @@ func (r environmentNewFromProjectResponseEnvironmentJSON) RawJSON() string {
 }
 
 // EnvironmentMetadata is data associated with an environment that's required for
+//
 // other parts of the system to function
 type EnvironmentNewFromProjectResponseEnvironmentMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
+	//
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -5303,6 +5170,7 @@ type EnvironmentNewFromProjectResponseEnvironmentMetadata struct {
 	// creator is the identity of the creator of the environment
 	Creator EnvironmentNewFromProjectResponseEnvironmentMetadataCreator `json:"creator"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -5396,6 +5264,7 @@ type EnvironmentNewFromProjectResponseEnvironmentMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// original_context_url is the normalized URL from which the environment was
+	//
 	// created
 	OriginalContextURL string `json:"originalContextUrl"`
 	// If the Environment was started from a project, the project_id will reference the
@@ -5478,6 +5347,7 @@ func (r EnvironmentNewFromProjectResponseEnvironmentMetadataCreatorPrincipal) Is
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
+//
 // start
 type EnvironmentNewFromProjectResponseEnvironmentSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
@@ -5499,7 +5369,7 @@ type EnvironmentNewFromProjectResponseEnvironmentSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion EnvironmentNewFromProjectResponseEnvironmentSpecSpecVersionUnion `json:"specVersion" format:"int64"`
+	SpecVersion string `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys []EnvironmentNewFromProjectResponseEnvironmentSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -5553,8 +5423,9 @@ func (r EnvironmentNewFromProjectResponseEnvironmentSpecAdmission) IsKnown() boo
 // automations_file is the automations file spec of the environment
 type EnvironmentNewFromProjectResponseEnvironmentSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root. path must not be absolute (start with a
-	// /):
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
@@ -5801,30 +5672,6 @@ func (r environmentNewFromProjectResponseEnvironmentSpecSecretJSON) RawJSON() st
 	return r.raw
 }
 
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentNewFromProjectResponseEnvironmentSpecSpecVersionUnion interface {
-	ImplementsEnvironmentNewFromProjectResponseEnvironmentSpecSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentNewFromProjectResponseEnvironmentSpecSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentNewFromProjectResponseEnvironmentSpecSSHPublicKey struct {
 	// id is the unique identifier of the public key
 	ID string `json:"id"`
@@ -5941,19 +5788,24 @@ type EnvironmentNewFromProjectResponseEnvironmentStatus struct {
 	Content EnvironmentNewFromProjectResponseEnvironmentStatusContent `json:"content"`
 	// devcontainer contains the status of the devcontainer.
 	Devcontainer EnvironmentNewFromProjectResponseEnvironmentStatusDevcontainer `json:"devcontainer"`
-	// environment_url contains the URL at which the environment can be accessed. This
-	// field is only set if the environment is running.
+	// environment_url contains the URL at which the environment can be accessed.
+	//
+	// This field is only set if the environment is running.
 	EnvironmentURLs EnvironmentNewFromProjectResponseEnvironmentStatusEnvironmentURLs `json:"environmentUrls"`
 	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// non-empty
+	//
+	// the environment has failed to operate and will likely transition to a stopped
+	// state.
 	FailureMessage []string `json:"failureMessage"`
 	// machine contains the status of the environment machine
 	Machine EnvironmentNewFromProjectResponseEnvironmentStatusMachine `json:"machine"`
 	// the phase of an environment is a simple, high-level summary of where the
+	//
 	// environment is in its lifecycle
 	Phase EnvironmentNewFromProjectResponseEnvironmentStatusPhase `json:"phase"`
 	// RunnerACK is the acknowledgement from the runner that is has received the
+	//
 	// environment spec.
 	RunnerAck EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAck `json:"runnerAck"`
 	// secrets contains the status of the environment secrets
@@ -5965,7 +5817,7 @@ type EnvironmentNewFromProjectResponseEnvironmentStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentNewFromProjectResponseEnvironmentStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion" format:"int64"`
 	// warning_message contains warnings, e.g. when the environment is present but not
 	// in the expected state.
 	WarningMessage []string                                               `json:"warningMessage"`
@@ -6002,11 +5854,13 @@ func (r environmentNewFromProjectResponseEnvironmentStatusJSON) RawJSON() string
 
 // EnvironmentActivitySignal used to signal activity for an environment.
 type EnvironmentNewFromProjectResponseEnvironmentStatusActivitySignal struct {
-	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
-	// should be a human-readable string that describes the source of the activity
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations".
+	//
+	// It should be a human-readable string that describes the source of the activity
 	// signal.
 	Source string `json:"source"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -6125,6 +5979,7 @@ type EnvironmentNewFromProjectResponseEnvironmentStatusAutomationsFile struct {
 	// environment.
 	AutomationsFilePresence EnvironmentNewFromProjectResponseEnvironmentStatusAutomationsFileAutomationsFilePresence `json:"automationsFilePresence"`
 	// failure_message contains the reason the automations file failed to be applied.
+	//
 	// This is only set if the phase is FAILED.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the automations file.
@@ -6244,6 +6099,7 @@ type EnvironmentNewFromProjectResponseEnvironmentStatusContentGit struct {
 	// branch is branch we're currently on
 	Branch string `json:"branch"`
 	// changed_files is an array of changed files in the environment, possibly
+	//
 	// truncated
 	ChangedFiles []EnvironmentNewFromProjectResponseEnvironmentStatusContentGitChangedFile `json:"changedFiles"`
 	// clone_url is the repository url as you would pass it to "git clone". Only HTTPS
@@ -6255,6 +6111,7 @@ type EnvironmentNewFromProjectResponseEnvironmentStatusContentGit struct {
 	// the total number of unpushed changes
 	TotalUnpushedCommits int64 `json:"totalUnpushedCommits"`
 	// unpushed_commits is an array of unpushed changes in the environment, possibly
+	//
 	// truncated
 	UnpushedCommits []string                                                         `json:"unpushedCommits"`
 	JSON            environmentNewFromProjectResponseEnvironmentStatusContentGitJSON `json:"-"`
@@ -6453,8 +6310,9 @@ func (r EnvironmentNewFromProjectResponseEnvironmentStatusDevcontainerPhase) IsK
 	return false
 }
 
-// environment_url contains the URL at which the environment can be accessed. This
-// field is only set if the environment is running.
+// environment_url contains the URL at which the environment can be accessed.
+//
+// This field is only set if the environment is running.
 type EnvironmentNewFromProjectResponseEnvironmentStatusEnvironmentURLs struct {
 	// logs is the URL at which the environment logs can be accessed.
 	Logs  string                                                                  `json:"logs"`
@@ -6541,6 +6399,7 @@ type EnvironmentNewFromProjectResponseEnvironmentStatusMachine struct {
 	// session is the session that is currently active in the machine.
 	Session string `json:"session"`
 	// timeout contains the reason the environment has timed out. If this field is
+	//
 	// empty, the environment has not timed out.
 	Timeout string `json:"timeout"`
 	// versions contains the versions of components in the machine.
@@ -6621,6 +6480,7 @@ func (r environmentNewFromProjectResponseEnvironmentStatusMachineVersionsJSON) R
 }
 
 // the phase of an environment is a simple, high-level summary of where the
+//
 // environment is in its lifecycle
 type EnvironmentNewFromProjectResponseEnvironmentStatusPhase string
 
@@ -6645,12 +6505,13 @@ func (r EnvironmentNewFromProjectResponseEnvironmentStatusPhase) IsKnown() bool 
 }
 
 // RunnerACK is the acknowledgement from the runner that is has received the
+//
 // environment spec.
 type EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAck struct {
-	Message     string                                                                      `json:"message"`
-	SpecVersion EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckSpecVersionUnion `json:"specVersion" format:"int64"`
-	StatusCode  EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckStatusCode       `json:"statusCode"`
-	JSON        environmentNewFromProjectResponseEnvironmentStatusRunnerAckJSON             `json:"-"`
+	Message     string                                                                `json:"message"`
+	SpecVersion string                                                                `json:"specVersion" format:"int64"`
+	StatusCode  EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckStatusCode `json:"statusCode"`
+	JSON        environmentNewFromProjectResponseEnvironmentStatusRunnerAckJSON       `json:"-"`
 }
 
 // environmentNewFromProjectResponseEnvironmentStatusRunnerAckJSON contains the
@@ -6670,26 +6531,6 @@ func (r *EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAck) UnmarshalJ
 
 func (r environmentNewFromProjectResponseEnvironmentStatusRunnerAckJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckSpecVersionUnion interface {
-	ImplementsEnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
 }
 
 type EnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckStatusCode string
@@ -6808,38 +6649,13 @@ func (r EnvironmentNewFromProjectResponseEnvironmentStatusSSHPublicKeysPhase) Is
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their status has different versions. The value of this field has no semantic
-// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
-// impose a partial order. If a.status_version < b.status_version then a was the
-// status before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentNewFromProjectResponseEnvironmentStatusStatusVersionUnion interface {
-	ImplementsEnvironmentNewFromProjectResponseEnvironmentStatusStatusVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentNewFromProjectResponseEnvironmentStatusStatusVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentStartResponse = interface{}
 
 type EnvironmentNewParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
+	//
 	// start
 	Spec param.Field[EnvironmentNewParamsSpec] `json:"spec"`
 	// Define the timeout, in ms
@@ -6866,6 +6682,7 @@ func (r EnvironmentNewParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
+//
 // start
 type EnvironmentNewParamsSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
@@ -6887,7 +6704,7 @@ type EnvironmentNewParamsSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion param.Field[EnvironmentNewParamsSpecSpecVersionUnion] `json:"specVersion" format:"int64"`
+	SpecVersion param.Field[string] `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys param.Field[[]EnvironmentNewParamsSpecSSHPublicKey] `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -6918,8 +6735,9 @@ func (r EnvironmentNewParamsSpecAdmission) IsKnown() bool {
 // automations_file is the automations file spec of the environment
 type EnvironmentNewParamsSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root. path must not be absolute (start with a
-	// /):
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
@@ -7048,15 +6866,6 @@ type EnvironmentNewParamsSpecSecret struct {
 
 func (r EnvironmentNewParamsSpecSecret) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Satisfied by [shared.UnionInt], [shared.UnionString].
-type EnvironmentNewParamsSpecSpecVersionUnion interface {
-	ImplementsEnvironmentNewParamsSpecSpecVersionUnion()
 }
 
 type EnvironmentNewParamsSpecSSHPublicKey struct {
@@ -7259,6 +7068,7 @@ func (r EnvironmentListParamsFilterStatusPhase) IsKnown() bool {
 // pagination contains the pagination options for listing environments
 type EnvironmentListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
@@ -7275,6 +7085,7 @@ type EnvironmentNewFromProjectParams struct {
 	ConnectProtocolVersion param.Field[EnvironmentNewFromProjectParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	ProjectID              param.Field[string]                                                `json:"projectId" format:"uuid"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
+	//
 	// start
 	Spec param.Field[EnvironmentNewFromProjectParamsSpec] `json:"spec"`
 	// Define the timeout, in ms
@@ -7301,6 +7112,7 @@ func (r EnvironmentNewFromProjectParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
+//
 // start
 type EnvironmentNewFromProjectParamsSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
@@ -7322,7 +7134,7 @@ type EnvironmentNewFromProjectParamsSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion param.Field[EnvironmentNewFromProjectParamsSpecSpecVersionUnion] `json:"specVersion" format:"int64"`
+	SpecVersion param.Field[string] `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys param.Field[[]EnvironmentNewFromProjectParamsSpecSSHPublicKey] `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -7353,8 +7165,9 @@ func (r EnvironmentNewFromProjectParamsSpecAdmission) IsKnown() bool {
 // automations_file is the automations file spec of the environment
 type EnvironmentNewFromProjectParamsSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root. path must not be absolute (start with a
-	// /):
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
@@ -7483,15 +7296,6 @@ type EnvironmentNewFromProjectParamsSpecSecret struct {
 
 func (r EnvironmentNewFromProjectParamsSpecSecret) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Satisfied by [shared.UnionInt], [shared.UnionString].
-type EnvironmentNewFromProjectParamsSpecSpecVersionUnion interface {
-	ImplementsEnvironmentNewFromProjectParamsSpecSpecVersionUnion()
 }
 
 type EnvironmentNewFromProjectParamsSpecSSHPublicKey struct {

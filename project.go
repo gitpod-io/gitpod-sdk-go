@@ -48,6 +48,20 @@ func (r *ProjectService) New(ctx context.Context, params ProjectNewParams, opts 
 	return
 }
 
+// GetProject retrieves a single Project.
+func (r *ProjectService) Get(ctx context.Context, params ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.ProjectService/GetProject"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
 // CreateProject creates a new Project using an environment as template.
 func (r *ProjectService) NewFromEnvironment(ctx context.Context, params ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
@@ -176,6 +190,7 @@ func (r projectNewResponseProjectInitializerSpecJSON) RawJSON() string {
 
 type ProjectNewResponseProjectMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -271,6 +286,7 @@ type ProjectNewResponseProjectMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -499,6 +515,445 @@ func (r ProjectNewResponseProjectUsedBySubjectsPrincipal) IsKnown() bool {
 	return false
 }
 
+type ProjectGetResponse struct {
+	Project ProjectGetResponseProject `json:"project"`
+	JSON    projectGetResponseJSON    `json:"-"`
+}
+
+// projectGetResponseJSON contains the JSON metadata for the struct
+// [ProjectGetResponse]
+type projectGetResponseJSON struct {
+	Project     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectGetResponseProject struct {
+	EnvironmentClass ProjectGetResponseProjectEnvironmentClassUnion `json:"environmentClass,required"`
+	// id is the unique identifier for the project
+	ID string `json:"id" format:"uuid"`
+	// automations_file_path is the path to the automations file relative to the repo
+	// root
+	AutomationsFilePath string `json:"automationsFilePath"`
+	// devcontainer_file_path is the path to the devcontainer file relative to the repo
+	// root
+	DevcontainerFilePath string `json:"devcontainerFilePath"`
+	// EnvironmentInitializer specifies how an environment is to be initialized
+	Initializer ProjectGetResponseProjectInitializer `json:"initializer"`
+	Metadata    ProjectGetResponseProjectMetadata    `json:"metadata"`
+	UsedBy      ProjectGetResponseProjectUsedBy      `json:"usedBy"`
+	JSON        projectGetResponseProjectJSON        `json:"-"`
+}
+
+// projectGetResponseProjectJSON contains the JSON metadata for the struct
+// [ProjectGetResponseProject]
+type projectGetResponseProjectJSON struct {
+	EnvironmentClass     apijson.Field
+	ID                   apijson.Field
+	AutomationsFilePath  apijson.Field
+	DevcontainerFilePath apijson.Field
+	Initializer          apijson.Field
+	Metadata             apijson.Field
+	UsedBy               apijson.Field
+	raw                  string
+	ExtraFields          map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProject) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectJSON) RawJSON() string {
+	return r.raw
+}
+
+// Union satisfied by [ProjectGetResponseProjectEnvironmentClassUnknown],
+// [ProjectGetResponseProjectEnvironmentClassUnknown] or
+// [ProjectGetResponseProjectEnvironmentClassUnknown].
+type ProjectGetResponseProjectEnvironmentClassUnion interface {
+	implementsProjectGetResponseProjectEnvironmentClassUnion()
+}
+
+func init() {
+	apijson.RegisterUnion(reflect.TypeOf((*ProjectGetResponseProjectEnvironmentClassUnion)(nil)).Elem(), "")
+}
+
+// EnvironmentInitializer specifies how an environment is to be initialized
+type ProjectGetResponseProjectInitializer struct {
+	Specs []ProjectGetResponseProjectInitializerSpec `json:"specs"`
+	JSON  projectGetResponseProjectInitializerJSON   `json:"-"`
+}
+
+// projectGetResponseProjectInitializerJSON contains the JSON metadata for the
+// struct [ProjectGetResponseProjectInitializer]
+type projectGetResponseProjectInitializerJSON struct {
+	Specs       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializer) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectInitializerJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectGetResponseProjectInitializerSpec struct {
+	JSON projectGetResponseProjectInitializerSpecJSON `json:"-"`
+}
+
+// projectGetResponseProjectInitializerSpecJSON contains the JSON metadata for the
+// struct [ProjectGetResponseProjectInitializerSpec]
+type projectGetResponseProjectInitializerSpecJSON struct {
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectGetResponseProjectMetadata struct {
+	// A Timestamp represents a point in time independent of any time zone or local
+	//
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	CreatedAt time.Time `json:"createdAt" format:"date-time"`
+	// creator is the identity of the project creator
+	Creator ProjectGetResponseProjectMetadataCreator `json:"creator"`
+	// name is the human readable name of the project
+	Name string `json:"name"`
+	// organization_id is the ID of the organization that contains the environment
+	OrganizationID string `json:"organizationId" format:"uuid"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	//
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	UpdatedAt time.Time                             `json:"updatedAt" format:"date-time"`
+	JSON      projectGetResponseProjectMetadataJSON `json:"-"`
+}
+
+// projectGetResponseProjectMetadataJSON contains the JSON metadata for the struct
+// [ProjectGetResponseProjectMetadata]
+type projectGetResponseProjectMetadataJSON struct {
+	CreatedAt      apijson.Field
+	Creator        apijson.Field
+	Name           apijson.Field
+	OrganizationID apijson.Field
+	UpdatedAt      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectMetadata) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectMetadataJSON) RawJSON() string {
+	return r.raw
+}
+
+// creator is the identity of the project creator
+type ProjectGetResponseProjectMetadataCreator struct {
+	// id is the UUID of the subject
+	ID string `json:"id"`
+	// Principal is the principal of the subject
+	Principal ProjectGetResponseProjectMetadataCreatorPrincipal `json:"principal"`
+	JSON      projectGetResponseProjectMetadataCreatorJSON      `json:"-"`
+}
+
+// projectGetResponseProjectMetadataCreatorJSON contains the JSON metadata for the
+// struct [ProjectGetResponseProjectMetadataCreator]
+type projectGetResponseProjectMetadataCreatorJSON struct {
+	ID          apijson.Field
+	Principal   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectMetadataCreator) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectMetadataCreatorJSON) RawJSON() string {
+	return r.raw
+}
+
+// Principal is the principal of the subject
+type ProjectGetResponseProjectMetadataCreatorPrincipal string
+
+const (
+	ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalUnspecified    ProjectGetResponseProjectMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalAccount        ProjectGetResponseProjectMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalUser           ProjectGetResponseProjectMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalRunner         ProjectGetResponseProjectMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalEnvironment    ProjectGetResponseProjectMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalServiceAccount ProjectGetResponseProjectMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+)
+
+func (r ProjectGetResponseProjectMetadataCreatorPrincipal) IsKnown() bool {
+	switch r {
+	case ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalUnspecified, ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalAccount, ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalUser, ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalRunner, ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalEnvironment, ProjectGetResponseProjectMetadataCreatorPrincipalPrincipalServiceAccount:
+		return true
+	}
+	return false
+}
+
+type ProjectGetResponseProjectUsedBy struct {
+	// Subjects are the 10 most recent subjects who have used the project to create an
+	// environment
+	Subjects []ProjectGetResponseProjectUsedBySubject `json:"subjects"`
+	// Total number of unique subjects who have used the project
+	TotalSubjects int64                               `json:"totalSubjects"`
+	JSON          projectGetResponseProjectUsedByJSON `json:"-"`
+}
+
+// projectGetResponseProjectUsedByJSON contains the JSON metadata for the struct
+// [ProjectGetResponseProjectUsedBy]
+type projectGetResponseProjectUsedByJSON struct {
+	Subjects      apijson.Field
+	TotalSubjects apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectUsedBy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectUsedByJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectGetResponseProjectUsedBySubject struct {
+	// id is the UUID of the subject
+	ID string `json:"id"`
+	// Principal is the principal of the subject
+	Principal ProjectGetResponseProjectUsedBySubjectsPrincipal `json:"principal"`
+	JSON      projectGetResponseProjectUsedBySubjectJSON       `json:"-"`
+}
+
+// projectGetResponseProjectUsedBySubjectJSON contains the JSON metadata for the
+// struct [ProjectGetResponseProjectUsedBySubject]
+type projectGetResponseProjectUsedBySubjectJSON struct {
+	ID          apijson.Field
+	Principal   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectUsedBySubject) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectUsedBySubjectJSON) RawJSON() string {
+	return r.raw
+}
+
+// Principal is the principal of the subject
+type ProjectGetResponseProjectUsedBySubjectsPrincipal string
+
+const (
+	ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalUnspecified    ProjectGetResponseProjectUsedBySubjectsPrincipal = "PRINCIPAL_UNSPECIFIED"
+	ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalAccount        ProjectGetResponseProjectUsedBySubjectsPrincipal = "PRINCIPAL_ACCOUNT"
+	ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalUser           ProjectGetResponseProjectUsedBySubjectsPrincipal = "PRINCIPAL_USER"
+	ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalRunner         ProjectGetResponseProjectUsedBySubjectsPrincipal = "PRINCIPAL_RUNNER"
+	ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalEnvironment    ProjectGetResponseProjectUsedBySubjectsPrincipal = "PRINCIPAL_ENVIRONMENT"
+	ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalServiceAccount ProjectGetResponseProjectUsedBySubjectsPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+)
+
+func (r ProjectGetResponseProjectUsedBySubjectsPrincipal) IsKnown() bool {
+	switch r {
+	case ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalUnspecified, ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalAccount, ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalUser, ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalRunner, ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalEnvironment, ProjectGetResponseProjectUsedBySubjectsPrincipalPrincipalServiceAccount:
+		return true
+	}
+	return false
+}
+
 type ProjectNewFromEnvironmentResponse struct {
 	Project ProjectNewFromEnvironmentResponseProject `json:"project"`
 	JSON    projectNewFromEnvironmentResponseJSON    `json:"-"`
@@ -615,6 +1070,7 @@ func (r projectNewFromEnvironmentResponseProjectInitializerSpecJSON) RawJSON() s
 
 type ProjectNewFromEnvironmentResponseProjectMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -710,6 +1166,7 @@ type ProjectNewFromEnvironmentResponseProjectMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1001,6 +1458,34 @@ const (
 func (r ProjectNewParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case ProjectNewParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type ProjectGetParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[ProjectGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// project_id specifies the project identifier
+	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r ProjectGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type ProjectGetParamsConnectProtocolVersion float64
+
+const (
+	ProjectGetParamsConnectProtocolVersion1 ProjectGetParamsConnectProtocolVersion = 1
+)
+
+func (r ProjectGetParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case ProjectGetParamsConnectProtocolVersion1:
 		return true
 	}
 	return false

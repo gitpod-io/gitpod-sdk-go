@@ -22,7 +22,6 @@ func TestUsage(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),

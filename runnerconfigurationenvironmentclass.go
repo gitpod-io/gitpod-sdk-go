@@ -48,6 +48,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 }
 
 // ListEnvironmentClasses returns all environment classes configured for a runner.
+//
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassListResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
@@ -97,8 +98,9 @@ type RunnerConfigurationEnvironmentClassListResponseEnvironmentClass struct {
 	Description string `json:"description"`
 	// display_name is the human readable name of the environment class
 	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create new
-	// environments.
+	// enabled indicates whether the environment class can be used to create
+	//
+	// new environments.
 	Enabled bool `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
@@ -154,8 +156,9 @@ func (r runnerConfigurationEnvironmentClassListResponseEnvironmentClassesConfigu
 
 // pagination contains the pagination options for listing environment classes
 type RunnerConfigurationEnvironmentClassListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                                        `json:"nextToken"`
 	JSON      runnerConfigurationEnvironmentClassListResponsePaginationJSON `json:"-"`
 }
@@ -249,6 +252,7 @@ type RunnerConfigurationEnvironmentClassListParamsFilterUnion interface {
 // pagination contains the pagination options for listing environment classes
 type RunnerConfigurationEnvironmentClassListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.

@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestAutomationsFileUpsertWithOptionalParams(t *testing.T) {
+func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -23,31 +23,30 @@ func TestAutomationsFileUpsertWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
-	_, err := client.AutomationsFiles.Upsert(context.TODO(), gitpod.AutomationsFileUpsertParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.AutomationsFileUpsertParamsConnectProtocolVersion1),
-		AutomationsFile: gitpod.F(gitpod.AutomationsFileUpsertParamsAutomationsFile{
-			Services: gitpod.F(map[string]gitpod.AutomationsFileUpsertParamsAutomationsFileServices{
+	_, err := client.Environments.Automations.Upsert(context.TODO(), gitpod.EnvironmentAutomationUpsertParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsConnectProtocolVersion1),
+		AutomationsFile: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFile{
+			Services: gitpod.F(map[string]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServices{
 				"foo": {
-					Commands: gitpod.F(gitpod.AutomationsFileUpsertParamsAutomationsFileServicesCommands{
+					Commands: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands{
 						Ready: gitpod.F("ready"),
 						Start: gitpod.F("x"),
 						Stop:  gitpod.F("stop"),
 					}),
 					Description: gitpod.F("description"),
 					Name:        gitpod.F("x"),
-					RunsOn:      gitpod.F[gitpod.AutomationsFileUpsertParamsAutomationsFileServicesRunsOnUnion](gitpod.AutomationsFileUpsertParamsAutomationsFileServicesRunsOnUnknown(map[string]interface{}{})),
+					RunsOn:      gitpod.F[gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion](gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnknown(map[string]interface{}{})),
 					TriggeredBy: gitpod.F([]string{"string"}),
 				},
 			}),
-			Tasks: gitpod.F(map[string]gitpod.AutomationsFileUpsertParamsAutomationsFileTasks{
+			Tasks: gitpod.F(map[string]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasks{
 				"foo": {
 					Command:     gitpod.F("x"),
 					DependsOn:   gitpod.F([]string{"string"}),
 					Description: gitpod.F("description"),
 					Name:        gitpod.F("x"),
-					RunsOn:      gitpod.F[gitpod.AutomationsFileUpsertParamsAutomationsFileTasksRunsOnUnion](gitpod.AutomationsFileUpsertParamsAutomationsFileTasksRunsOnUnknown(map[string]interface{}{})),
+					RunsOn:      gitpod.F[gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion](gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnknown(map[string]interface{}{})),
 					TriggeredBy: gitpod.F([]string{"string"}),
 				},
 			}),

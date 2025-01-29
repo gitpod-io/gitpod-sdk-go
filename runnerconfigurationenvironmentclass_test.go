@@ -23,7 +23,6 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.Update(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassUpdateParams{
 		Body:                   gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBody{},
@@ -49,7 +48,6 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.List(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1),

@@ -41,7 +41,9 @@ func NewRunnerConfigurationService(opts ...option.RequestOption) (r *RunnerConfi
 }
 
 // ValidateRunnerConfiguration validates a runner configuration (e.g. environment
-// class, SCM integration) with the runner.
+// class, SCM integration)
+//
+// with the runner.
 func (r *RunnerConfigurationService) Validate(ctx context.Context, params RunnerConfigurationValidateParams, opts ...option.RequestOption) (res *RunnerConfigurationValidateResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))

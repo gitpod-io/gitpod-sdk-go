@@ -70,8 +70,9 @@ func (r runnerPolicyListResponseJSON) RawJSON() string {
 }
 
 type RunnerPolicyListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                 `json:"nextToken"`
 	JSON      runnerPolicyListResponsePaginationJSON `json:"-"`
 }
@@ -166,6 +167,7 @@ func (r RunnerPolicyListParamsConnectProtocolVersion) IsKnown() bool {
 // pagination contains the pagination options for listing project policies
 type RunnerPolicyListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.

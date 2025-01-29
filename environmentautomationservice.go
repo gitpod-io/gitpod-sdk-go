@@ -13,8 +13,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/shared"
-	"github.com/tidwall/gjson"
 )
 
 // EnvironmentAutomationServiceService contains methods and other services that
@@ -65,7 +63,9 @@ func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params E
 }
 
 // DeleteService deletes a service. This call does not block until the service is
-// deleted. If the service is not stopped it will be stopped before deletion.
+// deleted.
+//
+// If the service is not stopped it will be stopped before deletion.
 func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, params EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
@@ -80,8 +80,9 @@ func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, params
 }
 
 // StartService starts a service. This call does not block until the service is
-// started. This call will not error if the service is already running or has been
 // started.
+//
+// This call will not error if the service is already running or has been started.
 func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, params EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
@@ -96,8 +97,9 @@ func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, params 
 }
 
 // StopService stops a service. This call does not block until the service is
-// stopped. This call will not error if the service is already stopped or has been
 // stopped.
+//
+// This call will not error if the service is already stopped or has been stopped.
 func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, params EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
@@ -137,8 +139,9 @@ func (r environmentAutomationServiceListResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationServiceListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                                 `json:"nextToken"`
 	JSON      environmentAutomationServiceListResponsePaginationJSON `json:"-"`
 }
@@ -190,6 +193,7 @@ func (r environmentAutomationServiceListResponseServiceJSON) RawJSON() string {
 
 type EnvironmentAutomationServiceListResponseServicesMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -284,12 +288,15 @@ type EnvironmentAutomationServiceListResponseServicesMetadata struct {
 	// provide context and documentation for the service.
 	Description string `json:"description"`
 	// name is a user-facing name for the service. Unlike the reference, this field is
-	// not unique, and not referenced by the system. This is a short descriptive name
-	// for the service.
+	// not unique, and not referenced by the system.
+	//
+	// This is a short descriptive name for the service.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the service which must be unique on
-	// the environment. It is used to express dependencies between services, and to
-	// identify the service in user interactions (e.g. the CLI).
+	// the environment.
+	//
+	// It is used to express dependencies between services, and to identify the service
+	// in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy []EnvironmentAutomationServiceListResponseServicesMetadataTriggeredBy `json:"triggeredBy"`
@@ -399,13 +406,15 @@ type EnvironmentAutomationServiceListResponseServicesSpec struct {
 	// runs_on specifies the environment the service should run on.
 	RunsOn EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnion `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
-	// exits it will not be restarted until the session is changed.
+	// exits it will
+	//
+	// not be restarted until the session is changed.
 	Session string `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion EnvironmentAutomationServiceListResponseServicesSpecSpecVersionUnion `json:"specVersion" format:"int64"`
-	JSON        environmentAutomationServiceListResponseServicesSpecJSON             `json:"-"`
+	SpecVersion string                                                   `json:"specVersion" format:"int64"`
+	JSON        environmentAutomationServiceListResponseServicesSpecJSON `json:"-"`
 }
 
 // environmentAutomationServiceListResponseServicesSpecJSON contains the JSON
@@ -432,8 +441,10 @@ func (r environmentAutomationServiceListResponseServicesSpecJSON) RawJSON() stri
 // service
 type EnvironmentAutomationServiceListResponseServicesSpecCommands struct {
 	// ready is an optional command that is run repeatedly until it exits with a zero
-	// exit code. If set, the service will first go into a Starting phase, and then
-	// into a Running phase once the ready command exits with a zero exit code.
+	// exit code.
+	//
+	// If set, the service will first go into a Starting phase, and then into a Running
+	// phase once the ready command exits with a zero exit code.
 	Ready string `json:"ready"`
 	// start is the command to start and run the service. If start exits, the service
 	// will transition to the following phase:
@@ -443,12 +454,14 @@ type EnvironmentAutomationServiceListResponseServicesSpecCommands struct {
 	//     command will receive a SIGTERM signal when the service is requested to stop.
 	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
 	Start string `json:"start"`
-	// stop is an optional command that runs when the service is requested to stop. If
-	// set, instead of sending a SIGTERM signal to the start command, the stop command
-	// will be run. Once the stop command exits, the start command will receive a
-	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
-	// will transition to the Failed phase. If the stop command does not exit within 2
-	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
+	// stop is an optional command that runs when the service is requested to stop.
+	//
+	// If set, instead of sending a SIGTERM signal to the start command, the stop
+	// command will be run. Once the stop command exits, the start command will receive
+	// a SIGKILL signal. If the stop command exits with a non-zero exit code, the
+	// service will transition to the Failed phase. If the stop command does not exit
+	// within 2 minutes, a SIGKILL signal will be sent to both the start and stop
+	// commands.
 	Stop string                                                           `json:"stop"`
 	JSON environmentAutomationServiceListResponseServicesSpecCommandsJSON `json:"-"`
 }
@@ -507,34 +520,11 @@ func init() {
 	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnion)(nil)).Elem(), "")
 }
 
-// version of the spec. The value of this field has no semantic meaning (e.g. don't
-// interpret it as as a timestamp), but it can be used to impose a partial order.
-// If a.spec_version < b.spec_version then a was the spec before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentAutomationServiceListResponseServicesSpecSpecVersionUnion interface {
-	ImplementsEnvironmentAutomationServiceListResponseServicesSpecSpecVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentAutomationServiceListResponseServicesSpecSpecVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentAutomationServiceListResponseServicesStatus struct {
 	// failure_message summarises why the service failed to operate. If this is
-	// non-empty the service has failed to operate and will likely transition to a
-	// failed state.
+	// non-empty
+	//
+	// the service has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url contains the URL at which the service logs can be accessed.
 	LogURL string `json:"logUrl"`
@@ -547,8 +537,8 @@ type EnvironmentAutomationServiceListResponseServicesStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentAutomationServiceListResponseServicesStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
-	JSON          environmentAutomationServiceListResponseServicesStatusJSON               `json:"-"`
+	StatusVersion string                                                     `json:"statusVersion" format:"int64"`
+	JSON          environmentAutomationServiceListResponseServicesStatusJSON `json:"-"`
 }
 
 // environmentAutomationServiceListResponseServicesStatusJSON contains the JSON
@@ -592,32 +582,6 @@ func (r EnvironmentAutomationServiceListResponseServicesStatusPhase) IsKnown() b
 	return false
 }
 
-// version of the status update. Service instances themselves are unversioned, but
-// their status has different versions. The value of this field has no semantic
-// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
-// impose a partial order. If a.status_version < b.status_version then a was the
-// status before b.
-//
-// Union satisfied by [shared.UnionInt] or [shared.UnionString].
-type EnvironmentAutomationServiceListResponseServicesStatusStatusVersionUnion interface {
-	ImplementsEnvironmentAutomationServiceListResponseServicesStatusStatusVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentAutomationServiceListResponseServicesStatusStatusVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionInt(0)),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-	)
-}
-
 type EnvironmentAutomationServiceDeleteResponse = interface{}
 
 type EnvironmentAutomationServiceStartResponse = interface{}
@@ -629,13 +593,16 @@ type EnvironmentAutomationServiceUpdateParams struct {
 	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	ID                     param.Field[string]                                                         `json:"id" format:"uuid"`
 	Metadata               param.Field[EnvironmentAutomationServiceUpdateParamsMetadata]               `json:"metadata"`
-	// Changing the spec of a service is a complex operation. The spec of a service can
-	// only be updated if the service is in a stopped state. If the service is running,
-	// it must be stopped first.
+	// Changing the spec of a service is a complex operation. The spec of a service
+	//
+	// can only be updated if the service is in a stopped state. If the service is
+	// running, it must be stopped first.
 	Spec param.Field[EnvironmentAutomationServiceUpdateParamsSpec] `json:"spec"`
 	// Service status updates are only expected from the executing environment. As a
-	// client of this API you are not expected to provide this field. Updating this
-	// field requires the `environmentservice:update_status` permission.
+	// client
+	//
+	// of this API you are not expected to provide this field. Updating this field
+	// requires the `environmentservice:update_status` permission.
 	Status param.Field[EnvironmentAutomationServiceUpdateParamsStatus] `json:"status"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
@@ -667,9 +634,10 @@ func (r EnvironmentAutomationServiceUpdateParamsMetadata) MarshalJSON() (data []
 	return apijson.MarshalRoot(r)
 }
 
-// Changing the spec of a service is a complex operation. The spec of a service can
-// only be updated if the service is in a stopped state. If the service is running,
-// it must be stopped first.
+// Changing the spec of a service is a complex operation. The spec of a service
+//
+// can only be updated if the service is in a stopped state. If the service is
+// running, it must be stopped first.
 type EnvironmentAutomationServiceUpdateParamsSpec struct {
 }
 
@@ -678,8 +646,10 @@ func (r EnvironmentAutomationServiceUpdateParamsSpec) MarshalJSON() (data []byte
 }
 
 // Service status updates are only expected from the executing environment. As a
-// client of this API you are not expected to provide this field. Updating this
-// field requires the `environmentservice:update_status` permission.
+// client
+//
+// of this API you are not expected to provide this field. Updating this field
+// requires the `environmentservice:update_status` permission.
 type EnvironmentAutomationServiceUpdateParamsStatus struct {
 }
 
@@ -734,6 +704,7 @@ func (r EnvironmentAutomationServiceListParamsFilter) MarshalJSON() (data []byte
 // pagination contains the pagination options for listing services
 type EnvironmentAutomationServiceListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.

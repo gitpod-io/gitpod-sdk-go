@@ -85,8 +85,9 @@ func (r personalAccessTokenListResponseJSON) RawJSON() string {
 }
 
 type PersonalAccessTokenListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                        `json:"nextToken"`
 	JSON      personalAccessTokenListResponsePaginationJSON `json:"-"`
 }
@@ -110,6 +111,7 @@ func (r personalAccessTokenListResponsePaginationJSON) RawJSON() string {
 type PersonalAccessTokenListResponsePersonalAccessToken struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -201,6 +203,7 @@ type PersonalAccessTokenListResponsePersonalAccessToken struct {
 	Creator     PersonalAccessTokenListResponsePersonalAccessTokensCreator `json:"creator"`
 	Description string                                                     `json:"description"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -290,6 +293,7 @@ type PersonalAccessTokenListResponsePersonalAccessToken struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	ExpiresAt time.Time `json:"expiresAt" format:"date-time"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -492,6 +496,7 @@ func (r PersonalAccessTokenListParamsFilter) MarshalJSON() (data []byte, err err
 
 type PersonalAccessTokenListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
