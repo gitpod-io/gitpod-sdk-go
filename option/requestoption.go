@@ -225,7 +225,7 @@ func WithRequestTimeout(dur time.Duration) RequestOption {
 // environment to be the "production" environment. An environment specifies which base URL
 // to use by default.
 func WithEnvironmentProduction() RequestOption {
-	return WithBaseURL("https://localhost:8080/test-api/")
+	return WithBaseURL("https://app.gitpod.io/app/")
 }
 
 // WithAuthToken returns a RequestOption that sets the client setting "auth_token".
