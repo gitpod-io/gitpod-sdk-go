@@ -23,7 +23,6 @@ func TestOrganizationMemberListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Organizations.Members.List(context.TODO(), gitpod.OrganizationMemberListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationMemberListParamsConnectProtocolVersion1),

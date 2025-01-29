@@ -86,8 +86,9 @@ func (r organizationInviteNewResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteNewResponseInvite struct {
-	// invite_id is the unique identifier of the invite to join the organization. Use
-	// JoinOrganization with this ID to join the organization.
+	// invite_id is the unique identifier of the invite to join the organization.
+	//
+	// Use JoinOrganization with this ID to join the organization.
 	InviteID string                                  `json:"inviteId" format:"uuid"`
 	JSON     organizationInviteNewResponseInviteJSON `json:"-"`
 }
@@ -130,8 +131,9 @@ func (r organizationInviteGetResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteGetResponseInvite struct {
-	// invite_id is the unique identifier of the invite to join the organization. Use
-	// JoinOrganization with this ID to join the organization.
+	// invite_id is the unique identifier of the invite to join the organization.
+	//
+	// Use JoinOrganization with this ID to join the organization.
 	InviteID string                                  `json:"inviteId" format:"uuid"`
 	JSON     organizationInviteGetResponseInviteJSON `json:"-"`
 }

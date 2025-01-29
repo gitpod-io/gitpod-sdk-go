@@ -11,7 +11,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go"
 	"github.com/stainless-sdks/gitpod-go/internal/testutil"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/shared"
 )
 
 func TestEnvironmentNewWithOptionalParams(t *testing.T) {
@@ -24,7 +23,6 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Environments.New(context.TODO(), gitpod.EnvironmentNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentNewParamsConnectProtocolVersion1),
@@ -57,7 +55,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecret{{}}),
-			SpecVersion: gitpod.F[gitpod.EnvironmentNewParamsSpecSpecVersionUnion](shared.UnionInt(int64(0))),
+			SpecVersion: gitpod.F("specVersion"),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
@@ -87,7 +85,6 @@ func TestEnvironmentGetWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Environments.Get(context.TODO(), gitpod.EnvironmentGetParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentGetParamsConnectProtocolVersion1),
@@ -113,7 +110,6 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Environments.List(context.TODO(), gitpod.EnvironmentListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentListParamsConnectProtocolVersion1),
@@ -150,7 +146,6 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Environments.NewFromProject(context.TODO(), gitpod.EnvironmentNewFromProjectParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentNewFromProjectParamsConnectProtocolVersion1),
@@ -184,7 +179,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecret{{}}),
-			SpecVersion: gitpod.F[gitpod.EnvironmentNewFromProjectParamsSpecSpecVersionUnion](shared.UnionInt(int64(0))),
+			SpecVersion: gitpod.F("specVersion"),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
@@ -214,7 +209,6 @@ func TestEnvironmentStartWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Environments.Start(context.TODO(), gitpod.EnvironmentStartParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentStartParamsConnectProtocolVersion1),

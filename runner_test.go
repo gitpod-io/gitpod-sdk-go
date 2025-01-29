@@ -23,7 +23,6 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
@@ -48,6 +47,31 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestRunnerGetWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Runners.Get(context.TODO(), gitpod.RunnerGetParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetParamsConnectProtocolVersion1),
+		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestRunnerListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -58,7 +82,6 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.List(context.TODO(), gitpod.RunnerListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerListParamsConnectProtocolVersion1),
@@ -91,7 +114,6 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.CheckAuthenticationForHost(context.TODO(), gitpod.RunnerCheckAuthenticationForHostParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerCheckAuthenticationForHostParamsConnectProtocolVersion1),
@@ -118,7 +140,6 @@ func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.NewRunnerToken(context.TODO(), gitpod.RunnerNewRunnerTokenParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewRunnerTokenParamsConnectProtocolVersion1),
@@ -144,7 +165,6 @@ func TestRunnerDeleteRunnerWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.DeleteRunner(context.TODO(), gitpod.RunnerDeleteRunnerParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerDeleteRunnerParamsConnectProtocolVersion1),
@@ -171,7 +191,6 @@ func TestRunnerGetRunnerWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.GetRunner(context.TODO(), gitpod.RunnerGetRunnerParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetRunnerParamsConnectProtocolVersion1),
@@ -197,7 +216,6 @@ func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.ParseContextURL(context.TODO(), gitpod.RunnerParseContextURLParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerParseContextURLParamsConnectProtocolVersion1),
@@ -224,7 +242,6 @@ func TestRunnerUpdateRunnerWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
-		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Runners.UpdateRunner(context.TODO(), gitpod.RunnerUpdateRunnerParams{
 		Body:                   gitpod.RunnerUpdateRunnerParamsBody{},

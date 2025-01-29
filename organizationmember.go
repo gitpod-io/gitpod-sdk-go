@@ -79,6 +79,7 @@ type OrganizationMemberListResponseMember struct {
 	// login_provider is the login provider the user uses to sign in
 	LoginProvider string `json:"loginProvider"`
 	// A Timestamp represents a point in time independent of any time zone or local
+	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -231,8 +232,9 @@ func (r OrganizationMemberListResponseMembersStatus) IsKnown() bool {
 
 // pagination contains the pagination options for listing members
 type OrganizationMemberListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                       `json:"nextToken"`
 	JSON      organizationMemberListResponsePaginationJSON `json:"-"`
 }
@@ -286,6 +288,7 @@ func (r OrganizationMemberListParamsConnectProtocolVersion) IsKnown() bool {
 // pagination contains the pagination options for listing members
 type OrganizationMemberListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.

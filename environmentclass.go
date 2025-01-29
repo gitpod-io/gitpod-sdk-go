@@ -33,8 +33,9 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 }
 
 // ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the query buf:lint:ignore
-// RPC_REQUEST_RESPONSE_UNIQUE
+// details a user is able to use based on the
+//
+// query buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *EnvironmentClassListResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
@@ -81,8 +82,9 @@ type EnvironmentClassListResponseEnvironmentClass struct {
 	Description string `json:"description"`
 	// display_name is the human readable name of the environment class
 	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create new
-	// environments.
+	// enabled indicates whether the environment class can be used to create
+	//
+	// new environments.
 	Enabled bool `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
@@ -137,8 +139,9 @@ func (r environmentClassListResponseEnvironmentClassesConfigurationJSON) RawJSON
 
 // pagination contains the pagination options for listing environment classes
 type EnvironmentClassListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
+	// Token passed for retreiving the next set of results. Empty if there are no
+	//
+	// more results
 	NextToken string                                     `json:"nextToken"`
 	JSON      environmentClassListResponsePaginationJSON `json:"-"`
 }
@@ -197,6 +200,7 @@ type EnvironmentClassListParamsFilterUnion interface {
 // pagination contains the pagination options for listing environment classes
 type EnvironmentClassListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
+	//
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
 	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
