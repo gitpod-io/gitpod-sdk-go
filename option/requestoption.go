@@ -227,3 +227,11 @@ func WithRequestTimeout(dur time.Duration) RequestOption {
 func WithEnvironmentProduction() RequestOption {
 	return WithBaseURL("https://localhost:8080/test-api/")
 }
+
+// WithAuthToken returns a RequestOption that sets the client setting "auth_token".
+func WithAuthToken(value string) RequestOption {
+	return func(r *requestconfig.RequestConfig) error {
+		r.AuthToken = value
+		return nil
+	}
+}

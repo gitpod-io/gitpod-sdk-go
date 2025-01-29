@@ -23,6 +23,7 @@ func TestEditorGetWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EditorGetParamsConnectProtocolVersion1),
@@ -48,6 +49,7 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Editors.List(context.TODO(), gitpod.EditorListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EditorListParamsConnectProtocolVersion1),
@@ -76,6 +78,7 @@ func TestEditorResolveEditorURLWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Editors.ResolveEditorURL(context.TODO(), gitpod.EditorResolveEditorURLParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EditorResolveEditorURLParamsConnectProtocolVersion1),
