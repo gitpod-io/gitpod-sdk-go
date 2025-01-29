@@ -6,12 +6,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -49,26 +47,12 @@ func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, par
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // ListTaskExecutions
 func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
-	opts = append(r.Options[:], opts...)
-	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
-}
-
-// ListTaskExecutions
-func (r *EnvironmentAutomationTaskExecutionService) NewList(ctx context.Context, params EnvironmentAutomationTaskExecutionNewListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionNewListResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
 	}
@@ -615,22 +599,21 @@ func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJS
 }
 
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatus struct {
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// failure_message summarises why the task execution failed to operate. If this is
+	// non-empty the task execution has failed to operate and will likely transition to
+	// a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url is the URL to the logs of the task's steps. If this is empty, the task
 	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
+	// the phase of a task execution represents the aggregated phase of all steps.
 	Phase EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusPhase `json:"phase"`
-	// version of the status update. Environment instances themselves are unversioned,
-	// but their statuus has different versions. The value of this field has no
-	// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-	// to impose a partial order. If a.status_version < b.status_version then a was the
+	// version of the status update. Task executions themselves are unversioned, but
+	// their status has different versions. The value of this field has no semantic
+	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion `json:"statusVersion"`
+	StatusVersion EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
 	// steps provides the status for each individual step of the task execution. If a
 	// step is missing it has not yet started.
 	Steps []EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStep `json:"steps"`
@@ -658,8 +641,7 @@ func (r environmentAutomationTaskExecutionGetResponseTaskExecutionStatusJSON) Ra
 	return r.raw
 }
 
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
+// the phase of a task execution represents the aggregated phase of all steps.
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusPhase string
 
 const (
@@ -679,13 +661,13 @@ func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusPhase) I
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their statuus has different versions. The value of this field has no
-// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-// to impose a partial order. If a.status_version < b.status_version then a was the
+// version of the status update. Task executions themselves are unversioned, but
+// their status has different versions. The value of this field has no semantic
+// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+// impose a partial order. If a.status_version < b.status_version then a was the
 // status before b.
 //
-// Union satisfied by [shared.UnionString] or [shared.UnionFloat].
+// Union satisfied by [shared.UnionInt] or [shared.UnionString].
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion interface {
 	ImplementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion()
 }
@@ -695,12 +677,12 @@ func init() {
 		reflect.TypeOf((*EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
+			TypeFilter: gjson.Number,
+			Type:       reflect.TypeOf(shared.UnionInt(0)),
 		},
 		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionFloat(0)),
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(shared.UnionString("")),
 		},
 	)
 }
@@ -708,12 +690,10 @@ func init() {
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStep struct {
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// failure_message summarises why the step failed to operate. If this is non-empty
+	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
+	// phase is the current phase of the execution step
 	Phase EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStepsPhase `json:"phase"`
 	JSON  environmentAutomationTaskExecutionGetResponseTaskExecutionStatusStepJSON   `json:"-"`
 }
@@ -737,8 +717,7 @@ func (r environmentAutomationTaskExecutionGetResponseTaskExecutionStatusStepJSON
 	return r.raw
 }
 
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
+// phase is the current phase of the execution step
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStepsPhase string
 
 const (
@@ -1275,22 +1254,21 @@ func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep
 }
 
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// failure_message summarises why the task execution failed to operate. If this is
+	// non-empty the task execution has failed to operate and will likely transition to
+	// a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url is the URL to the logs of the task's steps. If this is empty, the task
 	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
+	// the phase of a task execution represents the aggregated phase of all steps.
 	Phase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase `json:"phase"`
-	// version of the status update. Environment instances themselves are unversioned,
-	// but their statuus has different versions. The value of this field has no
-	// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-	// to impose a partial order. If a.status_version < b.status_version then a was the
+	// version of the status update. Task executions themselves are unversioned, but
+	// their status has different versions. The value of this field has no semantic
+	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion `json:"statusVersion"`
+	StatusVersion EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
 	// steps provides the status for each individual step of the task execution. If a
 	// step is missing it has not yet started.
 	Steps []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep `json:"steps"`
@@ -1318,8 +1296,7 @@ func (r environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON) 
 	return r.raw
 }
 
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
+// the phase of a task execution represents the aggregated phase of all steps.
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase string
 
 const (
@@ -1339,13 +1316,13 @@ func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase)
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their statuus has different versions. The value of this field has no
-// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-// to impose a partial order. If a.status_version < b.status_version then a was the
+// version of the status update. Task executions themselves are unversioned, but
+// their status has different versions. The value of this field has no semantic
+// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+// impose a partial order. If a.status_version < b.status_version then a was the
 // status before b.
 //
-// Union satisfied by [shared.UnionString] or [shared.UnionFloat].
+// Union satisfied by [shared.UnionInt] or [shared.UnionString].
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion interface {
 	ImplementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion()
 }
@@ -1355,12 +1332,12 @@ func init() {
 		reflect.TypeOf((*EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
+			TypeFilter: gjson.Number,
+			Type:       reflect.TypeOf(shared.UnionInt(0)),
 		},
 		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionFloat(0)),
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(shared.UnionString("")),
 		},
 	)
 }
@@ -1368,12 +1345,10 @@ func init() {
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep struct {
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// failure_message summarises why the step failed to operate. If this is non-empty
+	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
+	// phase is the current phase of the execution step
 	Phase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase `json:"phase"`
 	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJSON   `json:"-"`
 }
@@ -1397,8 +1372,7 @@ func (r environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJS
 	return r.raw
 }
 
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
+// phase is the current phase of the execution step
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase string
 
 const (
@@ -1413,666 +1387,6 @@ const (
 func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase) IsKnown() bool {
 	switch r {
 	case EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseStopped:
-		return true
-	}
-	return false
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponse struct {
-	Pagination     EnvironmentAutomationTaskExecutionNewListResponsePagination      `json:"pagination"`
-	TaskExecutions []EnvironmentAutomationTaskExecutionNewListResponseTaskExecution `json:"taskExecutions"`
-	JSON           environmentAutomationTaskExecutionNewListResponseJSON            `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseJSON contains the JSON metadata
-// for the struct [EnvironmentAutomationTaskExecutionNewListResponse]
-type environmentAutomationTaskExecutionNewListResponseJSON struct {
-	Pagination     apijson.Field
-	TaskExecutions apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                                          `json:"nextToken"`
-	JSON      environmentAutomationTaskExecutionNewListResponsePaginationJSON `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponsePaginationJSON contains the
-// JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponsePagination]
-type environmentAutomationTaskExecutionNewListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecution struct {
-	ID       string                                                                  `json:"id" format:"uuid"`
-	Metadata EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadata `json:"metadata"`
-	Spec     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpec     `json:"spec"`
-	Status   EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatus   `json:"status"`
-	JSON     environmentAutomationTaskExecutionNewListResponseTaskExecutionJSON      `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionJSON contains the
-// JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecution]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionJSON struct {
-	ID          apijson.Field
-	Metadata    apijson.Field
-	Spec        apijson.Field
-	Status      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecution) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadata struct {
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	CompletedAt time.Time `json:"completedAt" format:"date-time"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt time.Time `json:"createdAt" format:"date-time"`
-	// creator describes the principal who created/started the task run.
-	Creator EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreator `json:"creator"`
-	// environment_id is the ID of the environment in which the task run is executed.
-	EnvironmentID string `json:"environmentId" format:"uuid"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	StartedAt time.Time `json:"startedAt" format:"date-time"`
-	// started_by describes the trigger that started the task execution.
-	StartedBy string `json:"startedBy"`
-	// task_id is the ID of the main task being executed.
-	TaskID string                                                                      `json:"taskId" format:"uuid"`
-	JSON   environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataJSON `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadata]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataJSON struct {
-	CompletedAt   apijson.Field
-	CreatedAt     apijson.Field
-	Creator       apijson.Field
-	EnvironmentID apijson.Field
-	StartedAt     apijson.Field
-	StartedBy     apijson.Field
-	TaskID        apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadata) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataJSON) RawJSON() string {
-	return r.raw
-}
-
-// creator describes the principal who created/started the task run.
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreator struct {
-	// id is the UUID of the subject
-	ID string `json:"id"`
-	// Principal is the principal of the subject
-	Principal EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal `json:"principal"`
-	JSON      environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorJSON      `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreator]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorJSON struct {
-	ID          apijson.Field
-	Principal   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreator) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorJSON) RawJSON() string {
-	return r.raw
-}
-
-// Principal is the principal of the subject
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal string
-
-const (
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_USER"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
-)
-
-func (r EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipal) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalServiceAccount:
-		return true
-	}
-	return false
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpec struct {
-	// desired_phase is the phase the task execution should be in. Used to stop a
-	// running task execution early.
-	DesiredPhase EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase `json:"desiredPhase"`
-	// plan is a list of groups of steps. The steps in a group are executed
-	// concurrently, while the groups are executed sequentially. The order of the
-	// groups is the order in which they are executed.
-	Plan []EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlan `json:"plan"`
-	JSON environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecJSON   `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecJSON contains
-// the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpec]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecJSON struct {
-	DesiredPhase apijson.Field
-	Plan         apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpec) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecJSON) RawJSON() string {
-	return r.raw
-}
-
-// desired_phase is the phase the task execution should be in. Used to stop a
-// running task execution early.
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase string
-
-const (
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_STOPPED"
-)
-
-func (r EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhase) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseStopped:
-		return true
-	}
-	return false
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlan struct {
-	Steps []EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep `json:"steps"`
-	JSON  environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON   `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlan]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON struct {
-	Steps       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlan) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep struct {
-	JSON environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON struct {
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsSpecPlanStepJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatus struct {
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
-	FailureMessage string `json:"failureMessage"`
-	// log_url is the URL to the logs of the task's steps. If this is empty, the task
-	// either has no logs or has not yet started.
-	LogURL string `json:"logUrl"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
-	Phase EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase `json:"phase"`
-	// version of the status update. Environment instances themselves are unversioned,
-	// but their statuus has different versions. The value of this field has no
-	// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-	// to impose a partial order. If a.status_version < b.status_version then a was the
-	// status before b.
-	StatusVersion EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStatusVersionUnion `json:"statusVersion"`
-	// steps provides the status for each individual step of the task execution. If a
-	// step is missing it has not yet started.
-	Steps []EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStep `json:"steps"`
-	JSON  environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusJSON   `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatus]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusJSON struct {
-	FailureMessage apijson.Field
-	LogURL         apijson.Field
-	Phase          apijson.Field
-	StatusVersion  apijson.Field
-	Steps          apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatus) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusJSON) RawJSON() string {
-	return r.raw
-}
-
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase string
-
-const (
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_STOPPED"
-)
-
-func (r EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhase) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseStopped:
-		return true
-	}
-	return false
-}
-
-// version of the status update. Environment instances themselves are unversioned,
-// but their statuus has different versions. The value of this field has no
-// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-// to impose a partial order. If a.status_version < b.status_version then a was the
-// status before b.
-//
-// Union satisfied by [shared.UnionString] or [shared.UnionFloat].
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStatusVersionUnion interface {
-	ImplementsEnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStatusVersionUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStatusVersionUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionFloat(0)),
-		},
-	)
-}
-
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStep struct {
-	// ID is the ID of the execution step
-	ID string `json:"id" format:"uuid"`
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
-	FailureMessage string `json:"failureMessage"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
-	Phase EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase `json:"phase"`
-	JSON  environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepJSON   `json:"-"`
-}
-
-// environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStep]
-type environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepJSON struct {
-	ID             apijson.Field
-	FailureMessage apijson.Field
-	Phase          apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStep) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepJSON) RawJSON() string {
-	return r.raw
-}
-
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
-type EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase string
-
-const (
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_STOPPED"
-)
-
-func (r EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhase) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseStopped:
 		return true
 	}
 	return false
@@ -2569,22 +1883,21 @@ func (r environmentAutomationTaskExecutionNewGetResponseTaskExecutionSpecPlanSte
 }
 
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatus struct {
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// failure_message summarises why the task execution failed to operate. If this is
+	// non-empty the task execution has failed to operate and will likely transition to
+	// a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url is the URL to the logs of the task's steps. If this is empty, the task
 	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
+	// the phase of a task execution represents the aggregated phase of all steps.
 	Phase EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusPhase `json:"phase"`
-	// version of the status update. Environment instances themselves are unversioned,
-	// but their statuus has different versions. The value of this field has no
-	// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-	// to impose a partial order. If a.status_version < b.status_version then a was the
+	// version of the status update. Task executions themselves are unversioned, but
+	// their status has different versions. The value of this field has no semantic
+	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion `json:"statusVersion"`
+	StatusVersion EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion `json:"statusVersion" format:"int64"`
 	// steps provides the status for each individual step of the task execution. If a
 	// step is missing it has not yet started.
 	Steps []EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStep `json:"steps"`
@@ -2612,8 +1925,7 @@ func (r environmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusJSON)
 	return r.raw
 }
 
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
+// the phase of a task execution represents the aggregated phase of all steps.
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusPhase string
 
 const (
@@ -2633,13 +1945,13 @@ func (r EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusPhase
 	return false
 }
 
-// version of the status update. Environment instances themselves are unversioned,
-// but their statuus has different versions. The value of this field has no
-// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-// to impose a partial order. If a.status_version < b.status_version then a was the
+// version of the status update. Task executions themselves are unversioned, but
+// their status has different versions. The value of this field has no semantic
+// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+// impose a partial order. If a.status_version < b.status_version then a was the
 // status before b.
 //
-// Union satisfied by [shared.UnionString] or [shared.UnionFloat].
+// Union satisfied by [shared.UnionInt] or [shared.UnionString].
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion interface {
 	ImplementsEnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion()
 }
@@ -2649,12 +1961,12 @@ func init() {
 		reflect.TypeOf((*EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
+			TypeFilter: gjson.Number,
+			Type:       reflect.TypeOf(shared.UnionInt(0)),
 		},
 		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionFloat(0)),
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(shared.UnionString("")),
 		},
 	)
 }
@@ -2662,12 +1974,10 @@ func init() {
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStep struct {
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
-	// failure_message summarises why the environment failed to operate. If this is
-	// non-empty the environment has failed to operate and will likely transition to a
-	// stopped state.
+	// failure_message summarises why the step failed to operate. If this is non-empty
+	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
-	// the phase of a environment is a simple, high-level summary of where the
-	// environment is in its lifecycle
+	// phase is the current phase of the execution step
 	Phase EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStepsPhase `json:"phase"`
 	JSON  environmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStepJSON   `json:"-"`
 }
@@ -2691,8 +2001,7 @@ func (r environmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStepJ
 	return r.raw
 }
 
-// the phase of a environment is a simple, high-level summary of where the
-// environment is in its lifecycle
+// phase is the current phase of the execution step
 type EnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStepsPhase string
 
 const (
@@ -2719,22 +2028,13 @@ type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusResponse = inter
 type EnvironmentAutomationTaskExecutionGetParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Base64                 param.Field[string]                                                            `query:"base64"`
-	Compression            param.Field[string]                                                            `query:"compression"`
-	Connect                param.Field[string]                                                            `query:"connect"`
-	Encoding               param.Field[string]                                                            `query:"encoding"`
-	Message                param.Field[string]                                                            `query:"message"`
+	ID                     param.Field[string]                                                            `json:"id" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EnvironmentAutomationTaskExecutionGetParams]'s query
-// parameters as `url.Values`.
-func (r EnvironmentAutomationTaskExecutionGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
+func (r EnvironmentAutomationTaskExecutionGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -2755,22 +2055,16 @@ func (r EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion) IsKno
 type EnvironmentAutomationTaskExecutionListParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Base64                 param.Field[string]                                                             `query:"base64"`
-	Compression            param.Field[string]                                                             `query:"compression"`
-	Connect                param.Field[string]                                                             `query:"connect"`
-	Encoding               param.Field[string]                                                             `query:"encoding"`
-	Message                param.Field[string]                                                             `query:"message"`
+	// filter contains the filter options for listing task runs
+	Filter param.Field[EnvironmentAutomationTaskExecutionListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing task runs
+	Pagination param.Field[EnvironmentAutomationTaskExecutionListParamsPagination] `json:"pagination"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EnvironmentAutomationTaskExecutionListParams]'s query
-// parameters as `url.Values`.
-func (r EnvironmentAutomationTaskExecutionListParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
+func (r EnvironmentAutomationTaskExecutionListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -2788,73 +2082,43 @@ func (r EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion) IsKn
 	return false
 }
 
-type EnvironmentAutomationTaskExecutionNewListParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// filter contains the filter options for listing task runs
-	Filter param.Field[EnvironmentAutomationTaskExecutionNewListParamsFilter] `json:"filter"`
-	// pagination contains the pagination options for listing task runs
-	Pagination param.Field[EnvironmentAutomationTaskExecutionNewListParamsPagination] `json:"pagination"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
-}
-
-func (r EnvironmentAutomationTaskExecutionNewListParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionNewListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 // filter contains the filter options for listing task runs
-type EnvironmentAutomationTaskExecutionNewListParamsFilter struct {
+type EnvironmentAutomationTaskExecutionListParamsFilter struct {
 	// environment_ids filters the response to only task runs of these environments
 	EnvironmentIDs param.Field[[]string] `json:"environmentIds" format:"uuid"`
 	// phases filters the response to only task runs in these phases
-	Phases param.Field[[]EnvironmentAutomationTaskExecutionNewListParamsFilterPhase] `json:"phases"`
+	Phases param.Field[[]EnvironmentAutomationTaskExecutionListParamsFilterPhase] `json:"phases"`
 	// task_ids filters the response to only task runs of these tasks
 	TaskIDs param.Field[[]string] `json:"taskIds" format:"uuid"`
 	// task_references filters the response to only task runs with this reference
 	TaskReferences param.Field[[]string] `json:"taskReferences"`
 }
 
-func (r EnvironmentAutomationTaskExecutionNewListParamsFilter) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentAutomationTaskExecutionListParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type EnvironmentAutomationTaskExecutionNewListParamsFilterPhase string
+type EnvironmentAutomationTaskExecutionListParamsFilterPhase string
 
 const (
-	EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionNewListParamsFilterPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionNewListParamsFilterPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionNewListParamsFilterPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionNewListParamsFilterPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionNewListParamsFilterPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionNewListParamsFilterPhase = "TASK_EXECUTION_PHASE_STOPPED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_PENDING"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_RUNNING"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_FAILED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_STOPPED"
 )
 
-func (r EnvironmentAutomationTaskExecutionNewListParamsFilterPhase) IsKnown() bool {
+func (r EnvironmentAutomationTaskExecutionListParamsFilterPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionNewListParamsFilterPhaseTaskExecutionPhaseStopped:
+	case EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseStopped:
 		return true
 	}
 	return false
 }
 
 // pagination contains the pagination options for listing task runs
-type EnvironmentAutomationTaskExecutionNewListParamsPagination struct {
+type EnvironmentAutomationTaskExecutionListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
@@ -2863,7 +2127,7 @@ type EnvironmentAutomationTaskExecutionNewListParamsPagination struct {
 	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-func (r EnvironmentAutomationTaskExecutionNewListParamsPagination) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentAutomationTaskExecutionListParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

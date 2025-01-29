@@ -18,6 +18,7 @@ type Client struct {
 	Services               *ServiceService
 	AutomationsFiles       *AutomationsFileService
 	Tasks                  *TaskService
+	Editors                *EditorService
 	EnvironmentAutomations *EnvironmentAutomationService
 	Environments           *EnvironmentService
 	EnvironmentClasses     *EnvironmentClassService
@@ -42,6 +43,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Services = NewServiceService(opts...)
 	r.AutomationsFiles = NewAutomationsFileService(opts...)
 	r.Tasks = NewTaskService(opts...)
+	r.Editors = NewEditorService(opts...)
 	r.EnvironmentAutomations = NewEnvironmentAutomationService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.EnvironmentClasses = NewEnvironmentClassService(opts...)

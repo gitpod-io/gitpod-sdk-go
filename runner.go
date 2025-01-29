@@ -6,11 +6,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -50,20 +48,6 @@ func (r *RunnerService) New(ctx context.Context, params RunnerNewParams, opts ..
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
-}
-
-// GetRunner returns a single runner.
-func (r *RunnerService) Get(ctx context.Context, params RunnerGetParams, opts ...option.RequestOption) (res *RunnerGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
-	opts = append(r.Options[:], opts...)
-	path := "gitpod.v1.RunnerService/GetRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
 
@@ -470,14 +454,15 @@ func (r RunnerNewResponseRunnerCreatorPrincipal) IsKnown() bool {
 type RunnerNewResponseRunnerKind string
 
 const (
-	RunnerNewResponseRunnerKindRunnerKindUnspecified RunnerNewResponseRunnerKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerNewResponseRunnerKindRunnerKindLocal       RunnerNewResponseRunnerKind = "RUNNER_KIND_LOCAL"
-	RunnerNewResponseRunnerKindRunnerKindRemote      RunnerNewResponseRunnerKind = "RUNNER_KIND_REMOTE"
+	RunnerNewResponseRunnerKindRunnerKindUnspecified        RunnerNewResponseRunnerKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerNewResponseRunnerKindRunnerKindLocal              RunnerNewResponseRunnerKind = "RUNNER_KIND_LOCAL"
+	RunnerNewResponseRunnerKindRunnerKindRemote             RunnerNewResponseRunnerKind = "RUNNER_KIND_REMOTE"
+	RunnerNewResponseRunnerKindRunnerKindLocalConfiguration RunnerNewResponseRunnerKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
 func (r RunnerNewResponseRunnerKind) IsKnown() bool {
 	switch r {
-	case RunnerNewResponseRunnerKindRunnerKindUnspecified, RunnerNewResponseRunnerKindRunnerKindLocal, RunnerNewResponseRunnerKindRunnerKindRemote:
+	case RunnerNewResponseRunnerKindRunnerKindUnspecified, RunnerNewResponseRunnerKindRunnerKindLocal, RunnerNewResponseRunnerKindRunnerKindRemote, RunnerNewResponseRunnerKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false
@@ -583,7 +568,9 @@ type RunnerNewResponseRunnerStatus struct {
 	// additional_info contains additional information about the runner, e.g. a
 	// CloudFormation stack URL.
 	AdditionalInfo []RunnerNewResponseRunnerStatusAdditionalInfo `json:"additionalInfo"`
-	LogURL         string                                        `json:"logUrl"`
+	// capabilities is a list of capabilities the runner supports.
+	Capabilities []RunnerNewResponseRunnerStatusCapability `json:"capabilities"`
+	LogURL       string                                    `json:"logUrl"`
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
@@ -689,6 +676,7 @@ type RunnerNewResponseRunnerStatus struct {
 // [RunnerNewResponseRunnerStatus]
 type runnerNewResponseRunnerStatusJSON struct {
 	AdditionalInfo apijson.Field
+	Capabilities   apijson.Field
 	LogURL         apijson.Field
 	Message        apijson.Field
 	Phase          apijson.Field
@@ -731,6 +719,21 @@ func (r runnerNewResponseRunnerStatusAdditionalInfoJSON) RawJSON() string {
 	return r.raw
 }
 
+type RunnerNewResponseRunnerStatusCapability string
+
+const (
+	RunnerNewResponseRunnerStatusCapabilityRunnerCapabilityUnspecified               RunnerNewResponseRunnerStatusCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerNewResponseRunnerStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerNewResponseRunnerStatusCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+)
+
+func (r RunnerNewResponseRunnerStatusCapability) IsKnown() bool {
+	switch r {
+	case RunnerNewResponseRunnerStatusCapabilityRunnerCapabilityUnspecified, RunnerNewResponseRunnerStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations:
+		return true
+	}
+	return false
+}
+
 // RunnerPhase represents the phase a runner is in
 type RunnerNewResponseRunnerStatusPhase string
 
@@ -747,575 +750,6 @@ const (
 func (r RunnerNewResponseRunnerStatusPhase) IsKnown() bool {
 	switch r {
 	case RunnerNewResponseRunnerStatusPhaseRunnerPhaseUnspecified, RunnerNewResponseRunnerStatusPhaseRunnerPhaseCreated, RunnerNewResponseRunnerStatusPhaseRunnerPhaseInactive, RunnerNewResponseRunnerStatusPhaseRunnerPhaseActive, RunnerNewResponseRunnerStatusPhaseRunnerPhaseDeleting, RunnerNewResponseRunnerStatusPhaseRunnerPhaseDeleted, RunnerNewResponseRunnerStatusPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
-}
-
-type RunnerGetResponse struct {
-	Runner RunnerGetResponseRunner `json:"runner"`
-	JSON   runnerGetResponseJSON   `json:"-"`
-}
-
-// runnerGetResponseJSON contains the JSON metadata for the struct
-// [RunnerGetResponse]
-type runnerGetResponseJSON struct {
-	Runner      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerGetResponseRunner struct {
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt time.Time `json:"createdAt" format:"date-time"`
-	// creator is the identity of the creator of the environment
-	Creator RunnerGetResponseRunnerCreator `json:"creator"`
-	// RunnerKind represents the kind of a runner
-	Kind RunnerGetResponseRunnerKind `json:"kind"`
-	// The runner's name which is shown to users
-	Name     string `json:"name"`
-	RunnerID string `json:"runnerId"`
-	// The runner's specification
-	Spec RunnerGetResponseRunnerSpec `json:"spec"`
-	// RunnerStatus represents the status of a runner
-	Status RunnerGetResponseRunnerStatus `json:"status"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                   `json:"updatedAt" format:"date-time"`
-	JSON      runnerGetResponseRunnerJSON `json:"-"`
-}
-
-// runnerGetResponseRunnerJSON contains the JSON metadata for the struct
-// [RunnerGetResponseRunner]
-type runnerGetResponseRunnerJSON struct {
-	CreatedAt   apijson.Field
-	Creator     apijson.Field
-	Kind        apijson.Field
-	Name        apijson.Field
-	RunnerID    apijson.Field
-	Spec        apijson.Field
-	Status      apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetResponseRunner) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseRunnerJSON) RawJSON() string {
-	return r.raw
-}
-
-// creator is the identity of the creator of the environment
-type RunnerGetResponseRunnerCreator struct {
-	// id is the UUID of the subject
-	ID string `json:"id"`
-	// Principal is the principal of the subject
-	Principal RunnerGetResponseRunnerCreatorPrincipal `json:"principal"`
-	JSON      runnerGetResponseRunnerCreatorJSON      `json:"-"`
-}
-
-// runnerGetResponseRunnerCreatorJSON contains the JSON metadata for the struct
-// [RunnerGetResponseRunnerCreator]
-type runnerGetResponseRunnerCreatorJSON struct {
-	ID          apijson.Field
-	Principal   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetResponseRunnerCreator) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseRunnerCreatorJSON) RawJSON() string {
-	return r.raw
-}
-
-// Principal is the principal of the subject
-type RunnerGetResponseRunnerCreatorPrincipal string
-
-const (
-	RunnerGetResponseRunnerCreatorPrincipalPrincipalUnspecified    RunnerGetResponseRunnerCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	RunnerGetResponseRunnerCreatorPrincipalPrincipalAccount        RunnerGetResponseRunnerCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	RunnerGetResponseRunnerCreatorPrincipalPrincipalUser           RunnerGetResponseRunnerCreatorPrincipal = "PRINCIPAL_USER"
-	RunnerGetResponseRunnerCreatorPrincipalPrincipalRunner         RunnerGetResponseRunnerCreatorPrincipal = "PRINCIPAL_RUNNER"
-	RunnerGetResponseRunnerCreatorPrincipalPrincipalEnvironment    RunnerGetResponseRunnerCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	RunnerGetResponseRunnerCreatorPrincipalPrincipalServiceAccount RunnerGetResponseRunnerCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
-)
-
-func (r RunnerGetResponseRunnerCreatorPrincipal) IsKnown() bool {
-	switch r {
-	case RunnerGetResponseRunnerCreatorPrincipalPrincipalUnspecified, RunnerGetResponseRunnerCreatorPrincipalPrincipalAccount, RunnerGetResponseRunnerCreatorPrincipalPrincipalUser, RunnerGetResponseRunnerCreatorPrincipalPrincipalRunner, RunnerGetResponseRunnerCreatorPrincipalPrincipalEnvironment, RunnerGetResponseRunnerCreatorPrincipalPrincipalServiceAccount:
-		return true
-	}
-	return false
-}
-
-// RunnerKind represents the kind of a runner
-type RunnerGetResponseRunnerKind string
-
-const (
-	RunnerGetResponseRunnerKindRunnerKindUnspecified RunnerGetResponseRunnerKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerGetResponseRunnerKindRunnerKindLocal       RunnerGetResponseRunnerKind = "RUNNER_KIND_LOCAL"
-	RunnerGetResponseRunnerKindRunnerKindRemote      RunnerGetResponseRunnerKind = "RUNNER_KIND_REMOTE"
-)
-
-func (r RunnerGetResponseRunnerKind) IsKnown() bool {
-	switch r {
-	case RunnerGetResponseRunnerKindRunnerKindUnspecified, RunnerGetResponseRunnerKindRunnerKindLocal, RunnerGetResponseRunnerKindRunnerKindRemote:
-		return true
-	}
-	return false
-}
-
-// The runner's specification
-type RunnerGetResponseRunnerSpec struct {
-	// The runner's configuration
-	Configuration RunnerGetResponseRunnerSpecConfiguration `json:"configuration"`
-	// RunnerPhase represents the phase a runner is in
-	DesiredPhase RunnerGetResponseRunnerSpecDesiredPhase `json:"desiredPhase"`
-	JSON         runnerGetResponseRunnerSpecJSON         `json:"-"`
-}
-
-// runnerGetResponseRunnerSpecJSON contains the JSON metadata for the struct
-// [RunnerGetResponseRunnerSpec]
-type runnerGetResponseRunnerSpecJSON struct {
-	Configuration apijson.Field
-	DesiredPhase  apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *RunnerGetResponseRunnerSpec) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseRunnerSpecJSON) RawJSON() string {
-	return r.raw
-}
-
-// The runner's configuration
-type RunnerGetResponseRunnerSpecConfiguration struct {
-	// auto_update indicates whether the runner should automatically update itself.
-	AutoUpdate bool `json:"autoUpdate"`
-	// Region to deploy the runner in, if applicable. This is mainly used for remote
-	// runners, and is only a hint. The runner may be deployed in a different region.
-	// See the runner's status for the actual region.
-	Region string `json:"region"`
-	// The release channel the runner is on
-	ReleaseChannel RunnerGetResponseRunnerSpecConfigurationReleaseChannel `json:"releaseChannel"`
-	JSON           runnerGetResponseRunnerSpecConfigurationJSON           `json:"-"`
-}
-
-// runnerGetResponseRunnerSpecConfigurationJSON contains the JSON metadata for the
-// struct [RunnerGetResponseRunnerSpecConfiguration]
-type runnerGetResponseRunnerSpecConfigurationJSON struct {
-	AutoUpdate     apijson.Field
-	Region         apijson.Field
-	ReleaseChannel apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *RunnerGetResponseRunnerSpecConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseRunnerSpecConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
-// The release channel the runner is on
-type RunnerGetResponseRunnerSpecConfigurationReleaseChannel string
-
-const (
-	RunnerGetResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified RunnerGetResponseRunnerSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerGetResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelStable      RunnerGetResponseRunnerSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerGetResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelLatest      RunnerGetResponseRunnerSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
-)
-
-func (r RunnerGetResponseRunnerSpecConfigurationReleaseChannel) IsKnown() bool {
-	switch r {
-	case RunnerGetResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified, RunnerGetResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelStable, RunnerGetResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelLatest:
-		return true
-	}
-	return false
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerGetResponseRunnerSpecDesiredPhase string
-
-const (
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseUnspecified RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseCreated     RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_CREATED"
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseInactive    RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseActive      RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseDeleting    RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_DELETING"
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseDeleted     RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_DELETED"
-	RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseDegraded    RunnerGetResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerGetResponseRunnerSpecDesiredPhase) IsKnown() bool {
-	switch r {
-	case RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseUnspecified, RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseCreated, RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseInactive, RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseActive, RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseDeleting, RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseDeleted, RunnerGetResponseRunnerSpecDesiredPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
-}
-
-// RunnerStatus represents the status of a runner
-type RunnerGetResponseRunnerStatus struct {
-	// additional_info contains additional information about the runner, e.g. a
-	// CloudFormation stack URL.
-	AdditionalInfo []RunnerGetResponseRunnerStatusAdditionalInfo `json:"additionalInfo"`
-	LogURL         string                                        `json:"logUrl"`
-	// The runner's reported message which is shown to users. This message adds more
-	// context to the runner's phase.
-	Message string `json:"message"`
-	// RunnerPhase represents the phase a runner is in
-	Phase RunnerGetResponseRunnerStatusPhase `json:"phase"`
-	// region is the region the runner is running in, if applicable.
-	Region        string `json:"region"`
-	SystemDetails string `json:"systemDetails"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                         `json:"updatedAt" format:"date-time"`
-	Version   string                            `json:"version"`
-	JSON      runnerGetResponseRunnerStatusJSON `json:"-"`
-}
-
-// runnerGetResponseRunnerStatusJSON contains the JSON metadata for the struct
-// [RunnerGetResponseRunnerStatus]
-type runnerGetResponseRunnerStatusJSON struct {
-	AdditionalInfo apijson.Field
-	LogURL         apijson.Field
-	Message        apijson.Field
-	Phase          apijson.Field
-	Region         apijson.Field
-	SystemDetails  apijson.Field
-	UpdatedAt      apijson.Field
-	Version        apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *RunnerGetResponseRunnerStatus) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseRunnerStatusJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerGetResponseRunnerStatusAdditionalInfo struct {
-	Key   string                                          `json:"key"`
-	Value string                                          `json:"value"`
-	JSON  runnerGetResponseRunnerStatusAdditionalInfoJSON `json:"-"`
-}
-
-// runnerGetResponseRunnerStatusAdditionalInfoJSON contains the JSON metadata for
-// the struct [RunnerGetResponseRunnerStatusAdditionalInfo]
-type runnerGetResponseRunnerStatusAdditionalInfoJSON struct {
-	Key         apijson.Field
-	Value       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetResponseRunnerStatusAdditionalInfo) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetResponseRunnerStatusAdditionalInfoJSON) RawJSON() string {
-	return r.raw
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerGetResponseRunnerStatusPhase string
-
-const (
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseUnspecified RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseCreated     RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_CREATED"
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseInactive    RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseActive      RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseDeleting    RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_DELETING"
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseDeleted     RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_DELETED"
-	RunnerGetResponseRunnerStatusPhaseRunnerPhaseDegraded    RunnerGetResponseRunnerStatusPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerGetResponseRunnerStatusPhase) IsKnown() bool {
-	switch r {
-	case RunnerGetResponseRunnerStatusPhaseRunnerPhaseUnspecified, RunnerGetResponseRunnerStatusPhaseRunnerPhaseCreated, RunnerGetResponseRunnerStatusPhaseRunnerPhaseInactive, RunnerGetResponseRunnerStatusPhaseRunnerPhaseActive, RunnerGetResponseRunnerStatusPhaseRunnerPhaseDeleting, RunnerGetResponseRunnerStatusPhaseRunnerPhaseDeleted, RunnerGetResponseRunnerStatusPhaseRunnerPhaseDegraded:
 		return true
 	}
 	return false
@@ -1636,14 +1070,15 @@ func (r RunnerListResponseRunnersCreatorPrincipal) IsKnown() bool {
 type RunnerListResponseRunnersKind string
 
 const (
-	RunnerListResponseRunnersKindRunnerKindUnspecified RunnerListResponseRunnersKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerListResponseRunnersKindRunnerKindLocal       RunnerListResponseRunnersKind = "RUNNER_KIND_LOCAL"
-	RunnerListResponseRunnersKindRunnerKindRemote      RunnerListResponseRunnersKind = "RUNNER_KIND_REMOTE"
+	RunnerListResponseRunnersKindRunnerKindUnspecified        RunnerListResponseRunnersKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerListResponseRunnersKindRunnerKindLocal              RunnerListResponseRunnersKind = "RUNNER_KIND_LOCAL"
+	RunnerListResponseRunnersKindRunnerKindRemote             RunnerListResponseRunnersKind = "RUNNER_KIND_REMOTE"
+	RunnerListResponseRunnersKindRunnerKindLocalConfiguration RunnerListResponseRunnersKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
 func (r RunnerListResponseRunnersKind) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersKindRunnerKindUnspecified, RunnerListResponseRunnersKindRunnerKindLocal, RunnerListResponseRunnersKindRunnerKindRemote:
+	case RunnerListResponseRunnersKindRunnerKindUnspecified, RunnerListResponseRunnersKindRunnerKindLocal, RunnerListResponseRunnersKindRunnerKindRemote, RunnerListResponseRunnersKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false
@@ -1749,7 +1184,9 @@ type RunnerListResponseRunnersStatus struct {
 	// additional_info contains additional information about the runner, e.g. a
 	// CloudFormation stack URL.
 	AdditionalInfo []RunnerListResponseRunnersStatusAdditionalInfo `json:"additionalInfo"`
-	LogURL         string                                          `json:"logUrl"`
+	// capabilities is a list of capabilities the runner supports.
+	Capabilities []RunnerListResponseRunnersStatusCapability `json:"capabilities"`
+	LogURL       string                                      `json:"logUrl"`
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
@@ -1855,6 +1292,7 @@ type RunnerListResponseRunnersStatus struct {
 // [RunnerListResponseRunnersStatus]
 type runnerListResponseRunnersStatusJSON struct {
 	AdditionalInfo apijson.Field
+	Capabilities   apijson.Field
 	LogURL         apijson.Field
 	Message        apijson.Field
 	Phase          apijson.Field
@@ -1897,6 +1335,21 @@ func (r runnerListResponseRunnersStatusAdditionalInfoJSON) RawJSON() string {
 	return r.raw
 }
 
+type RunnerListResponseRunnersStatusCapability string
+
+const (
+	RunnerListResponseRunnersStatusCapabilityRunnerCapabilityUnspecified               RunnerListResponseRunnersStatusCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerListResponseRunnersStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerListResponseRunnersStatusCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+)
+
+func (r RunnerListResponseRunnersStatusCapability) IsKnown() bool {
+	switch r {
+	case RunnerListResponseRunnersStatusCapabilityRunnerCapabilityUnspecified, RunnerListResponseRunnersStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations:
+		return true
+	}
+	return false
+}
+
 // RunnerPhase represents the phase a runner is in
 type RunnerListResponseRunnersStatusPhase string
 
@@ -1922,6 +1375,7 @@ type RunnerCheckAuthenticationForHostResponse struct {
 	Authenticated     bool                                         `json:"authenticated"`
 	AuthenticationURL string                                       `json:"authenticationUrl"`
 	PatSupported      bool                                         `json:"patSupported"`
+	ScmID             string                                       `json:"scmId"`
 	JSON              runnerCheckAuthenticationForHostResponseJSON `json:"-"`
 }
 
@@ -1931,6 +1385,7 @@ type runnerCheckAuthenticationForHostResponseJSON struct {
 	Authenticated     apijson.Field
 	AuthenticationURL apijson.Field
 	PatSupported      apijson.Field
+	ScmID             apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -2253,14 +1708,15 @@ func (r RunnerGetRunnerResponseRunnerCreatorPrincipal) IsKnown() bool {
 type RunnerGetRunnerResponseRunnerKind string
 
 const (
-	RunnerGetRunnerResponseRunnerKindRunnerKindUnspecified RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerKindRunnerKindLocal       RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_LOCAL"
-	RunnerGetRunnerResponseRunnerKindRunnerKindRemote      RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_REMOTE"
+	RunnerGetRunnerResponseRunnerKindRunnerKindUnspecified        RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerGetRunnerResponseRunnerKindRunnerKindLocal              RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_LOCAL"
+	RunnerGetRunnerResponseRunnerKindRunnerKindRemote             RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_REMOTE"
+	RunnerGetRunnerResponseRunnerKindRunnerKindLocalConfiguration RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
 func (r RunnerGetRunnerResponseRunnerKind) IsKnown() bool {
 	switch r {
-	case RunnerGetRunnerResponseRunnerKindRunnerKindUnspecified, RunnerGetRunnerResponseRunnerKindRunnerKindLocal, RunnerGetRunnerResponseRunnerKindRunnerKindRemote:
+	case RunnerGetRunnerResponseRunnerKindRunnerKindUnspecified, RunnerGetRunnerResponseRunnerKindRunnerKindLocal, RunnerGetRunnerResponseRunnerKindRunnerKindRemote, RunnerGetRunnerResponseRunnerKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false
@@ -2366,7 +1822,9 @@ type RunnerGetRunnerResponseRunnerStatus struct {
 	// additional_info contains additional information about the runner, e.g. a
 	// CloudFormation stack URL.
 	AdditionalInfo []RunnerGetRunnerResponseRunnerStatusAdditionalInfo `json:"additionalInfo"`
-	LogURL         string                                              `json:"logUrl"`
+	// capabilities is a list of capabilities the runner supports.
+	Capabilities []RunnerGetRunnerResponseRunnerStatusCapability `json:"capabilities"`
+	LogURL       string                                          `json:"logUrl"`
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
@@ -2472,6 +1930,7 @@ type RunnerGetRunnerResponseRunnerStatus struct {
 // struct [RunnerGetRunnerResponseRunnerStatus]
 type runnerGetRunnerResponseRunnerStatusJSON struct {
 	AdditionalInfo apijson.Field
+	Capabilities   apijson.Field
 	LogURL         apijson.Field
 	Message        apijson.Field
 	Phase          apijson.Field
@@ -2512,6 +1971,21 @@ func (r *RunnerGetRunnerResponseRunnerStatusAdditionalInfo) UnmarshalJSON(data [
 
 func (r runnerGetRunnerResponseRunnerStatusAdditionalInfoJSON) RawJSON() string {
 	return r.raw
+}
+
+type RunnerGetRunnerResponseRunnerStatusCapability string
+
+const (
+	RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityUnspecified               RunnerGetRunnerResponseRunnerStatusCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerGetRunnerResponseRunnerStatusCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+)
+
+func (r RunnerGetRunnerResponseRunnerStatusCapability) IsKnown() bool {
+	switch r {
+	case RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityUnspecified, RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations:
+		return true
+	}
+	return false
 }
 
 // RunnerPhase represents the phase a runner is in
@@ -2628,14 +2102,15 @@ func (r RunnerNewParamsConnectProtocolVersion) IsKnown() bool {
 type RunnerNewParamsKind string
 
 const (
-	RunnerNewParamsKindRunnerKindUnspecified RunnerNewParamsKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerNewParamsKindRunnerKindLocal       RunnerNewParamsKind = "RUNNER_KIND_LOCAL"
-	RunnerNewParamsKindRunnerKindRemote      RunnerNewParamsKind = "RUNNER_KIND_REMOTE"
+	RunnerNewParamsKindRunnerKindUnspecified        RunnerNewParamsKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerNewParamsKindRunnerKindLocal              RunnerNewParamsKind = "RUNNER_KIND_LOCAL"
+	RunnerNewParamsKindRunnerKindRemote             RunnerNewParamsKind = "RUNNER_KIND_REMOTE"
+	RunnerNewParamsKindRunnerKindLocalConfiguration RunnerNewParamsKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
 func (r RunnerNewParamsKind) IsKnown() bool {
 	switch r {
-	case RunnerNewParamsKindRunnerKindUnspecified, RunnerNewParamsKindRunnerKindLocal, RunnerNewParamsKindRunnerKindRemote:
+	case RunnerNewParamsKindRunnerKindUnspecified, RunnerNewParamsKindRunnerKindLocal, RunnerNewParamsKindRunnerKindRemote, RunnerNewParamsKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false
@@ -2706,41 +2181,6 @@ func (r RunnerNewParamsSpecDesiredPhase) IsKnown() bool {
 	return false
 }
 
-type RunnerGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Base64                 param.Field[string]                                `query:"base64"`
-	Compression            param.Field[string]                                `query:"compression"`
-	Connect                param.Field[string]                                `query:"connect"`
-	Encoding               param.Field[string]                                `query:"encoding"`
-	Message                param.Field[string]                                `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
-}
-
-// URLQuery serializes [RunnerGetParams]'s query parameters as `url.Values`.
-func (r RunnerGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define the version of the Connect protocol
-type RunnerGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerGetParamsConnectProtocolVersion1 RunnerGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerListParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
@@ -2785,14 +2225,15 @@ func (r RunnerListParamsFilter) MarshalJSON() (data []byte, err error) {
 type RunnerListParamsFilterKind string
 
 const (
-	RunnerListParamsFilterKindRunnerKindUnspecified RunnerListParamsFilterKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerListParamsFilterKindRunnerKindLocal       RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL"
-	RunnerListParamsFilterKindRunnerKindRemote      RunnerListParamsFilterKind = "RUNNER_KIND_REMOTE"
+	RunnerListParamsFilterKindRunnerKindUnspecified        RunnerListParamsFilterKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerListParamsFilterKindRunnerKindLocal              RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL"
+	RunnerListParamsFilterKindRunnerKindRemote             RunnerListParamsFilterKind = "RUNNER_KIND_REMOTE"
+	RunnerListParamsFilterKindRunnerKindLocalConfiguration RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
 func (r RunnerListParamsFilterKind) IsKnown() bool {
 	switch r {
-	case RunnerListParamsFilterKindRunnerKindUnspecified, RunnerListParamsFilterKindRunnerKindLocal, RunnerListParamsFilterKindRunnerKindRemote:
+	case RunnerListParamsFilterKindRunnerKindUnspecified, RunnerListParamsFilterKindRunnerKindLocal, RunnerListParamsFilterKindRunnerKindRemote, RunnerListParamsFilterKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false

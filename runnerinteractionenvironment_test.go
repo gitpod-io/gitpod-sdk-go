@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stainless-sdks/gitpod-go"
 	"github.com/stainless-sdks/gitpod-go/internal/testutil"
@@ -86,6 +87,10 @@ func TestRunnerInteractionEnvironmentUpdateStatusWithOptionalParams(t *testing.T
 		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Status: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatus{
+			ActivitySignal: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusActivitySignal{
+				Source:    gitpod.F("xxx"),
+				Timestamp: gitpod.F(time.Now()),
+			}),
 			AutomationsFile: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusAutomationsFile{
 				AutomationsFilePath:     gitpod.F("automationsFilePath"),
 				AutomationsFilePresence: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusAutomationsFileAutomationsFilePresencePresenceUnspecified),
@@ -151,20 +156,21 @@ func TestRunnerInteractionEnvironmentUpdateStatusWithOptionalParams(t *testing.T
 			Phase: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusPhaseEnvironmentPhaseUnspecified),
 			RunnerAck: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAck{
 				Message:     gitpod.F("message"),
-				SpecVersion: gitpod.F[gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion](shared.UnionString("string")),
+				SpecVersion: gitpod.F[gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion](shared.UnionInt(int64(0))),
 				StatusCode:  gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckStatusCodeStatusCodeUnspecified),
 			}),
 			Secrets: gitpod.F([]gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSecret{{
 				FailureMessage: gitpod.F("failureMessage"),
 				Phase:          gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSecretsPhaseContentPhaseUnspecified),
 				SecretName:     gitpod.F("secretName"),
+				Session:        gitpod.F("session"),
 				WarningMessage: gitpod.F("warningMessage"),
 			}}),
 			SSHPublicKeys: gitpod.F([]gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKey{{
 				ID:    gitpod.F("id"),
 				Phase: gitpod.F(gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKeysPhaseContentPhaseUnspecified),
 			}}),
-			StatusVersion:  gitpod.F[gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion](shared.UnionString("string")),
+			StatusVersion:  gitpod.F[gitpod.RunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion](shared.UnionInt(int64(0))),
 			WarningMessage: gitpod.F([]string{"string"}),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
