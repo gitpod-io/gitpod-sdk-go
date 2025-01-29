@@ -16,6 +16,7 @@ import (
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options              []option.RequestOption
+	Identity             *IdentityService
 	Environments         *EnvironmentService
 	EnvironmentClasses   *EnvironmentClassService
 	Organizations        *OrganizationService
@@ -38,6 +39,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r = &Client{Options: opts}
 
+	r.Identity = NewIdentityService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.EnvironmentClasses = NewEnvironmentClassService(opts...)
 	r.Organizations = NewOrganizationService(opts...)
