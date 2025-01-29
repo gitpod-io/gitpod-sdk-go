@@ -24,6 +24,7 @@ func TestRunnerConfigurationHostAuthenticationTokenNewWithOptionalParams(t *test
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.HostAuthenticationTokens.New(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion1),
@@ -49,6 +50,7 @@ func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *t
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.HostAuthenticationTokens.Update(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParams{
 		Body:                   gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBody{},
@@ -74,6 +76,7 @@ func TestRunnerConfigurationHostAuthenticationTokenListWithOptionalParams(t *tes
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.HostAuthenticationTokens.List(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1),
@@ -103,6 +106,7 @@ func TestRunnerConfigurationHostAuthenticationTokenDeleteWithOptionalParams(t *t
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.HostAuthenticationTokens.Delete(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenDeleteParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion1),

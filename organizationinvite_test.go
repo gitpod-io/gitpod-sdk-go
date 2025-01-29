@@ -23,6 +23,7 @@ func TestOrganizationInviteNewWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Organizations.Invite.New(context.TODO(), gitpod.OrganizationInviteNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationInviteNewParamsConnectProtocolVersion1),
@@ -48,6 +49,7 @@ func TestOrganizationInviteGetWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.Organizations.Invite.Get(context.TODO(), gitpod.OrganizationInviteGetParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationInviteGetParamsConnectProtocolVersion1),

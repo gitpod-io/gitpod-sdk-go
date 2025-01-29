@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -27,11 +28,14 @@ type Client struct {
 }
 
 // NewClient generates a new client with the default option read from the
-// environment (). The option passed in as arguments are applied after these
-// default arguments, and all option will be passed down to the services and
-// requests that this client makes.
+// environment (GITPOD_API_KEY). The option passed in as arguments are applied
+// after these default arguments, and all option will be passed down to the
+// services and requests that this client makes.
 func NewClient(opts ...option.RequestOption) (r *Client) {
 	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
+	if o, ok := os.LookupEnv("GITPOD_API_KEY"); ok {
+		defaults = append(defaults, option.WithAuthToken(o))
+	}
 	opts = append(defaults, opts...)
 
 	r = &Client{Options: opts}

@@ -23,6 +23,7 @@ func TestAutomationsFileUpsertWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.AutomationsFiles.Upsert(context.TODO(), gitpod.AutomationsFileUpsertParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.AutomationsFileUpsertParamsConnectProtocolVersion1),

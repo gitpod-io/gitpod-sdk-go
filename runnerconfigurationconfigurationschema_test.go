@@ -23,6 +23,7 @@ func TestRunnerConfigurationConfigurationSchemaNewWithOptionalParams(t *testing.
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithAuthToken("My Auth Token"),
 	)
 	_, err := client.RunnerConfigurations.ConfigurationSchema.New(context.TODO(), gitpod.RunnerConfigurationConfigurationSchemaNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion1),

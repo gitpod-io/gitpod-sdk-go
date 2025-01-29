@@ -37,10 +37,13 @@ import (
 	"fmt"
 
 	"github.com/stainless-sdks/gitpod-go"
+	"github.com/stainless-sdks/gitpod-go/option"
 )
 
 func main() {
-	client := gitpod.NewClient()
+	client := gitpod.NewClient(
+		option.WithAuthToken("My Auth Token"), // defaults to os.LookupEnv("GITPOD_API_KEY")
+	)
 	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
 	})
