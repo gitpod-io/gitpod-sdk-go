@@ -23,6 +23,7 @@ func TestRunnerConfigurationConfigurationSchemaNewWithOptionalParams(t *testing.
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.ConfigurationSchema.New(context.TODO(), gitpod.RunnerConfigurationConfigurationSchemaNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion1),
@@ -48,6 +49,7 @@ func TestRunnerConfigurationConfigurationSchemaGetWithOptionalParams(t *testing.
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.ConfigurationSchema.Get(context.TODO(), gitpod.RunnerConfigurationConfigurationSchemaGetParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion1),

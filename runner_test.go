@@ -23,6 +23,7 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
@@ -57,6 +58,7 @@ func TestRunnerGetWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Get(context.TODO(), gitpod.RunnerGetParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetParamsConnectProtocolVersion1),
@@ -82,6 +84,7 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.List(context.TODO(), gitpod.RunnerListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerListParamsConnectProtocolVersion1),
@@ -114,6 +117,7 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.CheckAuthenticationForHost(context.TODO(), gitpod.RunnerCheckAuthenticationForHostParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerCheckAuthenticationForHostParamsConnectProtocolVersion1),
@@ -140,6 +144,7 @@ func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.NewRunnerToken(context.TODO(), gitpod.RunnerNewRunnerTokenParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewRunnerTokenParamsConnectProtocolVersion1),
@@ -165,6 +170,7 @@ func TestRunnerDeleteRunnerWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.DeleteRunner(context.TODO(), gitpod.RunnerDeleteRunnerParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerDeleteRunnerParamsConnectProtocolVersion1),
@@ -191,6 +197,7 @@ func TestRunnerGetRunnerWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.GetRunner(context.TODO(), gitpod.RunnerGetRunnerParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetRunnerParamsConnectProtocolVersion1),
@@ -216,6 +223,7 @@ func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.ParseContextURL(context.TODO(), gitpod.RunnerParseContextURLParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerParseContextURLParamsConnectProtocolVersion1),
@@ -242,6 +250,7 @@ func TestRunnerUpdateRunnerWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.UpdateRunner(context.TODO(), gitpod.RunnerUpdateRunnerParams{
 		Body:                   gitpod.RunnerUpdateRunnerParamsBody{},

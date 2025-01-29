@@ -23,6 +23,7 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Update(context.TODO(), gitpod.EnvironmentAutomationServiceUpdateParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1),
@@ -51,6 +52,7 @@ func TestEnvironmentAutomationServiceListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsConnectProtocolVersion1),
@@ -84,6 +86,7 @@ func TestEnvironmentAutomationServiceDeleteWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Delete(context.TODO(), gitpod.EnvironmentAutomationServiceDeleteParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1),
@@ -110,6 +113,7 @@ func TestEnvironmentAutomationServiceStartWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Start(context.TODO(), gitpod.EnvironmentAutomationServiceStartParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceStartParamsConnectProtocolVersion1),
@@ -135,6 +139,7 @@ func TestEnvironmentAutomationServiceStopWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Stop(context.TODO(), gitpod.EnvironmentAutomationServiceStopParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceStopParamsConnectProtocolVersion1),

@@ -23,6 +23,7 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.EnvironmentClasses.List(context.TODO(), gitpod.EnvironmentClassListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentClassListParamsConnectProtocolVersion1),

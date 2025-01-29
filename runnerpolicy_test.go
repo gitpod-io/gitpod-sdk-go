@@ -23,6 +23,7 @@ func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Policies.List(context.TODO(), gitpod.RunnerPolicyListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyListParamsConnectProtocolVersion1),

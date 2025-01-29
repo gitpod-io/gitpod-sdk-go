@@ -23,6 +23,7 @@ func TestOrganizationLeaveWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Leave(context.TODO(), gitpod.OrganizationLeaveParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationLeaveParamsConnectProtocolVersion1),
@@ -48,6 +49,7 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSetRoleParamsConnectProtocolVersion1),

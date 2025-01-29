@@ -23,6 +23,7 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.ScmIntegration.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
 		Body:                   gitpod.RunnerConfigurationScmIntegrationNewParamsBody{},
