@@ -76,6 +76,8 @@ type OrganizationMemberListResponseMember struct {
 	AvatarURL string `json:"avatarUrl"`
 	Email     string `json:"email"`
 	FullName  string `json:"fullName"`
+	// login_provider is the login provider the user uses to sign in
+	LoginProvider string `json:"loginProvider"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -174,15 +176,16 @@ type OrganizationMemberListResponseMember struct {
 // organizationMemberListResponseMemberJSON contains the JSON metadata for the
 // struct [OrganizationMemberListResponseMember]
 type organizationMemberListResponseMemberJSON struct {
-	AvatarURL   apijson.Field
-	Email       apijson.Field
-	FullName    apijson.Field
-	MemberSince apijson.Field
-	Role        apijson.Field
-	Status      apijson.Field
-	UserID      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	AvatarURL     apijson.Field
+	Email         apijson.Field
+	FullName      apijson.Field
+	LoginProvider apijson.Field
+	MemberSince   apijson.Field
+	Role          apijson.Field
+	Status        apijson.Field
+	UserID        apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
 }
 
 func (r *OrganizationMemberListResponseMember) UnmarshalJSON(data []byte) (err error) {

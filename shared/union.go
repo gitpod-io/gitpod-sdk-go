@@ -4,17 +4,11 @@ package shared
 
 type UnionString string
 
-func (UnionString) ImplementsServiceListResponseServicesSpecSpecVersionUnion()        {}
-func (UnionString) ImplementsServiceListResponseServicesStatusStatusVersionUnion()    {}
-func (UnionString) ImplementsServiceListNewResponseServicesSpecSpecVersionUnion()     {}
-func (UnionString) ImplementsServiceListNewResponseServicesStatusStatusVersionUnion() {}
 func (UnionString) ImplementsEnvironmentAutomationTaskStartResponseTaskExecutionStatusStatusVersionUnion() {
 }
 func (UnionString) ImplementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion() {
 }
 func (UnionString) ImplementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion() {
-}
-func (UnionString) ImplementsEnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStatusVersionUnion() {
 }
 func (UnionString) ImplementsEnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion() {
 }
@@ -42,42 +36,34 @@ func (UnionString) ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatu
 func (UnionString) ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion() {
 }
 
-type UnionFloat float64
+type UnionInt int64
 
-func (UnionFloat) ImplementsServiceListResponseServicesSpecSpecVersionUnion()        {}
-func (UnionFloat) ImplementsServiceListResponseServicesStatusStatusVersionUnion()    {}
-func (UnionFloat) ImplementsServiceListNewResponseServicesSpecSpecVersionUnion()     {}
-func (UnionFloat) ImplementsServiceListNewResponseServicesStatusStatusVersionUnion() {}
-func (UnionFloat) ImplementsEnvironmentAutomationTaskStartResponseTaskExecutionStatusStatusVersionUnion() {
+func (UnionInt) ImplementsEnvironmentAutomationTaskStartResponseTaskExecutionStatusStatusVersionUnion() {
 }
-func (UnionFloat) ImplementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion() {
+func (UnionInt) ImplementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStatusVersionUnion() {
 }
-func (UnionFloat) ImplementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion() {
+func (UnionInt) ImplementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStatusVersionUnion() {
 }
-func (UnionFloat) ImplementsEnvironmentAutomationTaskExecutionNewListResponseTaskExecutionsStatusStatusVersionUnion() {
+func (UnionInt) ImplementsEnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion() {
 }
-func (UnionFloat) ImplementsEnvironmentAutomationTaskExecutionNewGetResponseTaskExecutionStatusStatusVersionUnion() {
+func (UnionInt) ImplementsEnvironmentNewResponseEnvironmentSpecSpecVersionUnion()              {}
+func (UnionInt) ImplementsEnvironmentNewResponseEnvironmentStatusRunnerAckSpecVersionUnion()   {}
+func (UnionInt) ImplementsEnvironmentNewResponseEnvironmentStatusStatusVersionUnion()          {}
+func (UnionInt) ImplementsEnvironmentGetResponseEnvironmentSpecSpecVersionUnion()              {}
+func (UnionInt) ImplementsEnvironmentGetResponseEnvironmentStatusRunnerAckSpecVersionUnion()   {}
+func (UnionInt) ImplementsEnvironmentGetResponseEnvironmentStatusStatusVersionUnion()          {}
+func (UnionInt) ImplementsEnvironmentListResponseEnvironmentsSpecSpecVersionUnion()            {}
+func (UnionInt) ImplementsEnvironmentListResponseEnvironmentsStatusRunnerAckSpecVersionUnion() {}
+func (UnionInt) ImplementsEnvironmentListResponseEnvironmentsStatusStatusVersionUnion()        {}
+func (UnionInt) ImplementsEnvironmentNewFromProjectResponseEnvironmentSpecSpecVersionUnion()   {}
+func (UnionInt) ImplementsEnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckSpecVersionUnion() {
 }
-func (UnionFloat) ImplementsEnvironmentNewResponseEnvironmentSpecSpecVersionUnion()              {}
-func (UnionFloat) ImplementsEnvironmentNewResponseEnvironmentStatusRunnerAckSpecVersionUnion()   {}
-func (UnionFloat) ImplementsEnvironmentNewResponseEnvironmentStatusStatusVersionUnion()          {}
-func (UnionFloat) ImplementsEnvironmentGetResponseEnvironmentSpecSpecVersionUnion()              {}
-func (UnionFloat) ImplementsEnvironmentGetResponseEnvironmentStatusRunnerAckSpecVersionUnion()   {}
-func (UnionFloat) ImplementsEnvironmentGetResponseEnvironmentStatusStatusVersionUnion()          {}
-func (UnionFloat) ImplementsEnvironmentListResponseEnvironmentsSpecSpecVersionUnion()            {}
-func (UnionFloat) ImplementsEnvironmentListResponseEnvironmentsStatusRunnerAckSpecVersionUnion() {}
-func (UnionFloat) ImplementsEnvironmentListResponseEnvironmentsStatusStatusVersionUnion()        {}
-func (UnionFloat) ImplementsEnvironmentNewFromProjectResponseEnvironmentSpecSpecVersionUnion()   {}
-func (UnionFloat) ImplementsEnvironmentNewFromProjectResponseEnvironmentStatusRunnerAckSpecVersionUnion() {
+func (UnionInt) ImplementsEnvironmentNewFromProjectResponseEnvironmentStatusStatusVersionUnion()   {}
+func (UnionInt) ImplementsEnvironmentNewParamsSpecSpecVersionUnion()                               {}
+func (UnionInt) ImplementsEnvironmentNewFromProjectParamsSpecSpecVersionUnion()                    {}
+func (UnionInt) ImplementsRunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion() {}
+func (UnionInt) ImplementsRunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion() {
 }
-func (UnionFloat) ImplementsEnvironmentNewFromProjectResponseEnvironmentStatusStatusVersionUnion() {}
-func (UnionFloat) ImplementsEnvironmentNewParamsSpecSpecVersionUnion()                             {}
-func (UnionFloat) ImplementsEnvironmentNewFromProjectParamsSpecSpecVersionUnion()                  {}
-func (UnionFloat) ImplementsRunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion() {
+func (UnionInt) ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion() {
 }
-func (UnionFloat) ImplementsRunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion() {
-}
-func (UnionFloat) ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion() {
-}
-func (UnionFloat) ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion() {
-}
+func (UnionInt) ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion() {}

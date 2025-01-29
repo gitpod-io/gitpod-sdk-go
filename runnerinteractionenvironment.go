@@ -104,6 +104,8 @@ type RunnerInteractionEnvironmentGetResponseEnvironment struct {
 	// ID is a unique identifier of this environment. No other environment with the
 	// same name must be managed by this environment manager
 	ID string `json:"id" format:"uuid"`
+	// EnvironmentActivitySignal used to signal activity for an environment.
+	ActivitySignal RunnerInteractionEnvironmentGetResponseEnvironmentActivitySignal `json:"activitySignal"`
 	// The environment's access token
 	EnvironmentAccessToken string `json:"environmentAccessToken"`
 	// EnvironmentMetadata is data associated with an environment that's required for
@@ -119,6 +121,7 @@ type RunnerInteractionEnvironmentGetResponseEnvironment struct {
 // metadata for the struct [RunnerInteractionEnvironmentGetResponseEnvironment]
 type runnerInteractionEnvironmentGetResponseEnvironmentJSON struct {
 	ID                     apijson.Field
+	ActivitySignal         apijson.Field
 	EnvironmentAccessToken apijson.Field
 	Metadata               apijson.Field
 	Spec                   apijson.Field
@@ -131,6 +134,122 @@ func (r *RunnerInteractionEnvironmentGetResponseEnvironment) UnmarshalJSON(data 
 }
 
 func (r runnerInteractionEnvironmentGetResponseEnvironmentJSON) RawJSON() string {
+	return r.raw
+}
+
+// EnvironmentActivitySignal used to signal activity for an environment.
+type RunnerInteractionEnvironmentGetResponseEnvironmentActivitySignal struct {
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
+	// should be a human-readable string that describes the source of the activity
+	// signal.
+	Source string `json:"source"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	Timestamp time.Time                                                            `json:"timestamp" format:"date-time"`
+	JSON      runnerInteractionEnvironmentGetResponseEnvironmentActivitySignalJSON `json:"-"`
+}
+
+// runnerInteractionEnvironmentGetResponseEnvironmentActivitySignalJSON contains
+// the JSON metadata for the struct
+// [RunnerInteractionEnvironmentGetResponseEnvironmentActivitySignal]
+type runnerInteractionEnvironmentGetResponseEnvironmentActivitySignalJSON struct {
+	Source      apijson.Field
+	Timestamp   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionEnvironmentGetResponseEnvironmentActivitySignal) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionEnvironmentGetResponseEnvironmentActivitySignalJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -231,6 +350,95 @@ type RunnerInteractionEnvironmentGetResponseEnvironmentMetadata struct {
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
 	Creator RunnerInteractionEnvironmentGetResponseEnvironmentMetadataCreator `json:"creator"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	LastStartedAt time.Time `json:"lastStartedAt" format:"date-time"`
 	// name is the name of the environment as specified by the user
 	Name string `json:"name"`
 	// organization_id is the ID of the organization that contains the environment
@@ -253,6 +461,7 @@ type runnerInteractionEnvironmentGetResponseEnvironmentMetadataJSON struct {
 	Annotations        apijson.Field
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
+	LastStartedAt      apijson.Field
 	Name               apijson.Field
 	OrganizationID     apijson.Field
 	OriginalContextURL apijson.Field
@@ -339,7 +548,7 @@ type RunnerInteractionEnvironmentGetResponseEnvironmentSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion RunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion `json:"specVersion"`
+	SpecVersion RunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys []RunnerInteractionEnvironmentGetResponseEnvironmentSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -393,7 +602,12 @@ func (r RunnerInteractionEnvironmentGetResponseEnvironmentSpecAdmission) IsKnown
 // automations_file is the automations file spec of the environment
 type RunnerInteractionEnvironmentGetResponseEnvironmentSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root.
+	// environment, relative to the repo root. path must not be absolute (start with a
+	// /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
 	AutomationsFilePath string                                                                    `json:"automationsFilePath"`
 	Session             string                                                                    `json:"session"`
 	JSON                runnerInteractionEnvironmentGetResponseEnvironmentSpecAutomationsFileJSON `json:"-"`
@@ -518,7 +732,11 @@ func (r RunnerInteractionEnvironmentGetResponseEnvironmentSpecDesiredPhase) IsKn
 // devcontainer is the devcontainer spec of the environment
 type RunnerInteractionEnvironmentGetResponseEnvironmentSpecDevcontainer struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
-	// root
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
 	DevcontainerFilePath string                                                                 `json:"devcontainerFilePath"`
 	Session              string                                                                 `json:"session"`
 	JSON                 runnerInteractionEnvironmentGetResponseEnvironmentSpecDevcontainerJSON `json:"-"`
@@ -638,7 +856,7 @@ func (r runnerInteractionEnvironmentGetResponseEnvironmentSpecSecretJSON) RawJSO
 // interpret it as as a timestamp), but it can be used to impose a partial order.
 // If a.spec_version < b.spec_version then a was the spec before b.
 //
-// Union satisfied by [shared.UnionString] or [shared.UnionFloat].
+// Union satisfied by [shared.UnionInt] or [shared.UnionString].
 type RunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion interface {
 	ImplementsRunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion()
 }
@@ -648,12 +866,12 @@ func init() {
 		reflect.TypeOf((*RunnerInteractionEnvironmentGetResponseEnvironmentSpecSpecVersionUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
+			TypeFilter: gjson.Number,
+			Type:       reflect.TypeOf(shared.UnionInt(0)),
 		},
 		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionFloat(0)),
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(shared.UnionString("")),
 		},
 	)
 }
@@ -793,6 +1011,8 @@ type RunnerInteractionEnvironmentListResponseEnvironment struct {
 	// ID is a unique identifier of this environment. No other environment with the
 	// same name must be managed by this environment manager
 	ID string `json:"id" format:"uuid"`
+	// EnvironmentActivitySignal used to signal activity for an environment.
+	ActivitySignal RunnerInteractionEnvironmentListResponseEnvironmentsActivitySignal `json:"activitySignal"`
 	// The environment's access token
 	EnvironmentAccessToken string `json:"environmentAccessToken"`
 	// EnvironmentMetadata is data associated with an environment that's required for
@@ -808,6 +1028,7 @@ type RunnerInteractionEnvironmentListResponseEnvironment struct {
 // metadata for the struct [RunnerInteractionEnvironmentListResponseEnvironment]
 type runnerInteractionEnvironmentListResponseEnvironmentJSON struct {
 	ID                     apijson.Field
+	ActivitySignal         apijson.Field
 	EnvironmentAccessToken apijson.Field
 	Metadata               apijson.Field
 	Spec                   apijson.Field
@@ -820,6 +1041,122 @@ func (r *RunnerInteractionEnvironmentListResponseEnvironment) UnmarshalJSON(data
 }
 
 func (r runnerInteractionEnvironmentListResponseEnvironmentJSON) RawJSON() string {
+	return r.raw
+}
+
+// EnvironmentActivitySignal used to signal activity for an environment.
+type RunnerInteractionEnvironmentListResponseEnvironmentsActivitySignal struct {
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
+	// should be a human-readable string that describes the source of the activity
+	// signal.
+	Source string `json:"source"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	Timestamp time.Time                                                              `json:"timestamp" format:"date-time"`
+	JSON      runnerInteractionEnvironmentListResponseEnvironmentsActivitySignalJSON `json:"-"`
+}
+
+// runnerInteractionEnvironmentListResponseEnvironmentsActivitySignalJSON contains
+// the JSON metadata for the struct
+// [RunnerInteractionEnvironmentListResponseEnvironmentsActivitySignal]
+type runnerInteractionEnvironmentListResponseEnvironmentsActivitySignalJSON struct {
+	Source      apijson.Field
+	Timestamp   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerInteractionEnvironmentListResponseEnvironmentsActivitySignal) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerInteractionEnvironmentListResponseEnvironmentsActivitySignalJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -920,6 +1257,95 @@ type RunnerInteractionEnvironmentListResponseEnvironmentsMetadata struct {
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
 	Creator RunnerInteractionEnvironmentListResponseEnvironmentsMetadataCreator `json:"creator"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	LastStartedAt time.Time `json:"lastStartedAt" format:"date-time"`
 	// name is the name of the environment as specified by the user
 	Name string `json:"name"`
 	// organization_id is the ID of the organization that contains the environment
@@ -942,6 +1368,7 @@ type runnerInteractionEnvironmentListResponseEnvironmentsMetadataJSON struct {
 	Annotations        apijson.Field
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
+	LastStartedAt      apijson.Field
 	Name               apijson.Field
 	OrganizationID     apijson.Field
 	OriginalContextURL apijson.Field
@@ -1028,7 +1455,7 @@ type RunnerInteractionEnvironmentListResponseEnvironmentsSpec struct {
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion RunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion `json:"specVersion"`
+	SpecVersion RunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion `json:"specVersion" format:"int64"`
 	// ssh_public_keys are the public keys used to ssh into the environment
 	SSHPublicKeys []RunnerInteractionEnvironmentListResponseEnvironmentsSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
@@ -1083,7 +1510,12 @@ func (r RunnerInteractionEnvironmentListResponseEnvironmentsSpecAdmission) IsKno
 // automations_file is the automations file spec of the environment
 type RunnerInteractionEnvironmentListResponseEnvironmentsSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
-	// environment, relative to the repo root.
+	// environment, relative to the repo root. path must not be absolute (start with a
+	// /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
 	AutomationsFilePath string                                                                      `json:"automationsFilePath"`
 	Session             string                                                                      `json:"session"`
 	JSON                runnerInteractionEnvironmentListResponseEnvironmentsSpecAutomationsFileJSON `json:"-"`
@@ -1208,7 +1640,11 @@ func (r RunnerInteractionEnvironmentListResponseEnvironmentsSpecDesiredPhase) Is
 // devcontainer is the devcontainer spec of the environment
 type RunnerInteractionEnvironmentListResponseEnvironmentsSpecDevcontainer struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
-	// root
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
 	DevcontainerFilePath string                                                                   `json:"devcontainerFilePath"`
 	Session              string                                                                   `json:"session"`
 	JSON                 runnerInteractionEnvironmentListResponseEnvironmentsSpecDevcontainerJSON `json:"-"`
@@ -1328,7 +1764,7 @@ func (r runnerInteractionEnvironmentListResponseEnvironmentsSpecSecretJSON) RawJ
 // interpret it as as a timestamp), but it can be used to impose a partial order.
 // If a.spec_version < b.spec_version then a was the spec before b.
 //
-// Union satisfied by [shared.UnionString] or [shared.UnionFloat].
+// Union satisfied by [shared.UnionInt] or [shared.UnionString].
 type RunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion interface {
 	ImplementsRunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion()
 }
@@ -1338,12 +1774,12 @@ func init() {
 		reflect.TypeOf((*RunnerInteractionEnvironmentListResponseEnvironmentsSpecSpecVersionUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
-			TypeFilter: gjson.String,
-			Type:       reflect.TypeOf(shared.UnionString("")),
+			TypeFilter: gjson.Number,
+			Type:       reflect.TypeOf(shared.UnionInt(0)),
 		},
 		apijson.UnionVariant{
-			TypeFilter: gjson.Number,
-			Type:       reflect.TypeOf(shared.UnionFloat(0)),
+			TypeFilter: gjson.String,
+			Type:       reflect.TypeOf(shared.UnionString("")),
 		},
 	)
 }
@@ -1591,6 +2027,8 @@ func (r RunnerInteractionEnvironmentUpdateStatusParamsConnectProtocolVersion) Is
 
 // EnvironmentStatus describes an environment status
 type RunnerInteractionEnvironmentUpdateStatusParamsStatus struct {
+	// EnvironmentActivitySignal used to signal activity for an environment.
+	ActivitySignal param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusActivitySignal] `json:"activitySignal"`
 	// automations_file contains the status of the automations file.
 	AutomationsFile param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusAutomationsFile] `json:"automationsFile"`
 	// content contains the status of the environment content.
@@ -1617,17 +2055,118 @@ type RunnerInteractionEnvironmentUpdateStatusParamsStatus struct {
 	// ssh_public_keys contains the status of the environment ssh public keys
 	SSHPublicKeys param.Field[[]RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKey] `json:"sshPublicKeys"`
 	// version of the status update. Environment instances themselves are unversioned,
-	// but their statuus has different versions. The value of this field has no
-	// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-	// to impose a partial order. If a.status_version < b.status_version then a was the
+	// but their status has different versions. The value of this field has no semantic
+	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion] `json:"statusVersion"`
+	StatusVersion param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion] `json:"statusVersion" format:"int64"`
 	// warning_message contains warnings, e.g. when the environment is present but not
 	// in the expected state.
 	WarningMessage param.Field[[]string] `json:"warningMessage"`
 }
 
 func (r RunnerInteractionEnvironmentUpdateStatusParamsStatus) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// EnvironmentActivitySignal used to signal activity for an environment.
+type RunnerInteractionEnvironmentUpdateStatusParamsStatusActivitySignal struct {
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
+	// should be a human-readable string that describes the source of the activity
+	// signal.
+	Source param.Field[string] `json:"source"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	Timestamp param.Field[time.Time] `json:"timestamp" format:"date-time"`
+}
+
+func (r RunnerInteractionEnvironmentUpdateStatusParamsStatusActivitySignal) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -1987,7 +2526,7 @@ func (r RunnerInteractionEnvironmentUpdateStatusParamsStatusPhase) IsKnown() boo
 // environment spec.
 type RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAck struct {
 	Message     param.Field[string]                                                                        `json:"message"`
-	SpecVersion param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion] `json:"specVersion"`
+	SpecVersion param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion] `json:"specVersion" format:"int64"`
 	StatusCode  param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckStatusCode]       `json:"statusCode"`
 }
 
@@ -1995,7 +2534,7 @@ func (r RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAck) MarshalJS
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by [shared.UnionString], [shared.UnionFloat].
+// Satisfied by [shared.UnionInt], [shared.UnionString].
 type RunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion interface {
 	ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusRunnerAckSpecVersionUnion()
 }
@@ -2022,6 +2561,8 @@ type RunnerInteractionEnvironmentUpdateStatusParamsStatusSecret struct {
 	FailureMessage param.Field[string]                                                           `json:"failureMessage"`
 	Phase          param.Field[RunnerInteractionEnvironmentUpdateStatusParamsStatusSecretsPhase] `json:"phase"`
 	SecretName     param.Field[string]                                                           `json:"secretName"`
+	// session is the session that is currently active in the environment.
+	Session param.Field[string] `json:"session"`
 	// warning_message contains warnings, e.g. when the secret is present but not in
 	// the expected state.
 	WarningMessage param.Field[string] `json:"warningMessage"`
@@ -2082,12 +2623,12 @@ func (r RunnerInteractionEnvironmentUpdateStatusParamsStatusSSHPublicKeysPhase) 
 }
 
 // version of the status update. Environment instances themselves are unversioned,
-// but their statuus has different versions. The value of this field has no
-// semantic meaning (e.g. don't interpret it as as a timestemp), but it can be used
-// to impose a partial order. If a.status_version < b.status_version then a was the
+// but their status has different versions. The value of this field has no semantic
+// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
+// impose a partial order. If a.status_version < b.status_version then a was the
 // status before b.
 //
-// Satisfied by [shared.UnionString], [shared.UnionFloat].
+// Satisfied by [shared.UnionInt], [shared.UnionString].
 type RunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion interface {
 	ImplementsRunnerInteractionEnvironmentUpdateStatusParamsStatusStatusVersionUnion()
 }

@@ -56,7 +56,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecret{{}}),
-			SpecVersion: gitpod.F[gitpod.EnvironmentNewParamsSpecSpecVersionUnion](shared.UnionString("string")),
+			SpecVersion: gitpod.F[gitpod.EnvironmentNewParamsSpecSpecVersionUnion](shared.UnionInt(int64(0))),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
@@ -118,6 +118,7 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 			CreatorIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			ProjectIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			RunnerIDs:    gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerKinds:  gitpod.F([]gitpod.EnvironmentListParamsFilterRunnerKind{gitpod.EnvironmentListParamsFilterRunnerKindRunnerKindUnspecified}),
 			StatusPhases: gitpod.F([]gitpod.EnvironmentListParamsFilterStatusPhase{gitpod.EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUnspecified}),
 		}),
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
@@ -179,7 +180,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecret{{}}),
-			SpecVersion: gitpod.F[gitpod.EnvironmentNewFromProjectParamsSpecSpecVersionUnion](shared.UnionString("string")),
+			SpecVersion: gitpod.F[gitpod.EnvironmentNewFromProjectParamsSpecSpecVersionUnion](shared.UnionInt(int64(0))),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),

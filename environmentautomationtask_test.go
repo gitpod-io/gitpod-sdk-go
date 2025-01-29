@@ -29,7 +29,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		DependsOn:              gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		Metadata:               gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadata{}),
-		Spec:                   gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnion](gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnknown(map[string]interface{}{})),
+		Spec:                   gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsSpec{}),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -54,12 +54,16 @@ func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.EnvironmentAutomations.Tasks.List(context.TODO(), gitpod.EnvironmentAutomationTaskListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F("base64"),
-		Compression:            gitpod.F("compression"),
-		Connect:                gitpod.F("connect"),
-		Encoding:               gitpod.F("encoding"),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsFilter{
+			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			References:     gitpod.F([]string{"x"}),
+			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		}),
+		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(0)),
+		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -85,39 +89,6 @@ func TestEnvironmentAutomationTaskDeleteWithOptionalParams(t *testing.T) {
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestEnvironmentAutomationTaskNewListWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-	)
-	_, err := client.EnvironmentAutomations.Tasks.NewList(context.TODO(), gitpod.EnvironmentAutomationTaskNewListParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskNewListParamsConnectProtocolVersion1),
-		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskNewListParamsFilter{
-			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			References:     gitpod.F([]string{"x"}),
-			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		}),
-		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskNewListParamsPagination{
-			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
-		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
