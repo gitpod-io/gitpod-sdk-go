@@ -23,6 +23,7 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Upsert(context.TODO(), gitpod.EnvironmentAutomationUpsertParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsConnectProtocolVersion1),

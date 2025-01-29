@@ -23,6 +23,7 @@ func TestOrganizationInviteSummaryGetWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Invite.Summary.Get(context.TODO(), gitpod.OrganizationInviteSummaryGetParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationInviteSummaryGetParamsConnectProtocolVersion1),

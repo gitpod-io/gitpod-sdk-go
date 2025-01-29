@@ -23,6 +23,7 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 	}
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.Validate(context.TODO(), gitpod.RunnerConfigurationValidateParams{
 		Body:                   gitpod.RunnerConfigurationValidateParamsBody{},

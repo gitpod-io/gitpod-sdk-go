@@ -227,3 +227,11 @@ func WithRequestTimeout(dur time.Duration) RequestOption {
 func WithEnvironmentProduction() RequestOption {
 	return WithBaseURL("https://app.gitpod.io/api/")
 }
+
+// WithBearerToken returns a RequestOption that sets the client setting "bearer_token".
+func WithBearerToken(value string) RequestOption {
+	return func(r *requestconfig.RequestConfig) error {
+		r.BearerToken = value
+		return r.Apply(WithHeader("authorization", fmt.Sprintf("Bearer %s", r.BearerToken)))
+	}
+}
