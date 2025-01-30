@@ -25,7 +25,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Tasks.New(context.TODO(), gitpod.EnvironmentAutomationTaskNewParams{
@@ -74,7 +74,7 @@ func TestEnvironmentAutomationTaskGetWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Tasks.Get(context.TODO(), gitpod.EnvironmentAutomationTaskGetParams{
@@ -100,7 +100,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Tasks.Update(context.TODO(), gitpod.EnvironmentAutomationTaskUpdateParams{
@@ -133,7 +133,7 @@ func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Tasks.List(context.TODO(), gitpod.EnvironmentAutomationTaskListParams{
@@ -167,7 +167,7 @@ func TestEnvironmentAutomationTaskDeleteWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Tasks.Delete(context.TODO(), gitpod.EnvironmentAutomationTaskDeleteParams{
@@ -193,7 +193,7 @@ func TestEnvironmentAutomationTaskStartWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Tasks.Start(context.TODO(), gitpod.EnvironmentAutomationTaskStartParams{

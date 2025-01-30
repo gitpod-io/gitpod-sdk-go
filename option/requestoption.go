@@ -237,7 +237,7 @@ func WithBearerToken(value string) RequestOption {
 }
 
 // WithConnectProtocolVersion returns a RequestOption that sets the client setting "connect_protocol_version".
-func WithConnectProtocolVersion(value bool) RequestOption {
+func WithConnectProtocolVersion(value float64) RequestOption {
 	return func(r *requestconfig.RequestConfig) error {
 		r.ConnectProtocolVersion = value
 		return r.Apply(WithHeader("Connect-Protocol-Version", fmt.Sprintf("%v", value)))

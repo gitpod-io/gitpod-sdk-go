@@ -24,7 +24,7 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Identity.ExchangeToken(context.TODO(), gitpod.IdentityExchangeTokenParams{
@@ -50,7 +50,7 @@ func TestIdentityGetAuthenticatedIdentity(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{
@@ -76,7 +76,7 @@ func TestIdentityGetIDTokenWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Identity.GetIDToken(context.TODO(), gitpod.IdentityGetIDTokenParams{

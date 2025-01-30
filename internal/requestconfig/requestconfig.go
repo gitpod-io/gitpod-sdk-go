@@ -173,7 +173,7 @@ type RequestConfig struct {
 	HTTPClient             *http.Client
 	Middlewares            []middleware
 	BearerToken            string
-	ConnectProtocolVersion bool
+	ConnectProtocolVersion float64
 	ConnectTimeoutHeader   float64
 	// If ResponseBodyInto not nil, then we will attempt to deserialize into
 	// ResponseBodyInto. If Destination is a []byte, then it will return the body as

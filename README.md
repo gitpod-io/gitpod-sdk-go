@@ -43,7 +43,7 @@ import (
 func main() {
 	client := gitpod.NewClient(
 		option.WithBearerToken("My Bearer Token"), // defaults to os.LookupEnv("GITPOD_API_KEY")
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
