@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"reflect"
 
@@ -35,18 +36,30 @@ func NewRunnerConfigurationConfigurationSchemaService(opts ...option.RequestOpti
 }
 
 // GetRunnerConfigurationSchema retrieves the latest Runner configuration schema
-func (r *RunnerConfigurationConfigurationSchemaService) New(ctx context.Context, body RunnerConfigurationConfigurationSchemaNewParams, opts ...option.RequestOption) (res *RunnerConfigurationConfigurationSchemaNewResponse, err error) {
+func (r *RunnerConfigurationConfigurationSchemaService) New(ctx context.Context, params RunnerConfigurationConfigurationSchemaNewParams, opts ...option.RequestOption) (res *RunnerConfigurationConfigurationSchemaNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // GetRunnerConfigurationSchema retrieves the latest Runner configuration schema
-func (r *RunnerConfigurationConfigurationSchemaService) Get(ctx context.Context, body RunnerConfigurationConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationConfigurationSchemaGetResponse, err error) {
+func (r *RunnerConfigurationConfigurationSchemaService) Get(ctx context.Context, params RunnerConfigurationConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationConfigurationSchemaGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -1915,17 +1928,55 @@ func (r runnerConfigurationConfigurationSchemaGetResponseSchemaScmPatJSON) RawJS
 }
 
 type RunnerConfigurationConfigurationSchemaNewParams struct {
-	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	RunnerID               param.Field[string]                                                                `json:"runnerId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationConfigurationSchemaNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Define the version of the Connect protocol
+type RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion1 RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type RunnerConfigurationConfigurationSchemaGetParams struct {
-	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	RunnerID               param.Field[string]                                                                `json:"runnerId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationConfigurationSchemaGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion1 RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }

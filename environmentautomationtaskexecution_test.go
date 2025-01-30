@@ -24,11 +24,11 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.TaskExecutions.Get(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionGetParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1),
+		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -50,10 +50,9 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.TaskExecutions.List(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionListParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified}),
@@ -64,6 +63,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -85,11 +85,11 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.TaskExecutions.Stop(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionStopParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1),
+		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -100,7 +100,7 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatus(t *testing.T) {
+func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -111,13 +111,13 @@ func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatus(t *testing.
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.TaskExecutions.UpdateTaskExecutionStatus(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams{
 		Body: gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyFailureMessage{
 			FailureMessage: gitpod.F("failureMessage"),
 		},
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion1),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -35,10 +36,16 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 // details a user is able to use based on the
 //
 // query buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) List(ctx context.Context, body EnvironmentClassListParams, opts ...option.RequestOption) (res *EnvironmentClassListResponse, err error) {
+func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *EnvironmentClassListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironmentClasses"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -156,13 +163,32 @@ func (r environmentClassListResponsePaginationJSON) RawJSON() string {
 }
 
 type EnvironmentClassListParams struct {
-	Filter param.Field[EnvironmentClassListParamsFilter] `json:"filter"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	Filter                 param.Field[EnvironmentClassListParamsFilter]                 `json:"filter"`
 	// pagination contains the pagination options for listing environment classes
 	Pagination param.Field[EnvironmentClassListParamsPagination] `json:"pagination"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentClassListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentClassListParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentClassListParamsConnectProtocolVersion1 EnvironmentClassListParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentClassListParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentClassListParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type EnvironmentClassListParamsFilter struct {

@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -33,18 +34,30 @@ func NewPersonalAccessTokenService(opts ...option.RequestOption) (r *PersonalAcc
 }
 
 // ListPersonalAccessTokens
-func (r *PersonalAccessTokenService) List(ctx context.Context, body PersonalAccessTokenListParams, opts ...option.RequestOption) (res *PersonalAccessTokenListResponse, err error) {
+func (r *PersonalAccessTokenService) List(ctx context.Context, params PersonalAccessTokenListParams, opts ...option.RequestOption) (res *PersonalAccessTokenListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/ListPersonalAccessTokens"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // DeletePersonalAccessToken
-func (r *PersonalAccessTokenService) Delete(ctx context.Context, body PersonalAccessTokenDeleteParams, opts ...option.RequestOption) (res *PersonalAccessTokenDeleteResponse, err error) {
+func (r *PersonalAccessTokenService) Delete(ctx context.Context, params PersonalAccessTokenDeleteParams, opts ...option.RequestOption) (res *PersonalAccessTokenDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -444,12 +457,31 @@ func (r PersonalAccessTokenListResponsePersonalAccessTokensCreatorPrincipal) IsK
 type PersonalAccessTokenDeleteResponse = interface{}
 
 type PersonalAccessTokenListParams struct {
-	Filter     param.Field[PersonalAccessTokenListParamsFilter]     `json:"filter"`
-	Pagination param.Field[PersonalAccessTokenListParamsPagination] `json:"pagination"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[PersonalAccessTokenListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	Filter                 param.Field[PersonalAccessTokenListParamsFilter]                 `json:"filter"`
+	Pagination             param.Field[PersonalAccessTokenListParamsPagination]             `json:"pagination"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r PersonalAccessTokenListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type PersonalAccessTokenListParamsConnectProtocolVersion float64
+
+const (
+	PersonalAccessTokenListParamsConnectProtocolVersion1 PersonalAccessTokenListParamsConnectProtocolVersion = 1
+)
+
+func (r PersonalAccessTokenListParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case PersonalAccessTokenListParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type PersonalAccessTokenListParamsFilter struct {
@@ -477,9 +509,28 @@ func (r PersonalAccessTokenListParamsPagination) MarshalJSON() (data []byte, err
 }
 
 type PersonalAccessTokenDeleteParams struct {
-	PersonalAccessTokenID param.Field[string] `json:"personalAccessTokenId" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[PersonalAccessTokenDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	PersonalAccessTokenID  param.Field[string]                                                `json:"personalAccessTokenId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r PersonalAccessTokenDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type PersonalAccessTokenDeleteParamsConnectProtocolVersion float64
+
+const (
+	PersonalAccessTokenDeleteParamsConnectProtocolVersion1 PersonalAccessTokenDeleteParamsConnectProtocolVersion = 1
+)
+
+func (r PersonalAccessTokenDeleteParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case PersonalAccessTokenDeleteParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }

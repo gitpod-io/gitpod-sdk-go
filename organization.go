@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -35,26 +36,44 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 }
 
 // LeaveOrganization lets the passed user leave an Organization.
-func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveParams, opts ...option.RequestOption) (res *OrganizationLeaveResponse, err error) {
+func (r *OrganizationService) Leave(ctx context.Context, params OrganizationLeaveParams, opts ...option.RequestOption) (res *OrganizationLeaveResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/LeaveOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // ListMembers lists all members of the specified organization.
-func (r *OrganizationService) ListMembers(ctx context.Context, body OrganizationListMembersParams, opts ...option.RequestOption) (res *OrganizationListMembersResponse, err error) {
+func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *OrganizationListMembersResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/ListMembers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // SetRole
-func (r *OrganizationService) SetRole(ctx context.Context, body OrganizationSetRoleParams, opts ...option.RequestOption) (res *OrganizationSetRoleResponse, err error) {
+func (r *OrganizationService) SetRole(ctx context.Context, params OrganizationSetRoleParams, opts ...option.RequestOption) (res *OrganizationSetRoleResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/SetRole"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -271,22 +290,60 @@ func (r organizationListMembersResponsePaginationJSON) RawJSON() string {
 type OrganizationSetRoleResponse = interface{}
 
 type OrganizationLeaveParams struct {
-	UserID param.Field[string] `json:"userId" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[OrganizationLeaveParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	UserID                 param.Field[string]                                        `json:"userId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationLeaveParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Define the version of the Connect protocol
+type OrganizationLeaveParamsConnectProtocolVersion float64
+
+const (
+	OrganizationLeaveParamsConnectProtocolVersion1 OrganizationLeaveParamsConnectProtocolVersion = 1
+)
+
+func (r OrganizationLeaveParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case OrganizationLeaveParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type OrganizationListMembersParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[OrganizationListMembersParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// organization_id is the ID of the organization to list members for
 	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// pagination contains the pagination options for listing members
 	Pagination param.Field[OrganizationListMembersParamsPagination] `json:"pagination"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationListMembersParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type OrganizationListMembersParamsConnectProtocolVersion float64
+
+const (
+	OrganizationListMembersParamsConnectProtocolVersion1 OrganizationListMembersParamsConnectProtocolVersion = 1
+)
+
+func (r OrganizationListMembersParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case OrganizationListMembersParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 // pagination contains the pagination options for listing members
@@ -305,13 +362,32 @@ func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err
 }
 
 type OrganizationSetRoleParams struct {
-	OrganizationID param.Field[string]                        `json:"organizationId" format:"uuid"`
-	Role           param.Field[OrganizationSetRoleParamsRole] `json:"role"`
-	UserID         param.Field[string]                        `json:"userId" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[OrganizationSetRoleParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	OrganizationID         param.Field[string]                                          `json:"organizationId" format:"uuid"`
+	Role                   param.Field[OrganizationSetRoleParamsRole]                   `json:"role"`
+	UserID                 param.Field[string]                                          `json:"userId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationSetRoleParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type OrganizationSetRoleParamsConnectProtocolVersion float64
+
+const (
+	OrganizationSetRoleParamsConnectProtocolVersion1 OrganizationSetRoleParamsConnectProtocolVersion = 1
+)
+
+func (r OrganizationSetRoleParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case OrganizationSetRoleParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type OrganizationSetRoleParamsRole string

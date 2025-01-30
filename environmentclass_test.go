@@ -24,10 +24,9 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.EnvironmentClasses.List(context.TODO(), gitpod.EnvironmentClassListParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentClassListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.EnvironmentClassListParamsFilter{
 			Enabled: gitpod.F(true),
 		}),
@@ -35,6 +34,7 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

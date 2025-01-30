@@ -24,11 +24,11 @@ func TestOrganizationLeaveWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Organizations.Leave(context.TODO(), gitpod.OrganizationLeaveParams{
-		UserID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationLeaveParamsConnectProtocolVersion1),
+		UserID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -50,15 +50,15 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Organizations.ListMembers(context.TODO(), gitpod.OrganizationListMembersParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationListMembersParamsConnectProtocolVersion1),
+		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.OrganizationListMembersParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -80,13 +80,13 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:           gitpod.F(gitpod.OrganizationSetRoleParamsRoleOrganizationRoleUnspecified),
-		UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSetRoleParamsConnectProtocolVersion1),
+		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:                   gitpod.F(gitpod.OrganizationSetRoleParamsRoleOrganizationRoleUnspecified),
+		UserID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

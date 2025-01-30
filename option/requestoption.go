@@ -235,19 +235,3 @@ func WithBearerToken(value string) RequestOption {
 		return r.Apply(WithHeader("authorization", fmt.Sprintf("Bearer %s", r.BearerToken)))
 	}
 }
-
-// WithConnectProtocolVersion returns a RequestOption that sets the client setting "connect_protocol_version".
-func WithConnectProtocolVersion(value float64) RequestOption {
-	return func(r *requestconfig.RequestConfig) error {
-		r.ConnectProtocolVersion = value
-		return r.Apply(WithHeader("Connect-Protocol-Version", fmt.Sprintf("%v", value)))
-	}
-}
-
-// WithConnectTimeoutHeader returns a RequestOption that sets the client setting "connect_timeout_header".
-func WithConnectTimeoutHeader(value float64) RequestOption {
-	return func(r *requestconfig.RequestConfig) error {
-		r.ConnectTimeoutHeader = value
-		return r.Apply(WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%v", value)))
-	}
-}

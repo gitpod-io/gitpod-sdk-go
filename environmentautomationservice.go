@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"reflect"
 	"time"
@@ -35,18 +36,30 @@ func NewEnvironmentAutomationServiceService(opts ...option.RequestOption) (r *En
 }
 
 // UpdateService
-func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body EnvironmentAutomationServiceUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceUpdateResponse, err error) {
+func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, params EnvironmentAutomationServiceUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceUpdateResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // ListServices
-func (r *EnvironmentAutomationServiceService) List(ctx context.Context, body EnvironmentAutomationServiceListParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceListResponse, err error) {
+func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListServices"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -54,10 +67,16 @@ func (r *EnvironmentAutomationServiceService) List(ctx context.Context, body Env
 // deleted.
 //
 // If the service is not stopped it will be stopped before deletion.
-func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
+func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, params EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -65,10 +84,16 @@ func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body E
 // started.
 //
 // This call will not error if the service is already running or has been started.
-func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
+func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, params EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StartService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -76,10 +101,16 @@ func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body En
 // stopped.
 //
 // This call will not error if the service is already stopped or has been stopped.
-func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
+func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, params EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -725,8 +756,10 @@ type EnvironmentAutomationServiceStartResponse = interface{}
 type EnvironmentAutomationServiceStopResponse = interface{}
 
 type EnvironmentAutomationServiceUpdateParams struct {
-	ID       param.Field[string]                                                `json:"id" format:"uuid"`
-	Metadata param.Field[EnvironmentAutomationServiceUpdateParamsMetadataUnion] `json:"metadata"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	ID                     param.Field[string]                                                         `json:"id" format:"uuid"`
+	Metadata               param.Field[EnvironmentAutomationServiceUpdateParamsMetadataUnion]          `json:"metadata"`
 	// Changing the spec of a service is a complex operation. The spec of a service
 	//
 	// can only be updated if the service is in a stopped state. If the service is
@@ -738,10 +771,27 @@ type EnvironmentAutomationServiceUpdateParams struct {
 	// of this API you are not expected to provide this field. Updating this field
 	// requires the `environmentservice:update_status` permission.
 	Status param.Field[EnvironmentAutomationServiceUpdateParamsStatusUnion] `json:"status"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationServiceUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1 EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type EnvironmentAutomationServiceUpdateParamsMetadata struct {
@@ -1091,14 +1141,33 @@ func (r EnvironmentAutomationServiceUpdateParamsStatusSession) implementsEnviron
 }
 
 type EnvironmentAutomationServiceListParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// filter contains the filter options for listing services
 	Filter param.Field[EnvironmentAutomationServiceListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing services
 	Pagination param.Field[EnvironmentAutomationServiceListParamsPagination] `json:"pagination"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationServiceListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationServiceListParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationServiceListParamsConnectProtocolVersion1 EnvironmentAutomationServiceListParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationServiceListParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationServiceListParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 // filter contains the filter options for listing services
@@ -1131,26 +1200,83 @@ func (r EnvironmentAutomationServiceListParamsPagination) MarshalJSON() (data []
 }
 
 type EnvironmentAutomationServiceDeleteParams struct {
-	ID    param.Field[string] `json:"id" format:"uuid"`
-	Force param.Field[bool]   `json:"force"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	ID                     param.Field[string]                                                         `json:"id" format:"uuid"`
+	Force                  param.Field[bool]                                                           `json:"force"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationServiceDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Define the version of the Connect protocol
+type EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1 EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type EnvironmentAutomationServiceStartParams struct {
-	ID param.Field[string] `json:"id" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceStartParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	ID                     param.Field[string]                                                        `json:"id" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationServiceStartParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Define the version of the Connect protocol
+type EnvironmentAutomationServiceStartParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationServiceStartParamsConnectProtocolVersion1 EnvironmentAutomationServiceStartParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationServiceStartParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationServiceStartParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type EnvironmentAutomationServiceStopParams struct {
-	ID param.Field[string] `json:"id" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceStopParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	ID                     param.Field[string]                                                       `json:"id" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationServiceStopParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationServiceStopParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationServiceStopParamsConnectProtocolVersion1 EnvironmentAutomationServiceStopParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationServiceStopParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationServiceStopParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }

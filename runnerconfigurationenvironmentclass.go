@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -33,20 +34,32 @@ func NewRunnerConfigurationEnvironmentClassService(opts ...option.RequestOption)
 }
 
 // UpdateEnvironmentClass updates an existing environment class on a runner.
-func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context, body RunnerConfigurationEnvironmentClassUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassUpdateResponse, err error) {
+func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context, params RunnerConfigurationEnvironmentClassUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassUpdateResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // ListEnvironmentClasses returns all environment classes configured for a runner.
 //
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, body RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassListResponse, err error) {
+func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -169,6 +182,10 @@ func (r runnerConfigurationEnvironmentClassListResponsePaginationJSON) RawJSON()
 
 type RunnerConfigurationEnvironmentClassUpdateParams struct {
 	Body RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion `json:"body,required"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationEnvironmentClassUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -229,14 +246,48 @@ func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) MarshalJSON(
 func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
 }
 
+// Define the version of the Connect protocol
+type RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type RunnerConfigurationEnvironmentClassListParams struct {
-	Filter param.Field[RunnerConfigurationEnvironmentClassListParamsFilter] `json:"filter"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	Filter                 param.Field[RunnerConfigurationEnvironmentClassListParamsFilter]                 `json:"filter"`
 	// pagination contains the pagination options for listing environment classes
 	Pagination param.Field[RunnerConfigurationEnvironmentClassListParamsPagination] `json:"pagination"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationEnvironmentClassListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type RunnerConfigurationEnvironmentClassListParamsFilter struct {

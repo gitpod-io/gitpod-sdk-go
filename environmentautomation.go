@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -38,10 +39,16 @@ func NewEnvironmentAutomationService(opts ...option.RequestOption) (r *Environme
 }
 
 // UpsertAutomationsFile upserts the automations file for the given environment.
-func (r *EnvironmentAutomationService) Upsert(ctx context.Context, body EnvironmentAutomationUpsertParams, opts ...option.RequestOption) (res *EnvironmentAutomationUpsertResponse, err error) {
+func (r *EnvironmentAutomationService) Upsert(ctx context.Context, params EnvironmentAutomationUpsertParams, opts ...option.RequestOption) (res *EnvironmentAutomationUpsertResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpsertAutomationsFile"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -69,6 +76,8 @@ func (r environmentAutomationUpsertResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationUpsertParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationUpsertParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// WARN: Do not remove any field here, as it will break reading automation yaml
 	// files. We error if there are any
 	//
@@ -77,10 +86,27 @@ type EnvironmentAutomationUpsertParams struct {
 	// file, this will also break reading the yaml.
 	AutomationsFile param.Field[EnvironmentAutomationUpsertParamsAutomationsFile] `json:"automationsFile"`
 	EnvironmentID   param.Field[string]                                           `json:"environmentId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationUpsertParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationUpsertParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationUpsertParamsConnectProtocolVersion1 EnvironmentAutomationUpsertParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationUpsertParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationUpsertParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 // WARN: Do not remove any field here, as it will break reading automation yaml

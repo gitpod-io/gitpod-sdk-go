@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -32,10 +33,16 @@ func NewRunnerConfigurationScmIntegrationService(opts ...option.RequestOption) (
 }
 
 // CreateSCMIntegration creates a new SCM integration on a runner.
-func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body RunnerConfigurationScmIntegrationNewParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationNewResponse, err error) {
+func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, params RunnerConfigurationScmIntegrationNewParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -63,6 +70,10 @@ func (r runnerConfigurationScmIntegrationNewResponseJSON) RawJSON() string {
 
 type RunnerConfigurationScmIntegrationNewParams struct {
 	Body RunnerConfigurationScmIntegrationNewParamsBodyUnion `json:"body,required"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationScmIntegrationNewParams) MarshalJSON() (data []byte, err error) {
@@ -120,4 +131,19 @@ func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret
 }
 
 func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1 RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }

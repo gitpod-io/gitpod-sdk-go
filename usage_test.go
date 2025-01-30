@@ -23,10 +23,10 @@ func TestUsage(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
-	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
+	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
+	})
 	if err != nil {
 		t.Error(err)
 	}
