@@ -30,7 +30,7 @@ func TestOrganizationMemberListWithOptionalParams(t *testing.T) {
 		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.OrganizationMemberListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

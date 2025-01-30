@@ -109,7 +109,7 @@ func TestRunnerConfigurationHostAuthenticationTokenListWithOptionalParams(t *tes
 		Filter:                 gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilter{}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

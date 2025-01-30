@@ -217,7 +217,7 @@ func (r RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion) I
 type RunnerConfigurationEnvironmentClassListParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[RunnerConfigurationEnvironmentClassListParamsFilterUnion]            `json:"filter"`
+	Filter                 param.Field[interface{}]                                                         `json:"filter"`
 	// pagination contains the pagination options for listing environment classes
 	Pagination param.Field[RunnerConfigurationEnvironmentClassListParamsPagination] `json:"pagination"`
 	// Define the timeout, in ms
@@ -241,12 +241,6 @@ func (r RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion) IsK
 		return true
 	}
 	return false
-}
-
-// Satisfied by [RunnerConfigurationEnvironmentClassListParamsFilterUnknown],
-// [RunnerConfigurationEnvironmentClassListParamsFilterUnknown].
-type RunnerConfigurationEnvironmentClassListParamsFilterUnion interface {
-	implementsRunnerConfigurationEnvironmentClassListParamsFilterUnion()
 }
 
 // pagination contains the pagination options for listing environment classes

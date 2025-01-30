@@ -43,7 +43,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 		}),
 		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpec{
 			Command: gitpod.F("command"),
-			RunsOn:  gitpod.F[gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnUnion](gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnUnknown(map[string]interface{}{})),
+			RunsOn:  gitpod.F[any](map[string]interface{}{}),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
@@ -132,7 +132,7 @@ func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

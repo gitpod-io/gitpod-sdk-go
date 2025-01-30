@@ -61,7 +61,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

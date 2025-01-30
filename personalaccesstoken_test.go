@@ -32,7 +32,7 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 		}),
 		Pagination: gitpod.F(gitpod.PersonalAccessTokenListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

@@ -53,10 +53,10 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.List(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1),
-		Filter:                 gitpod.F[gitpod.RunnerConfigurationEnvironmentClassListParamsFilterUnion](gitpod.RunnerConfigurationEnvironmentClassListParamsFilterUnknown(map[string]interface{}{})),
+		Filter:                 gitpod.F[any](map[string]interface{}{}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

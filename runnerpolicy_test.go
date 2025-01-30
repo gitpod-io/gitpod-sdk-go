@@ -29,7 +29,7 @@ func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyListParamsConnectProtocolVersion1),
 		Pagination: gitpod.F(gitpod.RunnerPolicyListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		RunnerID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs: gitpod.F(0.000000),

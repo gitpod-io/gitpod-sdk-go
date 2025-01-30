@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -378,8 +377,8 @@ type EnvironmentAutomationTaskNewResponseTaskSpec struct {
 	// command contains the command the task should execute
 	Command string `json:"command"`
 	// runs_on specifies the environment the task should run on.
-	RunsOn EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion `json:"runsOn"`
-	JSON   environmentAutomationTaskNewResponseTaskSpecJSON        `json:"-"`
+	RunsOn interface{}                                      `json:"runsOn"`
+	JSON   environmentAutomationTaskNewResponseTaskSpecJSON `json:"-"`
 }
 
 // environmentAutomationTaskNewResponseTaskSpecJSON contains the JSON metadata for
@@ -397,18 +396,6 @@ func (r *EnvironmentAutomationTaskNewResponseTaskSpec) UnmarshalJSON(data []byte
 
 func (r environmentAutomationTaskNewResponseTaskSpecJSON) RawJSON() string {
 	return r.raw
-}
-
-// runs_on specifies the environment the task should run on.
-//
-// Union satisfied by [EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnknown]
-// or [EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnknown].
-type EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion interface {
-	implementsEnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskNewResponseTaskSpecRunsOnUnion)(nil)).Elem(), "")
 }
 
 type EnvironmentAutomationTaskGetResponse struct {
@@ -670,8 +657,8 @@ type EnvironmentAutomationTaskGetResponseTaskSpec struct {
 	// command contains the command the task should execute
 	Command string `json:"command"`
 	// runs_on specifies the environment the task should run on.
-	RunsOn EnvironmentAutomationTaskGetResponseTaskSpecRunsOnUnion `json:"runsOn"`
-	JSON   environmentAutomationTaskGetResponseTaskSpecJSON        `json:"-"`
+	RunsOn interface{}                                      `json:"runsOn"`
+	JSON   environmentAutomationTaskGetResponseTaskSpecJSON `json:"-"`
 }
 
 // environmentAutomationTaskGetResponseTaskSpecJSON contains the JSON metadata for
@@ -689,18 +676,6 @@ func (r *EnvironmentAutomationTaskGetResponseTaskSpec) UnmarshalJSON(data []byte
 
 func (r environmentAutomationTaskGetResponseTaskSpecJSON) RawJSON() string {
 	return r.raw
-}
-
-// runs_on specifies the environment the task should run on.
-//
-// Union satisfied by [EnvironmentAutomationTaskGetResponseTaskSpecRunsOnUnknown]
-// or [EnvironmentAutomationTaskGetResponseTaskSpecRunsOnUnknown].
-type EnvironmentAutomationTaskGetResponseTaskSpecRunsOnUnion interface {
-	implementsEnvironmentAutomationTaskGetResponseTaskSpecRunsOnUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskGetResponseTaskSpecRunsOnUnion)(nil)).Elem(), "")
 }
 
 type EnvironmentAutomationTaskUpdateResponse = interface{}
@@ -990,8 +965,8 @@ type EnvironmentAutomationTaskListResponseTasksSpec struct {
 	// command contains the command the task should execute
 	Command string `json:"command"`
 	// runs_on specifies the environment the task should run on.
-	RunsOn EnvironmentAutomationTaskListResponseTasksSpecRunsOnUnion `json:"runsOn"`
-	JSON   environmentAutomationTaskListResponseTasksSpecJSON        `json:"-"`
+	RunsOn interface{}                                        `json:"runsOn"`
+	JSON   environmentAutomationTaskListResponseTasksSpecJSON `json:"-"`
 }
 
 // environmentAutomationTaskListResponseTasksSpecJSON contains the JSON metadata
@@ -1009,18 +984,6 @@ func (r *EnvironmentAutomationTaskListResponseTasksSpec) UnmarshalJSON(data []by
 
 func (r environmentAutomationTaskListResponseTasksSpecJSON) RawJSON() string {
 	return r.raw
-}
-
-// runs_on specifies the environment the task should run on.
-//
-// Union satisfied by [EnvironmentAutomationTaskListResponseTasksSpecRunsOnUnknown]
-// or [EnvironmentAutomationTaskListResponseTasksSpecRunsOnUnknown].
-type EnvironmentAutomationTaskListResponseTasksSpecRunsOnUnion interface {
-	implementsEnvironmentAutomationTaskListResponseTasksSpecRunsOnUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationTaskListResponseTasksSpecRunsOnUnion)(nil)).Elem(), "")
 }
 
 type EnvironmentAutomationTaskDeleteResponse = interface{}
@@ -1830,19 +1793,11 @@ type EnvironmentAutomationTaskNewParamsSpec struct {
 	// command contains the command the task should execute
 	Command param.Field[string] `json:"command"`
 	// runs_on specifies the environment the task should run on.
-	RunsOn param.Field[EnvironmentAutomationTaskNewParamsSpecRunsOnUnion] `json:"runsOn"`
+	RunsOn param.Field[interface{}] `json:"runsOn"`
 }
 
 func (r EnvironmentAutomationTaskNewParamsSpec) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// runs_on specifies the environment the task should run on.
-//
-// Satisfied by [EnvironmentAutomationTaskNewParamsSpecRunsOnUnknown],
-// [EnvironmentAutomationTaskNewParamsSpecRunsOnUnknown].
-type EnvironmentAutomationTaskNewParamsSpecRunsOnUnion interface {
-	implementsEnvironmentAutomationTaskNewParamsSpecRunsOnUnion()
 }
 
 type EnvironmentAutomationTaskGetParams struct {
