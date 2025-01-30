@@ -27,10 +27,10 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.EnvironmentClasses.List(context.TODO(), gitpod.EnvironmentClassListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentClassListParamsConnectProtocolVersion1),
-		Filter:                 gitpod.F[gitpod.EnvironmentClassListParamsFilterUnion](gitpod.EnvironmentClassListParamsFilterUnknown(map[string]interface{}{})),
+		Filter:                 gitpod.F[any](map[string]interface{}{}),
 		Pagination: gitpod.F(gitpod.EnvironmentClassListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(0)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 		ConnectTimeoutMs: gitpod.F(0.000000),
 	})

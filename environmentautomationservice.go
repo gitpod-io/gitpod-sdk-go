@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -404,7 +403,7 @@ type EnvironmentAutomationServiceListResponseServicesSpec struct {
 	// service.
 	DesiredPhase EnvironmentAutomationServiceListResponseServicesSpecDesiredPhase `json:"desiredPhase"`
 	// runs_on specifies the environment the service should run on.
-	RunsOn EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnion `json:"runsOn"`
+	RunsOn interface{} `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
 	// exits it will
 	//
@@ -505,19 +504,6 @@ func (r EnvironmentAutomationServiceListResponseServicesSpecDesiredPhase) IsKnow
 		return true
 	}
 	return false
-}
-
-// runs_on specifies the environment the service should run on.
-//
-// Union satisfied by
-// [EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnknown] or
-// [EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnknown].
-type EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnion interface {
-	implementsEnvironmentAutomationServiceListResponseServicesSpecRunsOnUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*EnvironmentAutomationServiceListResponseServicesSpecRunsOnUnion)(nil)).Elem(), "")
 }
 
 type EnvironmentAutomationServiceListResponseServicesStatus struct {

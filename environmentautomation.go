@@ -125,11 +125,11 @@ func (r EnvironmentAutomationUpsertParamsAutomationsFile) MarshalJSON() (data []
 }
 
 type EnvironmentAutomationUpsertParamsAutomationsFileServices struct {
-	Commands    param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands]    `json:"commands"`
-	Description param.Field[string]                                                              `json:"description"`
-	Name        param.Field[string]                                                              `json:"name"`
-	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion] `json:"runsOn"`
-	TriggeredBy param.Field[[]string]                                                            `json:"triggeredBy"`
+	Commands    param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands] `json:"commands"`
+	Description param.Field[string]                                                           `json:"description"`
+	Name        param.Field[string]                                                           `json:"name"`
+	RunsOn      param.Field[interface{}]                                                      `json:"runsOn"`
+	TriggeredBy param.Field[[]string]                                                         `json:"triggeredBy"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileServices) MarshalJSON() (data []byte, err error) {
@@ -166,29 +166,15 @@ func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands) Marsha
 	return apijson.MarshalRoot(r)
 }
 
-// Satisfied by
-// [EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnknown],
-// [EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnknown].
-type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion interface {
-	implementsEnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion()
-}
-
 type EnvironmentAutomationUpsertParamsAutomationsFileTasks struct {
-	Command     param.Field[string]                                                           `json:"command"`
-	DependsOn   param.Field[[]string]                                                         `json:"dependsOn"`
-	Description param.Field[string]                                                           `json:"description"`
-	Name        param.Field[string]                                                           `json:"name"`
-	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion] `json:"runsOn"`
-	TriggeredBy param.Field[[]string]                                                         `json:"triggeredBy"`
+	Command     param.Field[string]      `json:"command"`
+	DependsOn   param.Field[[]string]    `json:"dependsOn"`
+	Description param.Field[string]      `json:"description"`
+	Name        param.Field[string]      `json:"name"`
+	RunsOn      param.Field[interface{}] `json:"runsOn"`
+	TriggeredBy param.Field[[]string]    `json:"triggeredBy"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileTasks) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Satisfied by
-// [EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnknown],
-// [EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnknown].
-type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion interface {
-	implementsEnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion()
 }

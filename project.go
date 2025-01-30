@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -98,7 +97,7 @@ func (r projectNewResponseJSON) RawJSON() string {
 }
 
 type ProjectNewResponseProject struct {
-	EnvironmentClass ProjectNewResponseProjectEnvironmentClassUnion `json:"environmentClass,required"`
+	EnvironmentClass interface{} `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -134,17 +133,6 @@ func (r *ProjectNewResponseProject) UnmarshalJSON(data []byte) (err error) {
 
 func (r projectNewResponseProjectJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by [ProjectNewResponseProjectEnvironmentClassUnknown],
-// [ProjectNewResponseProjectEnvironmentClassUnknown] or
-// [ProjectNewResponseProjectEnvironmentClassUnknown].
-type ProjectNewResponseProjectEnvironmentClassUnion interface {
-	implementsProjectNewResponseProjectEnvironmentClassUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ProjectNewResponseProjectEnvironmentClassUnion)(nil)).Elem(), "")
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
@@ -537,7 +525,7 @@ func (r projectGetResponseJSON) RawJSON() string {
 }
 
 type ProjectGetResponseProject struct {
-	EnvironmentClass ProjectGetResponseProjectEnvironmentClassUnion `json:"environmentClass,required"`
+	EnvironmentClass interface{} `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -573,17 +561,6 @@ func (r *ProjectGetResponseProject) UnmarshalJSON(data []byte) (err error) {
 
 func (r projectGetResponseProjectJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by [ProjectGetResponseProjectEnvironmentClassUnknown],
-// [ProjectGetResponseProjectEnvironmentClassUnknown] or
-// [ProjectGetResponseProjectEnvironmentClassUnknown].
-type ProjectGetResponseProjectEnvironmentClassUnion interface {
-	implementsProjectGetResponseProjectEnvironmentClassUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ProjectGetResponseProjectEnvironmentClassUnion)(nil)).Elem(), "")
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
@@ -976,7 +953,7 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 }
 
 type ProjectNewFromEnvironmentResponseProject struct {
-	EnvironmentClass ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion `json:"environmentClass,required"`
+	EnvironmentClass interface{} `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -1012,18 +989,6 @@ func (r *ProjectNewFromEnvironmentResponseProject) UnmarshalJSON(data []byte) (e
 
 func (r projectNewFromEnvironmentResponseProjectJSON) RawJSON() string {
 	return r.raw
-}
-
-// Union satisfied by
-// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnknown],
-// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnknown] or
-// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnknown].
-type ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion interface {
-	implementsProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion()
-}
-
-func init() {
-	apijson.RegisterUnion(reflect.TypeOf((*ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion)(nil)).Elem(), "")
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
@@ -1397,7 +1362,7 @@ func (r ProjectNewFromEnvironmentResponseProjectUsedBySubjectsPrincipal) IsKnown
 }
 
 type ProjectNewParams struct {
-	EnvironmentClass param.Field[ProjectNewParamsEnvironmentClassUnion] `json:"environmentClass,required"`
+	EnvironmentClass param.Field[interface{}] `json:"environmentClass,required"`
 	// EnvironmentInitializer specifies how an environment is to be initialized
 	Initializer param.Field[ProjectNewParamsInitializer] `json:"initializer,required"`
 	// Define the version of the Connect protocol
@@ -1423,13 +1388,6 @@ type ProjectNewParams struct {
 
 func (r ProjectNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Satisfied by [ProjectNewParamsEnvironmentClassUnknown],
-// [ProjectNewParamsEnvironmentClassUnknown],
-// [ProjectNewParamsEnvironmentClassUnknown].
-type ProjectNewParamsEnvironmentClassUnion interface {
-	implementsProjectNewParamsEnvironmentClassUnion()
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
