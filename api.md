@@ -109,22 +109,14 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationLeaveResponse">OrganizationLeaveResponse</a>
+- <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationListMembersResponse">OrganizationListMembersResponse</a>
 - <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationSetRoleResponse">OrganizationSetRoleResponse</a>
 
 Methods:
 
 - <code title="post /gitpod.v1.OrganizationService/LeaveOrganization">client.Organizations.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationService.Leave">Leave</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationLeaveParams">OrganizationLeaveParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationLeaveResponse">OrganizationLeaveResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /gitpod.v1.OrganizationService/ListMembers">client.Organizations.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationService.ListMembers">ListMembers</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationListMembersParams">OrganizationListMembersParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationListMembersResponse">OrganizationListMembersResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /gitpod.v1.OrganizationService/SetRole">client.Organizations.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationService.SetRole">SetRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationSetRoleParams">OrganizationSetRoleParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationSetRoleResponse">OrganizationSetRoleResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-## Members
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationMemberListResponse">OrganizationMemberListResponse</a>
-
-Methods:
-
-- <code title="post /gitpod.v1.OrganizationService/ListMembers">client.Organizations.Members.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationMemberService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationMemberListParams">OrganizationMemberListParams</a>) (<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/stainless-sdks/gitpod-go#OrganizationMemberListResponse">OrganizationMemberListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## Invite
 

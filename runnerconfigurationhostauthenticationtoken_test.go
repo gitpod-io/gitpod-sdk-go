@@ -79,7 +79,9 @@ func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *t
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.HostAuthenticationTokens.Update(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParams{
-		Body:                   gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBody{},
+		Body: gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyExpiresAt{
+			ExpiresAt: gitpod.F(time.Now()),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -106,7 +108,9 @@ func TestRunnerConfigurationHostAuthenticationTokenListWithOptionalParams(t *tes
 	)
 	_, err := client.RunnerConfigurations.HostAuthenticationTokens.List(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1),
-		Filter:                 gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilter{}),
+		Filter: gitpod.F[gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion](gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID{
+			RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),

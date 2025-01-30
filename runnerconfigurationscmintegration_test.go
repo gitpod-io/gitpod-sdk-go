@@ -26,7 +26,9 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.ScmIntegration.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
-		Body:                   gitpod.RunnerConfigurationScmIntegrationNewParamsBody{},
+		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientID{
+			OAuthClientID: gitpod.F("oauthClientId"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

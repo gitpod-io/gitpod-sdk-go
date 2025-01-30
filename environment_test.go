@@ -37,7 +37,11 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpec{{}}),
+					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsContextURL{
+						ContextURL: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializerSpecsContextURLContextURL{
+							URL: gitpod.F("https://example.com"),
+						}),
+					}}),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -55,7 +59,13 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets:     gitpod.F([]gitpod.EnvironmentNewParamsSpecSecret{{}}),
+			Secrets: gitpod.F([]gitpod.EnvironmentNewParamsSpecSecretUnion{gitpod.EnvironmentNewParamsSpecSecretsEnvironmentVariable{
+				EnvironmentVariable: gitpod.F("environmentVariable"),
+				Name:                gitpod.F("name"),
+				Session:             gitpod.F("session"),
+				Source:              gitpod.F("source"),
+				SourceRef:           gitpod.F("sourceRef"),
+			}}),
 			SpecVersion: gitpod.F("specVersion"),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),
@@ -164,7 +174,11 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpec{{}}),
+					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsContextURL{
+						ContextURL: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsContextURLContextURL{
+							URL: gitpod.F("https://example.com"),
+						}),
+					}}),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -182,7 +196,13 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets:     gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecret{{}}),
+			Secrets: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecretUnion{gitpod.EnvironmentNewFromProjectParamsSpecSecretsEnvironmentVariable{
+				EnvironmentVariable: gitpod.F("environmentVariable"),
+				Name:                gitpod.F("name"),
+				Session:             gitpod.F("session"),
+				Source:              gitpod.F("source"),
+				SourceRef:           gitpod.F("sourceRef"),
+			}}),
 			SpecVersion: gitpod.F("specVersion"),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("id"),

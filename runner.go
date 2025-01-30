@@ -3042,7 +3042,7 @@ func (r RunnerParseContextURLParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type RunnerUpdateRunnerParams struct {
-	Body RunnerUpdateRunnerParamsBody `json:"body,required"`
+	Body RunnerUpdateRunnerParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerUpdateRunnerParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -3054,10 +3054,168 @@ func (r RunnerUpdateRunnerParams) MarshalJSON() (data []byte, err error) {
 }
 
 type RunnerUpdateRunnerParamsBody struct {
+	// The runner's name which is shown to users
+	Name param.Field[string]      `json:"name"`
+	Spec param.Field[interface{}] `json:"spec"`
 }
 
 func (r RunnerUpdateRunnerParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBody) implementsRunnerUpdateRunnerParamsBodyUnion() {}
+
+// Satisfied by [RunnerUpdateRunnerParamsBodyName],
+// [RunnerUpdateRunnerParamsBodySpec], [RunnerUpdateRunnerParamsBody].
+type RunnerUpdateRunnerParamsBodyUnion interface {
+	implementsRunnerUpdateRunnerParamsBodyUnion()
+}
+
+type RunnerUpdateRunnerParamsBodyName struct {
+	// The runner's name which is shown to users
+	Name param.Field[string] `json:"name,required"`
+}
+
+func (r RunnerUpdateRunnerParamsBodyName) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodyName) implementsRunnerUpdateRunnerParamsBodyUnion() {}
+
+type RunnerUpdateRunnerParamsBodySpec struct {
+	Spec param.Field[RunnerUpdateRunnerParamsBodySpecSpecUnion] `json:"spec,required"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpec) implementsRunnerUpdateRunnerParamsBodyUnion() {}
+
+type RunnerUpdateRunnerParamsBodySpecSpec struct {
+	Configuration param.Field[interface{}] `json:"configuration"`
+	// RunnerPhase represents the phase a runner is in
+	DesiredPhase param.Field[RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase] `json:"desiredPhase"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpec) implementsRunnerUpdateRunnerParamsBodySpecSpecUnion() {}
+
+// Satisfied by [RunnerUpdateRunnerParamsBodySpecSpecConfiguration],
+// [RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase],
+// [RunnerUpdateRunnerParamsBodySpecSpec].
+type RunnerUpdateRunnerParamsBodySpecSpecUnion interface {
+	implementsRunnerUpdateRunnerParamsBodySpecSpecUnion()
+}
+
+type RunnerUpdateRunnerParamsBodySpecSpecConfiguration struct {
+	Configuration param.Field[RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion] `json:"configuration,required"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfiguration) implementsRunnerUpdateRunnerParamsBodySpecSpecUnion() {
+}
+
+type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration struct {
+	// auto_update indicates whether the runner should automatically update itself.
+	AutoUpdate param.Field[bool] `json:"autoUpdate"`
+	// The release channel the runner is on
+	ReleaseChannel param.Field[RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel] `json:"releaseChannel"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration) implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion() {
+}
+
+// Satisfied by
+// [RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate],
+// [RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel],
+// [RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration].
+type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion interface {
+	implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion()
+}
+
+type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate struct {
+	// auto_update indicates whether the runner should automatically update itself.
+	AutoUpdate param.Field[bool] `json:"autoUpdate,required"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate) implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion() {
+}
+
+type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel struct {
+	// The release channel the runner is on
+	ReleaseChannel param.Field[RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel] `json:"releaseChannel,required"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel) implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion() {
+}
+
+// The release channel the runner is on
+type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel string
+
+const (
+	RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelUnspecified RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
+	RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelStable      RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
+	RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelLatest      RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
+)
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel) IsKnown() bool {
+	switch r {
+	case RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelUnspecified, RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelStable, RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelLatest:
+		return true
+	}
+	return false
+}
+
+type RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase struct {
+	// RunnerPhase represents the phase a runner is in
+	DesiredPhase param.Field[RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase] `json:"desiredPhase,required"`
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase) implementsRunnerUpdateRunnerParamsBodySpecSpecUnion() {
+}
+
+// RunnerPhase represents the phase a runner is in
+type RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase string
+
+const (
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseUnspecified RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseCreated     RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_CREATED"
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseInactive    RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_INACTIVE"
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseActive      RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_ACTIVE"
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleting    RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_DELETING"
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleted     RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_DELETED"
+	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDegraded    RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_DEGRADED"
+)
+
+func (r RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase) IsKnown() bool {
+	switch r {
+	case RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseUnspecified, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseCreated, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseInactive, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseActive, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleting, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleted, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDegraded:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol

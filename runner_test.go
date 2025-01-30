@@ -253,7 +253,9 @@ func TestRunnerUpdateRunnerWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.UpdateRunner(context.TODO(), gitpod.RunnerUpdateRunnerParams{
-		Body:                   gitpod.RunnerUpdateRunnerParamsBody{},
+		Body: gitpod.RunnerUpdateRunnerParamsBodyName{
+			Name: gitpod.F("xxx"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerUpdateRunnerParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

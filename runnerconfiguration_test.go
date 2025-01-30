@@ -26,7 +26,20 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.Validate(context.TODO(), gitpod.RunnerConfigurationValidateParams{
-		Body:                   gitpod.RunnerConfigurationValidateParamsBody{},
+		Body: gitpod.RunnerConfigurationValidateParamsBodyEnvironmentClass{
+			EnvironmentClass: gitpod.F(gitpod.RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClass{
+				ID: gitpod.F("id"),
+				Configuration: gitpod.F([]gitpod.RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClassConfiguration{{
+					Key:   gitpod.F("key"),
+					Value: gitpod.F("value"),
+				}}),
+				Description: gitpod.F("xxx"),
+				DisplayName: gitpod.F("xxx"),
+				Enabled:     gitpod.F(true),
+				RunnerID:    gitpod.F("runnerId"),
+			}),
+			RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationValidateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
