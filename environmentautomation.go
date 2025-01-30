@@ -20,10 +20,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewEnvironmentAutomationService] method instead.
 type EnvironmentAutomationService struct {
-	Options        []option.RequestOption
-	Tasks          *EnvironmentAutomationTaskService
-	TaskExecutions *EnvironmentAutomationTaskExecutionService
-	Services       *EnvironmentAutomationServiceService
+	Options  []option.RequestOption
+	Services *EnvironmentAutomationServiceService
+	Tasks    *EnvironmentAutomationTaskService
 }
 
 // NewEnvironmentAutomationService generates a new service that applies the given
@@ -32,9 +31,8 @@ type EnvironmentAutomationService struct {
 func NewEnvironmentAutomationService(opts ...option.RequestOption) (r *EnvironmentAutomationService) {
 	r = &EnvironmentAutomationService{}
 	r.Options = opts
-	r.Tasks = NewEnvironmentAutomationTaskService(opts...)
-	r.TaskExecutions = NewEnvironmentAutomationTaskExecutionService(opts...)
 	r.Services = NewEnvironmentAutomationServiceService(opts...)
+	r.Tasks = NewEnvironmentAutomationTaskService(opts...)
 	return
 }
 

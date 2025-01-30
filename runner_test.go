@@ -61,8 +61,40 @@ func TestRunnerGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Get(context.TODO(), gitpod.RunnerGetParams{
+		Encoding:               gitpod.F(gitpod.RunnerGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetParamsConnectProtocolVersion1),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.RunnerGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.RunnerGetParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestRunnerUpdateWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Runners.Update(context.TODO(), gitpod.RunnerUpdateParams{
+		Body: gitpod.RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers{
+			Name: gitpod.F("xxx"),
+		},
+		ConnectProtocolVersion: gitpod.F(gitpod.RunnerUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -87,16 +119,40 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.List(context.TODO(), gitpod.RunnerListParams{
+		Encoding:               gitpod.F(gitpod.RunnerListParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerListParamsConnectProtocolVersion1),
-		Filter: gitpod.F(gitpod.RunnerListParamsFilter{
-			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Kinds:      gitpod.F([]gitpod.RunnerListParamsFilterKind{gitpod.RunnerListParamsFilterKindRunnerKindUnspecified}),
-		}),
-		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
-			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
-		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.RunnerListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.RunnerListParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestRunnerDeleteWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Runners.Delete(context.TODO(), gitpod.RunnerDeleteParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.RunnerDeleteParamsConnectProtocolVersion1),
+		Force:                  gitpod.F(true),
+		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -160,59 +216,6 @@ func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerDeleteRunnerWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Runners.DeleteRunner(context.TODO(), gitpod.RunnerDeleteRunnerParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerDeleteRunnerParamsConnectProtocolVersion1),
-		Force:                  gitpod.F(true),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestRunnerGetRunnerWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Runners.GetRunner(context.TODO(), gitpod.RunnerGetRunnerParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetRunnerParamsConnectProtocolVersion1),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
 func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -229,34 +232,6 @@ func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerParseContextURLParamsConnectProtocolVersion1),
 		ContextURL:             gitpod.F("https://example.com"),
 		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestRunnerUpdateRunnerWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Runners.UpdateRunner(context.TODO(), gitpod.RunnerUpdateRunnerParams{
-		Body: gitpod.RunnerUpdateRunnerParamsBodyName{
-			Name: gitpod.F("xxx"),
-		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerUpdateRunnerParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

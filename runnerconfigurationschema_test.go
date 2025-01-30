@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationSchemaGetWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,12 +25,12 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Classes.List(context.TODO(), gitpod.EnvironmentClassListParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentClassListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentClassListParamsConnectProtocolVersion1),
+	_, err := client.Runners.Configurations.Schema.Get(context.TODO(), gitpod.RunnerConfigurationSchemaGetParams{
+		Encoding:               gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentClassListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentClassListParamsConnectV1),
+		Compression:            gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

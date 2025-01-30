@@ -7,11 +7,97 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stainless-sdks/gitpod-go"
 	"github.com/stainless-sdks/gitpod-go/internal/testutil"
 	"github.com/stainless-sdks/gitpod-go/option"
 )
+
+func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Environments.Automations.Services.New(context.TODO(), gitpod.EnvironmentAutomationServiceNewParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsConnectProtocolVersion1),
+		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Metadata: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsMetadata{
+			CreatedAt: gitpod.F(time.Now()),
+			Creator: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsMetadataCreator{
+				ID:        gitpod.F("id"),
+				Principal: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsMetadataCreatorPrincipalPrincipalUnspecified),
+			}),
+			Description: gitpod.F("description"),
+			Name:        gitpod.F("x"),
+			Reference:   gitpod.F("reference"),
+			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationServiceNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationServiceNewParamsMetadataTriggeredByManual{
+				Manual: gitpod.F(true),
+			}}),
+		}),
+		Spec: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpec{
+			Commands: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecCommands{
+				Ready: gitpod.F("ready"),
+				Start: gitpod.F("x"),
+				Stop:  gitpod.F("stop"),
+			}),
+			DesiredPhase: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecDesiredPhaseServicePhaseUnspecified),
+			RunsOn: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOn{
+				Docker: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOnDocker{
+					Environment: gitpod.F([]string{"string"}),
+					Image:       gitpod.F("x"),
+				}),
+			}),
+			Session:     gitpod.F("session"),
+			SpecVersion: gitpod.F("specVersion"),
+		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestEnvironmentAutomationServiceGetWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Environments.Automations.Services.Get(context.TODO(), gitpod.EnvironmentAutomationServiceGetParams{
+		Encoding:               gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
 
 func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
@@ -63,17 +149,13 @@ func TestEnvironmentAutomationServiceListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{
+		Encoding:               gitpod.F(gitpod.EnvironmentAutomationServiceListParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsConnectProtocolVersion1),
-		Filter: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsFilter{
-			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			References:     gitpod.F([]string{"x"}),
-			ServiceIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		}),
-		Pagination: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsPagination{
-			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
-		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.EnvironmentAutomationServiceListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EnvironmentAutomationServiceListParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

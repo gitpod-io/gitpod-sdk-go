@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
+func TestUserPatListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,12 +25,12 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Automations.Tasks.Executions.Get(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionGetParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1),
+	_, err := client.Users.Pats.List(context.TODO(), gitpod.UserPatListParams{
+		Encoding:               gitpod.F(gitpod.UserPatListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.UserPatListParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectV1),
+		Compression:            gitpod.F(gitpod.UserPatListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.UserPatListParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -43,7 +43,7 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) {
+func TestUserPatDeleteWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -55,13 +55,9 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Automations.Tasks.Executions.List(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionListParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectV1),
-		Message:                gitpod.F("message"),
+	_, err := client.Users.Pats.Delete(context.TODO(), gitpod.UserPatDeleteParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.UserPatDeleteParamsConnectProtocolVersion1),
+		PersonalAccessTokenID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -73,7 +69,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) {
+func TestUserPatGetWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -85,9 +81,13 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Automations.Tasks.Executions.Stop(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionStopParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Users.Pats.Get(context.TODO(), gitpod.UserPatGetParams{
+		Encoding:               gitpod.F(gitpod.UserPatGetParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.UserPatGetParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.UserPatGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.UserPatGetParamsConnectV1),
+		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

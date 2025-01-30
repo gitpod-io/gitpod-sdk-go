@@ -6,8 +6,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
+	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -30,6 +32,34 @@ type RunnerConfigurationEnvironmentClassService struct {
 func NewRunnerConfigurationEnvironmentClassService(opts ...option.RequestOption) (r *RunnerConfigurationEnvironmentClassService) {
 	r = &RunnerConfigurationEnvironmentClassService{}
 	r.Options = opts
+	return
+}
+
+// CreateEnvironmentClass creates a new environment class on a runner.
+func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, params RunnerConfigurationEnvironmentClassNewParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassNewResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
+// GetEnvironmentClass returns a single environment class configured for a runner.
+func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, params RunnerConfigurationEnvironmentClassGetParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
 
@@ -59,8 +89,115 @@ func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, p
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
+}
+
+type RunnerConfigurationEnvironmentClassNewResponse struct {
+	ID   string                                             `json:"id"`
+	JSON runnerConfigurationEnvironmentClassNewResponseJSON `json:"-"`
+}
+
+// runnerConfigurationEnvironmentClassNewResponseJSON contains the JSON metadata
+// for the struct [RunnerConfigurationEnvironmentClassNewResponse]
+type runnerConfigurationEnvironmentClassNewResponseJSON struct {
+	ID          apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationEnvironmentClassNewResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationEnvironmentClassNewResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationEnvironmentClassGetResponse struct {
+	EnvironmentClass RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass `json:"environmentClass"`
+	JSON             runnerConfigurationEnvironmentClassGetResponseJSON             `json:"-"`
+}
+
+// runnerConfigurationEnvironmentClassGetResponseJSON contains the JSON metadata
+// for the struct [RunnerConfigurationEnvironmentClassGetResponse]
+type runnerConfigurationEnvironmentClassGetResponseJSON struct {
+	EnvironmentClass apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationEnvironmentClassGetResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationEnvironmentClassGetResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass struct {
+	// id is the unique identifier of the environment class
+	ID string `json:"id"`
+	// configuration describes the configuration of the environment class
+	Configuration []RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration `json:"configuration"`
+	// description is a human readable description of the environment class
+	Description string `json:"description"`
+	// display_name is the human readable name of the environment class
+	DisplayName string `json:"displayName"`
+	// enabled indicates whether the environment class can be used to create
+	//
+	// new environments.
+	Enabled bool `json:"enabled"`
+	// runner_id is the unique identifier of the runner the environment class belongs
+	// to
+	RunnerID string                                                             `json:"runnerId"`
+	JSON     runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON `json:"-"`
+}
+
+// runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass]
+type runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON struct {
+	ID            apijson.Field
+	Configuration apijson.Field
+	Description   apijson.Field
+	DisplayName   apijson.Field
+	Enabled       apijson.Field
+	RunnerID      apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration struct {
+	Key   string                                                                          `json:"key"`
+	Value string                                                                          `json:"value"`
+	JSON  runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON `json:"-"`
+}
+
+// runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration]
+type runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON struct {
+	Key         apijson.Field
+	Value       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON) RawJSON() string {
+	return r.raw
 }
 
 type RunnerConfigurationEnvironmentClassUpdateResponse = interface{}
@@ -180,6 +317,134 @@ func (r runnerConfigurationEnvironmentClassListResponsePaginationJSON) RawJSON()
 	return r.raw
 }
 
+type RunnerConfigurationEnvironmentClassNewParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	Configuration          param.Field[[]RunnerConfigurationEnvironmentClassNewParamsConfiguration]        `json:"configuration"`
+	Description            param.Field[string]                                                             `json:"description"`
+	DisplayName            param.Field[string]                                                             `json:"displayName"`
+	RunnerID               param.Field[string]                                                             `json:"runnerId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r RunnerConfigurationEnvironmentClassNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type RunnerConfigurationEnvironmentClassNewParamsConfiguration struct {
+	Key   param.Field[string] `json:"key"`
+	Value param.Field[string] `json:"value"`
+}
+
+func (r RunnerConfigurationEnvironmentClassNewParamsConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type RunnerConfigurationEnvironmentClassGetParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[RunnerConfigurationEnvironmentClassGetParamsEncoding] `query:"encoding,required"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[RunnerConfigurationEnvironmentClassGetParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[RunnerConfigurationEnvironmentClassGetParamsConnect] `query:"connect"`
+	Message param.Field[string]                                              `query:"message"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+// URLQuery serializes [RunnerConfigurationEnvironmentClassGetParams]'s query
+// parameters as `url.Values`.
+func (r RunnerConfigurationEnvironmentClassGetParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type RunnerConfigurationEnvironmentClassGetParamsEncoding string
+
+const (
+	RunnerConfigurationEnvironmentClassGetParamsEncodingProto RunnerConfigurationEnvironmentClassGetParamsEncoding = "proto"
+	RunnerConfigurationEnvironmentClassGetParamsEncodingJson  RunnerConfigurationEnvironmentClassGetParamsEncoding = "json"
+)
+
+func (r RunnerConfigurationEnvironmentClassGetParamsEncoding) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassGetParamsEncodingProto, RunnerConfigurationEnvironmentClassGetParamsEncodingJson:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion float64
+
+const (
+	RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+// Which compression algorithm to use for this request
+type RunnerConfigurationEnvironmentClassGetParamsCompression string
+
+const (
+	RunnerConfigurationEnvironmentClassGetParamsCompressionIdentity RunnerConfigurationEnvironmentClassGetParamsCompression = "identity"
+	RunnerConfigurationEnvironmentClassGetParamsCompressionGzip     RunnerConfigurationEnvironmentClassGetParamsCompression = "gzip"
+	RunnerConfigurationEnvironmentClassGetParamsCompressionBr       RunnerConfigurationEnvironmentClassGetParamsCompression = "br"
+)
+
+func (r RunnerConfigurationEnvironmentClassGetParamsCompression) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassGetParamsCompressionIdentity, RunnerConfigurationEnvironmentClassGetParamsCompressionGzip, RunnerConfigurationEnvironmentClassGetParamsCompressionBr:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationEnvironmentClassGetParamsConnect string
+
+const (
+	RunnerConfigurationEnvironmentClassGetParamsConnectV1 RunnerConfigurationEnvironmentClassGetParamsConnect = "v1"
+)
+
+func (r RunnerConfigurationEnvironmentClassGetParamsConnect) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassGetParamsConnectV1:
+		return true
+	}
+	return false
+}
+
 type RunnerConfigurationEnvironmentClassUpdateParams struct {
 	Body RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
@@ -262,17 +527,45 @@ func (r RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion) I
 }
 
 type RunnerConfigurationEnvironmentClassListParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[RunnerConfigurationEnvironmentClassListParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[RunnerConfigurationEnvironmentClassListParamsFilter]                 `json:"filter"`
-	// pagination contains the pagination options for listing environment classes
-	Pagination param.Field[RunnerConfigurationEnvironmentClassListParamsPagination] `json:"pagination"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[RunnerConfigurationEnvironmentClassListParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[RunnerConfigurationEnvironmentClassListParamsConnect] `query:"connect"`
+	Message param.Field[string]                                               `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r RunnerConfigurationEnvironmentClassListParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+// URLQuery serializes [RunnerConfigurationEnvironmentClassListParams]'s query
+// parameters as `url.Values`.
+func (r RunnerConfigurationEnvironmentClassListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type RunnerConfigurationEnvironmentClassListParamsEncoding string
+
+const (
+	RunnerConfigurationEnvironmentClassListParamsEncodingProto RunnerConfigurationEnvironmentClassListParamsEncoding = "proto"
+	RunnerConfigurationEnvironmentClassListParamsEncodingJson  RunnerConfigurationEnvironmentClassListParamsEncoding = "json"
+)
+
+func (r RunnerConfigurationEnvironmentClassListParamsEncoding) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassListParamsEncodingProto, RunnerConfigurationEnvironmentClassListParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -290,28 +583,34 @@ func (r RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion) IsK
 	return false
 }
 
-type RunnerConfigurationEnvironmentClassListParamsFilter struct {
-	// enabled filters the response to only enabled or disabled environment classes.
-	//
-	// If not set, all environment classes are returned.
-	Enabled param.Field[bool] `json:"enabled,required"`
+// Which compression algorithm to use for this request
+type RunnerConfigurationEnvironmentClassListParamsCompression string
+
+const (
+	RunnerConfigurationEnvironmentClassListParamsCompressionIdentity RunnerConfigurationEnvironmentClassListParamsCompression = "identity"
+	RunnerConfigurationEnvironmentClassListParamsCompressionGzip     RunnerConfigurationEnvironmentClassListParamsCompression = "gzip"
+	RunnerConfigurationEnvironmentClassListParamsCompressionBr       RunnerConfigurationEnvironmentClassListParamsCompression = "br"
+)
+
+func (r RunnerConfigurationEnvironmentClassListParamsCompression) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassListParamsCompressionIdentity, RunnerConfigurationEnvironmentClassListParamsCompressionGzip, RunnerConfigurationEnvironmentClassListParamsCompressionBr:
+		return true
+	}
+	return false
 }
 
-func (r RunnerConfigurationEnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
+// Define the version of the Connect protocol
+type RunnerConfigurationEnvironmentClassListParamsConnect string
 
-// pagination contains the pagination options for listing environment classes
-type RunnerConfigurationEnvironmentClassListParamsPagination struct {
-	// Token for the next set of results that was returned as next_token of a
-	//
-	// PaginationResponse
-	Token param.Field[string] `json:"token"`
-	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
-	// Maximum 100.
-	PageSize param.Field[int64] `json:"pageSize"`
-}
+const (
+	RunnerConfigurationEnvironmentClassListParamsConnectV1 RunnerConfigurationEnvironmentClassListParamsConnect = "v1"
+)
 
-func (r RunnerConfigurationEnvironmentClassListParamsPagination) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+func (r RunnerConfigurationEnvironmentClassListParamsConnect) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationEnvironmentClassListParamsConnectV1:
+		return true
+	}
+	return false
 }

@@ -6,8 +6,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
+	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -56,7 +58,7 @@ func (r *IdentityService) GetAuthenticatedIdentity(ctx context.Context, params I
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.IdentityService/GetAuthenticatedIdentity"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
 
@@ -217,15 +219,45 @@ func (r IdentityExchangeTokenParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type IdentityGetAuthenticatedIdentityParams struct {
-	Body interface{} `json:"body,required"`
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[IdentityGetAuthenticatedIdentityParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[IdentityGetAuthenticatedIdentityParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[IdentityGetAuthenticatedIdentityParamsConnect] `query:"connect"`
+	Message param.Field[string]                                        `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r IdentityGetAuthenticatedIdentityParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
+// URLQuery serializes [IdentityGetAuthenticatedIdentityParams]'s query parameters
+// as `url.Values`.
+func (r IdentityGetAuthenticatedIdentityParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type IdentityGetAuthenticatedIdentityParamsEncoding string
+
+const (
+	IdentityGetAuthenticatedIdentityParamsEncodingProto IdentityGetAuthenticatedIdentityParamsEncoding = "proto"
+	IdentityGetAuthenticatedIdentityParamsEncodingJson  IdentityGetAuthenticatedIdentityParamsEncoding = "json"
+)
+
+func (r IdentityGetAuthenticatedIdentityParamsEncoding) IsKnown() bool {
+	switch r {
+	case IdentityGetAuthenticatedIdentityParamsEncodingProto, IdentityGetAuthenticatedIdentityParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -238,6 +270,38 @@ const (
 func (r IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+// Which compression algorithm to use for this request
+type IdentityGetAuthenticatedIdentityParamsCompression string
+
+const (
+	IdentityGetAuthenticatedIdentityParamsCompressionIdentity IdentityGetAuthenticatedIdentityParamsCompression = "identity"
+	IdentityGetAuthenticatedIdentityParamsCompressionGzip     IdentityGetAuthenticatedIdentityParamsCompression = "gzip"
+	IdentityGetAuthenticatedIdentityParamsCompressionBr       IdentityGetAuthenticatedIdentityParamsCompression = "br"
+)
+
+func (r IdentityGetAuthenticatedIdentityParamsCompression) IsKnown() bool {
+	switch r {
+	case IdentityGetAuthenticatedIdentityParamsCompressionIdentity, IdentityGetAuthenticatedIdentityParamsCompressionGzip, IdentityGetAuthenticatedIdentityParamsCompressionBr:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type IdentityGetAuthenticatedIdentityParamsConnect string
+
+const (
+	IdentityGetAuthenticatedIdentityParamsConnectV1 IdentityGetAuthenticatedIdentityParamsConnect = "v1"
+)
+
+func (r IdentityGetAuthenticatedIdentityParamsConnect) IsKnown() bool {
+	switch r {
+	case IdentityGetAuthenticatedIdentityParamsConnectV1:
 		return true
 	}
 	return false

@@ -6,9 +6,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
+	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -21,8 +23,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewRunnerService] method instead.
 type RunnerService struct {
-	Options  []option.RequestOption
-	Policies *RunnerPolicyService
+	Options        []option.RequestOption
+	Configurations *RunnerConfigurationService
+	Policies       *RunnerPolicyService
 }
 
 // NewRunnerService generates a new service that applies the given options to each
@@ -31,6 +34,7 @@ type RunnerService struct {
 func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 	r = &RunnerService{}
 	r.Options = opts
+	r.Configurations = NewRunnerConfigurationService(opts...)
 	r.Policies = NewRunnerPolicyService(opts...)
 	return
 }
@@ -62,6 +66,20 @@ func (r *RunnerService) Get(ctx context.Context, params RunnerGetParams, opts ..
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/GetRunner"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	return
+}
+
+// UpdateRunner updates an environment runner.
+func (r *RunnerService) Update(ctx context.Context, params RunnerUpdateParams, opts ...option.RequestOption) (res *RunnerUpdateResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.RunnerService/UpdateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -76,6 +94,20 @@ func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts 
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ListRunners"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	return
+}
+
+// DeleteRunner deletes an environment runner.
+func (r *RunnerService) Delete(ctx context.Context, params RunnerDeleteParams, opts ...option.RequestOption) (res *RunnerDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.RunnerService/DeleteRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -115,34 +147,6 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, params RunnerNewRunn
 	return
 }
 
-// DeleteRunner deletes an environment runner.
-func (r *RunnerService) DeleteRunner(ctx context.Context, params RunnerDeleteRunnerParams, opts ...option.RequestOption) (res *RunnerDeleteRunnerResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
-	opts = append(r.Options[:], opts...)
-	path := "gitpod.v1.RunnerService/DeleteRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
-}
-
-// GetRunner returns a single runner.
-func (r *RunnerService) GetRunner(ctx context.Context, params RunnerGetRunnerParams, opts ...option.RequestOption) (res *RunnerGetRunnerResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
-	opts = append(r.Options[:], opts...)
-	path := "gitpod.v1.RunnerService/GetRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
-}
-
 // ParseContextURL asks a runner to parse a context URL, and return the parsed
 // result.
 //
@@ -164,20 +168,6 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, params RunnerParseC
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
-}
-
-// UpdateRunner updates an environment runner.
-func (r *RunnerService) UpdateRunner(ctx context.Context, params RunnerUpdateRunnerParams, opts ...option.RequestOption) (res *RunnerUpdateRunnerResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
-	opts = append(r.Options[:], opts...)
-	path := "gitpod.v1.RunnerService/UpdateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -1366,6 +1356,8 @@ func (r RunnerGetResponseRunnerStatusPhase) IsKnown() bool {
 	return false
 }
 
+type RunnerUpdateResponse = interface{}
+
 type RunnerListResponse struct {
 	// pagination contains the pagination options for listing runners
 	Pagination RunnerListResponsePagination `json:"pagination"`
@@ -1986,6 +1978,8 @@ func (r RunnerListResponseRunnersStatusPhase) IsKnown() bool {
 	return false
 }
 
+type RunnerDeleteResponse = interface{}
+
 type RunnerCheckAuthenticationForHostResponse struct {
 	Authenticated     bool                                         `json:"authenticated"`
 	AuthenticationURL string                                       `json:"authenticationUrl"`
@@ -2032,599 +2026,6 @@ func (r *RunnerNewRunnerTokenResponse) UnmarshalJSON(data []byte) (err error) {
 
 func (r runnerNewRunnerTokenResponseJSON) RawJSON() string {
 	return r.raw
-}
-
-type RunnerDeleteRunnerResponse = interface{}
-
-type RunnerGetRunnerResponse struct {
-	Runner RunnerGetRunnerResponseRunner `json:"runner"`
-	JSON   runnerGetRunnerResponseJSON   `json:"-"`
-}
-
-// runnerGetRunnerResponseJSON contains the JSON metadata for the struct
-// [RunnerGetRunnerResponse]
-type runnerGetRunnerResponseJSON struct {
-	Runner      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerGetRunnerResponseRunner struct {
-	// A Timestamp represents a point in time independent of any time zone or local
-	//
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt time.Time `json:"createdAt" format:"date-time"`
-	// creator is the identity of the creator of the environment
-	Creator RunnerGetRunnerResponseRunnerCreator `json:"creator"`
-	// RunnerKind represents the kind of a runner
-	Kind RunnerGetRunnerResponseRunnerKind `json:"kind"`
-	// The runner's name which is shown to users
-	Name     string `json:"name"`
-	RunnerID string `json:"runnerId"`
-	// The runner's specification
-	Spec RunnerGetRunnerResponseRunnerSpec `json:"spec"`
-	// RunnerStatus represents the status of a runner
-	Status RunnerGetRunnerResponseRunnerStatus `json:"status"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	//
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                         `json:"updatedAt" format:"date-time"`
-	JSON      runnerGetRunnerResponseRunnerJSON `json:"-"`
-}
-
-// runnerGetRunnerResponseRunnerJSON contains the JSON metadata for the struct
-// [RunnerGetRunnerResponseRunner]
-type runnerGetRunnerResponseRunnerJSON struct {
-	CreatedAt   apijson.Field
-	Creator     apijson.Field
-	Kind        apijson.Field
-	Name        apijson.Field
-	RunnerID    apijson.Field
-	Spec        apijson.Field
-	Status      apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponseRunner) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseRunnerJSON) RawJSON() string {
-	return r.raw
-}
-
-// creator is the identity of the creator of the environment
-type RunnerGetRunnerResponseRunnerCreator struct {
-	// id is the UUID of the subject
-	ID string `json:"id"`
-	// Principal is the principal of the subject
-	Principal RunnerGetRunnerResponseRunnerCreatorPrincipal `json:"principal"`
-	JSON      runnerGetRunnerResponseRunnerCreatorJSON      `json:"-"`
-}
-
-// runnerGetRunnerResponseRunnerCreatorJSON contains the JSON metadata for the
-// struct [RunnerGetRunnerResponseRunnerCreator]
-type runnerGetRunnerResponseRunnerCreatorJSON struct {
-	ID          apijson.Field
-	Principal   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponseRunnerCreator) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseRunnerCreatorJSON) RawJSON() string {
-	return r.raw
-}
-
-// Principal is the principal of the subject
-type RunnerGetRunnerResponseRunnerCreatorPrincipal string
-
-const (
-	RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalUnspecified    RunnerGetRunnerResponseRunnerCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalAccount        RunnerGetRunnerResponseRunnerCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalUser           RunnerGetRunnerResponseRunnerCreatorPrincipal = "PRINCIPAL_USER"
-	RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalRunner         RunnerGetRunnerResponseRunnerCreatorPrincipal = "PRINCIPAL_RUNNER"
-	RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalEnvironment    RunnerGetRunnerResponseRunnerCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalServiceAccount RunnerGetRunnerResponseRunnerCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
-)
-
-func (r RunnerGetRunnerResponseRunnerCreatorPrincipal) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalUnspecified, RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalAccount, RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalUser, RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalRunner, RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalEnvironment, RunnerGetRunnerResponseRunnerCreatorPrincipalPrincipalServiceAccount:
-		return true
-	}
-	return false
-}
-
-// RunnerKind represents the kind of a runner
-type RunnerGetRunnerResponseRunnerKind string
-
-const (
-	RunnerGetRunnerResponseRunnerKindRunnerKindUnspecified        RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerKindRunnerKindLocal              RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_LOCAL"
-	RunnerGetRunnerResponseRunnerKindRunnerKindRemote             RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_REMOTE"
-	RunnerGetRunnerResponseRunnerKindRunnerKindLocalConfiguration RunnerGetRunnerResponseRunnerKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
-)
-
-func (r RunnerGetRunnerResponseRunnerKind) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerResponseRunnerKindRunnerKindUnspecified, RunnerGetRunnerResponseRunnerKindRunnerKindLocal, RunnerGetRunnerResponseRunnerKindRunnerKindRemote, RunnerGetRunnerResponseRunnerKindRunnerKindLocalConfiguration:
-		return true
-	}
-	return false
-}
-
-// The runner's specification
-type RunnerGetRunnerResponseRunnerSpec struct {
-	// The runner's configuration
-	Configuration RunnerGetRunnerResponseRunnerSpecConfiguration `json:"configuration"`
-	// RunnerPhase represents the phase a runner is in
-	DesiredPhase RunnerGetRunnerResponseRunnerSpecDesiredPhase `json:"desiredPhase"`
-	JSON         runnerGetRunnerResponseRunnerSpecJSON         `json:"-"`
-}
-
-// runnerGetRunnerResponseRunnerSpecJSON contains the JSON metadata for the struct
-// [RunnerGetRunnerResponseRunnerSpec]
-type runnerGetRunnerResponseRunnerSpecJSON struct {
-	Configuration apijson.Field
-	DesiredPhase  apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponseRunnerSpec) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseRunnerSpecJSON) RawJSON() string {
-	return r.raw
-}
-
-// The runner's configuration
-type RunnerGetRunnerResponseRunnerSpecConfiguration struct {
-	// auto_update indicates whether the runner should automatically update itself.
-	AutoUpdate bool `json:"autoUpdate"`
-	// Region to deploy the runner in, if applicable. This is mainly used for remote
-	// runners, and is only a hint. The runner may be deployed in a different region.
-	// See the runner's status for the actual region.
-	Region string `json:"region"`
-	// The release channel the runner is on
-	ReleaseChannel RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannel `json:"releaseChannel"`
-	JSON           runnerGetRunnerResponseRunnerSpecConfigurationJSON           `json:"-"`
-}
-
-// runnerGetRunnerResponseRunnerSpecConfigurationJSON contains the JSON metadata
-// for the struct [RunnerGetRunnerResponseRunnerSpecConfiguration]
-type runnerGetRunnerResponseRunnerSpecConfigurationJSON struct {
-	AutoUpdate     apijson.Field
-	Region         apijson.Field
-	ReleaseChannel apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponseRunnerSpecConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseRunnerSpecConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
-// The release channel the runner is on
-type RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannel string
-
-const (
-	RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelStable      RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelLatest      RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
-)
-
-func (r RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannel) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified, RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelStable, RunnerGetRunnerResponseRunnerSpecConfigurationReleaseChannelRunnerReleaseChannelLatest:
-		return true
-	}
-	return false
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerGetRunnerResponseRunnerSpecDesiredPhase string
-
-const (
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseUnspecified RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseCreated     RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_CREATED"
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseInactive    RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseActive      RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseDeleting    RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_DELETING"
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseDeleted     RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_DELETED"
-	RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseDegraded    RunnerGetRunnerResponseRunnerSpecDesiredPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerGetRunnerResponseRunnerSpecDesiredPhase) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseUnspecified, RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseCreated, RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseInactive, RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseActive, RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseDeleting, RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseDeleted, RunnerGetRunnerResponseRunnerSpecDesiredPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
-}
-
-// RunnerStatus represents the status of a runner
-type RunnerGetRunnerResponseRunnerStatus struct {
-	// additional_info contains additional information about the runner, e.g. a
-	// CloudFormation stack URL.
-	AdditionalInfo []RunnerGetRunnerResponseRunnerStatusAdditionalInfo `json:"additionalInfo"`
-	// capabilities is a list of capabilities the runner supports.
-	Capabilities []RunnerGetRunnerResponseRunnerStatusCapability `json:"capabilities"`
-	LogURL       string                                          `json:"logUrl"`
-	// The runner's reported message which is shown to users. This message adds more
-	// context to the runner's phase.
-	Message string `json:"message"`
-	// RunnerPhase represents the phase a runner is in
-	Phase RunnerGetRunnerResponseRunnerStatusPhase `json:"phase"`
-	// region is the region the runner is running in, if applicable.
-	Region        string `json:"region"`
-	SystemDetails string `json:"systemDetails"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	//
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                               `json:"updatedAt" format:"date-time"`
-	Version   string                                  `json:"version"`
-	JSON      runnerGetRunnerResponseRunnerStatusJSON `json:"-"`
-}
-
-// runnerGetRunnerResponseRunnerStatusJSON contains the JSON metadata for the
-// struct [RunnerGetRunnerResponseRunnerStatus]
-type runnerGetRunnerResponseRunnerStatusJSON struct {
-	AdditionalInfo apijson.Field
-	Capabilities   apijson.Field
-	LogURL         apijson.Field
-	Message        apijson.Field
-	Phase          apijson.Field
-	Region         apijson.Field
-	SystemDetails  apijson.Field
-	UpdatedAt      apijson.Field
-	Version        apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponseRunnerStatus) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseRunnerStatusJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerGetRunnerResponseRunnerStatusAdditionalInfo struct {
-	Key   string                                                `json:"key"`
-	Value string                                                `json:"value"`
-	JSON  runnerGetRunnerResponseRunnerStatusAdditionalInfoJSON `json:"-"`
-}
-
-// runnerGetRunnerResponseRunnerStatusAdditionalInfoJSON contains the JSON metadata
-// for the struct [RunnerGetRunnerResponseRunnerStatusAdditionalInfo]
-type runnerGetRunnerResponseRunnerStatusAdditionalInfoJSON struct {
-	Key         apijson.Field
-	Value       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerGetRunnerResponseRunnerStatusAdditionalInfo) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerGetRunnerResponseRunnerStatusAdditionalInfoJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerGetRunnerResponseRunnerStatusCapability string
-
-const (
-	RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityUnspecified               RunnerGetRunnerResponseRunnerStatusCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerGetRunnerResponseRunnerStatusCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
-)
-
-func (r RunnerGetRunnerResponseRunnerStatusCapability) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityUnspecified, RunnerGetRunnerResponseRunnerStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations:
-		return true
-	}
-	return false
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerGetRunnerResponseRunnerStatusPhase string
-
-const (
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseUnspecified RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseCreated     RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_CREATED"
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseInactive    RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseActive      RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseDeleting    RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_DELETING"
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseDeleted     RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_DELETED"
-	RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseDegraded    RunnerGetRunnerResponseRunnerStatusPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerGetRunnerResponseRunnerStatusPhase) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseUnspecified, RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseCreated, RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseInactive, RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseActive, RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseDeleting, RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseDeleted, RunnerGetRunnerResponseRunnerStatusPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
 }
 
 type RunnerParseContextURLResponse struct {
@@ -2682,8 +2083,6 @@ func (r *RunnerParseContextURLResponseGit) UnmarshalJSON(data []byte) (err error
 func (r runnerParseContextURLResponseGitJSON) RawJSON() string {
 	return r.raw
 }
-
-type RunnerUpdateRunnerResponse = interface{}
 
 type RunnerNewParams struct {
 	// Define the version of the Connect protocol
@@ -2800,15 +2199,44 @@ func (r RunnerNewParamsSpecDesiredPhase) IsKnown() bool {
 }
 
 type RunnerGetParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[RunnerGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	RunnerID               param.Field[string]                                `json:"runnerId" format:"uuid"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[RunnerGetParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[RunnerGetParamsConnect] `query:"connect"`
+	Message param.Field[string]                 `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r RunnerGetParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+// URLQuery serializes [RunnerGetParams]'s query parameters as `url.Values`.
+func (r RunnerGetParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type RunnerGetParamsEncoding string
+
+const (
+	RunnerGetParamsEncodingProto RunnerGetParamsEncoding = "proto"
+	RunnerGetParamsEncodingJson  RunnerGetParamsEncoding = "json"
+)
+
+func (r RunnerGetParamsEncoding) IsKnown() bool {
+	switch r {
+	case RunnerGetParamsEncodingProto, RunnerGetParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -2826,18 +2254,308 @@ func (r RunnerGetParamsConnectProtocolVersion) IsKnown() bool {
 	return false
 }
 
-type RunnerListParams struct {
+// Which compression algorithm to use for this request
+type RunnerGetParamsCompression string
+
+const (
+	RunnerGetParamsCompressionIdentity RunnerGetParamsCompression = "identity"
+	RunnerGetParamsCompressionGzip     RunnerGetParamsCompression = "gzip"
+	RunnerGetParamsCompressionBr       RunnerGetParamsCompression = "br"
+)
+
+func (r RunnerGetParamsCompression) IsKnown() bool {
+	switch r {
+	case RunnerGetParamsCompressionIdentity, RunnerGetParamsCompressionGzip, RunnerGetParamsCompressionBr:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type RunnerGetParamsConnect string
+
+const (
+	RunnerGetParamsConnectV1 RunnerGetParamsConnect = "v1"
+)
+
+func (r RunnerGetParamsConnect) IsKnown() bool {
+	switch r {
+	case RunnerGetParamsConnectV1:
+		return true
+	}
+	return false
+}
+
+type RunnerUpdateParams struct {
+	Body RunnerUpdateParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[RunnerListParamsFilter]                 `json:"filter"`
-	// pagination contains the pagination options for listing runners
-	Pagination param.Field[RunnerListParamsPagination] `json:"pagination"`
+	ConnectProtocolVersion param.Field[RunnerUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r RunnerListParams) MarshalJSON() (data []byte, err error) {
+func (r RunnerUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r.Body)
+}
+
+type RunnerUpdateParamsBody struct {
+	// The runner's name which is shown to users
+	Name param.Field[string]      `json:"name"`
+	Spec param.Field[interface{}] `json:"spec"`
+}
+
+func (r RunnerUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBody) implementsRunnerUpdateParamsBodyUnion() {}
+
+// Satisfied by [RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers],
+// [RunnerUpdateParamsBodySpec], [RunnerUpdateParamsBody].
+type RunnerUpdateParamsBodyUnion interface {
+	implementsRunnerUpdateParamsBodyUnion()
+}
+
+type RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers struct {
+	// The runner's name which is shown to users
+	Name param.Field[string] `json:"name,required"`
+}
+
+func (r RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers) implementsRunnerUpdateParamsBodyUnion() {
+}
+
+type RunnerUpdateParamsBodySpec struct {
+	Spec param.Field[RunnerUpdateParamsBodySpecSpecUnion] `json:"spec,required"`
+}
+
+func (r RunnerUpdateParamsBodySpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpec) implementsRunnerUpdateParamsBodyUnion() {}
+
+type RunnerUpdateParamsBodySpecSpec struct {
+	Configuration param.Field[interface{}] `json:"configuration"`
+	// RunnerPhase represents the phase a runner is in
+	DesiredPhase param.Field[RunnerUpdateParamsBodySpecSpecDesiredPhase] `json:"desiredPhase"`
+}
+
+func (r RunnerUpdateParamsBodySpecSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpecSpec) implementsRunnerUpdateParamsBodySpecSpecUnion() {}
+
+// Satisfied by [RunnerUpdateParamsBodySpecSpecConfiguration],
+// [RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners],
+// [RunnerUpdateParamsBodySpecSpec].
+type RunnerUpdateParamsBodySpecSpecUnion interface {
+	implementsRunnerUpdateParamsBodySpecSpecUnion()
+}
+
+type RunnerUpdateParamsBodySpecSpecConfiguration struct {
+	Configuration param.Field[RunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion] `json:"configuration,required"`
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfiguration) implementsRunnerUpdateParamsBodySpecSpecUnion() {
+}
+
+type RunnerUpdateParamsBodySpecSpecConfigurationConfiguration struct {
+	// auto_update indicates whether the runner should automatically update itself.
+	AutoUpdate param.Field[bool] `json:"autoUpdate"`
+	// The release channel the runner is on
+	ReleaseChannel param.Field[RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel] `json:"releaseChannel"`
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfiguration) implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion() {
+}
+
+// Satisfied by
+// [RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself],
+// [RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn],
+// [RunnerUpdateParamsBodySpecSpecConfigurationConfiguration].
+type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion interface {
+	implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion()
+}
+
+type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself struct {
+	// auto_update indicates whether the runner should automatically update itself.
+	AutoUpdate param.Field[bool] `json:"autoUpdate,required"`
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself) implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion() {
+}
+
+type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn struct {
+	// The release channel the runner is on
+	ReleaseChannel param.Field[RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel] `json:"releaseChannel,required"`
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn) implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion() {
+}
+
+// The release channel the runner is on
+type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel string
+
+const (
+	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelUnspecified RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
+	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelStable      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
+	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelLatest      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
+)
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel) IsKnown() bool {
+	switch r {
+	case RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelUnspecified, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelStable, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelLatest:
+		return true
+	}
+	return false
+}
+
+// The release channel the runner is on
+type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel string
+
+const (
+	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelUnspecified RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
+	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelStable      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
+	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelLatest      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
+)
+
+func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel) IsKnown() bool {
+	switch r {
+	case RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelUnspecified, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelStable, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelLatest:
+		return true
+	}
+	return false
+}
+
+type RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners struct {
+	// RunnerPhase represents the phase a runner is in
+	DesiredPhase param.Field[RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase] `json:"desiredPhase,required"`
+}
+
+func (r RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners) implementsRunnerUpdateParamsBodySpecSpecUnion() {
+}
+
+// RunnerPhase represents the phase a runner is in
+type RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase string
+
+const (
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseUnspecified RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseCreated     RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_CREATED"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseInactive    RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_INACTIVE"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseActive      RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_ACTIVE"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleting    RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_DELETING"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleted     RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_DELETED"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDegraded    RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_DEGRADED"
+)
+
+func (r RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase) IsKnown() bool {
+	switch r {
+	case RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseUnspecified, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseCreated, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseInactive, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseActive, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleting, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleted, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDegraded:
+		return true
+	}
+	return false
+}
+
+// RunnerPhase represents the phase a runner is in
+type RunnerUpdateParamsBodySpecSpecDesiredPhase string
+
+const (
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseUnspecified RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseCreated     RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_CREATED"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseInactive    RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_INACTIVE"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseActive      RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_ACTIVE"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleting    RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_DELETING"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleted     RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_DELETED"
+	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDegraded    RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_DEGRADED"
+)
+
+func (r RunnerUpdateParamsBodySpecSpecDesiredPhase) IsKnown() bool {
+	switch r {
+	case RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseUnspecified, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseCreated, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseInactive, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseActive, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleting, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleted, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDegraded:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type RunnerUpdateParamsConnectProtocolVersion float64
+
+const (
+	RunnerUpdateParamsConnectProtocolVersion1 RunnerUpdateParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerUpdateParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerUpdateParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type RunnerListParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[RunnerListParamsEncoding] `query:"encoding,required"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[RunnerListParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[RunnerListParamsConnect] `query:"connect"`
+	Message param.Field[string]                  `query:"message"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+// URLQuery serializes [RunnerListParams]'s query parameters as `url.Values`.
+func (r RunnerListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type RunnerListParamsEncoding string
+
+const (
+	RunnerListParamsEncodingProto RunnerListParamsEncoding = "proto"
+	RunnerListParamsEncodingJson  RunnerListParamsEncoding = "json"
+)
+
+func (r RunnerListParamsEncoding) IsKnown() bool {
+	switch r {
+	case RunnerListParamsEncodingProto, RunnerListParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -2855,48 +2573,68 @@ func (r RunnerListParamsConnectProtocolVersion) IsKnown() bool {
 	return false
 }
 
-type RunnerListParamsFilter struct {
-	// creator_ids filters the response to only runner created by specified users
-	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
-	// kinds filters the response to only runners of the specified kinds
-	Kinds param.Field[[]RunnerListParamsFilterKind] `json:"kinds"`
-}
-
-func (r RunnerListParamsFilter) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-// RunnerKind represents the kind of a runner
-type RunnerListParamsFilterKind string
+// Which compression algorithm to use for this request
+type RunnerListParamsCompression string
 
 const (
-	RunnerListParamsFilterKindRunnerKindUnspecified        RunnerListParamsFilterKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerListParamsFilterKindRunnerKindLocal              RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL"
-	RunnerListParamsFilterKindRunnerKindRemote             RunnerListParamsFilterKind = "RUNNER_KIND_REMOTE"
-	RunnerListParamsFilterKindRunnerKindLocalConfiguration RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
+	RunnerListParamsCompressionIdentity RunnerListParamsCompression = "identity"
+	RunnerListParamsCompressionGzip     RunnerListParamsCompression = "gzip"
+	RunnerListParamsCompressionBr       RunnerListParamsCompression = "br"
 )
 
-func (r RunnerListParamsFilterKind) IsKnown() bool {
+func (r RunnerListParamsCompression) IsKnown() bool {
 	switch r {
-	case RunnerListParamsFilterKindRunnerKindUnspecified, RunnerListParamsFilterKindRunnerKindLocal, RunnerListParamsFilterKindRunnerKindRemote, RunnerListParamsFilterKindRunnerKindLocalConfiguration:
+	case RunnerListParamsCompressionIdentity, RunnerListParamsCompressionGzip, RunnerListParamsCompressionBr:
 		return true
 	}
 	return false
 }
 
-// pagination contains the pagination options for listing runners
-type RunnerListParamsPagination struct {
-	// Token for the next set of results that was returned as next_token of a
-	//
-	// PaginationResponse
-	Token param.Field[string] `json:"token"`
-	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
-	// Maximum 100.
-	PageSize param.Field[int64] `json:"pageSize"`
+// Define the version of the Connect protocol
+type RunnerListParamsConnect string
+
+const (
+	RunnerListParamsConnectV1 RunnerListParamsConnect = "v1"
+)
+
+func (r RunnerListParamsConnect) IsKnown() bool {
+	switch r {
+	case RunnerListParamsConnectV1:
+		return true
+	}
+	return false
 }
 
-func (r RunnerListParamsPagination) MarshalJSON() (data []byte, err error) {
+type RunnerDeleteParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// force indicates whether the runner should be deleted forcefully. When force
+	// deleting a Runner, all Environments on the runner are also force deleted and
+	// regular Runner lifecycle is not respected. Force deleting can result in data
+	// loss.
+	Force    param.Field[bool]   `json:"force"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r RunnerDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type RunnerDeleteParamsConnectProtocolVersion float64
+
+const (
+	RunnerDeleteParamsConnectProtocolVersion1 RunnerDeleteParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerDeleteParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerDeleteParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type RunnerCheckAuthenticationForHostParams struct {
@@ -2954,65 +2692,6 @@ func (r RunnerNewRunnerTokenParamsConnectProtocolVersion) IsKnown() bool {
 	return false
 }
 
-type RunnerDeleteRunnerParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerDeleteRunnerParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// force indicates whether the runner should be deleted forcefully. When force
-	// deleting a Runner, all Environments on the runner are also force deleted and
-	// regular Runner lifecycle is not respected. Force deleting can result in data
-	// loss.
-	Force    param.Field[bool]   `json:"force"`
-	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
-}
-
-func (r RunnerDeleteRunnerParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerDeleteRunnerParamsConnectProtocolVersion float64
-
-const (
-	RunnerDeleteRunnerParamsConnectProtocolVersion1 RunnerDeleteRunnerParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerDeleteRunnerParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerDeleteRunnerParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-type RunnerGetRunnerParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerGetRunnerParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	RunnerID               param.Field[string]                                      `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
-}
-
-func (r RunnerGetRunnerParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerGetRunnerParamsConnectProtocolVersion float64
-
-const (
-	RunnerGetRunnerParamsConnectProtocolVersion1 RunnerGetRunnerParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerGetRunnerParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerGetRunnerParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerParseContextURLParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerParseContextURLParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
@@ -3036,198 +2715,6 @@ const (
 func (r RunnerParseContextURLParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerParseContextURLParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-type RunnerUpdateRunnerParams struct {
-	Body RunnerUpdateRunnerParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerUpdateRunnerParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
-}
-
-func (r RunnerUpdateRunnerParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
-}
-
-type RunnerUpdateRunnerParamsBody struct {
-	// The runner's name which is shown to users
-	Name param.Field[string]      `json:"name"`
-	Spec param.Field[interface{}] `json:"spec"`
-}
-
-func (r RunnerUpdateRunnerParamsBody) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBody) implementsRunnerUpdateRunnerParamsBodyUnion() {}
-
-// Satisfied by [RunnerUpdateRunnerParamsBodyName],
-// [RunnerUpdateRunnerParamsBodySpec], [RunnerUpdateRunnerParamsBody].
-type RunnerUpdateRunnerParamsBodyUnion interface {
-	implementsRunnerUpdateRunnerParamsBodyUnion()
-}
-
-type RunnerUpdateRunnerParamsBodyName struct {
-	// The runner's name which is shown to users
-	Name param.Field[string] `json:"name,required"`
-}
-
-func (r RunnerUpdateRunnerParamsBodyName) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodyName) implementsRunnerUpdateRunnerParamsBodyUnion() {}
-
-type RunnerUpdateRunnerParamsBodySpec struct {
-	Spec param.Field[RunnerUpdateRunnerParamsBodySpecSpecUnion] `json:"spec,required"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpec) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpec) implementsRunnerUpdateRunnerParamsBodyUnion() {}
-
-type RunnerUpdateRunnerParamsBodySpecSpec struct {
-	Configuration param.Field[interface{}] `json:"configuration"`
-	// RunnerPhase represents the phase a runner is in
-	DesiredPhase param.Field[RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase] `json:"desiredPhase"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpec) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpec) implementsRunnerUpdateRunnerParamsBodySpecSpecUnion() {}
-
-// Satisfied by [RunnerUpdateRunnerParamsBodySpecSpecConfiguration],
-// [RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase],
-// [RunnerUpdateRunnerParamsBodySpecSpec].
-type RunnerUpdateRunnerParamsBodySpecSpecUnion interface {
-	implementsRunnerUpdateRunnerParamsBodySpecSpecUnion()
-}
-
-type RunnerUpdateRunnerParamsBodySpecSpecConfiguration struct {
-	Configuration param.Field[RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion] `json:"configuration,required"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfiguration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfiguration) implementsRunnerUpdateRunnerParamsBodySpecSpecUnion() {
-}
-
-type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration struct {
-	// auto_update indicates whether the runner should automatically update itself.
-	AutoUpdate param.Field[bool] `json:"autoUpdate"`
-	// The release channel the runner is on
-	ReleaseChannel param.Field[RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel] `json:"releaseChannel"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration) implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion() {
-}
-
-// Satisfied by
-// [RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate],
-// [RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel],
-// [RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfiguration].
-type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion interface {
-	implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion()
-}
-
-type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate struct {
-	// auto_update indicates whether the runner should automatically update itself.
-	AutoUpdate param.Field[bool] `json:"autoUpdate,required"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationAutoUpdate) implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion() {
-}
-
-type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel struct {
-	// The release channel the runner is on
-	ReleaseChannel param.Field[RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel] `json:"releaseChannel,required"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannel) implementsRunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationUnion() {
-}
-
-// The release channel the runner is on
-type RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel string
-
-const (
-	RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelUnspecified RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelStable      RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelLatest      RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
-)
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannel) IsKnown() bool {
-	switch r {
-	case RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelUnspecified, RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelStable, RunnerUpdateRunnerParamsBodySpecSpecConfigurationConfigurationReleaseChannelReleaseChannelRunnerReleaseChannelLatest:
-		return true
-	}
-	return false
-}
-
-type RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase struct {
-	// RunnerPhase represents the phase a runner is in
-	DesiredPhase param.Field[RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase] `json:"desiredPhase,required"`
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecDesiredPhase) implementsRunnerUpdateRunnerParamsBodySpecSpecUnion() {
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase string
-
-const (
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseUnspecified RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseCreated     RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_CREATED"
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseInactive    RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseActive      RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleting    RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_DELETING"
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleted     RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_DELETED"
-	RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDegraded    RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhase) IsKnown() bool {
-	switch r {
-	case RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseUnspecified, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseCreated, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseInactive, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseActive, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleting, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDeleted, RunnerUpdateRunnerParamsBodySpecSpecDesiredPhaseDesiredPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerUpdateRunnerParamsConnectProtocolVersion float64
-
-const (
-	RunnerUpdateRunnerParamsConnectProtocolVersion1 RunnerUpdateRunnerParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerUpdateRunnerParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerUpdateRunnerParamsConnectProtocolVersion1:
 		return true
 	}
 	return false

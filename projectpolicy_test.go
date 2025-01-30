@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestRunnerPolicyNewWithOptionalParams(t *testing.T) {
+func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,11 +25,11 @@ func TestRunnerPolicyNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Policies.New(context.TODO(), gitpod.RunnerPolicyNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyNewParamsConnectProtocolVersion1),
+	_, err := client.Projects.Policies.New(context.TODO(), gitpod.ProjectPolicyNewParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyNewParamsConnectProtocolVersion1),
 		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:                   gitpod.F(gitpod.RunnerPolicyNewParamsRoleRunnerRoleUnspecified),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:                   gitpod.F(gitpod.ProjectPolicyNewParamsRoleProjectRoleUnspecified),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -41,7 +41,7 @@ func TestRunnerPolicyNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerPolicyUpdateWithOptionalParams(t *testing.T) {
+func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -53,11 +53,11 @@ func TestRunnerPolicyUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Policies.Update(context.TODO(), gitpod.RunnerPolicyUpdateParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyUpdateParamsConnectProtocolVersion1),
+	_, err := client.Projects.Policies.Update(context.TODO(), gitpod.ProjectPolicyUpdateParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyUpdateParamsConnectProtocolVersion1),
 		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:                   gitpod.F(gitpod.RunnerPolicyUpdateParamsRoleRunnerRoleUnspecified),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:                   gitpod.F(gitpod.ProjectPolicyUpdateParamsRoleProjectRoleUnspecified),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -69,7 +69,7 @@ func TestRunnerPolicyUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
+func TestProjectPolicyListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -81,12 +81,12 @@ func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Policies.List(context.TODO(), gitpod.RunnerPolicyListParams{
-		Encoding:               gitpod.F(gitpod.RunnerPolicyListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyListParamsConnectProtocolVersion1),
+	_, err := client.Projects.Policies.List(context.TODO(), gitpod.ProjectPolicyListParams{
+		Encoding:               gitpod.F(gitpod.ProjectPolicyListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyListParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerPolicyListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerPolicyListParamsConnectV1),
+		Compression:            gitpod.F(gitpod.ProjectPolicyListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.ProjectPolicyListParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -99,7 +99,7 @@ func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerPolicyDeleteWithOptionalParams(t *testing.T) {
+func TestProjectPolicyDeleteWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -111,10 +111,10 @@ func TestRunnerPolicyDeleteWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Policies.Delete(context.TODO(), gitpod.RunnerPolicyDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyDeleteParamsConnectProtocolVersion1),
+	_, err := client.Projects.Policies.Delete(context.TODO(), gitpod.ProjectPolicyDeleteParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyDeleteParamsConnectProtocolVersion1),
 		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

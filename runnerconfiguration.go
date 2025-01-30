@@ -23,10 +23,10 @@ import (
 // the [NewRunnerConfigurationService] method instead.
 type RunnerConfigurationService struct {
 	Options                  []option.RequestOption
-	HostAuthenticationTokens *RunnerConfigurationHostAuthenticationTokenService
-	ConfigurationSchema      *RunnerConfigurationConfigurationSchemaService
-	ScmIntegration           *RunnerConfigurationScmIntegrationService
 	EnvironmentClasses       *RunnerConfigurationEnvironmentClassService
+	HostAuthenticationTokens *RunnerConfigurationHostAuthenticationTokenService
+	Schema                   *RunnerConfigurationSchemaService
+	ScmIntegrations          *RunnerConfigurationScmIntegrationService
 }
 
 // NewRunnerConfigurationService generates a new service that applies the given
@@ -35,10 +35,10 @@ type RunnerConfigurationService struct {
 func NewRunnerConfigurationService(opts ...option.RequestOption) (r *RunnerConfigurationService) {
 	r = &RunnerConfigurationService{}
 	r.Options = opts
-	r.HostAuthenticationTokens = NewRunnerConfigurationHostAuthenticationTokenService(opts...)
-	r.ConfigurationSchema = NewRunnerConfigurationConfigurationSchemaService(opts...)
-	r.ScmIntegration = NewRunnerConfigurationScmIntegrationService(opts...)
 	r.EnvironmentClasses = NewRunnerConfigurationEnvironmentClassService(opts...)
+	r.HostAuthenticationTokens = NewRunnerConfigurationHostAuthenticationTokenService(opts...)
+	r.Schema = NewRunnerConfigurationSchemaService(opts...)
+	r.ScmIntegrations = NewRunnerConfigurationScmIntegrationService(opts...)
 	return
 }
 
@@ -489,30 +489,30 @@ func (r RunnerConfigurationValidateParamsBody) MarshalJSON() (data []byte, err e
 func (r RunnerConfigurationValidateParamsBody) implementsRunnerConfigurationValidateParamsBodyUnion() {
 }
 
-// Satisfied by [RunnerConfigurationValidateParamsBodyEnvironmentClass],
-// [RunnerConfigurationValidateParamsBodyScmIntegration],
+// Satisfied by [RunnerConfigurationValidateParamsBodyObject],
+// [RunnerConfigurationValidateParamsBodyObject],
 // [RunnerConfigurationValidateParamsBody].
 type RunnerConfigurationValidateParamsBodyUnion interface {
 	implementsRunnerConfigurationValidateParamsBodyUnion()
 }
 
-type RunnerConfigurationValidateParamsBodyEnvironmentClass struct {
-	EnvironmentClass param.Field[RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClass] `json:"environmentClass,required"`
-	RunnerID         param.Field[string]                                                                `json:"runnerId" format:"uuid"`
+type RunnerConfigurationValidateParamsBodyObject struct {
+	EnvironmentClass param.Field[RunnerConfigurationValidateParamsBodyObjectEnvironmentClass] `json:"environmentClass,required"`
+	RunnerID         param.Field[string]                                                      `json:"runnerId" format:"uuid"`
 }
 
-func (r RunnerConfigurationValidateParamsBodyEnvironmentClass) MarshalJSON() (data []byte, err error) {
+func (r RunnerConfigurationValidateParamsBodyObject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r RunnerConfigurationValidateParamsBodyEnvironmentClass) implementsRunnerConfigurationValidateParamsBodyUnion() {
+func (r RunnerConfigurationValidateParamsBodyObject) implementsRunnerConfigurationValidateParamsBodyUnion() {
 }
 
-type RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClass struct {
+type RunnerConfigurationValidateParamsBodyObjectEnvironmentClass struct {
 	// id is the unique identifier of the environment class
 	ID param.Field[string] `json:"id"`
 	// configuration describes the configuration of the environment class
-	Configuration param.Field[[]RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClassConfiguration] `json:"configuration"`
+	Configuration param.Field[[]RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration] `json:"configuration"`
 	// description is a human readable description of the environment class
 	Description param.Field[string] `json:"description"`
 	// display_name is the human readable name of the environment class
@@ -526,112 +526,17 @@ type RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClass struc
 	RunnerID param.Field[string] `json:"runnerId"`
 }
 
-func (r RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClass) MarshalJSON() (data []byte, err error) {
+func (r RunnerConfigurationValidateParamsBodyObjectEnvironmentClass) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClassConfiguration struct {
+type RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration struct {
 	Key   param.Field[string] `json:"key"`
 	Value param.Field[string] `json:"value"`
 }
 
-func (r RunnerConfigurationValidateParamsBodyEnvironmentClassEnvironmentClassConfiguration) MarshalJSON() (data []byte, err error) {
+func (r RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-type RunnerConfigurationValidateParamsBodyScmIntegration struct {
-	ScmIntegration param.Field[RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion] `json:"scmIntegration,required"`
-	RunnerID       param.Field[string]                                                                 `json:"runnerId" format:"uuid"`
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegration) implementsRunnerConfigurationValidateParamsBodyUnion() {
-}
-
-type RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegration struct {
-	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
-	//
-	// If configured, oauth_client_secret must also be set.
-	OAuthClientID param.Field[string] `json:"oauthClientId"`
-	// oauth_encrypted_client_secret is the OAuth app's client secret encrypted with
-	// the runner's public key,
-	//
-	// if OAuth is configured. This can be used to e.g. validate an already encrypted
-	// client secret of an existing SCM integration.
-	OAuthEncryptedClientSecret param.Field[string] `json:"oauthEncryptedClientSecret" format:"byte"`
-	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text, if
-	// OAuth is configured.
-	//
-	// This can be set to validate any new client secret before it is encrypted and
-	// stored. This value will not be stored and get encrypted with the runner's public
-	// key before passing it to the runner.
-	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret"`
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegration) implementsRunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion() {
-}
-
-// Satisfied by
-// [RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthClientID],
-// [RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthEncryptedClientSecret],
-// [RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthPlaintextClientSecret],
-// [RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegration].
-type RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion interface {
-	implementsRunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion()
-}
-
-type RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthClientID struct {
-	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
-	//
-	// If configured, oauth_client_secret must also be set.
-	OAuthClientID param.Field[string] `json:"oauthClientId,required"`
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthClientID) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthClientID) implementsRunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion() {
-}
-
-type RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthEncryptedClientSecret struct {
-	// oauth_encrypted_client_secret is the OAuth app's client secret encrypted with
-	// the runner's public key,
-	//
-	// if OAuth is configured. This can be used to e.g. validate an already encrypted
-	// client secret of an existing SCM integration.
-	OAuthEncryptedClientSecret param.Field[string] `json:"oauthEncryptedClientSecret,required" format:"byte"`
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthEncryptedClientSecret) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthEncryptedClientSecret) implementsRunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion() {
-}
-
-type RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthPlaintextClientSecret struct {
-	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text, if
-	// OAuth is configured.
-	//
-	// This can be set to validate any new client secret before it is encrypted and
-	// stored. This value will not be stored and get encrypted with the runner's public
-	// key before passing it to the runner.
-	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret,required"`
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthPlaintextClientSecret) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationOAuthPlaintextClientSecret) implementsRunnerConfigurationValidateParamsBodyScmIntegrationScmIntegrationUnion() {
 }
 
 // Define the version of the Connect protocol

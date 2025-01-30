@@ -6,10 +6,12 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
+	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -25,6 +27,7 @@ import (
 type EnvironmentService struct {
 	Options     []option.RequestOption
 	Automations *EnvironmentAutomationService
+	Classes     *EnvironmentClassService
 }
 
 // NewEnvironmentService generates a new service that applies the given options to
@@ -34,6 +37,7 @@ func NewEnvironmentService(opts ...option.RequestOption) (r *EnvironmentService)
 	r = &EnvironmentService{}
 	r.Options = opts
 	r.Automations = NewEnvironmentAutomationService(opts...)
+	r.Classes = NewEnvironmentClassService(opts...)
 	return
 }
 
@@ -64,6 +68,20 @@ func (r *EnvironmentService) Get(ctx context.Context, params EnvironmentGetParam
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	return
+}
+
+// UpdateEnvironment updates the environment partially.
+func (r *EnvironmentService) Update(ctx context.Context, params EnvironmentUpdateParams, opts ...option.RequestOption) (res *EnvironmentUpdateResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/UpdateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -78,6 +96,21 @@ func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListPar
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironments"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	return
+}
+
+// DeleteEnvironment deletes an environment. When the environment is running, it
+// will be stopped as well. Deleted environments cannot be started again.
+func (r *EnvironmentService) Delete(ctx context.Context, params EnvironmentDeleteParams, opts ...option.RequestOption) (res *EnvironmentDeleteResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/DeleteEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -97,6 +130,35 @@ func (r *EnvironmentService) NewFromProject(ctx context.Context, params Environm
 	return
 }
 
+// CreateEnvironmentLogsToken creates a token that can be used to access the logs
+// of an environment.
+func (r *EnvironmentService) NewLogsToken(ctx context.Context, params EnvironmentNewLogsTokenParams, opts ...option.RequestOption) (res *EnvironmentNewLogsTokenResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/CreateEnvironmentLogsToken"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
+// MarkEnvironmentActive allows tools to signal activity for an environment.
+func (r *EnvironmentService) MarkActive(ctx context.Context, params EnvironmentMarkActiveParams, opts ...option.RequestOption) (res *EnvironmentMarkActiveResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/MarkEnvironmentActive"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
 // StartEnvironment starts an environment. This function is idempotent, i.e. if
 //
 // the environment is already running no error is returned.
@@ -109,6 +171,20 @@ func (r *EnvironmentService) Start(ctx context.Context, params EnvironmentStartP
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/StartEnvironment"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
+// StopEnvironment stops a running environment.
+func (r *EnvironmentService) Stop(ctx context.Context, params EnvironmentStopParams, opts ...option.RequestOption) (res *EnvironmentStopResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/StopEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -977,17 +1053,16 @@ func (r *EnvironmentNewResponseEnvironmentSpecSecret) UnmarshalJSON(data []byte)
 // which you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable],
-// [EnvironmentNewResponseEnvironmentSpecSecretsFilePath],
-// [EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost].
+// [EnvironmentNewResponseEnvironmentSpecSecretsObject],
+// [EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentNewResponseEnvironmentSpecSecretsObject].
 func (r EnvironmentNewResponseEnvironmentSpecSecret) AsUnion() EnvironmentNewResponseEnvironmentSpecSecretsUnion {
 	return r.union
 }
 
-// Union satisfied by
-// [EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable],
-// [EnvironmentNewResponseEnvironmentSpecSecretsFilePath] or
-// [EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost].
+// Union satisfied by [EnvironmentNewResponseEnvironmentSpecSecretsObject],
+// [EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+// or [EnvironmentNewResponseEnvironmentSpecSecretsObject].
 type EnvironmentNewResponseEnvironmentSpecSecretsUnion interface {
 	implementsEnvironmentNewResponseEnvironmentSpecSecret()
 }
@@ -998,20 +1073,20 @@ func init() {
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable{}),
+			Type:       reflect.TypeOf(EnvironmentNewResponseEnvironmentSpecSecretsObject{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentNewResponseEnvironmentSpecSecretsFilePath{}),
+			Type:       reflect.TypeOf(EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost{}),
+			Type:       reflect.TypeOf(EnvironmentNewResponseEnvironmentSpecSecretsObject{}),
 		},
 	)
 }
 
-type EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable struct {
+type EnvironmentNewResponseEnvironmentSpecSecretsObject struct {
 	EnvironmentVariable string `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
@@ -1021,14 +1096,13 @@ type EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                              `json:"sourceRef"`
-	JSON      environmentNewResponseEnvironmentSpecSecretsEnvironmentVariableJSON `json:"-"`
+	SourceRef string                                                 `json:"sourceRef"`
+	JSON      environmentNewResponseEnvironmentSpecSecretsObjectJSON `json:"-"`
 }
 
-// environmentNewResponseEnvironmentSpecSecretsEnvironmentVariableJSON contains the
-// JSON metadata for the struct
-// [EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable]
-type environmentNewResponseEnvironmentSpecSecretsEnvironmentVariableJSON struct {
+// environmentNewResponseEnvironmentSpecSecretsObjectJSON contains the JSON
+// metadata for the struct [EnvironmentNewResponseEnvironmentSpecSecretsObject]
+type environmentNewResponseEnvironmentSpecSecretsObjectJSON struct {
 	EnvironmentVariable apijson.Field
 	Name                apijson.Field
 	Session             apijson.Field
@@ -1038,18 +1112,18 @@ type environmentNewResponseEnvironmentSpecSecretsEnvironmentVariableJSON struct 
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentNewResponseEnvironmentSpecSecretsObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentNewResponseEnvironmentSpecSecretsEnvironmentVariableJSON) RawJSON() string {
+func (r environmentNewResponseEnvironmentSpecSecretsObjectJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentNewResponseEnvironmentSpecSecretsEnvironmentVariable) implementsEnvironmentNewResponseEnvironmentSpecSecret() {
+func (r EnvironmentNewResponseEnvironmentSpecSecretsObject) implementsEnvironmentNewResponseEnvironmentSpecSecret() {
 }
 
-type EnvironmentNewResponseEnvironmentSpecSecretsFilePath struct {
+type EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath string `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -1060,13 +1134,14 @@ type EnvironmentNewResponseEnvironmentSpecSecretsFilePath struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                   `json:"sourceRef"`
-	JSON      environmentNewResponseEnvironmentSpecSecretsFilePathJSON `json:"-"`
+	SourceRef string                                                                                                        `json:"sourceRef"`
+	JSON      environmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON `json:"-"`
 }
 
-// environmentNewResponseEnvironmentSpecSecretsFilePathJSON contains the JSON
-// metadata for the struct [EnvironmentNewResponseEnvironmentSpecSecretsFilePath]
-type environmentNewResponseEnvironmentSpecSecretsFilePathJSON struct {
+// environmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON
+// contains the JSON metadata for the struct
+// [EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+type environmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON struct {
 	FilePath    apijson.Field
 	Name        apijson.Field
 	Session     apijson.Field
@@ -1076,53 +1151,15 @@ type environmentNewResponseEnvironmentSpecSecretsFilePathJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentNewResponseEnvironmentSpecSecretsFilePath) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentNewResponseEnvironmentSpecSecretsFilePathJSON) RawJSON() string {
+func (r environmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentNewResponseEnvironmentSpecSecretsFilePath) implementsEnvironmentNewResponseEnvironmentSpecSecret() {
-}
-
-type EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost struct {
-	GitCredentialHost string `json:"gitCredentialHost,required"`
-	// name is the human readable description of the secret
-	Name string `json:"name"`
-	// session indicated the current session of the secret. When the session does not
-	// change, secrets are not reloaded in the environment.
-	Session string `json:"session"`
-	// source is the source of the secret, for now control-plane or runner
-	Source string `json:"source"`
-	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                            `json:"sourceRef"`
-	JSON      environmentNewResponseEnvironmentSpecSecretsGitCredentialHostJSON `json:"-"`
-}
-
-// environmentNewResponseEnvironmentSpecSecretsGitCredentialHostJSON contains the
-// JSON metadata for the struct
-// [EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost]
-type environmentNewResponseEnvironmentSpecSecretsGitCredentialHostJSON struct {
-	GitCredentialHost apijson.Field
-	Name              apijson.Field
-	Session           apijson.Field
-	Source            apijson.Field
-	SourceRef         apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentNewResponseEnvironmentSpecSecretsGitCredentialHostJSON) RawJSON() string {
-	return r.raw
-}
-
-func (r EnvironmentNewResponseEnvironmentSpecSecretsGitCredentialHost) implementsEnvironmentNewResponseEnvironmentSpecSecret() {
+func (r EnvironmentNewResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentNewResponseEnvironmentSpecSecret() {
 }
 
 type EnvironmentNewResponseEnvironmentSpecSSHPublicKey struct {
@@ -2953,17 +2990,16 @@ func (r *EnvironmentGetResponseEnvironmentSpecSecret) UnmarshalJSON(data []byte)
 // which you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable],
-// [EnvironmentGetResponseEnvironmentSpecSecretsFilePath],
-// [EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost].
+// [EnvironmentGetResponseEnvironmentSpecSecretsObject],
+// [EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentGetResponseEnvironmentSpecSecretsObject].
 func (r EnvironmentGetResponseEnvironmentSpecSecret) AsUnion() EnvironmentGetResponseEnvironmentSpecSecretsUnion {
 	return r.union
 }
 
-// Union satisfied by
-// [EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable],
-// [EnvironmentGetResponseEnvironmentSpecSecretsFilePath] or
-// [EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost].
+// Union satisfied by [EnvironmentGetResponseEnvironmentSpecSecretsObject],
+// [EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+// or [EnvironmentGetResponseEnvironmentSpecSecretsObject].
 type EnvironmentGetResponseEnvironmentSpecSecretsUnion interface {
 	implementsEnvironmentGetResponseEnvironmentSpecSecret()
 }
@@ -2974,20 +3010,20 @@ func init() {
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable{}),
+			Type:       reflect.TypeOf(EnvironmentGetResponseEnvironmentSpecSecretsObject{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentGetResponseEnvironmentSpecSecretsFilePath{}),
+			Type:       reflect.TypeOf(EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost{}),
+			Type:       reflect.TypeOf(EnvironmentGetResponseEnvironmentSpecSecretsObject{}),
 		},
 	)
 }
 
-type EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable struct {
+type EnvironmentGetResponseEnvironmentSpecSecretsObject struct {
 	EnvironmentVariable string `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
@@ -2997,14 +3033,13 @@ type EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                              `json:"sourceRef"`
-	JSON      environmentGetResponseEnvironmentSpecSecretsEnvironmentVariableJSON `json:"-"`
+	SourceRef string                                                 `json:"sourceRef"`
+	JSON      environmentGetResponseEnvironmentSpecSecretsObjectJSON `json:"-"`
 }
 
-// environmentGetResponseEnvironmentSpecSecretsEnvironmentVariableJSON contains the
-// JSON metadata for the struct
-// [EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable]
-type environmentGetResponseEnvironmentSpecSecretsEnvironmentVariableJSON struct {
+// environmentGetResponseEnvironmentSpecSecretsObjectJSON contains the JSON
+// metadata for the struct [EnvironmentGetResponseEnvironmentSpecSecretsObject]
+type environmentGetResponseEnvironmentSpecSecretsObjectJSON struct {
 	EnvironmentVariable apijson.Field
 	Name                apijson.Field
 	Session             apijson.Field
@@ -3014,18 +3049,18 @@ type environmentGetResponseEnvironmentSpecSecretsEnvironmentVariableJSON struct 
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentGetResponseEnvironmentSpecSecretsObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentGetResponseEnvironmentSpecSecretsEnvironmentVariableJSON) RawJSON() string {
+func (r environmentGetResponseEnvironmentSpecSecretsObjectJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentGetResponseEnvironmentSpecSecretsEnvironmentVariable) implementsEnvironmentGetResponseEnvironmentSpecSecret() {
+func (r EnvironmentGetResponseEnvironmentSpecSecretsObject) implementsEnvironmentGetResponseEnvironmentSpecSecret() {
 }
 
-type EnvironmentGetResponseEnvironmentSpecSecretsFilePath struct {
+type EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath string `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -3036,13 +3071,14 @@ type EnvironmentGetResponseEnvironmentSpecSecretsFilePath struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                   `json:"sourceRef"`
-	JSON      environmentGetResponseEnvironmentSpecSecretsFilePathJSON `json:"-"`
+	SourceRef string                                                                                                        `json:"sourceRef"`
+	JSON      environmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON `json:"-"`
 }
 
-// environmentGetResponseEnvironmentSpecSecretsFilePathJSON contains the JSON
-// metadata for the struct [EnvironmentGetResponseEnvironmentSpecSecretsFilePath]
-type environmentGetResponseEnvironmentSpecSecretsFilePathJSON struct {
+// environmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON
+// contains the JSON metadata for the struct
+// [EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+type environmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON struct {
 	FilePath    apijson.Field
 	Name        apijson.Field
 	Session     apijson.Field
@@ -3052,53 +3088,15 @@ type environmentGetResponseEnvironmentSpecSecretsFilePathJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentGetResponseEnvironmentSpecSecretsFilePath) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentGetResponseEnvironmentSpecSecretsFilePathJSON) RawJSON() string {
+func (r environmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentGetResponseEnvironmentSpecSecretsFilePath) implementsEnvironmentGetResponseEnvironmentSpecSecret() {
-}
-
-type EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost struct {
-	GitCredentialHost string `json:"gitCredentialHost,required"`
-	// name is the human readable description of the secret
-	Name string `json:"name"`
-	// session indicated the current session of the secret. When the session does not
-	// change, secrets are not reloaded in the environment.
-	Session string `json:"session"`
-	// source is the source of the secret, for now control-plane or runner
-	Source string `json:"source"`
-	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                            `json:"sourceRef"`
-	JSON      environmentGetResponseEnvironmentSpecSecretsGitCredentialHostJSON `json:"-"`
-}
-
-// environmentGetResponseEnvironmentSpecSecretsGitCredentialHostJSON contains the
-// JSON metadata for the struct
-// [EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost]
-type environmentGetResponseEnvironmentSpecSecretsGitCredentialHostJSON struct {
-	GitCredentialHost apijson.Field
-	Name              apijson.Field
-	Session           apijson.Field
-	Source            apijson.Field
-	SourceRef         apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentGetResponseEnvironmentSpecSecretsGitCredentialHostJSON) RawJSON() string {
-	return r.raw
-}
-
-func (r EnvironmentGetResponseEnvironmentSpecSecretsGitCredentialHost) implementsEnvironmentGetResponseEnvironmentSpecSecret() {
+func (r EnvironmentGetResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentGetResponseEnvironmentSpecSecret() {
 }
 
 type EnvironmentGetResponseEnvironmentSpecSSHPublicKey struct {
@@ -4065,6 +4063,8 @@ func (r EnvironmentGetResponseEnvironmentStatusSSHPublicKeysPhase) IsKnown() boo
 	return false
 }
 
+type EnvironmentUpdateResponse = interface{}
+
 type EnvironmentListResponse struct {
 	// environments are the environments that matched the query
 	Environments []EnvironmentListResponseEnvironment `json:"environments"`
@@ -4932,17 +4932,16 @@ func (r *EnvironmentListResponseEnvironmentsSpecSecret) UnmarshalJSON(data []byt
 // interface which you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable],
-// [EnvironmentListResponseEnvironmentsSpecSecretsFilePath],
-// [EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost].
+// [EnvironmentListResponseEnvironmentsSpecSecretsObject],
+// [EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentListResponseEnvironmentsSpecSecretsObject].
 func (r EnvironmentListResponseEnvironmentsSpecSecret) AsUnion() EnvironmentListResponseEnvironmentsSpecSecretsUnion {
 	return r.union
 }
 
-// Union satisfied by
-// [EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable],
-// [EnvironmentListResponseEnvironmentsSpecSecretsFilePath] or
-// [EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost].
+// Union satisfied by [EnvironmentListResponseEnvironmentsSpecSecretsObject],
+// [EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+// or [EnvironmentListResponseEnvironmentsSpecSecretsObject].
 type EnvironmentListResponseEnvironmentsSpecSecretsUnion interface {
 	implementsEnvironmentListResponseEnvironmentsSpecSecret()
 }
@@ -4953,20 +4952,20 @@ func init() {
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsObject{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsFilePath{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsObject{}),
 		},
 	)
 }
 
-type EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable struct {
+type EnvironmentListResponseEnvironmentsSpecSecretsObject struct {
 	EnvironmentVariable string `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
@@ -4976,14 +4975,13 @@ type EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                                `json:"sourceRef"`
-	JSON      environmentListResponseEnvironmentsSpecSecretsEnvironmentVariableJSON `json:"-"`
+	SourceRef string                                                   `json:"sourceRef"`
+	JSON      environmentListResponseEnvironmentsSpecSecretsObjectJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecSecretsEnvironmentVariableJSON contains
-// the JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable]
-type environmentListResponseEnvironmentsSpecSecretsEnvironmentVariableJSON struct {
+// environmentListResponseEnvironmentsSpecSecretsObjectJSON contains the JSON
+// metadata for the struct [EnvironmentListResponseEnvironmentsSpecSecretsObject]
+type environmentListResponseEnvironmentsSpecSecretsObjectJSON struct {
 	EnvironmentVariable apijson.Field
 	Name                apijson.Field
 	Session             apijson.Field
@@ -4993,18 +4991,18 @@ type environmentListResponseEnvironmentsSpecSecretsEnvironmentVariableJSON struc
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseEnvironmentsSpecSecretsObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecSecretsEnvironmentVariableJSON) RawJSON() string {
+func (r environmentListResponseEnvironmentsSpecSecretsObjectJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentListResponseEnvironmentsSpecSecretsEnvironmentVariable) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
+func (r EnvironmentListResponseEnvironmentsSpecSecretsObject) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
 }
 
-type EnvironmentListResponseEnvironmentsSpecSecretsFilePath struct {
+type EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath string `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -5015,13 +5013,14 @@ type EnvironmentListResponseEnvironmentsSpecSecretsFilePath struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                     `json:"sourceRef"`
-	JSON      environmentListResponseEnvironmentsSpecSecretsFilePathJSON `json:"-"`
+	SourceRef string                                                                                                          `json:"sourceRef"`
+	JSON      environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecSecretsFilePathJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsSpecSecretsFilePath]
-type environmentListResponseEnvironmentsSpecSecretsFilePathJSON struct {
+// environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON
+// contains the JSON metadata for the struct
+// [EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+type environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON struct {
 	FilePath    apijson.Field
 	Name        apijson.Field
 	Session     apijson.Field
@@ -5031,53 +5030,15 @@ type environmentListResponseEnvironmentsSpecSecretsFilePathJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecSecretsFilePath) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecSecretsFilePathJSON) RawJSON() string {
+func (r environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentListResponseEnvironmentsSpecSecretsFilePath) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
-}
-
-type EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost struct {
-	GitCredentialHost string `json:"gitCredentialHost,required"`
-	// name is the human readable description of the secret
-	Name string `json:"name"`
-	// session indicated the current session of the secret. When the session does not
-	// change, secrets are not reloaded in the environment.
-	Session string `json:"session"`
-	// source is the source of the secret, for now control-plane or runner
-	Source string `json:"source"`
-	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                              `json:"sourceRef"`
-	JSON      environmentListResponseEnvironmentsSpecSecretsGitCredentialHostJSON `json:"-"`
-}
-
-// environmentListResponseEnvironmentsSpecSecretsGitCredentialHostJSON contains the
-// JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost]
-type environmentListResponseEnvironmentsSpecSecretsGitCredentialHostJSON struct {
-	GitCredentialHost apijson.Field
-	Name              apijson.Field
-	Session           apijson.Field
-	Source            apijson.Field
-	SourceRef         apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentListResponseEnvironmentsSpecSecretsGitCredentialHostJSON) RawJSON() string {
-	return r.raw
-}
-
-func (r EnvironmentListResponseEnvironmentsSpecSecretsGitCredentialHost) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
+func (r EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
 }
 
 type EnvironmentListResponseEnvironmentsSpecSSHPublicKey struct {
@@ -6073,6 +6034,8 @@ func (r environmentListResponsePaginationJSON) RawJSON() string {
 	return r.raw
 }
 
+type EnvironmentDeleteResponse = interface{}
+
 type EnvironmentNewFromProjectResponse struct {
 	// +resource get environment
 	Environment EnvironmentNewFromProjectResponseEnvironment `json:"environment"`
@@ -6942,17 +6905,17 @@ func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecret) UnmarshalJSON(d
 // interface which you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable],
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath],
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost].
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject],
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject].
 func (r EnvironmentNewFromProjectResponseEnvironmentSpecSecret) AsUnion() EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnion {
 	return r.union
 }
 
 // Union satisfied by
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable],
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath] or
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost].
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject],
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+// or [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject].
 type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsUnion interface {
 	implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecret()
 }
@@ -6963,20 +6926,20 @@ func init() {
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable{}),
+			Type:       reflect.TypeOf(EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath{}),
+			Type:       reflect.TypeOf(EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost{}),
+			Type:       reflect.TypeOf(EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject{}),
 		},
 	)
 }
 
-type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable struct {
+type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject struct {
 	EnvironmentVariable string `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
@@ -6986,14 +6949,14 @@ type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable 
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                                         `json:"sourceRef"`
-	JSON      environmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariableJSON `json:"-"`
+	SourceRef string                                                            `json:"sourceRef"`
+	JSON      environmentNewFromProjectResponseEnvironmentSpecSecretsObjectJSON `json:"-"`
 }
 
-// environmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariableJSON
-// contains the JSON metadata for the struct
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable]
-type environmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariableJSON struct {
+// environmentNewFromProjectResponseEnvironmentSpecSecretsObjectJSON contains the
+// JSON metadata for the struct
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject]
+type environmentNewFromProjectResponseEnvironmentSpecSecretsObjectJSON struct {
 	EnvironmentVariable apijson.Field
 	Name                apijson.Field
 	Session             apijson.Field
@@ -7003,18 +6966,18 @@ type environmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariableJ
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariableJSON) RawJSON() string {
+func (r environmentNewFromProjectResponseEnvironmentSpecSecretsObjectJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentNewFromProjectResponseEnvironmentSpecSecretsEnvironmentVariable) implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecret() {
+func (r EnvironmentNewFromProjectResponseEnvironmentSpecSecretsObject) implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecret() {
 }
 
-type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath struct {
+type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath string `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -7025,14 +6988,14 @@ type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                              `json:"sourceRef"`
-	JSON      environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathJSON `json:"-"`
+	SourceRef string                                                                                                                   `json:"sourceRef"`
+	JSON      environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON `json:"-"`
 }
 
-// environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathJSON contains the
-// JSON metadata for the struct
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath]
-type environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathJSON struct {
+// environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON
+// contains the JSON metadata for the struct
+// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+type environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON struct {
 	FilePath    apijson.Field
 	Name        apijson.Field
 	Session     apijson.Field
@@ -7042,53 +7005,15 @@ type environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathJSON struct 
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathJSON) RawJSON() string {
+func (r environmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePath) implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecret() {
-}
-
-type EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost struct {
-	GitCredentialHost string `json:"gitCredentialHost,required"`
-	// name is the human readable description of the secret
-	Name string `json:"name"`
-	// session indicated the current session of the secret. When the session does not
-	// change, secrets are not reloaded in the environment.
-	Session string `json:"session"`
-	// source is the source of the secret, for now control-plane or runner
-	Source string `json:"source"`
-	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                                       `json:"sourceRef"`
-	JSON      environmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHostJSON `json:"-"`
-}
-
-// environmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHostJSON
-// contains the JSON metadata for the struct
-// [EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost]
-type environmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHostJSON struct {
-	GitCredentialHost apijson.Field
-	Name              apijson.Field
-	Session           apijson.Field
-	Source            apijson.Field
-	SourceRef         apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHostJSON) RawJSON() string {
-	return r.raw
-}
-
-func (r EnvironmentNewFromProjectResponseEnvironmentSpecSecretsGitCredentialHost) implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecret() {
+func (r EnvironmentNewFromProjectResponseEnvironmentSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentNewFromProjectResponseEnvironmentSpecSecret() {
 }
 
 type EnvironmentNewFromProjectResponseEnvironmentSpecSSHPublicKey struct {
@@ -8068,7 +7993,33 @@ func (r EnvironmentNewFromProjectResponseEnvironmentStatusSSHPublicKeysPhase) Is
 	return false
 }
 
+type EnvironmentNewLogsTokenResponse struct {
+	// access_token is the token that can be used to access the logs of the environment
+	AccessToken string                              `json:"accessToken"`
+	JSON        environmentNewLogsTokenResponseJSON `json:"-"`
+}
+
+// environmentNewLogsTokenResponseJSON contains the JSON metadata for the struct
+// [EnvironmentNewLogsTokenResponse]
+type environmentNewLogsTokenResponseJSON struct {
+	AccessToken apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentNewLogsTokenResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentNewLogsTokenResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentMarkActiveResponse = interface{}
+
 type EnvironmentStartResponse = interface{}
+
+type EnvironmentStopResponse = interface{}
 
 type EnvironmentNewParams struct {
 	// Define the version of the Connect protocol
@@ -8383,15 +8334,14 @@ func (r EnvironmentNewParamsSpecSecret) MarshalJSON() (data []byte, err error) {
 
 func (r EnvironmentNewParamsSpecSecret) implementsEnvironmentNewParamsSpecSecretUnion() {}
 
-// Satisfied by [EnvironmentNewParamsSpecSecretsEnvironmentVariable],
-// [EnvironmentNewParamsSpecSecretsFilePath],
-// [EnvironmentNewParamsSpecSecretsGitCredentialHost],
-// [EnvironmentNewParamsSpecSecret].
+// Satisfied by [EnvironmentNewParamsSpecSecretsObject],
+// [EnvironmentNewParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentNewParamsSpecSecretsObject], [EnvironmentNewParamsSpecSecret].
 type EnvironmentNewParamsSpecSecretUnion interface {
 	implementsEnvironmentNewParamsSpecSecretUnion()
 }
 
-type EnvironmentNewParamsSpecSecretsEnvironmentVariable struct {
+type EnvironmentNewParamsSpecSecretsObject struct {
 	EnvironmentVariable param.Field[string] `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name param.Field[string] `json:"name"`
@@ -8404,14 +8354,13 @@ type EnvironmentNewParamsSpecSecretsEnvironmentVariable struct {
 	SourceRef param.Field[string] `json:"sourceRef"`
 }
 
-func (r EnvironmentNewParamsSpecSecretsEnvironmentVariable) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentNewParamsSpecSecretsObject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentNewParamsSpecSecretsEnvironmentVariable) implementsEnvironmentNewParamsSpecSecretUnion() {
-}
+func (r EnvironmentNewParamsSpecSecretsObject) implementsEnvironmentNewParamsSpecSecretUnion() {}
 
-type EnvironmentNewParamsSpecSecretsFilePath struct {
+type EnvironmentNewParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath param.Field[string] `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -8425,30 +8374,11 @@ type EnvironmentNewParamsSpecSecretsFilePath struct {
 	SourceRef param.Field[string] `json:"sourceRef"`
 }
 
-func (r EnvironmentNewParamsSpecSecretsFilePath) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentNewParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentNewParamsSpecSecretsFilePath) implementsEnvironmentNewParamsSpecSecretUnion() {}
-
-type EnvironmentNewParamsSpecSecretsGitCredentialHost struct {
-	GitCredentialHost param.Field[string] `json:"gitCredentialHost,required"`
-	// name is the human readable description of the secret
-	Name param.Field[string] `json:"name"`
-	// session indicated the current session of the secret. When the session does not
-	// change, secrets are not reloaded in the environment.
-	Session param.Field[string] `json:"session"`
-	// source is the source of the secret, for now control-plane or runner
-	Source param.Field[string] `json:"source"`
-	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef param.Field[string] `json:"sourceRef"`
-}
-
-func (r EnvironmentNewParamsSpecSecretsGitCredentialHost) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EnvironmentNewParamsSpecSecretsGitCredentialHost) implementsEnvironmentNewParamsSpecSecretUnion() {
+func (r EnvironmentNewParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentNewParamsSpecSecretUnion() {
 }
 
 type EnvironmentNewParamsSpecSSHPublicKey struct {
@@ -8529,16 +8459,44 @@ func (r EnvironmentNewParamsSpecTimeout) MarshalJSON() (data []byte, err error) 
 }
 
 type EnvironmentGetParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[EnvironmentGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// environment_id specifies the environment to get
-	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[EnvironmentGetParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[EnvironmentGetParamsConnect] `query:"connect"`
+	Message param.Field[string]                      `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+// URLQuery serializes [EnvironmentGetParams]'s query parameters as `url.Values`.
+func (r EnvironmentGetParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type EnvironmentGetParamsEncoding string
+
+const (
+	EnvironmentGetParamsEncodingProto EnvironmentGetParamsEncoding = "proto"
+	EnvironmentGetParamsEncodingJson  EnvironmentGetParamsEncoding = "json"
+)
+
+func (r EnvironmentGetParamsEncoding) IsKnown() bool {
+	switch r {
+	case EnvironmentGetParamsEncodingProto, EnvironmentGetParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -8556,20 +8514,566 @@ func (r EnvironmentGetParamsConnectProtocolVersion) IsKnown() bool {
 	return false
 }
 
-type EnvironmentListParams struct {
+// Which compression algorithm to use for this request
+type EnvironmentGetParamsCompression string
+
+const (
+	EnvironmentGetParamsCompressionIdentity EnvironmentGetParamsCompression = "identity"
+	EnvironmentGetParamsCompressionGzip     EnvironmentGetParamsCompression = "gzip"
+	EnvironmentGetParamsCompressionBr       EnvironmentGetParamsCompression = "br"
+)
+
+func (r EnvironmentGetParamsCompression) IsKnown() bool {
+	switch r {
+	case EnvironmentGetParamsCompressionIdentity, EnvironmentGetParamsCompressionGzip, EnvironmentGetParamsCompressionBr:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type EnvironmentGetParamsConnect string
+
+const (
+	EnvironmentGetParamsConnectV1 EnvironmentGetParamsConnect = "v1"
+)
+
+func (r EnvironmentGetParamsConnect) IsKnown() bool {
+	switch r {
+	case EnvironmentGetParamsConnectV1:
+		return true
+	}
+	return false
+}
+
+type EnvironmentUpdateParams struct {
+	Body EnvironmentUpdateParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[EnvironmentListParamsFilter]                 `json:"filter"`
-	// organization_id is the ID of the organization that contains the environments
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
-	// pagination contains the pagination options for listing environments
-	Pagination param.Field[EnvironmentListParamsPagination] `json:"pagination"`
+	ConnectProtocolVersion param.Field[EnvironmentUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r EnvironmentListParams) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r.Body)
+}
+
+type EnvironmentUpdateParamsBody struct {
+	Metadata param.Field[interface{}] `json:"metadata"`
+	Spec     param.Field[interface{}] `json:"spec"`
+}
+
+func (r EnvironmentUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBody) implementsEnvironmentUpdateParamsBodyUnion() {}
+
+// Satisfied by [EnvironmentUpdateParamsBodyMetadata],
+// [EnvironmentUpdateParamsBodySpec], [EnvironmentUpdateParamsBody].
+type EnvironmentUpdateParamsBodyUnion interface {
+	implementsEnvironmentUpdateParamsBodyUnion()
+}
+
+type EnvironmentUpdateParamsBodyMetadata struct {
+	Metadata param.Field[interface{}] `json:"metadata,required"`
+}
+
+func (r EnvironmentUpdateParamsBodyMetadata) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodyMetadata) implementsEnvironmentUpdateParamsBodyUnion() {}
+
+type EnvironmentUpdateParamsBodySpec struct {
+	Spec param.Field[EnvironmentUpdateParamsBodySpecSpecUnion] `json:"spec,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpec) implementsEnvironmentUpdateParamsBodyUnion() {}
+
+type EnvironmentUpdateParamsBodySpecSpec struct {
+	AutomationsFile param.Field[interface{}] `json:"automationsFile"`
+	Content         param.Field[interface{}] `json:"content"`
+	Devcontainer    param.Field[interface{}] `json:"devcontainer"`
+	Timeout         param.Field[interface{}] `json:"timeout"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpec) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {}
+
+// Satisfied by
+// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment],
+// [EnvironmentUpdateParamsBodySpecSpecContent],
+// [EnvironmentUpdateParamsBodySpecSpecDevcontainer],
+// [EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout],
+// [EnvironmentUpdateParamsBodySpecSpec].
+type EnvironmentUpdateParamsBodySpecSpecUnion interface {
+	implementsEnvironmentUpdateParamsBodySpecSpecUnion()
+}
+
+type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment struct {
+	// automations_file is the automations file spec of the environment
+	AutomationsFile param.Field[EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion] `json:"automationsFile,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
+}
+
+// automations_file is the automations file spec of the environment
+type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile struct {
+	// automations_file_path is the path to the automations file that is applied in the
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	AutomationsFilePath param.Field[string] `json:"automationsFilePath"`
+	Session             param.Field[string] `json:"session"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile) implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
+}
+
+// automations_file is the automations file spec of the environment
+//
+// Satisfied by
+// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot],
+// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession],
+// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile].
+type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion interface {
+	implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion()
+}
+
+type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot struct {
+	// automations_file_path is the path to the automations file that is applied in the
+	// environment,
+	//
+	// relative to the repo root. path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	AutomationsFilePath param.Field[string] `json:"automationsFilePath,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot) implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession struct {
+	Session param.Field[string] `json:"session,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession) implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContent struct {
+	Content param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentUnion] `json:"content,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContent) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContent) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContent struct {
+	// The Git email address
+	GitEmail param.Field[string] `json:"gitEmail"`
+	// The Git username
+	GitUsername param.Field[string]      `json:"gitUsername"`
+	Initializer param.Field[interface{}] `json:"initializer"`
+	// session should be changed to trigger a content reinitialization
+	Session param.Field[string] `json:"session"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContent) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContent) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+}
+
+// Satisfied by
+// [EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress],
+// [EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername],
+// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized],
+// [EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization],
+// [EnvironmentUpdateParamsBodySpecSpecContentContent].
+type EnvironmentUpdateParamsBodySpecSpecContentContentUnion interface {
+	implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion()
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress struct {
+	// The Git email address
+	GitEmail param.Field[string] `json:"gitEmail,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername struct {
+	// The Git username
+	GitUsername param.Field[string] `json:"gitUsername,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized struct {
+	// EnvironmentInitializer specifies how an environment is to be initialized
+	Initializer param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer] `json:"initializer,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+}
+
+// EnvironmentInitializer specifies how an environment is to be initialized
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer struct {
+	Specs param.Field[[]EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion] `json:"specs"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec struct {
+	ContextURL param.Field[interface{}] `json:"contextUrl"`
+	Git        param.Field[interface{}] `json:"git"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec) implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
+}
+
+// Satisfied by
+// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL],
+// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit],
+// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec].
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion interface {
+	implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion()
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL struct {
+	ContextURL param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL] `json:"contextUrl,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL) implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL struct {
+	// url is the URL from which the environment is created
+	URL param.Field[string] `json:"url" format:"uri"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit struct {
+	Git param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit] `json:"git,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit) implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit struct {
+	// a path relative to the environment root in which the code will be checked out
+	//
+	// to
+	CheckoutLocation param.Field[string] `json:"checkoutLocation"`
+	// the value for the clone target mode - use depends on the target mode
+	CloneTarget param.Field[string] `json:"cloneTarget"`
+	// remote_uri is the Git remote origin
+	RemoteUri param.Field[string] `json:"remoteUri"`
+	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	TargetMode param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode] `json:"targetMode"`
+	// upstream_Remote_uri is the fork upstream of a repository
+	UpstreamRemoteUri param.Field[string] `json:"upstreamRemoteUri"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode string
+
+const (
+	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+)
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode) IsKnown() bool {
+	switch r {
+	case EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+		return true
+	}
+	return false
+}
+
+type EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization struct {
+	// session should be changed to trigger a content reinitialization
+	Session param.Field[string] `json:"session,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecDevcontainer struct {
+	Devcontainer param.Field[EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion] `json:"devcontainer,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainer) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainer) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer struct {
+	// devcontainer_file_path is the path to the devcontainer file relative to the repo
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
+	// session should be changed to trigger a devcontainer rebuild
+	Session param.Field[string] `json:"session"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer) implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion() {
+}
+
+// Satisfied by
+// [EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot],
+// [EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild],
+// [EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer].
+type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion interface {
+	implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion()
+}
+
+type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot struct {
+	// devcontainer_file_path is the path to the devcontainer file relative to the repo
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot) implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild struct {
+	// session should be changed to trigger a devcontainer rebuild
+	Session param.Field[string] `json:"session,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild) implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion() {
+}
+
+type EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout struct {
+	// Timeout configures the environment timeout
+	Timeout param.Field[EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout] `json:"timeout,required"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
+}
+
+// Timeout configures the environment timeout
+type EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout struct {
+	// A Duration represents a signed, fixed-length span of time represented as a count
+	// of seconds and fractions of seconds at nanosecond resolution. It is independent
+	// of any calendar and concepts like "day" or "month". It is related to Timestamp
+	// in that the difference between two Timestamp values is a Duration and it can be
+	// added or subtracted from a Timestamp. Range is approximately +-10,000 years.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Duration from two Timestamps in pseudo code.
+	//
+	//	Timestamp start = ...;
+	//	Timestamp end = ...;
+	//	Duration duration = ...;
+	//
+	//	duration.seconds = end.seconds - start.seconds;
+	//	duration.nanos = end.nanos - start.nanos;
+	//
+	//	if (duration.seconds < 0 && duration.nanos > 0) {
+	//	  duration.seconds += 1;
+	//	  duration.nanos -= 1000000000;
+	//	} else if (duration.seconds > 0 && duration.nanos < 0) {
+	//	  duration.seconds -= 1;
+	//	  duration.nanos += 1000000000;
+	//	}
+	//
+	// Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.
+	//
+	//	Timestamp start = ...;
+	//	Duration duration = ...;
+	//	Timestamp end = ...;
+	//
+	//	end.seconds = start.seconds + duration.seconds;
+	//	end.nanos = start.nanos + duration.nanos;
+	//
+	//	if (end.nanos < 0) {
+	//	  end.seconds -= 1;
+	//	  end.nanos += 1000000000;
+	//	} else if (end.nanos >= 1000000000) {
+	//	  end.seconds += 1;
+	//	  end.nanos -= 1000000000;
+	//	}
+	//
+	// Example 3: Compute Duration from datetime.timedelta in Python.
+	//
+	//	td = datetime.timedelta(days=3, minutes=10)
+	//	duration = Duration()
+	//	duration.FromTimedelta(td)
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Duration type is encoded as a string rather than an object,
+	// where the string ends in the suffix "s" (indicating seconds) and is preceded by
+	// the number of seconds, with nanoseconds expressed as fractional seconds. For
+	// example, 3 seconds with 0 nanoseconds should be encoded in JSON format as "3s",
+	// while 3 seconds and 1 nanosecond should be expressed in JSON format as
+	// "3.000000001s", and 3 seconds and 1 microsecond should be expressed in JSON
+	// format as "3.000001s".
+	Disconnected param.Field[string] `json:"disconnected,required" format:"regex"`
+}
+
+func (r EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentUpdateParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentUpdateParamsConnectProtocolVersion1 EnvironmentUpdateParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentUpdateParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentUpdateParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type EnvironmentListParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[EnvironmentListParamsEncoding] `query:"encoding,required"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[EnvironmentListParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[EnvironmentListParamsConnect] `query:"connect"`
+	Message param.Field[string]                       `query:"message"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+// URLQuery serializes [EnvironmentListParams]'s query parameters as `url.Values`.
+func (r EnvironmentListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type EnvironmentListParamsEncoding string
+
+const (
+	EnvironmentListParamsEncodingProto EnvironmentListParamsEncoding = "proto"
+	EnvironmentListParamsEncodingJson  EnvironmentListParamsEncoding = "json"
+)
+
+func (r EnvironmentListParamsEncoding) IsKnown() bool {
+	switch r {
+	case EnvironmentListParamsEncodingProto, EnvironmentListParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -8587,80 +9091,71 @@ func (r EnvironmentListParamsConnectProtocolVersion) IsKnown() bool {
 	return false
 }
 
-type EnvironmentListParamsFilter struct {
-	// creator_ids filters the response to only Environments created by specified
-	// members
-	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
-	// project_ids filters the response to only Environments associated with the
-	// specified projects
-	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
-	// runner_ids filters the response to only Environments running on these Runner IDs
-	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
-	// runner_kinds filters the response to only Environments running on these Runner
-	// Kinds
-	RunnerKinds param.Field[[]EnvironmentListParamsFilterRunnerKind] `json:"runnerKinds"`
-	// actual_phases is a list of phases the environment must be in for it to be
-	// returned in the API call
-	StatusPhases param.Field[[]EnvironmentListParamsFilterStatusPhase] `json:"statusPhases"`
-}
-
-func (r EnvironmentListParamsFilter) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-// RunnerKind represents the kind of a runner
-type EnvironmentListParamsFilterRunnerKind string
+// Which compression algorithm to use for this request
+type EnvironmentListParamsCompression string
 
 const (
-	EnvironmentListParamsFilterRunnerKindRunnerKindUnspecified        EnvironmentListParamsFilterRunnerKind = "RUNNER_KIND_UNSPECIFIED"
-	EnvironmentListParamsFilterRunnerKindRunnerKindLocal              EnvironmentListParamsFilterRunnerKind = "RUNNER_KIND_LOCAL"
-	EnvironmentListParamsFilterRunnerKindRunnerKindRemote             EnvironmentListParamsFilterRunnerKind = "RUNNER_KIND_REMOTE"
-	EnvironmentListParamsFilterRunnerKindRunnerKindLocalConfiguration EnvironmentListParamsFilterRunnerKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
+	EnvironmentListParamsCompressionIdentity EnvironmentListParamsCompression = "identity"
+	EnvironmentListParamsCompressionGzip     EnvironmentListParamsCompression = "gzip"
+	EnvironmentListParamsCompressionBr       EnvironmentListParamsCompression = "br"
 )
 
-func (r EnvironmentListParamsFilterRunnerKind) IsKnown() bool {
+func (r EnvironmentListParamsCompression) IsKnown() bool {
 	switch r {
-	case EnvironmentListParamsFilterRunnerKindRunnerKindUnspecified, EnvironmentListParamsFilterRunnerKindRunnerKindLocal, EnvironmentListParamsFilterRunnerKindRunnerKindRemote, EnvironmentListParamsFilterRunnerKindRunnerKindLocalConfiguration:
+	case EnvironmentListParamsCompressionIdentity, EnvironmentListParamsCompressionGzip, EnvironmentListParamsCompressionBr:
 		return true
 	}
 	return false
 }
 
-type EnvironmentListParamsFilterStatusPhase string
+// Define the version of the Connect protocol
+type EnvironmentListParamsConnect string
 
 const (
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUnspecified EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseCreating    EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_CREATING"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStarting    EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_STARTING"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseRunning     EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_RUNNING"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUpdating    EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_UPDATING"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStopping    EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_STOPPING"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStopped     EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_STOPPED"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseDeleting    EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_DELETING"
-	EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseDeleted     EnvironmentListParamsFilterStatusPhase = "ENVIRONMENT_PHASE_DELETED"
+	EnvironmentListParamsConnectV1 EnvironmentListParamsConnect = "v1"
 )
 
-func (r EnvironmentListParamsFilterStatusPhase) IsKnown() bool {
+func (r EnvironmentListParamsConnect) IsKnown() bool {
 	switch r {
-	case EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUnspecified, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseCreating, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStarting, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseRunning, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUpdating, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStopping, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseStopped, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseDeleting, EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseDeleted:
+	case EnvironmentListParamsConnectV1:
 		return true
 	}
 	return false
 }
 
-// pagination contains the pagination options for listing environments
-type EnvironmentListParamsPagination struct {
-	// Token for the next set of results that was returned as next_token of a
+type EnvironmentDeleteParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// environment_id specifies the environment that is going to delete.
 	//
-	// PaginationResponse
-	Token param.Field[string] `json:"token"`
-	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
-	// Maximum 100.
-	PageSize param.Field[int64] `json:"pageSize"`
+	// +required
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+	// force indicates whether the environment should be deleted forcefully When force
+	// deleting an Environment, the Environment is removed immediately and environment
+	// lifecycle is not respected. Force deleting can result in data loss on the
+	// environment.
+	Force param.Field[bool] `json:"force"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r EnvironmentListParamsPagination) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentDeleteParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentDeleteParamsConnectProtocolVersion1 EnvironmentDeleteParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentDeleteParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentDeleteParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 type EnvironmentNewFromProjectParams struct {
@@ -8979,15 +9474,15 @@ func (r EnvironmentNewFromProjectParamsSpecSecret) MarshalJSON() (data []byte, e
 func (r EnvironmentNewFromProjectParamsSpecSecret) implementsEnvironmentNewFromProjectParamsSpecSecretUnion() {
 }
 
-// Satisfied by [EnvironmentNewFromProjectParamsSpecSecretsEnvironmentVariable],
-// [EnvironmentNewFromProjectParamsSpecSecretsFilePath],
-// [EnvironmentNewFromProjectParamsSpecSecretsGitCredentialHost],
+// Satisfied by [EnvironmentNewFromProjectParamsSpecSecretsObject],
+// [EnvironmentNewFromProjectParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentNewFromProjectParamsSpecSecretsObject],
 // [EnvironmentNewFromProjectParamsSpecSecret].
 type EnvironmentNewFromProjectParamsSpecSecretUnion interface {
 	implementsEnvironmentNewFromProjectParamsSpecSecretUnion()
 }
 
-type EnvironmentNewFromProjectParamsSpecSecretsEnvironmentVariable struct {
+type EnvironmentNewFromProjectParamsSpecSecretsObject struct {
 	EnvironmentVariable param.Field[string] `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name param.Field[string] `json:"name"`
@@ -9000,14 +9495,14 @@ type EnvironmentNewFromProjectParamsSpecSecretsEnvironmentVariable struct {
 	SourceRef param.Field[string] `json:"sourceRef"`
 }
 
-func (r EnvironmentNewFromProjectParamsSpecSecretsEnvironmentVariable) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentNewFromProjectParamsSpecSecretsObject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentNewFromProjectParamsSpecSecretsEnvironmentVariable) implementsEnvironmentNewFromProjectParamsSpecSecretUnion() {
+func (r EnvironmentNewFromProjectParamsSpecSecretsObject) implementsEnvironmentNewFromProjectParamsSpecSecretUnion() {
 }
 
-type EnvironmentNewFromProjectParamsSpecSecretsFilePath struct {
+type EnvironmentNewFromProjectParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath param.Field[string] `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -9021,31 +9516,11 @@ type EnvironmentNewFromProjectParamsSpecSecretsFilePath struct {
 	SourceRef param.Field[string] `json:"sourceRef"`
 }
 
-func (r EnvironmentNewFromProjectParamsSpecSecretsFilePath) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentNewFromProjectParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentNewFromProjectParamsSpecSecretsFilePath) implementsEnvironmentNewFromProjectParamsSpecSecretUnion() {
-}
-
-type EnvironmentNewFromProjectParamsSpecSecretsGitCredentialHost struct {
-	GitCredentialHost param.Field[string] `json:"gitCredentialHost,required"`
-	// name is the human readable description of the secret
-	Name param.Field[string] `json:"name"`
-	// session indicated the current session of the secret. When the session does not
-	// change, secrets are not reloaded in the environment.
-	Session param.Field[string] `json:"session"`
-	// source is the source of the secret, for now control-plane or runner
-	Source param.Field[string] `json:"source"`
-	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef param.Field[string] `json:"sourceRef"`
-}
-
-func (r EnvironmentNewFromProjectParamsSpecSecretsGitCredentialHost) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EnvironmentNewFromProjectParamsSpecSecretsGitCredentialHost) implementsEnvironmentNewFromProjectParamsSpecSecretUnion() {
+func (r EnvironmentNewFromProjectParamsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentNewFromProjectParamsSpecSecretUnion() {
 }
 
 type EnvironmentNewFromProjectParamsSpecSSHPublicKey struct {
@@ -9125,6 +9600,170 @@ func (r EnvironmentNewFromProjectParamsSpecTimeout) MarshalJSON() (data []byte, 
 	return apijson.MarshalRoot(r)
 }
 
+type EnvironmentNewLogsTokenParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentNewLogsTokenParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// environment_id specifies the environment for which the logs token should be
+	// created.
+	//
+	// +required
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r EnvironmentNewLogsTokenParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentNewLogsTokenParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentNewLogsTokenParamsConnectProtocolVersion1 EnvironmentNewLogsTokenParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentNewLogsTokenParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentNewLogsTokenParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type EnvironmentMarkActiveParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentMarkActiveParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// EnvironmentActivitySignal used to signal activity for an environment.
+	ActivitySignal param.Field[EnvironmentMarkActiveParamsActivitySignal] `json:"activitySignal"`
+	// The ID of the environment to update activity for.
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r EnvironmentMarkActiveParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentMarkActiveParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentMarkActiveParamsConnectProtocolVersion1 EnvironmentMarkActiveParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentMarkActiveParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentMarkActiveParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+// EnvironmentActivitySignal used to signal activity for an environment.
+type EnvironmentMarkActiveParamsActivitySignal struct {
+	// source of the activity signal, such as "VS Code", "SSH", or "Automations".
+	//
+	// It should be a human-readable string that describes the source of the activity
+	// signal.
+	Source param.Field[string] `json:"source"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	//
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	Timestamp param.Field[time.Time] `json:"timestamp" format:"date-time"`
+}
+
+func (r EnvironmentMarkActiveParamsActivitySignal) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type EnvironmentStartParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentStartParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
@@ -9148,6 +9787,36 @@ const (
 func (r EnvironmentStartParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case EnvironmentStartParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+type EnvironmentStopParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentStopParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// environment_id specifies which environment should be stopped.
+	//
+	// +required
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+}
+
+func (r EnvironmentStopParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentStopParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentStopParamsConnectProtocolVersion1 EnvironmentStopParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentStopParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentStopParamsConnectProtocolVersion1:
 		return true
 	}
 	return false

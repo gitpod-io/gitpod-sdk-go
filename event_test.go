@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestRunnerConfigurationConfigurationSchemaNewWithOptionalParams(t *testing.T) {
+func TestEventListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,9 +25,13 @@ func TestRunnerConfigurationConfigurationSchemaNewWithOptionalParams(t *testing.
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.RunnerConfigurations.ConfigurationSchema.New(context.TODO(), gitpod.RunnerConfigurationConfigurationSchemaNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationConfigurationSchemaNewParamsConnectProtocolVersion1),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Events.List(context.TODO(), gitpod.EventListParams{
+		Encoding:               gitpod.F(gitpod.EventListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.EventListParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.EventListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EventListParamsConnectV1),
+		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -39,7 +43,7 @@ func TestRunnerConfigurationConfigurationSchemaNewWithOptionalParams(t *testing.
 	}
 }
 
-func TestRunnerConfigurationConfigurationSchemaGetWithOptionalParams(t *testing.T) {
+func TestEventWatchWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -51,9 +55,11 @@ func TestRunnerConfigurationConfigurationSchemaGetWithOptionalParams(t *testing.
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.RunnerConfigurations.ConfigurationSchema.Get(context.TODO(), gitpod.RunnerConfigurationConfigurationSchemaGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationConfigurationSchemaGetParamsConnectProtocolVersion1),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Events.Watch(context.TODO(), gitpod.EventWatchParams{
+		Body: gitpod.EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment{
+			EnvironmentID: gitpod.F("environmentId"),
+		},
+		ConnectProtocolVersion: gitpod.F(gitpod.EventWatchParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

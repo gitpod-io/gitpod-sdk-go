@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
+func TestSecretNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,11 +25,14 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Configurations.ScmIntegrations.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
-		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet{
-			OAuthClientID: gitpod.F("oauthClientId"),
+	_, err := client.Secrets.New(context.TODO(), gitpod.SecretNewParams{
+		Body: gitpod.SecretNewParamsBodySecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret{
+			EnvironmentVariable: gitpod.F(true),
+			Name:                gitpod.F("name"),
+			ProjectID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Value:               gitpod.F("x"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1),
+		ConnectProtocolVersion: gitpod.F(gitpod.SecretNewParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -41,7 +44,7 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
+func TestSecretListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -53,12 +56,12 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Configurations.ScmIntegrations.Get(context.TODO(), gitpod.RunnerConfigurationScmIntegrationGetParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationScmIntegrationGetParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion1),
+	_, err := client.Secrets.List(context.TODO(), gitpod.SecretListParams{
+		Encoding:               gitpod.F(gitpod.SecretListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.SecretListParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationScmIntegrationGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationScmIntegrationGetParamsConnectV1),
+		Compression:            gitpod.F(gitpod.SecretListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.SecretListParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -71,7 +74,7 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T) {
+func TestSecretDeleteWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -83,11 +86,9 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Configurations.ScmIntegrations.Update(context.TODO(), gitpod.RunnerConfigurationScmIntegrationUpdateParams{
-		Body: gitpod.RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate{
-			OAuthClientID: gitpod.F("oauthClientId"),
-		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion1),
+	_, err := client.Secrets.Delete(context.TODO(), gitpod.SecretDeleteParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.SecretDeleteParamsConnectProtocolVersion1),
+		SecretID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -99,7 +100,7 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 	}
 }
 
-func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
+func TestSecretGetValueWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -111,12 +112,12 @@ func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Configurations.ScmIntegrations.List(context.TODO(), gitpod.RunnerConfigurationScmIntegrationListParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion1),
+	_, err := client.Secrets.GetValue(context.TODO(), gitpod.SecretGetValueParams{
+		Encoding:               gitpod.F(gitpod.SecretGetValueParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.SecretGetValueParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsConnectV1),
+		Compression:            gitpod.F(gitpod.SecretGetValueParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.SecretGetValueParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -129,7 +130,7 @@ func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerConfigurationScmIntegrationDeleteWithOptionalParams(t *testing.T) {
+func TestSecretUpdateValueWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -141,9 +142,10 @@ func TestRunnerConfigurationScmIntegrationDeleteWithOptionalParams(t *testing.T)
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Runners.Configurations.ScmIntegrations.Delete(context.TODO(), gitpod.RunnerConfigurationScmIntegrationDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Secrets.UpdateValue(context.TODO(), gitpod.SecretUpdateValueParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.SecretUpdateValueParamsConnectProtocolVersion1),
+		SecretID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Value:                  gitpod.F("x"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
