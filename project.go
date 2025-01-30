@@ -6,12 +6,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/tidwall/gjson"
 )
 
 // ProjectService contains methods and other services that help with interacting
@@ -97,7 +99,7 @@ func (r projectNewResponseJSON) RawJSON() string {
 }
 
 type ProjectNewResponseProject struct {
-	EnvironmentClass interface{} `json:"environmentClass,required"`
+	EnvironmentClass ProjectNewResponseProjectEnvironmentClass `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -135,6 +137,121 @@ func (r projectNewResponseProjectJSON) RawJSON() string {
 	return r.raw
 }
 
+type ProjectNewResponseProjectEnvironmentClass struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
+	// Use a local runner for the user
+	LocalRunner bool                                          `json:"localRunner"`
+	JSON        projectNewResponseProjectEnvironmentClassJSON `json:"-"`
+	union       ProjectNewResponseProjectEnvironmentClassUnion
+}
+
+// projectNewResponseProjectEnvironmentClassJSON contains the JSON metadata for the
+// struct [ProjectNewResponseProjectEnvironmentClass]
+type projectNewResponseProjectEnvironmentClassJSON struct {
+	EnvironmentClassID apijson.Field
+	LocalRunner        apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r projectNewResponseProjectEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r *ProjectNewResponseProjectEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectNewResponseProjectEnvironmentClass{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a [ProjectNewResponseProjectEnvironmentClassUnion] interface
+// which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [ProjectNewResponseProjectEnvironmentClassEnvironmentClassID],
+// [ProjectNewResponseProjectEnvironmentClassLocalRunner].
+func (r ProjectNewResponseProjectEnvironmentClass) AsUnion() ProjectNewResponseProjectEnvironmentClassUnion {
+	return r.union
+}
+
+// Union satisfied by [ProjectNewResponseProjectEnvironmentClassEnvironmentClassID]
+// or [ProjectNewResponseProjectEnvironmentClassLocalRunner].
+type ProjectNewResponseProjectEnvironmentClassUnion interface {
+	implementsProjectNewResponseProjectEnvironmentClass()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*ProjectNewResponseProjectEnvironmentClassUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewResponseProjectEnvironmentClassEnvironmentClassID{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewResponseProjectEnvironmentClassLocalRunner{}),
+		},
+	)
+}
+
+type ProjectNewResponseProjectEnvironmentClassEnvironmentClassID struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string                                                          `json:"environmentClassId,required" format:"uuid"`
+	JSON               projectNewResponseProjectEnvironmentClassEnvironmentClassIDJSON `json:"-"`
+}
+
+// projectNewResponseProjectEnvironmentClassEnvironmentClassIDJSON contains the
+// JSON metadata for the struct
+// [ProjectNewResponseProjectEnvironmentClassEnvironmentClassID]
+type projectNewResponseProjectEnvironmentClassEnvironmentClassIDJSON struct {
+	EnvironmentClassID apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectEnvironmentClassEnvironmentClassID) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewResponseProjectEnvironmentClassEnvironmentClassIDJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectNewResponseProjectEnvironmentClassEnvironmentClassID) implementsProjectNewResponseProjectEnvironmentClass() {
+}
+
+type ProjectNewResponseProjectEnvironmentClassLocalRunner struct {
+	// Use a local runner for the user
+	LocalRunner bool                                                     `json:"localRunner,required"`
+	JSON        projectNewResponseProjectEnvironmentClassLocalRunnerJSON `json:"-"`
+}
+
+// projectNewResponseProjectEnvironmentClassLocalRunnerJSON contains the JSON
+// metadata for the struct [ProjectNewResponseProjectEnvironmentClassLocalRunner]
+type projectNewResponseProjectEnvironmentClassLocalRunnerJSON struct {
+	LocalRunner apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectEnvironmentClassLocalRunner) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewResponseProjectEnvironmentClassLocalRunnerJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectNewResponseProjectEnvironmentClassLocalRunner) implementsProjectNewResponseProjectEnvironmentClass() {
+}
+
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectNewResponseProjectInitializer struct {
 	Specs []ProjectNewResponseProjectInitializerSpec `json:"specs"`
@@ -158,22 +275,193 @@ func (r projectNewResponseProjectInitializerJSON) RawJSON() string {
 }
 
 type ProjectNewResponseProjectInitializerSpec struct {
-	JSON projectNewResponseProjectInitializerSpecJSON `json:"-"`
+	// This field can have the runtime type of
+	// [ProjectNewResponseProjectInitializerSpecsContextURLContextURL].
+	ContextURL interface{} `json:"contextUrl"`
+	// This field can have the runtime type of
+	// [ProjectNewResponseProjectInitializerSpecsGitGit].
+	Git   interface{}                                  `json:"git"`
+	JSON  projectNewResponseProjectInitializerSpecJSON `json:"-"`
+	union ProjectNewResponseProjectInitializerSpecsUnion
 }
 
 // projectNewResponseProjectInitializerSpecJSON contains the JSON metadata for the
 // struct [ProjectNewResponseProjectInitializerSpec]
 type projectNewResponseProjectInitializerSpecJSON struct {
+	ContextURL  apijson.Field
+	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
+func (r projectNewResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
+}
+
 func (r *ProjectNewResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectNewResponseProjectInitializerSpec{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a [ProjectNewResponseProjectInitializerSpecsUnion] interface
+// which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [ProjectNewResponseProjectInitializerSpecsContextURL],
+// [ProjectNewResponseProjectInitializerSpecsGit].
+func (r ProjectNewResponseProjectInitializerSpec) AsUnion() ProjectNewResponseProjectInitializerSpecsUnion {
+	return r.union
+}
+
+// Union satisfied by [ProjectNewResponseProjectInitializerSpecsContextURL] or
+// [ProjectNewResponseProjectInitializerSpecsGit].
+type ProjectNewResponseProjectInitializerSpecsUnion interface {
+	implementsProjectNewResponseProjectInitializerSpec()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*ProjectNewResponseProjectInitializerSpecsUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewResponseProjectInitializerSpecsContextURL{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewResponseProjectInitializerSpecsGit{}),
+		},
+	)
+}
+
+type ProjectNewResponseProjectInitializerSpecsContextURL struct {
+	ContextURL ProjectNewResponseProjectInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
+	JSON       projectNewResponseProjectInitializerSpecsContextURLJSON       `json:"-"`
+}
+
+// projectNewResponseProjectInitializerSpecsContextURLJSON contains the JSON
+// metadata for the struct [ProjectNewResponseProjectInitializerSpecsContextURL]
+type projectNewResponseProjectInitializerSpecsContextURLJSON struct {
+	ContextURL  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectNewResponseProjectInitializerSpecJSON) RawJSON() string {
+func (r projectNewResponseProjectInitializerSpecsContextURLJSON) RawJSON() string {
 	return r.raw
+}
+
+func (r ProjectNewResponseProjectInitializerSpecsContextURL) implementsProjectNewResponseProjectInitializerSpec() {
+}
+
+type ProjectNewResponseProjectInitializerSpecsContextURLContextURL struct {
+	// url is the URL from which the environment is created
+	URL  string                                                            `json:"url" format:"uri"`
+	JSON projectNewResponseProjectInitializerSpecsContextURLContextURLJSON `json:"-"`
+}
+
+// projectNewResponseProjectInitializerSpecsContextURLContextURLJSON contains the
+// JSON metadata for the struct
+// [ProjectNewResponseProjectInitializerSpecsContextURLContextURL]
+type projectNewResponseProjectInitializerSpecsContextURLContextURLJSON struct {
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewResponseProjectInitializerSpecsContextURLContextURLJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectNewResponseProjectInitializerSpecsGit struct {
+	Git  ProjectNewResponseProjectInitializerSpecsGitGit  `json:"git,required"`
+	JSON projectNewResponseProjectInitializerSpecsGitJSON `json:"-"`
+}
+
+// projectNewResponseProjectInitializerSpecsGitJSON contains the JSON metadata for
+// the struct [ProjectNewResponseProjectInitializerSpecsGit]
+type projectNewResponseProjectInitializerSpecsGitJSON struct {
+	Git         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewResponseProjectInitializerSpecsGitJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectNewResponseProjectInitializerSpecsGit) implementsProjectNewResponseProjectInitializerSpec() {
+}
+
+type ProjectNewResponseProjectInitializerSpecsGitGit struct {
+	// a path relative to the environment root in which the code will be checked out
+	//
+	// to
+	CheckoutLocation string `json:"checkoutLocation"`
+	// the value for the clone target mode - use depends on the target mode
+	CloneTarget string `json:"cloneTarget"`
+	// remote_uri is the Git remote origin
+	RemoteUri string `json:"remoteUri"`
+	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	TargetMode ProjectNewResponseProjectInitializerSpecsGitGitTargetMode `json:"targetMode"`
+	// upstream_Remote_uri is the fork upstream of a repository
+	UpstreamRemoteUri string                                              `json:"upstreamRemoteUri"`
+	JSON              projectNewResponseProjectInitializerSpecsGitGitJSON `json:"-"`
+}
+
+// projectNewResponseProjectInitializerSpecsGitGitJSON contains the JSON metadata
+// for the struct [ProjectNewResponseProjectInitializerSpecsGitGit]
+type projectNewResponseProjectInitializerSpecsGitGitJSON struct {
+	CheckoutLocation  apijson.Field
+	CloneTarget       apijson.Field
+	RemoteUri         apijson.Field
+	TargetMode        apijson.Field
+	UpstreamRemoteUri apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ProjectNewResponseProjectInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewResponseProjectInitializerSpecsGitGitJSON) RawJSON() string {
+	return r.raw
+}
+
+// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+type ProjectNewResponseProjectInitializerSpecsGitGitTargetMode string
+
+const (
+	ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  ProjectNewResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   ProjectNewResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit ProjectNewResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch ProjectNewResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  ProjectNewResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+)
+
+func (r ProjectNewResponseProjectInitializerSpecsGitGitTargetMode) IsKnown() bool {
+	switch r {
+	case ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, ProjectNewResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+		return true
+	}
+	return false
 }
 
 type ProjectNewResponseProjectMetadata struct {
@@ -525,7 +813,7 @@ func (r projectGetResponseJSON) RawJSON() string {
 }
 
 type ProjectGetResponseProject struct {
-	EnvironmentClass interface{} `json:"environmentClass,required"`
+	EnvironmentClass ProjectGetResponseProjectEnvironmentClass `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -563,6 +851,121 @@ func (r projectGetResponseProjectJSON) RawJSON() string {
 	return r.raw
 }
 
+type ProjectGetResponseProjectEnvironmentClass struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
+	// Use a local runner for the user
+	LocalRunner bool                                          `json:"localRunner"`
+	JSON        projectGetResponseProjectEnvironmentClassJSON `json:"-"`
+	union       ProjectGetResponseProjectEnvironmentClassUnion
+}
+
+// projectGetResponseProjectEnvironmentClassJSON contains the JSON metadata for the
+// struct [ProjectGetResponseProjectEnvironmentClass]
+type projectGetResponseProjectEnvironmentClassJSON struct {
+	EnvironmentClassID apijson.Field
+	LocalRunner        apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r projectGetResponseProjectEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r *ProjectGetResponseProjectEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectGetResponseProjectEnvironmentClass{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a [ProjectGetResponseProjectEnvironmentClassUnion] interface
+// which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [ProjectGetResponseProjectEnvironmentClassEnvironmentClassID],
+// [ProjectGetResponseProjectEnvironmentClassLocalRunner].
+func (r ProjectGetResponseProjectEnvironmentClass) AsUnion() ProjectGetResponseProjectEnvironmentClassUnion {
+	return r.union
+}
+
+// Union satisfied by [ProjectGetResponseProjectEnvironmentClassEnvironmentClassID]
+// or [ProjectGetResponseProjectEnvironmentClassLocalRunner].
+type ProjectGetResponseProjectEnvironmentClassUnion interface {
+	implementsProjectGetResponseProjectEnvironmentClass()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*ProjectGetResponseProjectEnvironmentClassUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectGetResponseProjectEnvironmentClassEnvironmentClassID{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectGetResponseProjectEnvironmentClassLocalRunner{}),
+		},
+	)
+}
+
+type ProjectGetResponseProjectEnvironmentClassEnvironmentClassID struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string                                                          `json:"environmentClassId,required" format:"uuid"`
+	JSON               projectGetResponseProjectEnvironmentClassEnvironmentClassIDJSON `json:"-"`
+}
+
+// projectGetResponseProjectEnvironmentClassEnvironmentClassIDJSON contains the
+// JSON metadata for the struct
+// [ProjectGetResponseProjectEnvironmentClassEnvironmentClassID]
+type projectGetResponseProjectEnvironmentClassEnvironmentClassIDJSON struct {
+	EnvironmentClassID apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectEnvironmentClassEnvironmentClassID) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectEnvironmentClassEnvironmentClassIDJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectGetResponseProjectEnvironmentClassEnvironmentClassID) implementsProjectGetResponseProjectEnvironmentClass() {
+}
+
+type ProjectGetResponseProjectEnvironmentClassLocalRunner struct {
+	// Use a local runner for the user
+	LocalRunner bool                                                     `json:"localRunner,required"`
+	JSON        projectGetResponseProjectEnvironmentClassLocalRunnerJSON `json:"-"`
+}
+
+// projectGetResponseProjectEnvironmentClassLocalRunnerJSON contains the JSON
+// metadata for the struct [ProjectGetResponseProjectEnvironmentClassLocalRunner]
+type projectGetResponseProjectEnvironmentClassLocalRunnerJSON struct {
+	LocalRunner apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectEnvironmentClassLocalRunner) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectEnvironmentClassLocalRunnerJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectGetResponseProjectEnvironmentClassLocalRunner) implementsProjectGetResponseProjectEnvironmentClass() {
+}
+
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectGetResponseProjectInitializer struct {
 	Specs []ProjectGetResponseProjectInitializerSpec `json:"specs"`
@@ -586,22 +989,193 @@ func (r projectGetResponseProjectInitializerJSON) RawJSON() string {
 }
 
 type ProjectGetResponseProjectInitializerSpec struct {
-	JSON projectGetResponseProjectInitializerSpecJSON `json:"-"`
+	// This field can have the runtime type of
+	// [ProjectGetResponseProjectInitializerSpecsContextURLContextURL].
+	ContextURL interface{} `json:"contextUrl"`
+	// This field can have the runtime type of
+	// [ProjectGetResponseProjectInitializerSpecsGitGit].
+	Git   interface{}                                  `json:"git"`
+	JSON  projectGetResponseProjectInitializerSpecJSON `json:"-"`
+	union ProjectGetResponseProjectInitializerSpecsUnion
 }
 
 // projectGetResponseProjectInitializerSpecJSON contains the JSON metadata for the
 // struct [ProjectGetResponseProjectInitializerSpec]
 type projectGetResponseProjectInitializerSpecJSON struct {
+	ContextURL  apijson.Field
+	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
+func (r projectGetResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
+}
+
 func (r *ProjectGetResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectGetResponseProjectInitializerSpec{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a [ProjectGetResponseProjectInitializerSpecsUnion] interface
+// which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [ProjectGetResponseProjectInitializerSpecsContextURL],
+// [ProjectGetResponseProjectInitializerSpecsGit].
+func (r ProjectGetResponseProjectInitializerSpec) AsUnion() ProjectGetResponseProjectInitializerSpecsUnion {
+	return r.union
+}
+
+// Union satisfied by [ProjectGetResponseProjectInitializerSpecsContextURL] or
+// [ProjectGetResponseProjectInitializerSpecsGit].
+type ProjectGetResponseProjectInitializerSpecsUnion interface {
+	implementsProjectGetResponseProjectInitializerSpec()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*ProjectGetResponseProjectInitializerSpecsUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectGetResponseProjectInitializerSpecsContextURL{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectGetResponseProjectInitializerSpecsGit{}),
+		},
+	)
+}
+
+type ProjectGetResponseProjectInitializerSpecsContextURL struct {
+	ContextURL ProjectGetResponseProjectInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
+	JSON       projectGetResponseProjectInitializerSpecsContextURLJSON       `json:"-"`
+}
+
+// projectGetResponseProjectInitializerSpecsContextURLJSON contains the JSON
+// metadata for the struct [ProjectGetResponseProjectInitializerSpecsContextURL]
+type projectGetResponseProjectInitializerSpecsContextURLJSON struct {
+	ContextURL  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectGetResponseProjectInitializerSpecJSON) RawJSON() string {
+func (r projectGetResponseProjectInitializerSpecsContextURLJSON) RawJSON() string {
 	return r.raw
+}
+
+func (r ProjectGetResponseProjectInitializerSpecsContextURL) implementsProjectGetResponseProjectInitializerSpec() {
+}
+
+type ProjectGetResponseProjectInitializerSpecsContextURLContextURL struct {
+	// url is the URL from which the environment is created
+	URL  string                                                            `json:"url" format:"uri"`
+	JSON projectGetResponseProjectInitializerSpecsContextURLContextURLJSON `json:"-"`
+}
+
+// projectGetResponseProjectInitializerSpecsContextURLContextURLJSON contains the
+// JSON metadata for the struct
+// [ProjectGetResponseProjectInitializerSpecsContextURLContextURL]
+type projectGetResponseProjectInitializerSpecsContextURLContextURLJSON struct {
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectInitializerSpecsContextURLContextURLJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectGetResponseProjectInitializerSpecsGit struct {
+	Git  ProjectGetResponseProjectInitializerSpecsGitGit  `json:"git,required"`
+	JSON projectGetResponseProjectInitializerSpecsGitJSON `json:"-"`
+}
+
+// projectGetResponseProjectInitializerSpecsGitJSON contains the JSON metadata for
+// the struct [ProjectGetResponseProjectInitializerSpecsGit]
+type projectGetResponseProjectInitializerSpecsGitJSON struct {
+	Git         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectInitializerSpecsGitJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectGetResponseProjectInitializerSpecsGit) implementsProjectGetResponseProjectInitializerSpec() {
+}
+
+type ProjectGetResponseProjectInitializerSpecsGitGit struct {
+	// a path relative to the environment root in which the code will be checked out
+	//
+	// to
+	CheckoutLocation string `json:"checkoutLocation"`
+	// the value for the clone target mode - use depends on the target mode
+	CloneTarget string `json:"cloneTarget"`
+	// remote_uri is the Git remote origin
+	RemoteUri string `json:"remoteUri"`
+	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	TargetMode ProjectGetResponseProjectInitializerSpecsGitGitTargetMode `json:"targetMode"`
+	// upstream_Remote_uri is the fork upstream of a repository
+	UpstreamRemoteUri string                                              `json:"upstreamRemoteUri"`
+	JSON              projectGetResponseProjectInitializerSpecsGitGitJSON `json:"-"`
+}
+
+// projectGetResponseProjectInitializerSpecsGitGitJSON contains the JSON metadata
+// for the struct [ProjectGetResponseProjectInitializerSpecsGitGit]
+type projectGetResponseProjectInitializerSpecsGitGitJSON struct {
+	CheckoutLocation  apijson.Field
+	CloneTarget       apijson.Field
+	RemoteUri         apijson.Field
+	TargetMode        apijson.Field
+	UpstreamRemoteUri apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ProjectGetResponseProjectInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectGetResponseProjectInitializerSpecsGitGitJSON) RawJSON() string {
+	return r.raw
+}
+
+// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+type ProjectGetResponseProjectInitializerSpecsGitGitTargetMode string
+
+const (
+	ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  ProjectGetResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   ProjectGetResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit ProjectGetResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch ProjectGetResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  ProjectGetResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+)
+
+func (r ProjectGetResponseProjectInitializerSpecsGitGitTargetMode) IsKnown() bool {
+	switch r {
+	case ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, ProjectGetResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+		return true
+	}
+	return false
 }
 
 type ProjectGetResponseProjectMetadata struct {
@@ -953,7 +1527,7 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 }
 
 type ProjectNewFromEnvironmentResponseProject struct {
-	EnvironmentClass interface{} `json:"environmentClass,required"`
+	EnvironmentClass ProjectNewFromEnvironmentResponseProjectEnvironmentClass `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -991,6 +1565,125 @@ func (r projectNewFromEnvironmentResponseProjectJSON) RawJSON() string {
 	return r.raw
 }
 
+type ProjectNewFromEnvironmentResponseProjectEnvironmentClass struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
+	// Use a local runner for the user
+	LocalRunner bool                                                         `json:"localRunner"`
+	JSON        projectNewFromEnvironmentResponseProjectEnvironmentClassJSON `json:"-"`
+	union       ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion
+}
+
+// projectNewFromEnvironmentResponseProjectEnvironmentClassJSON contains the JSON
+// metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClass]
+type projectNewFromEnvironmentResponseProjectEnvironmentClassJSON struct {
+	EnvironmentClassID apijson.Field
+	LocalRunner        apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r projectNewFromEnvironmentResponseProjectEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectNewFromEnvironmentResponseProjectEnvironmentClass{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion] interface which
+// you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID],
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner].
+func (r ProjectNewFromEnvironmentResponseProjectEnvironmentClass) AsUnion() ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion {
+	return r.union
+}
+
+// Union satisfied by
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID] or
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner].
+type ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion interface {
+	implementsProjectNewFromEnvironmentResponseProjectEnvironmentClass()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*ProjectNewFromEnvironmentResponseProjectEnvironmentClassUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner{}),
+		},
+	)
+}
+
+type ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string                                                                         `json:"environmentClassId,required" format:"uuid"`
+	JSON               projectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassIDJSON `json:"-"`
+}
+
+// projectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassIDJSON
+// contains the JSON metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID]
+type projectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassIDJSON struct {
+	EnvironmentClassID apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassIDJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectNewFromEnvironmentResponseProjectEnvironmentClassEnvironmentClassID) implementsProjectNewFromEnvironmentResponseProjectEnvironmentClass() {
+}
+
+type ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner struct {
+	// Use a local runner for the user
+	LocalRunner bool                                                                    `json:"localRunner,required"`
+	JSON        projectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunnerJSON `json:"-"`
+}
+
+// projectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunnerJSON contains
+// the JSON metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner]
+type projectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunnerJSON struct {
+	LocalRunner apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunnerJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectNewFromEnvironmentResponseProjectEnvironmentClassLocalRunner) implementsProjectNewFromEnvironmentResponseProjectEnvironmentClass() {
+}
+
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectNewFromEnvironmentResponseProjectInitializer struct {
 	Specs []ProjectNewFromEnvironmentResponseProjectInitializerSpec `json:"specs"`
@@ -1014,23 +1707,199 @@ func (r projectNewFromEnvironmentResponseProjectInitializerJSON) RawJSON() strin
 }
 
 type ProjectNewFromEnvironmentResponseProjectInitializerSpec struct {
-	JSON projectNewFromEnvironmentResponseProjectInitializerSpecJSON `json:"-"`
+	// This field can have the runtime type of
+	// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURL].
+	ContextURL interface{} `json:"contextUrl"`
+	// This field can have the runtime type of
+	// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGit].
+	Git   interface{}                                                 `json:"git"`
+	JSON  projectNewFromEnvironmentResponseProjectInitializerSpecJSON `json:"-"`
+	union ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion
 }
 
 // projectNewFromEnvironmentResponseProjectInitializerSpecJSON contains the JSON
 // metadata for the struct
 // [ProjectNewFromEnvironmentResponseProjectInitializerSpec]
 type projectNewFromEnvironmentResponseProjectInitializerSpecJSON struct {
+	ContextURL  apijson.Field
+	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
+func (r projectNewFromEnvironmentResponseProjectInitializerSpecJSON) RawJSON() string {
+	return r.raw
+}
+
 func (r *ProjectNewFromEnvironmentResponseProjectInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectNewFromEnvironmentResponseProjectInitializerSpec{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion] interface which
+// you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL],
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit].
+func (r ProjectNewFromEnvironmentResponseProjectInitializerSpec) AsUnion() ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion {
+	return r.union
+}
+
+// Union satisfied by
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL] or
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit].
+type ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion interface {
+	implementsProjectNewFromEnvironmentResponseProjectInitializerSpec()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*ProjectNewFromEnvironmentResponseProjectInitializerSpecsUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit{}),
+		},
+	)
+}
+
+type ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL struct {
+	ContextURL ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
+	JSON       projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLJSON       `json:"-"`
+}
+
+// projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLJSON contains
+// the JSON metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL]
+type projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLJSON struct {
+	ContextURL  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectNewFromEnvironmentResponseProjectInitializerSpecJSON) RawJSON() string {
+func (r projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLJSON) RawJSON() string {
 	return r.raw
+}
+
+func (r ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURL) implementsProjectNewFromEnvironmentResponseProjectInitializerSpec() {
+}
+
+type ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURL struct {
+	// url is the URL from which the environment is created
+	URL  string                                                                           `json:"url" format:"uri"`
+	JSON projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURLJSON `json:"-"`
+}
+
+// projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURLJSON
+// contains the JSON metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURL]
+type projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURLJSON struct {
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewFromEnvironmentResponseProjectInitializerSpecsContextURLContextURLJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit struct {
+	Git  ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGit  `json:"git,required"`
+	JSON projectNewFromEnvironmentResponseProjectInitializerSpecsGitJSON `json:"-"`
+}
+
+// projectNewFromEnvironmentResponseProjectInitializerSpecsGitJSON contains the
+// JSON metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit]
+type projectNewFromEnvironmentResponseProjectInitializerSpecsGitJSON struct {
+	Git         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewFromEnvironmentResponseProjectInitializerSpecsGitJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit) implementsProjectNewFromEnvironmentResponseProjectInitializerSpec() {
+}
+
+type ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGit struct {
+	// a path relative to the environment root in which the code will be checked out
+	//
+	// to
+	CheckoutLocation string `json:"checkoutLocation"`
+	// the value for the clone target mode - use depends on the target mode
+	CloneTarget string `json:"cloneTarget"`
+	// remote_uri is the Git remote origin
+	RemoteUri string `json:"remoteUri"`
+	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	TargetMode ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode `json:"targetMode"`
+	// upstream_Remote_uri is the fork upstream of a repository
+	UpstreamRemoteUri string                                                             `json:"upstreamRemoteUri"`
+	JSON              projectNewFromEnvironmentResponseProjectInitializerSpecsGitGitJSON `json:"-"`
+}
+
+// projectNewFromEnvironmentResponseProjectInitializerSpecsGitGitJSON contains the
+// JSON metadata for the struct
+// [ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGit]
+type projectNewFromEnvironmentResponseProjectInitializerSpecsGitGitJSON struct {
+	CheckoutLocation  apijson.Field
+	CloneTarget       apijson.Field
+	RemoteUri         apijson.Field
+	TargetMode        apijson.Field
+	UpstreamRemoteUri apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectNewFromEnvironmentResponseProjectInitializerSpecsGitGitJSON) RawJSON() string {
+	return r.raw
+}
+
+// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+type ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode string
+
+const (
+	ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+)
+
+func (r ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode) IsKnown() bool {
+	switch r {
+	case ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+		return true
+	}
+	return false
 }
 
 type ProjectNewFromEnvironmentResponseProjectMetadata struct {
@@ -1362,7 +2231,7 @@ func (r ProjectNewFromEnvironmentResponseProjectUsedBySubjectsPrincipal) IsKnown
 }
 
 type ProjectNewParams struct {
-	EnvironmentClass param.Field[interface{}] `json:"environmentClass,required"`
+	EnvironmentClass param.Field[ProjectNewParamsEnvironmentClassUnion] `json:"environmentClass,required"`
 	// EnvironmentInitializer specifies how an environment is to be initialized
 	Initializer param.Field[ProjectNewParamsInitializer] `json:"initializer,required"`
 	// Define the version of the Connect protocol
@@ -1390,9 +2259,55 @@ func (r ProjectNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type ProjectNewParamsEnvironmentClass struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
+	// Use a local runner for the user
+	LocalRunner param.Field[bool] `json:"localRunner"`
+}
+
+func (r ProjectNewParamsEnvironmentClass) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r ProjectNewParamsEnvironmentClass) implementsProjectNewParamsEnvironmentClassUnion() {}
+
+// Satisfied by [ProjectNewParamsEnvironmentClassEnvironmentClassID],
+// [ProjectNewParamsEnvironmentClassLocalRunner],
+// [ProjectNewParamsEnvironmentClass].
+type ProjectNewParamsEnvironmentClassUnion interface {
+	implementsProjectNewParamsEnvironmentClassUnion()
+}
+
+type ProjectNewParamsEnvironmentClassEnvironmentClassID struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID param.Field[string] `json:"environmentClassId,required" format:"uuid"`
+}
+
+func (r ProjectNewParamsEnvironmentClassEnvironmentClassID) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r ProjectNewParamsEnvironmentClassEnvironmentClassID) implementsProjectNewParamsEnvironmentClassUnion() {
+}
+
+type ProjectNewParamsEnvironmentClassLocalRunner struct {
+	// Use a local runner for the user
+	LocalRunner param.Field[bool] `json:"localRunner,required"`
+}
+
+func (r ProjectNewParamsEnvironmentClassLocalRunner) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r ProjectNewParamsEnvironmentClassLocalRunner) implementsProjectNewParamsEnvironmentClassUnion() {
+}
+
 // EnvironmentInitializer specifies how an environment is to be initialized
 type ProjectNewParamsInitializer struct {
-	Specs param.Field[[]ProjectNewParamsInitializerSpec] `json:"specs"`
+	Specs param.Field[[]ProjectNewParamsInitializerSpecUnion] `json:"specs"`
 }
 
 func (r ProjectNewParamsInitializer) MarshalJSON() (data []byte, err error) {
@@ -1400,10 +2315,88 @@ func (r ProjectNewParamsInitializer) MarshalJSON() (data []byte, err error) {
 }
 
 type ProjectNewParamsInitializerSpec struct {
+	ContextURL param.Field[interface{}] `json:"contextUrl"`
+	Git        param.Field[interface{}] `json:"git"`
 }
 
 func (r ProjectNewParamsInitializerSpec) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r ProjectNewParamsInitializerSpec) implementsProjectNewParamsInitializerSpecUnion() {}
+
+// Satisfied by [ProjectNewParamsInitializerSpecsContextURL],
+// [ProjectNewParamsInitializerSpecsGit], [ProjectNewParamsInitializerSpec].
+type ProjectNewParamsInitializerSpecUnion interface {
+	implementsProjectNewParamsInitializerSpecUnion()
+}
+
+type ProjectNewParamsInitializerSpecsContextURL struct {
+	ContextURL param.Field[ProjectNewParamsInitializerSpecsContextURLContextURL] `json:"contextUrl,required"`
+}
+
+func (r ProjectNewParamsInitializerSpecsContextURL) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r ProjectNewParamsInitializerSpecsContextURL) implementsProjectNewParamsInitializerSpecUnion() {
+}
+
+type ProjectNewParamsInitializerSpecsContextURLContextURL struct {
+	// url is the URL from which the environment is created
+	URL param.Field[string] `json:"url" format:"uri"`
+}
+
+func (r ProjectNewParamsInitializerSpecsContextURLContextURL) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ProjectNewParamsInitializerSpecsGit struct {
+	Git param.Field[ProjectNewParamsInitializerSpecsGitGit] `json:"git,required"`
+}
+
+func (r ProjectNewParamsInitializerSpecsGit) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r ProjectNewParamsInitializerSpecsGit) implementsProjectNewParamsInitializerSpecUnion() {}
+
+type ProjectNewParamsInitializerSpecsGitGit struct {
+	// a path relative to the environment root in which the code will be checked out
+	//
+	// to
+	CheckoutLocation param.Field[string] `json:"checkoutLocation"`
+	// the value for the clone target mode - use depends on the target mode
+	CloneTarget param.Field[string] `json:"cloneTarget"`
+	// remote_uri is the Git remote origin
+	RemoteUri param.Field[string] `json:"remoteUri"`
+	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	TargetMode param.Field[ProjectNewParamsInitializerSpecsGitGitTargetMode] `json:"targetMode"`
+	// upstream_Remote_uri is the fork upstream of a repository
+	UpstreamRemoteUri param.Field[string] `json:"upstreamRemoteUri"`
+}
+
+func (r ProjectNewParamsInitializerSpecsGitGit) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+type ProjectNewParamsInitializerSpecsGitGitTargetMode string
+
+const (
+	ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  ProjectNewParamsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   ProjectNewParamsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit ProjectNewParamsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch ProjectNewParamsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  ProjectNewParamsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+)
+
+func (r ProjectNewParamsInitializerSpecsGitGitTargetMode) IsKnown() bool {
+	switch r {
+	case ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, ProjectNewParamsInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol

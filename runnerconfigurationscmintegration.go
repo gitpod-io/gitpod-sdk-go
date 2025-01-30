@@ -69,7 +69,7 @@ func (r runnerConfigurationScmIntegrationNewResponseJSON) RawJSON() string {
 }
 
 type RunnerConfigurationScmIntegrationNewParams struct {
-	Body RunnerConfigurationScmIntegrationNewParamsBody `json:"body,required"`
+	Body RunnerConfigurationScmIntegrationNewParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -81,10 +81,56 @@ func (r RunnerConfigurationScmIntegrationNewParams) MarshalJSON() (data []byte, 
 }
 
 type RunnerConfigurationScmIntegrationNewParamsBody struct {
+	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
+	//
+	// If configured, oauth_plaintext_client_secret must also be set.
+	OAuthClientID param.Field[string] `json:"oauthClientId"`
+	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text.
+	//
+	// This will first be encrypted with the runner's public key before being stored.
+	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret"`
 }
 
 func (r RunnerConfigurationScmIntegrationNewParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBody) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
+}
+
+// Satisfied by [RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientID],
+// [RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret],
+// [RunnerConfigurationScmIntegrationNewParamsBody].
+type RunnerConfigurationScmIntegrationNewParamsBodyUnion interface {
+	implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion()
+}
+
+type RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientID struct {
+	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
+	//
+	// If configured, oauth_plaintext_client_secret must also be set.
+	OAuthClientID param.Field[string] `json:"oauthClientId,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientID) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientID) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
+}
+
+type RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret struct {
+	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text.
+	//
+	// This will first be encrypted with the runner's public key before being stored.
+	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
 }
 
 // Define the version of the Connect protocol

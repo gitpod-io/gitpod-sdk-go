@@ -28,10 +28,18 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Services.Update(context.TODO(), gitpod.EnvironmentAutomationServiceUpdateParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Metadata:               gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsMetadata{}),
-		Spec:                   gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsSpec{}),
-		Status:                 gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsStatus{}),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Metadata: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsMetadataUnion](gitpod.EnvironmentAutomationServiceUpdateParamsMetadataDescription{
+			Description: gitpod.F("description"),
+		}),
+		Spec: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsSpecUnion](gitpod.EnvironmentAutomationServiceUpdateParamsSpecCommands{
+			Commands: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsSpecCommandsCommandsUnion](gitpod.EnvironmentAutomationServiceUpdateParamsSpecCommandsCommandsReady{
+				Ready: gitpod.F("ready"),
+			}),
+		}),
+		Status: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsStatusUnion](gitpod.EnvironmentAutomationServiceUpdateParamsStatusFailureMessage{
+			FailureMessage: gitpod.F("failureMessage"),
+		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

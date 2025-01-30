@@ -6,12 +6,14 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"reflect"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/tidwall/gjson"
 )
 
 // EnvironmentAutomationTaskExecutionService contains methods and other services
@@ -566,22 +568,237 @@ func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanJSON) 
 }
 
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep struct {
-	JSON environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON `json:"-"`
+	// ID is the ID of the execution step
+	ID string `json:"id" format:"uuid"`
+	// This field can have the runtime type of [[]string].
+	DependsOn interface{} `json:"dependsOn"`
+	Label     string      `json:"label"`
+	ServiceID string      `json:"serviceId" format:"uuid"`
+	// This field can have the runtime type of
+	// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTask].
+	Task  interface{}                                                                `json:"task"`
+	JSON  environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON `json:"-"`
+	union EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion
 }
 
 // environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON
 // contains the JSON metadata for the struct
 // [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep]
 type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON struct {
+	ID          apijson.Field
+	DependsOn   apijson.Field
+	Label       apijson.Field
+	ServiceID   apijson.Field
+	Task        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON) RawJSON() string {
+	return r.raw
+}
+
 func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	*r = EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion]
+// interface which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID],
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask].
+func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep) AsUnion() EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion {
+	return r.union
+}
+
+// Union satisfied by
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID]
+// or
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask].
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion interface {
+	implementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask{}),
+		},
+	)
+}
+
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID struct {
+	ServiceID string `json:"serviceId,required" format:"uuid"`
+	// ID is the ID of the execution step
+	ID        string                                                                               `json:"id" format:"uuid"`
+	DependsOn []string                                                                             `json:"dependsOn"`
+	Label     string                                                                               `json:"label"`
+	JSON      environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceIDJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceIDJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceIDJSON struct {
+	ServiceID   apijson.Field
+	ID          apijson.Field
+	DependsOn   apijson.Field
+	Label       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceIDJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsServiceID) implementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep() {
+}
+
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask struct {
+	Task EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTask `json:"task,required"`
+	// ID is the ID of the execution step
+	ID        string                                                                          `json:"id" format:"uuid"`
+	DependsOn []string                                                                        `json:"dependsOn"`
+	Label     string                                                                          `json:"label"`
+	JSON      environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskJSON struct {
+	Task        apijson.Field
+	ID          apijson.Field
+	DependsOn   apijson.Field
+	Label       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTask) implementsEnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStep() {
+}
+
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTask struct {
+	ID   string                                                                              `json:"id" format:"uuid"`
+	Spec EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpec `json:"spec"`
+	JSON environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTask]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskJSON struct {
+	ID          apijson.Field
+	Spec        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTask) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpec struct {
+	// command contains the command the task should execute
+	Command string `json:"command"`
+	// runs_on specifies the environment the task should run on.
+	RunsOn EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOn `json:"runsOn"`
+	JSON   environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecJSON   `json:"-"`
+}
+
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpec]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecJSON struct {
+	Command     apijson.Field
+	RunsOn      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecJSON) RawJSON() string {
+	return r.raw
+}
+
+// runs_on specifies the environment the task should run on.
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOn struct {
+	Docker EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDocker `json:"docker,required"`
+	JSON   environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnJSON   `json:"-"`
+}
+
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOn]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnJSON struct {
+	Docker      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOn) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDocker struct {
+	Environment []string                                                                                            `json:"environment"`
+	Image       string                                                                                              `json:"image"`
+	JSON        environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDockerJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDockerJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDocker]
+type environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDockerJSON struct {
+	Environment apijson.Field
+	Image       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDocker) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsTaskTaskSpecRunsOnDockerJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1207,22 +1424,237 @@ func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON
 }
 
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep struct {
-	JSON environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON `json:"-"`
+	// ID is the ID of the execution step
+	ID string `json:"id" format:"uuid"`
+	// This field can have the runtime type of [[]string].
+	DependsOn interface{} `json:"dependsOn"`
+	Label     string      `json:"label"`
+	ServiceID string      `json:"serviceId" format:"uuid"`
+	// This field can have the runtime type of
+	// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTask].
+	Task  interface{}                                                                  `json:"task"`
+	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON `json:"-"`
+	union EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion
 }
 
 // environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON
 // contains the JSON metadata for the struct
 // [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep]
 type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON struct {
+	ID          apijson.Field
+	DependsOn   apijson.Field
+	Label       apijson.Field
+	ServiceID   apijson.Field
+	Task        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON) RawJSON() string {
+	return r.raw
+}
+
 func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	*r = EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion]
+// interface which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID],
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask].
+func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep) AsUnion() EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion {
+	return r.union
+}
+
+// Union satisfied by
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID]
+// or
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask].
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion interface {
+	implementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask{}),
+		},
+	)
+}
+
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID struct {
+	ServiceID string `json:"serviceId,required" format:"uuid"`
+	// ID is the ID of the execution step
+	ID        string                                                                                 `json:"id" format:"uuid"`
+	DependsOn []string                                                                               `json:"dependsOn"`
+	Label     string                                                                                 `json:"label"`
+	JSON      environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceIDJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceIDJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceIDJSON struct {
+	ServiceID   apijson.Field
+	ID          apijson.Field
+	DependsOn   apijson.Field
+	Label       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceIDJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsServiceID) implementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep() {
+}
+
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask struct {
+	Task EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTask `json:"task,required"`
+	// ID is the ID of the execution step
+	ID        string                                                                            `json:"id" format:"uuid"`
+	DependsOn []string                                                                          `json:"dependsOn"`
+	Label     string                                                                            `json:"label"`
+	JSON      environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskJSON struct {
+	Task        apijson.Field
+	ID          apijson.Field
+	DependsOn   apijson.Field
+	Label       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTask) implementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep() {
+}
+
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTask struct {
+	ID   string                                                                                `json:"id" format:"uuid"`
+	Spec EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpec `json:"spec"`
+	JSON environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTask]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskJSON struct {
+	ID          apijson.Field
+	Spec        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTask) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpec struct {
+	// command contains the command the task should execute
+	Command string `json:"command"`
+	// runs_on specifies the environment the task should run on.
+	RunsOn EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOn `json:"runsOn"`
+	JSON   environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecJSON   `json:"-"`
+}
+
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpec]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecJSON struct {
+	Command     apijson.Field
+	RunsOn      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecJSON) RawJSON() string {
+	return r.raw
+}
+
+// runs_on specifies the environment the task should run on.
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOn struct {
+	Docker EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDocker `json:"docker,required"`
+	JSON   environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnJSON   `json:"-"`
+}
+
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOn]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnJSON struct {
+	Docker      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOn) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnJSON) RawJSON() string {
+	return r.raw
+}
+
+type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDocker struct {
+	Environment []string                                                                                              `json:"environment"`
+	Image       string                                                                                                `json:"image"`
+	JSON        environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDockerJSON `json:"-"`
+}
+
+// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDockerJSON
+// contains the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDocker]
+type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDockerJSON struct {
+	Environment apijson.Field
+	Image       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDocker) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsTaskTaskSpecRunsOnDockerJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1485,7 +1917,7 @@ func (r EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion) IsKn
 }
 
 type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams struct {
-	Body EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody `json:"body,required"`
+	Body EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -1497,10 +1929,59 @@ func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams) Marsh
 }
 
 type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody struct {
+	// failure_message marks the task execution as failed and provides a message
+	// explaining the failure.
+	//
+	// If an individual step has failed, callers are NOT expected to set this message;
+	// only if the task execution as a whole has failed/cannot be started.
+	FailureMessage param.Field[string] `json:"failureMessage"`
+	// log_url is the URL to the logs of the task's steps. If this is empty, the task
+	// either has no logs or has not yet started.
+	LogURL param.Field[string] `json:"logUrl"`
 }
 
 func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody) implementsEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion() {
+}
+
+// Satisfied by
+// [EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyFailureMessage],
+// [EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyLogURL],
+// [EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody].
+type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion interface {
+	implementsEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion()
+}
+
+type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyFailureMessage struct {
+	// failure_message marks the task execution as failed and provides a message
+	// explaining the failure.
+	//
+	// If an individual step has failed, callers are NOT expected to set this message;
+	// only if the task execution as a whole has failed/cannot be started.
+	FailureMessage param.Field[string] `json:"failureMessage,required"`
+}
+
+func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyFailureMessage) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyFailureMessage) implementsEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion() {
+}
+
+type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyLogURL struct {
+	// log_url is the URL to the logs of the task's steps. If this is empty, the task
+	// either has no logs or has not yet started.
+	LogURL param.Field[string] `json:"logUrl,required"`
+}
+
+func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyLogURL) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyLogURL) implementsEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion() {
 }
 
 // Define the version of the Connect protocol

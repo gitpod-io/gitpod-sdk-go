@@ -113,7 +113,9 @@ func TestEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusWithOptional
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.TaskExecutions.UpdateTaskExecutionStatus(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams{
-		Body:                   gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBody{},
+		Body: gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyFailureMessage{
+			FailureMessage: gitpod.F("failureMessage"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

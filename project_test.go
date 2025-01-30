@@ -26,9 +26,15 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
-		EnvironmentClass: gitpod.F[any](map[string]interface{}{}),
+		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassEnvironmentClassID{
+			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		}),
 		Initializer: gitpod.F(gitpod.ProjectNewParamsInitializer{
-			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpec{{}}),
+			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpecUnion{gitpod.ProjectNewParamsInitializerSpecsContextURL{
+				ContextURL: gitpod.F(gitpod.ProjectNewParamsInitializerSpecsContextURLContextURL{
+					URL: gitpod.F("https://example.com"),
+				}),
+			}}),
 		}),
 		ConnectProtocolVersion: gitpod.F(gitpod.ProjectNewParamsConnectProtocolVersion1),
 		AutomationsFilePath:    gitpod.F("automationsFilePath"),

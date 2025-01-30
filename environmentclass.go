@@ -165,7 +165,7 @@ func (r environmentClassListResponsePaginationJSON) RawJSON() string {
 type EnvironmentClassListParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[interface{}]                                      `json:"filter"`
+	Filter                 param.Field[EnvironmentClassListParamsFilter]                 `json:"filter"`
 	// pagination contains the pagination options for listing environment classes
 	Pagination param.Field[EnvironmentClassListParamsPagination] `json:"pagination"`
 	// Define the timeout, in ms
@@ -189,6 +189,17 @@ func (r EnvironmentClassListParamsConnectProtocolVersion) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+type EnvironmentClassListParamsFilter struct {
+	// enabled filters the response to only enabled or disabled environment classes.
+	//
+	// If not set, all environment classes are returned.
+	Enabled param.Field[bool] `json:"enabled,required"`
+}
+
+func (r EnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // pagination contains the pagination options for listing environment classes

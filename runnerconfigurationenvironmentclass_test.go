@@ -26,7 +26,9 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.Update(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassUpdateParams{
-		Body:                   gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBody{},
+		Body: gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription{
+			Description: gitpod.F("xxx"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -53,7 +55,9 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.List(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassListParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1),
-		Filter:                 gitpod.F[any](map[string]interface{}{}),
+		Filter: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsFilter{
+			Enabled: gitpod.F(true),
+		}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
