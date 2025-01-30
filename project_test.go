@@ -26,7 +26,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
-		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassEnvironmentClassID{
+		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass{
 			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 		Initializer: gitpod.F(gitpod.ProjectNewParamsInitializer{
@@ -64,7 +64,95 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Get(context.TODO(), gitpod.ProjectGetParams{
+		Encoding:               gitpod.F(gitpod.ProjectGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.ProjectGetParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.ProjectGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.ProjectGetParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestProjectUpdateWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Projects.Update(context.TODO(), gitpod.ProjectUpdateParams{
+		Body: gitpod.ProjectUpdateParamsBodyAutomationsFilePathIsThePathToTheAutomationsFileRelativeToTheRepoRoot{
+			AutomationsFilePath: gitpod.F("automationsFilePath"),
+		},
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectUpdateParamsConnectProtocolVersion1),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestProjectListWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Projects.List(context.TODO(), gitpod.ProjectListParams{
+		Encoding:               gitpod.F(gitpod.ProjectListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectListParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.ProjectListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.ProjectListParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestProjectDeleteWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Projects.Delete(context.TODO(), gitpod.ProjectDeleteParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.ProjectDeleteParamsConnectProtocolVersion1),
 		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

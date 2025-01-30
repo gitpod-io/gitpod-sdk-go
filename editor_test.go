@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
+func TestEditorGetWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,12 +25,12 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Automations.Tasks.Executions.Get(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionGetParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1),
+	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
+		Encoding:               gitpod.F(gitpod.EditorGetParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.EditorGetParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectV1),
+		Compression:            gitpod.F(gitpod.EditorGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EditorGetParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -43,7 +43,7 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) {
+func TestEditorListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -55,12 +55,12 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Automations.Tasks.Executions.List(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionListParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1),
+	_, err := client.Editors.List(context.TODO(), gitpod.EditorListParams{
+		Encoding:               gitpod.F(gitpod.EditorListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.EditorListParamsConnectProtocolVersion1),
 		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectV1),
+		Compression:            gitpod.F(gitpod.EditorListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EditorListParamsConnectV1),
 		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -73,7 +73,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 	}
 }
 
-func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) {
+func TestEditorResolveURLWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -85,9 +85,11 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Environments.Automations.Tasks.Executions.Stop(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionStopParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Editors.ResolveURL(context.TODO(), gitpod.EditorResolveURLParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.EditorResolveURLParamsConnectProtocolVersion1),
+		EditorID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

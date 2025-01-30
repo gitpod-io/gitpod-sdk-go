@@ -76,8 +76,12 @@ func TestEnvironmentAutomationTaskGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Get(context.TODO(), gitpod.EnvironmentAutomationTaskGetParams{
+		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskGetParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskGetParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskGetParamsConnectV1),
+		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -135,17 +139,13 @@ func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.List(context.TODO(), gitpod.EnvironmentAutomationTaskListParams{
+		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskListParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsConnectProtocolVersion1),
-		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsFilter{
-			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			References:     gitpod.F([]string{"x"}),
-			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		}),
-		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsPagination{
-			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
-		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskListParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

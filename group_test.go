@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestOrganizationInviteSummaryGetWithOptionalParams(t *testing.T) {
+func TestGroupListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,9 +25,13 @@ func TestOrganizationInviteSummaryGetWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Organizations.Invite.Summary.Get(context.TODO(), gitpod.OrganizationInviteSummaryGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationInviteSummaryGetParamsConnectProtocolVersion1),
-		InviteID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Groups.List(context.TODO(), gitpod.GroupListParams{
+		Encoding:               gitpod.F(gitpod.GroupListParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.GroupListParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.GroupListParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.GroupListParamsConnectV1),
+		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

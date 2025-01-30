@@ -6,9 +6,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
+	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -34,7 +36,7 @@ func NewRunnerConfigurationHostAuthenticationTokenService(opts ...option.Request
 	return
 }
 
-// GetHostAuthenticationToken
+// CreateHostAuthenticationToken
 func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
@@ -43,7 +45,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Cont
 		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
 	}
 	opts = append(r.Options[:], opts...)
-	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
+	path := "gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -58,7 +60,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Cont
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
 
@@ -86,7 +88,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Con
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListHostAuthenticationTokens"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
 
@@ -612,7 +614,102 @@ type RunnerConfigurationHostAuthenticationTokenDeleteResponse = interface{}
 type RunnerConfigurationHostAuthenticationTokenNewParams struct {
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                    `json:"id" format:"uuid"`
+	Token                  param.Field[string]                                                                    `json:"token"`
+	// A Timestamp represents a point in time independent of any time zone or local
+	//
+	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
+	// resolution. The count is relative to an epoch at UTC midnight on January 1,
+	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
+	// backwards to year one.
+	//
+	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
+	// second table is needed for interpretation, using a
+	// [24-hour linear smear](https://developers.google.com/time/smear).
+	//
+	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
+	// restricting to that range, we ensure that we can convert to and from
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
+	//
+	// # Examples
+	//
+	// Example 1: Compute Timestamp from POSIX `time()`.
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(time(NULL));
+	//	timestamp.set_nanos(0);
+	//
+	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
+	//
+	//	struct timeval tv;
+	//	gettimeofday(&tv, NULL);
+	//
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds(tv.tv_sec);
+	//	timestamp.set_nanos(tv.tv_usec * 1000);
+	//
+	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
+	//
+	//	FILETIME ft;
+	//	GetSystemTimeAsFileTime(&ft);
+	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+	//
+	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
+	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
+	//	Timestamp timestamp;
+	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
+	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
+	//
+	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
+	//
+	//	long millis = System.currentTimeMillis();
+	//
+	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
+	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
+	//
+	// Example 5: Compute Timestamp from Java `Instant.now()`.
+	//
+	//	Instant now = Instant.now();
+	//
+	//	Timestamp timestamp =
+	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
+	//	        .setNanos(now.getNano()).build();
+	//
+	// Example 6: Compute Timestamp from current time in Python.
+	//
+	//	timestamp = Timestamp()
+	//	timestamp.GetCurrentTime()
+	//
+	// # JSON Mapping
+	//
+	// In JSON format, the Timestamp type is encoded as a string in the
+	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
+	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
+	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
+	// zero-padded to two digits each. The fractional seconds, which can go up to 9
+	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
+	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
+	// serializer should always use UTC (as indicated by "Z") when printing the
+	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
+	// other timezones (as indicated by an offset).
+	//
+	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
+	// January 15, 2017.
+	//
+	// In JavaScript, one can convert a Date object to this format using the standard
+	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
+	// method. In Python, a standard `datetime.datetime` object can be converted to
+	// this format using
+	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
+	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
+	// Joda Time's
+	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
+	// to obtain a formatter capable of generating timestamps in this format.
+	ExpiresAt    param.Field[time.Time]                                                 `json:"expiresAt" format:"date-time"`
+	Host         param.Field[string]                                                    `json:"host"`
+	RefreshToken param.Field[string]                                                    `json:"refreshToken"`
+	RunnerID     param.Field[string]                                                    `json:"runnerId" format:"uuid"`
+	Source       param.Field[RunnerConfigurationHostAuthenticationTokenNewParamsSource] `json:"source"`
+	UserID       param.Field[string]                                                    `json:"userId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
@@ -636,16 +733,62 @@ func (r RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersio
 	return false
 }
 
+type RunnerConfigurationHostAuthenticationTokenNewParamsSource string
+
+const (
+	RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceUnspecified RunnerConfigurationHostAuthenticationTokenNewParamsSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_UNSPECIFIED"
+	RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceOAuth       RunnerConfigurationHostAuthenticationTokenNewParamsSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_OAUTH"
+	RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourcePat         RunnerConfigurationHostAuthenticationTokenNewParamsSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_PAT"
+)
+
+func (r RunnerConfigurationHostAuthenticationTokenNewParamsSource) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceUnspecified, RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceOAuth, RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourcePat:
+		return true
+	}
+	return false
+}
+
 type RunnerConfigurationHostAuthenticationTokenGetParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                    `json:"id" format:"uuid"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsConnect] `query:"connect"`
+	Message param.Field[string]                                                     `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r RunnerConfigurationHostAuthenticationTokenGetParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+// URLQuery serializes [RunnerConfigurationHostAuthenticationTokenGetParams]'s
+// query parameters as `url.Values`.
+func (r RunnerConfigurationHostAuthenticationTokenGetParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type RunnerConfigurationHostAuthenticationTokenGetParamsEncoding string
+
+const (
+	RunnerConfigurationHostAuthenticationTokenGetParamsEncodingProto RunnerConfigurationHostAuthenticationTokenGetParamsEncoding = "proto"
+	RunnerConfigurationHostAuthenticationTokenGetParamsEncodingJson  RunnerConfigurationHostAuthenticationTokenGetParamsEncoding = "json"
+)
+
+func (r RunnerConfigurationHostAuthenticationTokenGetParamsEncoding) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenGetParamsEncodingProto, RunnerConfigurationHostAuthenticationTokenGetParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -658,6 +801,38 @@ const (
 func (r RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
+// Which compression algorithm to use for this request
+type RunnerConfigurationHostAuthenticationTokenGetParamsCompression string
+
+const (
+	RunnerConfigurationHostAuthenticationTokenGetParamsCompressionIdentity RunnerConfigurationHostAuthenticationTokenGetParamsCompression = "identity"
+	RunnerConfigurationHostAuthenticationTokenGetParamsCompressionGzip     RunnerConfigurationHostAuthenticationTokenGetParamsCompression = "gzip"
+	RunnerConfigurationHostAuthenticationTokenGetParamsCompressionBr       RunnerConfigurationHostAuthenticationTokenGetParamsCompression = "br"
+)
+
+func (r RunnerConfigurationHostAuthenticationTokenGetParamsCompression) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenGetParamsCompressionIdentity, RunnerConfigurationHostAuthenticationTokenGetParamsCompressionGzip, RunnerConfigurationHostAuthenticationTokenGetParamsCompressionBr:
+		return true
+	}
+	return false
+}
+
+// Define the version of the Connect protocol
+type RunnerConfigurationHostAuthenticationTokenGetParamsConnect string
+
+const (
+	RunnerConfigurationHostAuthenticationTokenGetParamsConnectV1 RunnerConfigurationHostAuthenticationTokenGetParamsConnect = "v1"
+)
+
+func (r RunnerConfigurationHostAuthenticationTokenGetParamsConnect) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenGetParamsConnectV1:
 		return true
 	}
 	return false
@@ -924,16 +1099,45 @@ func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVer
 }
 
 type RunnerConfigurationHostAuthenticationTokenListParams struct {
+	// Define which encoding or 'Message-Codec' to use
+	Encoding param.Field[RunnerConfigurationHostAuthenticationTokenListParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion]            `json:"filter"`
-	Pagination             param.Field[RunnerConfigurationHostAuthenticationTokenListParamsPagination]             `json:"pagination"`
+	// Specifies if the message query param is base64 encoded, which may be required
+	// for binary data
+	Base64 param.Field[bool] `query:"base64"`
+	// Which compression algorithm to use for this request
+	Compression param.Field[RunnerConfigurationHostAuthenticationTokenListParamsCompression] `query:"compression"`
+	// Define the version of the Connect protocol
+	Connect param.Field[RunnerConfigurationHostAuthenticationTokenListParamsConnect] `query:"connect"`
+	Message param.Field[string]                                                      `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-func (r RunnerConfigurationHostAuthenticationTokenListParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+// URLQuery serializes [RunnerConfigurationHostAuthenticationTokenListParams]'s
+// query parameters as `url.Values`.
+func (r RunnerConfigurationHostAuthenticationTokenListParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// Define which encoding or 'Message-Codec' to use
+type RunnerConfigurationHostAuthenticationTokenListParamsEncoding string
+
+const (
+	RunnerConfigurationHostAuthenticationTokenListParamsEncodingProto RunnerConfigurationHostAuthenticationTokenListParamsEncoding = "proto"
+	RunnerConfigurationHostAuthenticationTokenListParamsEncodingJson  RunnerConfigurationHostAuthenticationTokenListParamsEncoding = "json"
+)
+
+func (r RunnerConfigurationHostAuthenticationTokenListParamsEncoding) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenListParamsEncodingProto, RunnerConfigurationHostAuthenticationTokenListParamsEncodingJson:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol
@@ -951,60 +1155,36 @@ func (r RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersi
 	return false
 }
 
-type RunnerConfigurationHostAuthenticationTokenListParamsFilter struct {
-	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	UserID   param.Field[string] `json:"userId" format:"uuid"`
+// Which compression algorithm to use for this request
+type RunnerConfigurationHostAuthenticationTokenListParamsCompression string
+
+const (
+	RunnerConfigurationHostAuthenticationTokenListParamsCompressionIdentity RunnerConfigurationHostAuthenticationTokenListParamsCompression = "identity"
+	RunnerConfigurationHostAuthenticationTokenListParamsCompressionGzip     RunnerConfigurationHostAuthenticationTokenListParamsCompression = "gzip"
+	RunnerConfigurationHostAuthenticationTokenListParamsCompressionBr       RunnerConfigurationHostAuthenticationTokenListParamsCompression = "br"
+)
+
+func (r RunnerConfigurationHostAuthenticationTokenListParamsCompression) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenListParamsCompressionIdentity, RunnerConfigurationHostAuthenticationTokenListParamsCompressionGzip, RunnerConfigurationHostAuthenticationTokenListParamsCompressionBr:
+		return true
+	}
+	return false
 }
 
-func (r RunnerConfigurationHostAuthenticationTokenListParamsFilter) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
+// Define the version of the Connect protocol
+type RunnerConfigurationHostAuthenticationTokenListParamsConnect string
 
-func (r RunnerConfigurationHostAuthenticationTokenListParamsFilter) implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion() {
-}
+const (
+	RunnerConfigurationHostAuthenticationTokenListParamsConnectV1 RunnerConfigurationHostAuthenticationTokenListParamsConnect = "v1"
+)
 
-// Satisfied by
-// [RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID],
-// [RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID],
-// [RunnerConfigurationHostAuthenticationTokenListParamsFilter].
-type RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion interface {
-	implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion()
-}
-
-type RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID struct {
-	RunnerID param.Field[string] `json:"runnerId,required" format:"uuid"`
-}
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID) implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion() {
-}
-
-type RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID struct {
-	UserID param.Field[string] `json:"userId,required" format:"uuid"`
-}
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID) implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion() {
-}
-
-type RunnerConfigurationHostAuthenticationTokenListParamsPagination struct {
-	// Token for the next set of results that was returned as next_token of a
-	//
-	// PaginationResponse
-	Token param.Field[string] `json:"token"`
-	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
-	// Maximum 100.
-	PageSize param.Field[int64] `json:"pageSize"`
-}
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsPagination) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+func (r RunnerConfigurationHostAuthenticationTokenListParamsConnect) IsKnown() bool {
+	switch r {
+	case RunnerConfigurationHostAuthenticationTokenListParamsConnectV1:
+		return true
+	}
+	return false
 }
 
 type RunnerConfigurationHostAuthenticationTokenDeleteParams struct {

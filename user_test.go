@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
+func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,16 +25,14 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.PersonalAccessTokens.List(context.TODO(), gitpod.PersonalAccessTokenListParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenListParamsConnectProtocolVersion1),
-		Filter: gitpod.F(gitpod.PersonalAccessTokenListParamsFilter{
-			UserIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		}),
-		Pagination: gitpod.F(gitpod.PersonalAccessTokenListParamsPagination{
-			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
-		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+	_, err := client.Users.GetAuthenticatedUser(context.TODO(), gitpod.UserGetAuthenticatedUserParams{
+		Encoding:               gitpod.F(gitpod.UserGetAuthenticatedUserParamsEncodingProto),
+		ConnectProtocolVersion: gitpod.F(gitpod.UserGetAuthenticatedUserParamsConnectProtocolVersion1),
+		Base64:                 gitpod.F(true),
+		Compression:            gitpod.F(gitpod.UserGetAuthenticatedUserParamsCompressionIdentity),
+		Connect:                gitpod.F(gitpod.UserGetAuthenticatedUserParamsConnectV1),
+		Message:                gitpod.F("message"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -45,7 +43,7 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestPersonalAccessTokenDeleteWithOptionalParams(t *testing.T) {
+func TestUserSetSuspendedWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -57,9 +55,10 @@ func TestPersonalAccessTokenDeleteWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.PersonalAccessTokens.Delete(context.TODO(), gitpod.PersonalAccessTokenDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenDeleteParamsConnectProtocolVersion1),
-		PersonalAccessTokenID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Users.SetSuspended(context.TODO(), gitpod.UserSetSuspendedParams{
+		ConnectProtocolVersion: gitpod.F(gitpod.UserSetSuspendedParamsConnectProtocolVersion1),
+		Suspended:              gitpod.F(true),
+		UserID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

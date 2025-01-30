@@ -15,15 +15,18 @@ import (
 // interacting with the gitpod API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options              []option.RequestOption
-	Identity             *IdentityService
-	Environments         *EnvironmentService
-	EnvironmentClasses   *EnvironmentClassService
-	Organizations        *OrganizationService
-	Projects             *ProjectService
-	RunnerConfigurations *RunnerConfigurationService
-	Runners              *RunnerService
-	PersonalAccessTokens *PersonalAccessTokenService
+	Options       []option.RequestOption
+	Accounts      *AccountService
+	Editors       *EditorService
+	Environments  *EnvironmentService
+	Events        *EventService
+	Groups        *GroupService
+	Identity      *IdentityService
+	Organizations *OrganizationService
+	Projects      *ProjectService
+	Runners       *RunnerService
+	Secrets       *SecretService
+	Users         *UserService
 }
 
 // NewClient generates a new client with the default option read from the
@@ -39,14 +42,17 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r = &Client{Options: opts}
 
-	r.Identity = NewIdentityService(opts...)
+	r.Accounts = NewAccountService(opts...)
+	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
-	r.EnvironmentClasses = NewEnvironmentClassService(opts...)
+	r.Events = NewEventService(opts...)
+	r.Groups = NewGroupService(opts...)
+	r.Identity = NewIdentityService(opts...)
 	r.Organizations = NewOrganizationService(opts...)
 	r.Projects = NewProjectService(opts...)
-	r.RunnerConfigurations = NewRunnerConfigurationService(opts...)
 	r.Runners = NewRunnerService(opts...)
-	r.PersonalAccessTokens = NewPersonalAccessTokenService(opts...)
+	r.Secrets = NewSecretService(opts...)
+	r.Users = NewUserService(opts...)
 
 	return
 }
