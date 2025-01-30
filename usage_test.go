@@ -23,7 +23,7 @@ func TestUsage(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(true),
+		option.WithConnectProtocolVersion(0),
 		option.WithConnectTimeoutHeader(0),
 	)
 	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
