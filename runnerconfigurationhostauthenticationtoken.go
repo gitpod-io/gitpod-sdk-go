@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -35,72 +34,42 @@ func NewRunnerConfigurationHostAuthenticationTokenService(opts ...option.Request
 }
 
 // GetHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenGetParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenGetParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListHostAuthenticationTokens
-func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenListResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListHostAuthenticationTokens"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // DeleteHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -610,65 +579,23 @@ func (r RunnerConfigurationHostAuthenticationTokenListResponseTokensSource) IsKn
 type RunnerConfigurationHostAuthenticationTokenDeleteResponse = interface{}
 
 type RunnerConfigurationHostAuthenticationTokenNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                    `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationHostAuthenticationTokenGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                    `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationHostAuthenticationTokenUpdateParams struct {
 	Body RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -908,47 +835,13 @@ func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyToken) Marshal
 func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyToken) implementsRunnerConfigurationHostAuthenticationTokenUpdateParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationHostAuthenticationTokenListParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion]            `json:"filter"`
-	Pagination             param.Field[RunnerConfigurationHostAuthenticationTokenListParamsPagination]             `json:"pagination"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Filter     param.Field[RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion] `json:"filter"`
+	Pagination param.Field[RunnerConfigurationHostAuthenticationTokenListParamsPagination]  `json:"pagination"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type RunnerConfigurationHostAuthenticationTokenListParamsFilter struct {
@@ -1008,28 +901,9 @@ func (r RunnerConfigurationHostAuthenticationTokenListParamsPagination) MarshalJ
 }
 
 type RunnerConfigurationHostAuthenticationTokenDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                       `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

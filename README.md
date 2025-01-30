@@ -43,10 +43,10 @@ import (
 func main() {
 	client := gitpod.NewClient(
 		option.WithBearerToken("My Bearer Token"), // defaults to os.LookupEnv("GITPOD_API_KEY")
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
-	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
-	})
+	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
 	if err != nil {
 		panic(err.Error())
 	}
@@ -168,9 +168,7 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-	ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
-})
+_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
 if err != nil {
 	var apierr *gitpod.Error
 	if errors.As(err, &apierr) {
@@ -197,9 +195,7 @@ ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
 client.Runners.New(
 	ctx,
-	gitpod.RunnerNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
-	},
+	gitpod.RunnerNewParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -235,9 +231,7 @@ client := gitpod.NewClient(
 // Override per-request:
 client.Runners.New(
 	context.TODO(),
-	gitpod.RunnerNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
-	},
+	gitpod.RunnerNewParams{},
 	option.WithMaxRetries(5),
 )
 ```

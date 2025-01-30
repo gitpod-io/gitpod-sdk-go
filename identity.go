@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -33,45 +32,27 @@ func NewIdentityService(opts ...option.RequestOption) (r *IdentityService) {
 }
 
 // ExchangeToken trades an exchange token for a new access token.
-func (r *IdentityService) ExchangeToken(ctx context.Context, params IdentityExchangeTokenParams, opts ...option.RequestOption) (res *IdentityExchangeTokenResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *IdentityService) ExchangeToken(ctx context.Context, body IdentityExchangeTokenParams, opts ...option.RequestOption) (res *IdentityExchangeTokenResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.IdentityService/ExchangeToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetAuthenticatedIdentity allows to retrieve the current identity.
-func (r *IdentityService) GetAuthenticatedIdentity(ctx context.Context, params IdentityGetAuthenticatedIdentityParams, opts ...option.RequestOption) (res *IdentityGetAuthenticatedIdentityResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *IdentityService) GetAuthenticatedIdentity(ctx context.Context, body IdentityGetAuthenticatedIdentityParams, opts ...option.RequestOption) (res *IdentityGetAuthenticatedIdentityResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.IdentityService/GetAuthenticatedIdentity"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetIDToken returns a token that can be used to authenticate the user against the
 // other services.
-func (r *IdentityService) GetIDToken(ctx context.Context, params IdentityGetIDTokenParams, opts ...option.RequestOption) (res *IdentityGetIDTokenResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *IdentityService) GetIDToken(ctx context.Context, body IdentityGetIDTokenParams, opts ...option.RequestOption) (res *IdentityGetIDTokenResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.IdentityService/GetIDToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -189,83 +170,26 @@ func (r identityGetIDTokenResponseJSON) RawJSON() string {
 }
 
 type IdentityExchangeTokenParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[IdentityExchangeTokenParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// exchange_token is the token to exchange
 	ExchangeToken param.Field[string] `json:"exchangeToken"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r IdentityExchangeTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type IdentityExchangeTokenParamsConnectProtocolVersion float64
-
-const (
-	IdentityExchangeTokenParamsConnectProtocolVersion1 IdentityExchangeTokenParamsConnectProtocolVersion = 1
-)
-
-func (r IdentityExchangeTokenParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case IdentityExchangeTokenParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type IdentityGetAuthenticatedIdentityParams struct {
 	Body interface{} `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r IdentityGetAuthenticatedIdentityParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r.Body)
 }
 
-// Define the version of the Connect protocol
-type IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion float64
-
-const (
-	IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion1 IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion = 1
-)
-
-func (r IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type IdentityGetIDTokenParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[IdentityGetIDTokenParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Audience               param.Field[[]string]                                       `json:"audience"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Audience param.Field[[]string] `json:"audience"`
 }
 
 func (r IdentityGetIDTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type IdentityGetIDTokenParamsConnectProtocolVersion float64
-
-const (
-	IdentityGetIDTokenParamsConnectProtocolVersion1 IdentityGetIDTokenParamsConnectProtocolVersion = 1
-)
-
-func (r IdentityGetIDTokenParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case IdentityGetIDTokenParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

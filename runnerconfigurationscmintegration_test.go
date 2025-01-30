@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationScmIntegrationNew(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,13 +24,13 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.RunnerConfigurations.ScmIntegration.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
 		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientID{
 			OAuthClientID: gitpod.F("oauthClientId"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

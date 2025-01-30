@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationEnvironmentClassUpdate(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,13 +24,13 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.Update(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassUpdateParams{
 		Body: gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription{
 			Description: gitpod.F("xxx"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -52,9 +52,10 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.RunnerConfigurations.EnvironmentClasses.List(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassListParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsFilter{
 			Enabled: gitpod.F(true),
 		}),
@@ -62,7 +63,6 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

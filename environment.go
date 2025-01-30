@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"reflect"
 	"time"
@@ -38,16 +37,10 @@ func NewEnvironmentService(opts ...option.RequestOption) (r *EnvironmentService)
 }
 
 // CreateEnvironment creates a new environment and starts it.
-func (r *EnvironmentService) New(ctx context.Context, params EnvironmentNewParams, opts ...option.RequestOption) (res *EnvironmentNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams, opts ...option.RequestOption) (res *EnvironmentNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironment"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -55,61 +48,37 @@ func (r *EnvironmentService) New(ctx context.Context, params EnvironmentNewParam
 //
 // +return NOT_FOUND User does not have access to an environment with the given ID
 // +return NOT_FOUND Environment does not exist
-func (r *EnvironmentService) Get(ctx context.Context, params EnvironmentGetParams, opts ...option.RequestOption) (res *EnvironmentGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams, opts ...option.RequestOption) (res *EnvironmentGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListEnvironments returns a list of environments that match the query.
-func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) (res *EnvironmentListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentService) List(ctx context.Context, body EnvironmentListParams, opts ...option.RequestOption) (res *EnvironmentListResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironments"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // CreateAbdStartEnvironmentFromProject creates a new environment from a project
 // and starts it.
-func (r *EnvironmentService) NewFromProject(ctx context.Context, params EnvironmentNewFromProjectParams, opts ...option.RequestOption) (res *EnvironmentNewFromProjectResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentService) NewFromProject(ctx context.Context, body EnvironmentNewFromProjectParams, opts ...option.RequestOption) (res *EnvironmentNewFromProjectResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentFromProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // StartEnvironment starts an environment. This function is idempotent, i.e. if
 //
 // the environment is already running no error is returned.
-func (r *EnvironmentService) Start(ctx context.Context, params EnvironmentStartParams, opts ...option.RequestOption) (res *EnvironmentStartResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartParams, opts ...option.RequestOption) (res *EnvironmentStartResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/StartEnvironment"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -8071,33 +8040,14 @@ func (r EnvironmentNewFromProjectResponseEnvironmentStatusSSHPublicKeysPhase) Is
 type EnvironmentStartResponse = interface{}
 
 type EnvironmentNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
 	//
 	// start
 	Spec param.Field[EnvironmentNewParamsSpec] `json:"spec"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentNewParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentNewParamsConnectProtocolVersion1 EnvironmentNewParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
@@ -8529,62 +8479,24 @@ func (r EnvironmentNewParamsSpecTimeout) MarshalJSON() (data []byte, err error) 
 }
 
 type EnvironmentGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// environment_id specifies the environment to get
 	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentGetParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentGetParamsConnectProtocolVersion1 EnvironmentGetParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentListParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Filter                 param.Field[EnvironmentListParamsFilter]                 `json:"filter"`
+	Filter param.Field[EnvironmentListParamsFilter] `json:"filter"`
 	// organization_id is the ID of the organization that contains the environments
 	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// pagination contains the pagination options for listing environments
 	Pagination param.Field[EnvironmentListParamsPagination] `json:"pagination"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentListParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentListParamsConnectProtocolVersion1 EnvironmentListParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type EnvironmentListParamsFilter struct {
@@ -8664,34 +8576,15 @@ func (r EnvironmentListParamsPagination) MarshalJSON() (data []byte, err error) 
 }
 
 type EnvironmentNewFromProjectParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentNewFromProjectParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ProjectID              param.Field[string]                                                `json:"projectId" format:"uuid"`
+	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
 	// EnvironmentSpec specifies the configuration of an environment for an environment
 	//
 	// start
 	Spec param.Field[EnvironmentNewFromProjectParamsSpec] `json:"spec"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentNewFromProjectParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentNewFromProjectParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentNewFromProjectParamsConnectProtocolVersion1 EnvironmentNewFromProjectParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentNewFromProjectParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentNewFromProjectParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
@@ -9126,29 +9019,10 @@ func (r EnvironmentNewFromProjectParamsSpecTimeout) MarshalJSON() (data []byte, 
 }
 
 type EnvironmentStartParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentStartParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// environment_id specifies which environment should be started.
 	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentStartParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentStartParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentStartParamsConnectProtocolVersion1 EnvironmentStartParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentStartParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentStartParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
