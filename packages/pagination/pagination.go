@@ -691,3 +691,100 @@ func (r *GroupsPageAutoPager[T]) Err() error {
 func (r *GroupsPageAutoPager[T]) Index() int {
 	return r.run
 }
+
+type MembersPage[T any] struct {
+	Members   []T             `json:"members"`
+	NextToken string          `json:"nextToken"`
+	JSON      membersPageJSON `json:"-"`
+	cfg       *requestconfig.RequestConfig
+	res       *http.Response
+}
+
+// membersPageJSON contains the JSON metadata for the struct [MembersPage[T]]
+type membersPageJSON struct {
+	Members     apijson.Field
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MembersPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r membersPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *MembersPage[T]) GetNextPage() (res *MembersPage[T], err error) {
+	next := r.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	cfg.Apply(option.WithQuery("token", next))
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *MembersPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &MembersPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type MembersPageAutoPager[T any] struct {
+	page *MembersPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewMembersPageAutoPager[T any](page *MembersPage[T], err error) *MembersPageAutoPager[T] {
+	return &MembersPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *MembersPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Members) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Members) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Members) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Members[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *MembersPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *MembersPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *MembersPageAutoPager[T]) Index() int {
+	return r.run
+}
