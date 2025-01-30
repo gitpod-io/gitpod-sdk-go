@@ -24,15 +24,15 @@ func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Runners.Policies.List(context.TODO(), gitpod.RunnerPolicyListParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyListParamsConnectProtocolVersion1),
 		Pagination: gitpod.F(gitpod.RunnerPolicyListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
-		RunnerID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

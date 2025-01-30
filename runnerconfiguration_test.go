@@ -24,6 +24,8 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.RunnerConfigurations.Validate(context.TODO(), gitpod.RunnerConfigurationValidateParams{
 		Body: gitpod.RunnerConfigurationValidateParamsBodyEnvironmentClass{
@@ -40,8 +42,6 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 			}),
 			RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationValidateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

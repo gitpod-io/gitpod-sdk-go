@@ -24,6 +24,8 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
 		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassEnvironmentClassID{
@@ -36,11 +38,9 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 				}),
 			}}),
 		}),
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectNewParamsConnectProtocolVersion1),
-		AutomationsFilePath:    gitpod.F("automationsFilePath"),
-		DevcontainerFilePath:   gitpod.F("devcontainerFilePath"),
-		Name:                   gitpod.F("x"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		AutomationsFilePath:  gitpod.F("automationsFilePath"),
+		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+		Name:                 gitpod.F("x"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -62,11 +62,11 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Projects.Get(context.TODO(), gitpod.ProjectGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectGetParamsConnectProtocolVersion1),
-		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -88,12 +88,12 @@ func TestProjectNewFromEnvironmentWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Projects.NewFromEnvironment(context.TODO(), gitpod.ProjectNewFromEnvironmentParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectNewFromEnvironmentParamsConnectProtocolVersion1),
-		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Name:                   gitpod.F("x"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Name:          gitpod.F("x"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -36,16 +35,10 @@ func NewOrganizationInviteSummaryService(opts ...option.RequestOption) (r *Organ
 // Invite ID.
 //
 // Used to discover which organization an invite is for.
-func (r *OrganizationInviteSummaryService) Get(ctx context.Context, params OrganizationInviteSummaryGetParams, opts ...option.RequestOption) (res *OrganizationInviteSummaryGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationInviteSummaryService) Get(ctx context.Context, body OrganizationInviteSummaryGetParams, opts ...option.RequestOption) (res *OrganizationInviteSummaryGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -75,28 +68,9 @@ func (r organizationInviteSummaryGetResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteSummaryGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationInviteSummaryGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	InviteID               param.Field[string]                                                   `json:"inviteId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	InviteID param.Field[string] `json:"inviteId" format:"uuid"`
 }
 
 func (r OrganizationInviteSummaryGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type OrganizationInviteSummaryGetParamsConnectProtocolVersion float64
-
-const (
-	OrganizationInviteSummaryGetParamsConnectProtocolVersion1 OrganizationInviteSummaryGetParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationInviteSummaryGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationInviteSummaryGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

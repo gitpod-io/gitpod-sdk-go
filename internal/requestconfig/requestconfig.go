@@ -165,14 +165,16 @@ func NewRequestConfig(ctx context.Context, method string, u string, body interfa
 // Editing the variables inside RequestConfig directly is unstable api. Prefer
 // composing func(\*RequestConfig) error instead if possible.
 type RequestConfig struct {
-	MaxRetries     int
-	RequestTimeout time.Duration
-	Context        context.Context
-	Request        *http.Request
-	BaseURL        *url.URL
-	HTTPClient     *http.Client
-	Middlewares    []middleware
-	BearerToken    string
+	MaxRetries             int
+	RequestTimeout         time.Duration
+	Context                context.Context
+	Request                *http.Request
+	BaseURL                *url.URL
+	HTTPClient             *http.Client
+	Middlewares            []middleware
+	BearerToken            string
+	ConnectProtocolVersion bool
+	ConnectTimeoutHeader   float64
 	// If ResponseBodyInto not nil, then we will attempt to deserialize into
 	// ResponseBodyInto. If Destination is a []byte, then it will return the body as
 	// is.
@@ -478,14 +480,16 @@ func (cfg *RequestConfig) Clone(ctx context.Context) *RequestConfig {
 		return nil
 	}
 	new := &RequestConfig{
-		MaxRetries:     cfg.MaxRetries,
-		RequestTimeout: cfg.RequestTimeout,
-		Context:        ctx,
-		Request:        req,
-		BaseURL:        cfg.BaseURL,
-		HTTPClient:     cfg.HTTPClient,
-		Middlewares:    cfg.Middlewares,
-		BearerToken:    cfg.BearerToken,
+		MaxRetries:             cfg.MaxRetries,
+		RequestTimeout:         cfg.RequestTimeout,
+		Context:                ctx,
+		Request:                req,
+		BaseURL:                cfg.BaseURL,
+		HTTPClient:             cfg.HTTPClient,
+		Middlewares:            cfg.Middlewares,
+		BearerToken:            cfg.BearerToken,
+		ConnectProtocolVersion: cfg.ConnectProtocolVersion,
+		ConnectTimeoutHeader:   cfg.ConnectTimeoutHeader,
 	}
 
 	return new

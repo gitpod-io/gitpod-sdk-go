@@ -24,9 +24,10 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.PersonalAccessTokens.List(context.TODO(), gitpod.PersonalAccessTokenListParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenListParamsConnectProtocolVersion1),
 		Filter: gitpod.F(gitpod.PersonalAccessTokenListParamsFilter{
 			UserIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
@@ -34,7 +35,6 @@ func TestPersonalAccessTokenListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -56,11 +56,11 @@ func TestPersonalAccessTokenDeleteWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.PersonalAccessTokens.Delete(context.TODO(), gitpod.PersonalAccessTokenDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.PersonalAccessTokenDeleteParamsConnectProtocolVersion1),
-		PersonalAccessTokenID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		PersonalAccessTokenID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

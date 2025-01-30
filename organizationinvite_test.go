@@ -24,11 +24,11 @@ func TestOrganizationInviteNewWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Organizations.Invite.New(context.TODO(), gitpod.OrganizationInviteNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationInviteNewParamsConnectProtocolVersion1),
-		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -50,11 +50,11 @@ func TestOrganizationInviteGetWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Organizations.Invite.Get(context.TODO(), gitpod.OrganizationInviteGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationInviteGetParamsConnectProtocolVersion1),
-		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

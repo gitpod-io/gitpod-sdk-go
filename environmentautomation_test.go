@@ -24,9 +24,10 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
+		option.WithConnectProtocolVersion(true),
+		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Environments.Automations.Upsert(context.TODO(), gitpod.EnvironmentAutomationUpsertParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsConnectProtocolVersion1),
 		AutomationsFile: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFile{
 			Services: gitpod.F(map[string]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServices{
 				"foo": {
@@ -62,8 +63,7 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 				},
 			}),
 		}),
-		EnvironmentID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"reflect"
 	"time"
@@ -36,44 +35,26 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 }
 
 // CreateProject creates a new Project.
-func (r *ProjectService) New(ctx context.Context, params ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetProject retrieves a single Project.
-func (r *ProjectService) Get(ctx context.Context, params ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/GetProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // CreateProject creates a new Project using an environment as template.
-func (r *ProjectService) NewFromEnvironment(ctx context.Context, params ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) NewFromEnvironment(ctx context.Context, body ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -2234,8 +2215,6 @@ type ProjectNewParams struct {
 	EnvironmentClass param.Field[ProjectNewParamsEnvironmentClassUnion] `json:"environmentClass,required"`
 	// EnvironmentInitializer specifies how an environment is to be initialized
 	Initializer param.Field[ProjectNewParamsInitializer] `json:"initializer,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -2251,8 +2230,6 @@ type ProjectNewParams struct {
 	// ```
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
 	Name                 param.Field[string] `json:"name"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectNewParams) MarshalJSON() (data []byte, err error) {
@@ -2399,74 +2376,21 @@ func (r ProjectNewParamsInitializerSpecsGitGitTargetMode) IsKnown() bool {
 	return false
 }
 
-// Define the version of the Connect protocol
-type ProjectNewParamsConnectProtocolVersion float64
-
-const (
-	ProjectNewParamsConnectProtocolVersion1 ProjectNewParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type ProjectGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// project_id specifies the project identifier
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type ProjectGetParamsConnectProtocolVersion float64
-
-const (
-	ProjectGetParamsConnectProtocolVersion1 ProjectGetParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type ProjectNewFromEnvironmentParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectNewFromEnvironmentParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// environment_id specifies the environment identifier
 	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
 	Name          param.Field[string] `json:"name"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectNewFromEnvironmentParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type ProjectNewFromEnvironmentParamsConnectProtocolVersion float64
-
-const (
-	ProjectNewFromEnvironmentParamsConnectProtocolVersion1 ProjectNewFromEnvironmentParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectNewFromEnvironmentParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectNewFromEnvironmentParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
