@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -32,10 +33,16 @@ func NewRunnerPolicyService(opts ...option.RequestOption) (r *RunnerPolicyServic
 }
 
 // ListRunnerPolicies lists runner policies.
-func (r *RunnerPolicyService) List(ctx context.Context, body RunnerPolicyListParams, opts ...option.RequestOption) (res *RunnerPolicyListResponse, err error) {
+func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) (res *RunnerPolicyListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ListRunnerPolicies"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -128,14 +135,33 @@ func (r RunnerPolicyListResponsePoliciesRole) IsKnown() bool {
 }
 
 type RunnerPolicyListParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[RunnerPolicyListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// pagination contains the pagination options for listing project policies
 	Pagination param.Field[RunnerPolicyListParamsPagination] `json:"pagination"`
 	// runner_id specifies the project identifier
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerPolicyListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type RunnerPolicyListParamsConnectProtocolVersion float64
+
+const (
+	RunnerPolicyListParamsConnectProtocolVersion1 RunnerPolicyListParamsConnectProtocolVersion = 1
+)
+
+func (r RunnerPolicyListParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case RunnerPolicyListParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 // pagination contains the pagination options for listing project policies

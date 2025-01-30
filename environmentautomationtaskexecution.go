@@ -4,6 +4,7 @@ package gitpod
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"reflect"
 	"time"
@@ -36,35 +37,59 @@ func NewEnvironmentAutomationTaskExecutionService(opts ...option.RequestOption) 
 }
 
 // GetTaskExecution
-func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, body EnvironmentAutomationTaskExecutionGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionGetResponse, err error) {
+func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, params EnvironmentAutomationTaskExecutionGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionGetResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // ListTaskExecutions
-func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, body EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
+func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // StopTaskExecution
-func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, body EnvironmentAutomationTaskExecutionStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionStopResponse, err error) {
+func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, params EnvironmentAutomationTaskExecutionStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionStopResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
 // UpdateTaskExecutionStatus updates the status of a task execution. Only the
 // environment executing a task execution is expected to call this function.
-func (r *EnvironmentAutomationTaskExecutionService) UpdateTaskExecutionStatus(ctx context.Context, body EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusResponse, err error) {
+func (r *EnvironmentAutomationTaskExecutionService) UpdateTaskExecutionStatus(ctx context.Context, params EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusResponse, err error) {
+	if params.ConnectProtocolVersion.Present {
+		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
+	}
+	if params.ConnectTimeoutMs.Present {
+		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
+	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateTaskExecutionStatus"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -1758,22 +1783,60 @@ type EnvironmentAutomationTaskExecutionStopResponse = interface{}
 type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusResponse = interface{}
 
 type EnvironmentAutomationTaskExecutionGetParams struct {
-	ID param.Field[string] `json:"id" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	ID                     param.Field[string]                                                            `json:"id" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationTaskExecutionGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Define the version of the Connect protocol
+type EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type EnvironmentAutomationTaskExecutionListParams struct {
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// filter contains the filter options for listing task runs
 	Filter param.Field[EnvironmentAutomationTaskExecutionListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing task runs
 	Pagination param.Field[EnvironmentAutomationTaskExecutionListParamsPagination] `json:"pagination"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationTaskExecutionListParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }
 
 // filter contains the filter options for listing task runs
@@ -1827,15 +1890,38 @@ func (r EnvironmentAutomationTaskExecutionListParamsPagination) MarshalJSON() (d
 }
 
 type EnvironmentAutomationTaskExecutionStopParams struct {
-	ID param.Field[string] `json:"id" format:"uuid"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	ID                     param.Field[string]                                                             `json:"id" format:"uuid"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationTaskExecutionStopParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Define the version of the Connect protocol
+type EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
+}
+
 type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams struct {
 	Body EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion `json:"body,required"`
+	// Define the version of the Connect protocol
+	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
+	// Define the timeout, in ms
+	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParams) MarshalJSON() (data []byte, err error) {
@@ -1896,4 +1982,19 @@ func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyLog
 }
 
 func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyLogURL) implementsEnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsBodyUnion() {
+}
+
+// Define the version of the Connect protocol
+type EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion float64
+
+const (
+	EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion = 1
+)
+
+func (r EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion) IsKnown() bool {
+	switch r {
+	case EnvironmentAutomationTaskExecutionUpdateTaskExecutionStatusParamsConnectProtocolVersion1:
+		return true
+	}
+	return false
 }

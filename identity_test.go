@@ -24,11 +24,11 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Identity.ExchangeToken(context.TODO(), gitpod.IdentityExchangeTokenParams{
-		ExchangeToken: gitpod.F("exchangeToken"),
+		ConnectProtocolVersion: gitpod.F(gitpod.IdentityExchangeTokenParamsConnectProtocolVersion1),
+		ExchangeToken:          gitpod.F("exchangeToken"),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -39,7 +39,7 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestIdentityGetAuthenticatedIdentity(t *testing.T) {
+func TestIdentityGetAuthenticatedIdentityWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -50,11 +50,11 @@ func TestIdentityGetAuthenticatedIdentity(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{
-		Body: map[string]interface{}{},
+		Body:                   map[string]interface{}{},
+		ConnectProtocolVersion: gitpod.F(gitpod.IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion1),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -76,11 +76,11 @@ func TestIdentityGetIDTokenWithOptionalParams(t *testing.T) {
 	client := gitpod.NewClient(
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
-		option.WithConnectProtocolVersion(0),
-		option.WithConnectTimeoutHeader(0),
 	)
 	_, err := client.Identity.GetIDToken(context.TODO(), gitpod.IdentityGetIDTokenParams{
-		Audience: gitpod.F([]string{"string"}),
+		ConnectProtocolVersion: gitpod.F(gitpod.IdentityGetIDTokenParamsConnectProtocolVersion1),
+		Audience:               gitpod.F([]string{"string"}),
+		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
