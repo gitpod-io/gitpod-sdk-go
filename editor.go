@@ -101,6 +101,7 @@ func (r editorGetResponseJSON) RawJSON() string {
 // editor contains the editor
 type EditorGetResponseEditor struct {
 	ID                       string                      `json:"id"`
+	Alias                    string                      `json:"alias"`
 	IconURL                  string                      `json:"iconUrl"`
 	InstallationInstructions string                      `json:"installationInstructions"`
 	Name                     string                      `json:"name"`
@@ -113,6 +114,7 @@ type EditorGetResponseEditor struct {
 // [EditorGetResponseEditor]
 type editorGetResponseEditorJSON struct {
 	ID                       apijson.Field
+	Alias                    apijson.Field
 	IconURL                  apijson.Field
 	InstallationInstructions apijson.Field
 	Name                     apijson.Field
@@ -157,6 +159,7 @@ func (r editorListResponseJSON) RawJSON() string {
 
 type EditorListResponseEditor struct {
 	ID                       string                       `json:"id"`
+	Alias                    string                       `json:"alias"`
 	IconURL                  string                       `json:"iconUrl"`
 	InstallationInstructions string                       `json:"installationInstructions"`
 	Name                     string                       `json:"name"`
@@ -169,6 +172,7 @@ type EditorListResponseEditor struct {
 // [EditorListResponseEditor]
 type editorListResponseEditorJSON struct {
 	ID                       apijson.Field
+	Alias                    apijson.Field
 	IconURL                  apijson.Field
 	InstallationInstructions apijson.Field
 	Name                     apijson.Field

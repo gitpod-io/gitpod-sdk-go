@@ -29,6 +29,7 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
 		Kind:                   gitpod.F(gitpod.RunnerNewParamsKindRunnerKindUnspecified),
 		Name:                   gitpod.F("xxx"),
+		Provider:               gitpod.F(gitpod.RunnerNewParamsProviderRunnerProviderUnspecified),
 		Spec: gitpod.F(gitpod.RunnerNewParamsSpec{
 			Configuration: gitpod.F(gitpod.RunnerNewParamsSpecConfiguration{
 				AutoUpdate:     gitpod.F(true),
@@ -91,9 +92,7 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Update(context.TODO(), gitpod.RunnerUpdateParams{
-		Body: gitpod.RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers{
-			Name: gitpod.F("xxx"),
-		},
+		Body:                   gitpod.RunnerUpdateParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

@@ -88,9 +88,7 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.Update(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassUpdateParams{
-		Body: gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription{
-			Description: gitpod.F("xxx"),
-		},
+		Body:                   gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
