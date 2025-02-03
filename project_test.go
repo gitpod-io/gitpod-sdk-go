@@ -64,12 +64,8 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Get(context.TODO(), gitpod.ProjectGetParams{
-		Encoding:               gitpod.F(gitpod.ProjectGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.ProjectGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.ProjectGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.ProjectGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

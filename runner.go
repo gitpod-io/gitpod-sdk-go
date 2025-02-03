@@ -66,7 +66,7 @@ func (r *RunnerService) Get(ctx context.Context, params RunnerGetParams, opts ..
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/GetRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -2298,44 +2298,15 @@ func (r RunnerNewParamsSpecDesiredPhase) IsKnown() bool {
 }
 
 type RunnerGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                 `query:"message"`
+	RunnerID               param.Field[string]                                `json:"runnerId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [RunnerGetParams]'s query parameters as `url.Values`.
-func (r RunnerGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type RunnerGetParamsEncoding string
-
-const (
-	RunnerGetParamsEncodingProto RunnerGetParamsEncoding = "proto"
-	RunnerGetParamsEncodingJson  RunnerGetParamsEncoding = "json"
-)
-
-func (r RunnerGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerGetParamsEncodingProto, RunnerGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r RunnerGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -2348,38 +2319,6 @@ const (
 func (r RunnerGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type RunnerGetParamsCompression string
-
-const (
-	RunnerGetParamsCompressionIdentity RunnerGetParamsCompression = "identity"
-	RunnerGetParamsCompressionGzip     RunnerGetParamsCompression = "gzip"
-	RunnerGetParamsCompressionBr       RunnerGetParamsCompression = "br"
-)
-
-func (r RunnerGetParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerGetParamsCompressionIdentity, RunnerGetParamsCompressionGzip, RunnerGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerGetParamsConnect string
-
-const (
-	RunnerGetParamsConnectV1 RunnerGetParamsConnect = "v1"
-)
-
-func (r RunnerGetParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerGetParamsConnectV1:
 		return true
 	}
 	return false

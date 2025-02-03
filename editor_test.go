@@ -26,12 +26,8 @@ func TestEditorGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
-		Encoding:               gitpod.F(gitpod.EditorGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.EditorGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EditorGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EditorGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		ID:                     gitpod.F("id"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

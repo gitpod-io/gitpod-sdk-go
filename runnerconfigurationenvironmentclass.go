@@ -59,7 +59,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, pa
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -357,45 +357,15 @@ func (r RunnerConfigurationEnvironmentClassNewParamsConfiguration) MarshalJSON()
 }
 
 type RunnerConfigurationEnvironmentClassGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationEnvironmentClassGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationEnvironmentClassGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationEnvironmentClassGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                              `query:"message"`
+	EnvironmentClassID     param.Field[string]                                                             `json:"environmentClassId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [RunnerConfigurationEnvironmentClassGetParams]'s query
-// parameters as `url.Values`.
-func (r RunnerConfigurationEnvironmentClassGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationEnvironmentClassGetParamsEncoding string
-
-const (
-	RunnerConfigurationEnvironmentClassGetParamsEncodingProto RunnerConfigurationEnvironmentClassGetParamsEncoding = "proto"
-	RunnerConfigurationEnvironmentClassGetParamsEncodingJson  RunnerConfigurationEnvironmentClassGetParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationEnvironmentClassGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassGetParamsEncodingProto, RunnerConfigurationEnvironmentClassGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r RunnerConfigurationEnvironmentClassGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -408,38 +378,6 @@ const (
 func (r RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type RunnerConfigurationEnvironmentClassGetParamsCompression string
-
-const (
-	RunnerConfigurationEnvironmentClassGetParamsCompressionIdentity RunnerConfigurationEnvironmentClassGetParamsCompression = "identity"
-	RunnerConfigurationEnvironmentClassGetParamsCompressionGzip     RunnerConfigurationEnvironmentClassGetParamsCompression = "gzip"
-	RunnerConfigurationEnvironmentClassGetParamsCompressionBr       RunnerConfigurationEnvironmentClassGetParamsCompression = "br"
-)
-
-func (r RunnerConfigurationEnvironmentClassGetParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassGetParamsCompressionIdentity, RunnerConfigurationEnvironmentClassGetParamsCompressionGzip, RunnerConfigurationEnvironmentClassGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationEnvironmentClassGetParamsConnect string
-
-const (
-	RunnerConfigurationEnvironmentClassGetParamsConnectV1 RunnerConfigurationEnvironmentClassGetParamsConnect = "v1"
-)
-
-func (r RunnerConfigurationEnvironmentClassGetParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassGetParamsConnectV1:
 		return true
 	}
 	return false

@@ -26,12 +26,8 @@ func TestRunnerConfigurationSchemaGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.Schema.Get(context.TODO(), gitpod.RunnerConfigurationSchemaGetParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationSchemaGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

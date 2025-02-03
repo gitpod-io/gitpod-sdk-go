@@ -58,12 +58,8 @@ func TestRunnerConfigurationEnvironmentClassGetWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.Get(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassGetParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationEnvironmentClassGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationEnvironmentClassGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationEnvironmentClassGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		EnvironmentClassID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

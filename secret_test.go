@@ -113,12 +113,8 @@ func TestSecretGetValueWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Secrets.GetValue(context.TODO(), gitpod.SecretGetValueParams{
-		Encoding:               gitpod.F(gitpod.SecretGetValueParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.SecretGetValueParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.SecretGetValueParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.SecretGetValueParamsConnectV1),
-		Message:                gitpod.F("message"),
+		SecretID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

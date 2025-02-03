@@ -6,11 +6,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 	"reflect"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -46,7 +44,7 @@ func (r *RunnerConfigurationSchemaService) Get(ctx context.Context, params Runne
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -504,45 +502,15 @@ func (r runnerConfigurationSchemaGetResponseSchemaScmPatJSON) RawJSON() string {
 }
 
 type RunnerConfigurationSchemaGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationSchemaGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationSchemaGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationSchemaGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationSchemaGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                    `query:"message"`
+	RunnerID               param.Field[string]                                                   `json:"runnerId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [RunnerConfigurationSchemaGetParams]'s query parameters as
-// `url.Values`.
-func (r RunnerConfigurationSchemaGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationSchemaGetParamsEncoding string
-
-const (
-	RunnerConfigurationSchemaGetParamsEncodingProto RunnerConfigurationSchemaGetParamsEncoding = "proto"
-	RunnerConfigurationSchemaGetParamsEncodingJson  RunnerConfigurationSchemaGetParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationSchemaGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationSchemaGetParamsEncodingProto, RunnerConfigurationSchemaGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r RunnerConfigurationSchemaGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -555,38 +523,6 @@ const (
 func (r RunnerConfigurationSchemaGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerConfigurationSchemaGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type RunnerConfigurationSchemaGetParamsCompression string
-
-const (
-	RunnerConfigurationSchemaGetParamsCompressionIdentity RunnerConfigurationSchemaGetParamsCompression = "identity"
-	RunnerConfigurationSchemaGetParamsCompressionGzip     RunnerConfigurationSchemaGetParamsCompression = "gzip"
-	RunnerConfigurationSchemaGetParamsCompressionBr       RunnerConfigurationSchemaGetParamsCompression = "br"
-)
-
-func (r RunnerConfigurationSchemaGetParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationSchemaGetParamsCompressionIdentity, RunnerConfigurationSchemaGetParamsCompressionGzip, RunnerConfigurationSchemaGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationSchemaGetParamsConnect string
-
-const (
-	RunnerConfigurationSchemaGetParamsConnectV1 RunnerConfigurationSchemaGetParamsConnect = "v1"
-)
-
-func (r RunnerConfigurationSchemaGetParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationSchemaGetParamsConnectV1:
 		return true
 	}
 	return false

@@ -44,7 +44,7 @@ func (r *EditorService) Get(ctx context.Context, params EditorGetParams, opts ..
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EditorService/GetEditor"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -242,44 +242,16 @@ func (r editorResolveURLResponseJSON) RawJSON() string {
 }
 
 type EditorGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EditorGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EditorGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EditorGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EditorGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                 `query:"message"`
+	// id is the ID of the editor to get
+	ID param.Field[string] `json:"id"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EditorGetParams]'s query parameters as `url.Values`.
-func (r EditorGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type EditorGetParamsEncoding string
-
-const (
-	EditorGetParamsEncodingProto EditorGetParamsEncoding = "proto"
-	EditorGetParamsEncodingJson  EditorGetParamsEncoding = "json"
-)
-
-func (r EditorGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case EditorGetParamsEncodingProto, EditorGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r EditorGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -292,38 +264,6 @@ const (
 func (r EditorGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case EditorGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type EditorGetParamsCompression string
-
-const (
-	EditorGetParamsCompressionIdentity EditorGetParamsCompression = "identity"
-	EditorGetParamsCompressionGzip     EditorGetParamsCompression = "gzip"
-	EditorGetParamsCompressionBr       EditorGetParamsCompression = "br"
-)
-
-func (r EditorGetParamsCompression) IsKnown() bool {
-	switch r {
-	case EditorGetParamsCompressionIdentity, EditorGetParamsCompressionGzip, EditorGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type EditorGetParamsConnect string
-
-const (
-	EditorGetParamsConnectV1 EditorGetParamsConnect = "v1"
-)
-
-func (r EditorGetParamsConnect) IsKnown() bool {
-	switch r {
-	case EditorGetParamsConnectV1:
 		return true
 	}
 	return false

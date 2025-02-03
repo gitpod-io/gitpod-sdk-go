@@ -26,12 +26,8 @@ func TestAccountGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.Get(context.TODO(), gitpod.AccountGetParams{
-		Encoding:               gitpod.F(gitpod.AccountGetParamsEncodingProto),
+		Body:                   map[string]interface{}{},
 		ConnectProtocolVersion: gitpod.F(gitpod.AccountGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.AccountGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.AccountGetParamsConnectV1),
-		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
@@ -82,12 +78,9 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.GetSSOLoginURL(context.TODO(), gitpod.AccountGetSSOLoginURLParams{
-		Encoding:               gitpod.F(gitpod.AccountGetSSOLoginURLParamsEncodingProto),
+		ReturnTo:               gitpod.F("https://example.com"),
 		ConnectProtocolVersion: gitpod.F(gitpod.AccountGetSSOLoginURLParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.AccountGetSSOLoginURLParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.AccountGetSSOLoginURLParamsConnectV1),
-		Message:                gitpod.F("message"),
+		Email:                  gitpod.F("dev@stainlessapi.com"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

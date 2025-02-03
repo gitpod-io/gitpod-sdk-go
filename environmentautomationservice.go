@@ -61,7 +61,7 @@ func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, params En
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -2333,45 +2333,15 @@ func (r EnvironmentAutomationServiceNewParamsSpecRunsOnDocker) MarshalJSON() (da
 }
 
 type EnvironmentAutomationServiceGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentAutomationServiceGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentAutomationServiceGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentAutomationServiceGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                       `query:"message"`
+	ID                     param.Field[string]                                                      `json:"id" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EnvironmentAutomationServiceGetParams]'s query parameters
-// as `url.Values`.
-func (r EnvironmentAutomationServiceGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentAutomationServiceGetParamsEncoding string
-
-const (
-	EnvironmentAutomationServiceGetParamsEncodingProto EnvironmentAutomationServiceGetParamsEncoding = "proto"
-	EnvironmentAutomationServiceGetParamsEncodingJson  EnvironmentAutomationServiceGetParamsEncoding = "json"
-)
-
-func (r EnvironmentAutomationServiceGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceGetParamsEncodingProto, EnvironmentAutomationServiceGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationServiceGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -2384,38 +2354,6 @@ const (
 func (r EnvironmentAutomationServiceGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case EnvironmentAutomationServiceGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type EnvironmentAutomationServiceGetParamsCompression string
-
-const (
-	EnvironmentAutomationServiceGetParamsCompressionIdentity EnvironmentAutomationServiceGetParamsCompression = "identity"
-	EnvironmentAutomationServiceGetParamsCompressionGzip     EnvironmentAutomationServiceGetParamsCompression = "gzip"
-	EnvironmentAutomationServiceGetParamsCompressionBr       EnvironmentAutomationServiceGetParamsCompression = "br"
-)
-
-func (r EnvironmentAutomationServiceGetParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceGetParamsCompressionIdentity, EnvironmentAutomationServiceGetParamsCompressionGzip, EnvironmentAutomationServiceGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceGetParamsConnect string
-
-const (
-	EnvironmentAutomationServiceGetParamsConnectV1 EnvironmentAutomationServiceGetParamsConnect = "v1"
-)
-
-func (r EnvironmentAutomationServiceGetParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceGetParamsConnectV1:
 		return true
 	}
 	return false

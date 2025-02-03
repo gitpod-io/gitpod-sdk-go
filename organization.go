@@ -63,7 +63,7 @@ func (r *OrganizationService) Get(ctx context.Context, params OrganizationGetPar
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -1794,44 +1794,16 @@ func (r OrganizationNewParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type OrganizationGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[OrganizationGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[OrganizationGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[OrganizationGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[OrganizationGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                       `query:"message"`
+	// organization_id is the unique identifier of the Organization to retreive.
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [OrganizationGetParams]'s query parameters as `url.Values`.
-func (r OrganizationGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type OrganizationGetParamsEncoding string
-
-const (
-	OrganizationGetParamsEncodingProto OrganizationGetParamsEncoding = "proto"
-	OrganizationGetParamsEncodingJson  OrganizationGetParamsEncoding = "json"
-)
-
-func (r OrganizationGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case OrganizationGetParamsEncodingProto, OrganizationGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r OrganizationGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -1844,38 +1816,6 @@ const (
 func (r OrganizationGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case OrganizationGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type OrganizationGetParamsCompression string
-
-const (
-	OrganizationGetParamsCompressionIdentity OrganizationGetParamsCompression = "identity"
-	OrganizationGetParamsCompressionGzip     OrganizationGetParamsCompression = "gzip"
-	OrganizationGetParamsCompressionBr       OrganizationGetParamsCompression = "br"
-)
-
-func (r OrganizationGetParamsCompression) IsKnown() bool {
-	switch r {
-	case OrganizationGetParamsCompressionIdentity, OrganizationGetParamsCompressionGzip, OrganizationGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type OrganizationGetParamsConnect string
-
-const (
-	OrganizationGetParamsConnectV1 OrganizationGetParamsConnect = "v1"
-)
-
-func (r OrganizationGetParamsConnect) IsKnown() bool {
-	switch r {
-	case OrganizationGetParamsConnectV1:
 		return true
 	}
 	return false

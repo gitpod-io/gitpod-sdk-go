@@ -82,12 +82,8 @@ func TestEnvironmentAutomationServiceGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Get(context.TODO(), gitpod.EnvironmentAutomationServiceGetParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

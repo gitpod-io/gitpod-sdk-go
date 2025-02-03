@@ -6,11 +6,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -47,7 +45,7 @@ func (r *UserService) GetAuthenticatedUser(ctx context.Context, params UserGetAu
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -234,45 +232,15 @@ func (r UserGetAuthenticatedUserResponseUserStatus) IsKnown() bool {
 type UserSetSuspendedResponse = interface{}
 
 type UserGetAuthenticatedUserParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[UserGetAuthenticatedUserParamsEncoding] `query:"encoding,required"`
+	Body interface{} `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[UserGetAuthenticatedUserParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[UserGetAuthenticatedUserParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[UserGetAuthenticatedUserParamsConnect] `query:"connect"`
-	Message param.Field[string]                                `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [UserGetAuthenticatedUserParams]'s query parameters as
-// `url.Values`.
-func (r UserGetAuthenticatedUserParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type UserGetAuthenticatedUserParamsEncoding string
-
-const (
-	UserGetAuthenticatedUserParamsEncodingProto UserGetAuthenticatedUserParamsEncoding = "proto"
-	UserGetAuthenticatedUserParamsEncodingJson  UserGetAuthenticatedUserParamsEncoding = "json"
-)
-
-func (r UserGetAuthenticatedUserParamsEncoding) IsKnown() bool {
-	switch r {
-	case UserGetAuthenticatedUserParamsEncodingProto, UserGetAuthenticatedUserParamsEncodingJson:
-		return true
-	}
-	return false
+func (r UserGetAuthenticatedUserParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r.Body)
 }
 
 // Define the version of the Connect protocol
@@ -285,38 +253,6 @@ const (
 func (r UserGetAuthenticatedUserParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case UserGetAuthenticatedUserParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type UserGetAuthenticatedUserParamsCompression string
-
-const (
-	UserGetAuthenticatedUserParamsCompressionIdentity UserGetAuthenticatedUserParamsCompression = "identity"
-	UserGetAuthenticatedUserParamsCompressionGzip     UserGetAuthenticatedUserParamsCompression = "gzip"
-	UserGetAuthenticatedUserParamsCompressionBr       UserGetAuthenticatedUserParamsCompression = "br"
-)
-
-func (r UserGetAuthenticatedUserParamsCompression) IsKnown() bool {
-	switch r {
-	case UserGetAuthenticatedUserParamsCompressionIdentity, UserGetAuthenticatedUserParamsCompressionGzip, UserGetAuthenticatedUserParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type UserGetAuthenticatedUserParamsConnect string
-
-const (
-	UserGetAuthenticatedUserParamsConnectV1 UserGetAuthenticatedUserParamsConnect = "v1"
-)
-
-func (r UserGetAuthenticatedUserParamsConnect) IsKnown() bool {
-	switch r {
-	case UserGetAuthenticatedUserParamsConnectV1:
 		return true
 	}
 	return false

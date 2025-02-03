@@ -60,7 +60,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Cont
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -750,45 +750,15 @@ func (r RunnerConfigurationHostAuthenticationTokenNewParamsSource) IsKnown() boo
 }
 
 type RunnerConfigurationHostAuthenticationTokenGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                                     `query:"message"`
+	ID                     param.Field[string]                                                                    `json:"id" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [RunnerConfigurationHostAuthenticationTokenGetParams]'s
-// query parameters as `url.Values`.
-func (r RunnerConfigurationHostAuthenticationTokenGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationHostAuthenticationTokenGetParamsEncoding string
-
-const (
-	RunnerConfigurationHostAuthenticationTokenGetParamsEncodingProto RunnerConfigurationHostAuthenticationTokenGetParamsEncoding = "proto"
-	RunnerConfigurationHostAuthenticationTokenGetParamsEncodingJson  RunnerConfigurationHostAuthenticationTokenGetParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenGetParamsEncodingProto, RunnerConfigurationHostAuthenticationTokenGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r RunnerConfigurationHostAuthenticationTokenGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -801,38 +771,6 @@ const (
 func (r RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type RunnerConfigurationHostAuthenticationTokenGetParamsCompression string
-
-const (
-	RunnerConfigurationHostAuthenticationTokenGetParamsCompressionIdentity RunnerConfigurationHostAuthenticationTokenGetParamsCompression = "identity"
-	RunnerConfigurationHostAuthenticationTokenGetParamsCompressionGzip     RunnerConfigurationHostAuthenticationTokenGetParamsCompression = "gzip"
-	RunnerConfigurationHostAuthenticationTokenGetParamsCompressionBr       RunnerConfigurationHostAuthenticationTokenGetParamsCompression = "br"
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenGetParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenGetParamsCompressionIdentity, RunnerConfigurationHostAuthenticationTokenGetParamsCompressionGzip, RunnerConfigurationHostAuthenticationTokenGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenGetParamsConnect string
-
-const (
-	RunnerConfigurationHostAuthenticationTokenGetParamsConnectV1 RunnerConfigurationHostAuthenticationTokenGetParamsConnect = "v1"
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenGetParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenGetParamsConnectV1:
 		return true
 	}
 	return false
