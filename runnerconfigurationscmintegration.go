@@ -7,14 +7,12 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"reflect"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
 	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/tidwall/gjson"
 )
 
 // RunnerConfigurationScmIntegrationService contains methods and other services
@@ -150,142 +148,51 @@ func (r runnerConfigurationScmIntegrationGetResponseJSON) RawJSON() string {
 }
 
 type RunnerConfigurationScmIntegrationGetResponseIntegration struct {
-	// id is the unique identifier of the SCM integration
-	ID   string `json:"id"`
-	Host string `json:"host"`
-	// This field can have the runtime type of
-	// [RunnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuth].
-	OAuth    interface{} `json:"oauth"`
-	Pat      bool        `json:"pat"`
-	RunnerID string      `json:"runnerId"`
-	// scm_id references the scm_id in the runner's configuration schema that this
-	// integration is for
-	ScmID string                                                      `json:"scmId"`
-	JSON  runnerConfigurationScmIntegrationGetResponseIntegrationJSON `json:"-"`
-	union RunnerConfigurationScmIntegrationGetResponseIntegrationUnion
+	OAuth RunnerConfigurationScmIntegrationGetResponseIntegrationOAuth `json:"oauth,required"`
+	JSON  runnerConfigurationScmIntegrationGetResponseIntegrationJSON  `json:"-"`
 }
 
 // runnerConfigurationScmIntegrationGetResponseIntegrationJSON contains the JSON
 // metadata for the struct
 // [RunnerConfigurationScmIntegrationGetResponseIntegration]
 type runnerConfigurationScmIntegrationGetResponseIntegrationJSON struct {
-	ID          apijson.Field
-	Host        apijson.Field
 	OAuth       apijson.Field
-	Pat         apijson.Field
-	RunnerID    apijson.Field
-	ScmID       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationScmIntegrationGetResponseIntegration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 func (r runnerConfigurationScmIntegrationGetResponseIntegrationJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *RunnerConfigurationScmIntegrationGetResponseIntegration) UnmarshalJSON(data []byte) (err error) {
-	*r = RunnerConfigurationScmIntegrationGetResponseIntegration{}
-	err = apijson.UnmarshalRoot(data, &r.union)
-	if err != nil {
-		return err
-	}
-	return apijson.Port(r.union, &r)
-}
-
-// AsUnion returns a [RunnerConfigurationScmIntegrationGetResponseIntegrationUnion]
-// interface which you can cast to the specific types for more type safety.
-//
-// Possible runtime types of the union are
-// [RunnerConfigurationScmIntegrationGetResponseIntegrationObject],
-// [RunnerConfigurationScmIntegrationGetResponseIntegrationObject].
-func (r RunnerConfigurationScmIntegrationGetResponseIntegration) AsUnion() RunnerConfigurationScmIntegrationGetResponseIntegrationUnion {
-	return r.union
-}
-
-// Union satisfied by
-// [RunnerConfigurationScmIntegrationGetResponseIntegrationObject] or
-// [RunnerConfigurationScmIntegrationGetResponseIntegrationObject].
-type RunnerConfigurationScmIntegrationGetResponseIntegrationUnion interface {
-	implementsRunnerConfigurationScmIntegrationGetResponseIntegration()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*RunnerConfigurationScmIntegrationGetResponseIntegrationUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationScmIntegrationGetResponseIntegrationObject{}),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationScmIntegrationGetResponseIntegrationObject{}),
-		},
-	)
-}
-
-type RunnerConfigurationScmIntegrationGetResponseIntegrationObject struct {
-	OAuth RunnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuth `json:"oauth,required"`
-	// id is the unique identifier of the SCM integration
-	ID       string `json:"id"`
-	Host     string `json:"host"`
-	Pat      bool   `json:"pat"`
-	RunnerID string `json:"runnerId"`
-	// scm_id references the scm_id in the runner's configuration schema that this
-	// integration is for
-	ScmID string                                                            `json:"scmId"`
-	JSON  runnerConfigurationScmIntegrationGetResponseIntegrationObjectJSON `json:"-"`
-}
-
-// runnerConfigurationScmIntegrationGetResponseIntegrationObjectJSON contains the
-// JSON metadata for the struct
-// [RunnerConfigurationScmIntegrationGetResponseIntegrationObject]
-type runnerConfigurationScmIntegrationGetResponseIntegrationObjectJSON struct {
-	OAuth       apijson.Field
-	ID          apijson.Field
-	Host        apijson.Field
-	Pat         apijson.Field
-	RunnerID    apijson.Field
-	ScmID       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationScmIntegrationGetResponseIntegrationObject) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationScmIntegrationGetResponseIntegrationObjectJSON) RawJSON() string {
-	return r.raw
-}
-
-func (r RunnerConfigurationScmIntegrationGetResponseIntegrationObject) implementsRunnerConfigurationScmIntegrationGetResponseIntegration() {
-}
-
-type RunnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuth struct {
+type RunnerConfigurationScmIntegrationGetResponseIntegrationOAuth struct {
 	// client_id is the OAuth app's client ID in clear text.
 	ClientID string `json:"clientId"`
 	// encrypted_client_secret is the OAuth app's secret encrypted with the runner's
 	// public key.
-	EncryptedClientSecret string                                                                 `json:"encryptedClientSecret" format:"byte"`
-	JSON                  runnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuthJSON `json:"-"`
+	EncryptedClientSecret string                                                           `json:"encryptedClientSecret" format:"byte"`
+	JSON                  runnerConfigurationScmIntegrationGetResponseIntegrationOAuthJSON `json:"-"`
 }
 
-// runnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuthJSON contains
-// the JSON metadata for the struct
-// [RunnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuth]
-type runnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuthJSON struct {
+// runnerConfigurationScmIntegrationGetResponseIntegrationOAuthJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationScmIntegrationGetResponseIntegrationOAuth]
+type runnerConfigurationScmIntegrationGetResponseIntegrationOAuthJSON struct {
 	ClientID              apijson.Field
 	EncryptedClientSecret apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuth) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationScmIntegrationGetResponseIntegrationOAuth) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationScmIntegrationGetResponseIntegrationObjectOAuthJSON) RawJSON() string {
+func (r runnerConfigurationScmIntegrationGetResponseIntegrationOAuthJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -316,83 +223,7 @@ func (r runnerConfigurationScmIntegrationListResponseJSON) RawJSON() string {
 }
 
 type RunnerConfigurationScmIntegrationListResponseIntegration struct {
-	// id is the unique identifier of the SCM integration
-	ID   string `json:"id"`
-	Host string `json:"host"`
-	// This field can have the runtime type of
-	// [RunnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuth].
-	OAuth    interface{} `json:"oauth"`
-	Pat      bool        `json:"pat"`
-	RunnerID string      `json:"runnerId"`
-	// scm_id references the scm_id in the runner's configuration schema that this
-	// integration is for
-	ScmID string                                                       `json:"scmId"`
-	JSON  runnerConfigurationScmIntegrationListResponseIntegrationJSON `json:"-"`
-	union RunnerConfigurationScmIntegrationListResponseIntegrationsUnion
-}
-
-// runnerConfigurationScmIntegrationListResponseIntegrationJSON contains the JSON
-// metadata for the struct
-// [RunnerConfigurationScmIntegrationListResponseIntegration]
-type runnerConfigurationScmIntegrationListResponseIntegrationJSON struct {
-	ID          apijson.Field
-	Host        apijson.Field
-	OAuth       apijson.Field
-	Pat         apijson.Field
-	RunnerID    apijson.Field
-	ScmID       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r runnerConfigurationScmIntegrationListResponseIntegrationJSON) RawJSON() string {
-	return r.raw
-}
-
-func (r *RunnerConfigurationScmIntegrationListResponseIntegration) UnmarshalJSON(data []byte) (err error) {
-	*r = RunnerConfigurationScmIntegrationListResponseIntegration{}
-	err = apijson.UnmarshalRoot(data, &r.union)
-	if err != nil {
-		return err
-	}
-	return apijson.Port(r.union, &r)
-}
-
-// AsUnion returns a
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsUnion] interface which
-// you can cast to the specific types for more type safety.
-//
-// Possible runtime types of the union are
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsObject],
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsObject].
-func (r RunnerConfigurationScmIntegrationListResponseIntegration) AsUnion() RunnerConfigurationScmIntegrationListResponseIntegrationsUnion {
-	return r.union
-}
-
-// Union satisfied by
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsObject] or
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsObject].
-type RunnerConfigurationScmIntegrationListResponseIntegrationsUnion interface {
-	implementsRunnerConfigurationScmIntegrationListResponseIntegration()
-}
-
-func init() {
-	apijson.RegisterUnion(
-		reflect.TypeOf((*RunnerConfigurationScmIntegrationListResponseIntegrationsUnion)(nil)).Elem(),
-		"",
-		apijson.UnionVariant{
-			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationScmIntegrationListResponseIntegrationsObject{}),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationScmIntegrationListResponseIntegrationsObject{}),
-		},
-	)
-}
-
-type RunnerConfigurationScmIntegrationListResponseIntegrationsObject struct {
-	OAuth RunnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuth `json:"oauth,required"`
+	OAuth RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth `json:"oauth,required"`
 	// id is the unique identifier of the SCM integration
 	ID       string `json:"id"`
 	Host     string `json:"host"`
@@ -400,14 +231,14 @@ type RunnerConfigurationScmIntegrationListResponseIntegrationsObject struct {
 	RunnerID string `json:"runnerId"`
 	// scm_id references the scm_id in the runner's configuration schema that this
 	// integration is for
-	ScmID string                                                              `json:"scmId"`
-	JSON  runnerConfigurationScmIntegrationListResponseIntegrationsObjectJSON `json:"-"`
+	ScmID string                                                       `json:"scmId"`
+	JSON  runnerConfigurationScmIntegrationListResponseIntegrationJSON `json:"-"`
 }
 
-// runnerConfigurationScmIntegrationListResponseIntegrationsObjectJSON contains the
-// JSON metadata for the struct
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsObject]
-type runnerConfigurationScmIntegrationListResponseIntegrationsObjectJSON struct {
+// runnerConfigurationScmIntegrationListResponseIntegrationJSON contains the JSON
+// metadata for the struct
+// [RunnerConfigurationScmIntegrationListResponseIntegration]
+type runnerConfigurationScmIntegrationListResponseIntegrationJSON struct {
 	OAuth       apijson.Field
 	ID          apijson.Field
 	Host        apijson.Field
@@ -418,41 +249,38 @@ type runnerConfigurationScmIntegrationListResponseIntegrationsObjectJSON struct 
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationScmIntegrationListResponseIntegrationsObject) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationScmIntegrationListResponseIntegration) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationScmIntegrationListResponseIntegrationsObjectJSON) RawJSON() string {
+func (r runnerConfigurationScmIntegrationListResponseIntegrationJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r RunnerConfigurationScmIntegrationListResponseIntegrationsObject) implementsRunnerConfigurationScmIntegrationListResponseIntegration() {
-}
-
-type RunnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuth struct {
+type RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth struct {
 	// client_id is the OAuth app's client ID in clear text.
 	ClientID string `json:"clientId"`
 	// encrypted_client_secret is the OAuth app's secret encrypted with the runner's
 	// public key.
-	EncryptedClientSecret string                                                                   `json:"encryptedClientSecret" format:"byte"`
-	JSON                  runnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuthJSON `json:"-"`
+	EncryptedClientSecret string                                                             `json:"encryptedClientSecret" format:"byte"`
+	JSON                  runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON `json:"-"`
 }
 
-// runnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuthJSON
-// contains the JSON metadata for the struct
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuth]
-type runnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuthJSON struct {
+// runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth]
+type runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON struct {
 	ClientID              apijson.Field
 	EncryptedClientSecret apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuth) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationScmIntegrationListResponseIntegrationsObjectOAuthJSON) RawJSON() string {
+func (r runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -485,7 +313,7 @@ func (r runnerConfigurationScmIntegrationListResponsePaginationJSON) RawJSON() s
 type RunnerConfigurationScmIntegrationDeleteResponse = interface{}
 
 type RunnerConfigurationScmIntegrationNewParams struct {
-	Body RunnerConfigurationScmIntegrationNewParamsBody `json:"body,required"`
+	Body RunnerConfigurationScmIntegrationNewParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -497,10 +325,57 @@ func (r RunnerConfigurationScmIntegrationNewParams) MarshalJSON() (data []byte, 
 }
 
 type RunnerConfigurationScmIntegrationNewParamsBody struct {
+	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
+	//
+	// If configured, oauth_plaintext_client_secret must also be set.
+	OAuthClientID param.Field[string] `json:"oauthClientId"`
+	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text.
+	//
+	// This will first be encrypted with the runner's public key before being stored.
+	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret"`
 }
 
 func (r RunnerConfigurationScmIntegrationNewParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBody) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
+}
+
+// Satisfied by
+// [RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet],
+// [RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecretIsTheOAuthAppSClientSecretInClearTextThisWillFirstBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored],
+// [RunnerConfigurationScmIntegrationNewParamsBody].
+type RunnerConfigurationScmIntegrationNewParamsBodyUnion interface {
+	implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion()
+}
+
+type RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet struct {
+	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
+	//
+	// If configured, oauth_plaintext_client_secret must also be set.
+	OAuthClientID param.Field[string] `json:"oauthClientId,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
+}
+
+type RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecretIsTheOAuthAppSClientSecretInClearTextThisWillFirstBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored struct {
+	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text.
+	//
+	// This will first be encrypted with the runner's public key before being stored.
+	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecretIsTheOAuthAppSClientSecretInClearTextThisWillFirstBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecretIsTheOAuthAppSClientSecretInClearTextThisWillFirstBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
 }
 
 // Define the version of the Connect protocol
@@ -608,7 +483,7 @@ func (r RunnerConfigurationScmIntegrationGetParamsConnect) IsKnown() bool {
 }
 
 type RunnerConfigurationScmIntegrationUpdateParams struct {
-	Body RunnerConfigurationScmIntegrationUpdateParamsBody `json:"body,required"`
+	Body RunnerConfigurationScmIntegrationUpdateParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -620,10 +495,94 @@ func (r RunnerConfigurationScmIntegrationUpdateParams) MarshalJSON() (data []byt
 }
 
 type RunnerConfigurationScmIntegrationUpdateParamsBody struct {
+	// oauth_client_id can be set to update the OAuth app's client ID.
+	//
+	// If an empty string is set, the OAuth configuration will be removed (regardless
+	// of whether a client secret is set), and any existing Host Authentication Tokens
+	// for the SCM integration's runner and host that were created using the OAuth app
+	// will be deleted. This might lead to users being unable to access their
+	// repositories until they re-authenticate.
+	OAuthClientID param.Field[string] `json:"oauthClientId"`
+	// oauth_plaintext_client_secret can be set to update the OAuth app's client
+	// secret.
+	//
+	// The cleartext secret will be encrypted with the runner's public key before being
+	// stored.
+	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret"`
+	// pat can be set to enable or disable Personal Access Tokens support.
+	//
+	// When disabling PATs, any existing Host Authentication Tokens for the SCM
+	// integration's runner and host that were created using a PAT will be deleted.
+	// This might lead to users being unable to access their repositories until they
+	// re-authenticate.
+	Pat param.Field[bool] `json:"pat"`
 }
 
 func (r RunnerConfigurationScmIntegrationUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBody) implementsRunnerConfigurationScmIntegrationUpdateParamsBodyUnion() {
+}
+
+// Satisfied by
+// [RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate],
+// [RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthPlaintextClientSecretCanBeSetToUpdateTheOAuthAppSClientSecretTheCleartextSecretWillBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored],
+// [RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDisablePersonalAccessTokensSupportWhenDisablingPaTsAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingAPatWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate],
+// [RunnerConfigurationScmIntegrationUpdateParamsBody].
+type RunnerConfigurationScmIntegrationUpdateParamsBodyUnion interface {
+	implementsRunnerConfigurationScmIntegrationUpdateParamsBodyUnion()
+}
+
+type RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate struct {
+	// oauth_client_id can be set to update the OAuth app's client ID.
+	//
+	// If an empty string is set, the OAuth configuration will be removed (regardless
+	// of whether a client secret is set), and any existing Host Authentication Tokens
+	// for the SCM integration's runner and host that were created using the OAuth app
+	// will be deleted. This might lead to users being unable to access their
+	// repositories until they re-authenticate.
+	OAuthClientID param.Field[string] `json:"oauthClientId,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate) implementsRunnerConfigurationScmIntegrationUpdateParamsBodyUnion() {
+}
+
+type RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthPlaintextClientSecretCanBeSetToUpdateTheOAuthAppSClientSecretTheCleartextSecretWillBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored struct {
+	// oauth_plaintext_client_secret can be set to update the OAuth app's client
+	// secret.
+	//
+	// The cleartext secret will be encrypted with the runner's public key before being
+	// stored.
+	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthPlaintextClientSecretCanBeSetToUpdateTheOAuthAppSClientSecretTheCleartextSecretWillBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthPlaintextClientSecretCanBeSetToUpdateTheOAuthAppSClientSecretTheCleartextSecretWillBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored) implementsRunnerConfigurationScmIntegrationUpdateParamsBodyUnion() {
+}
+
+type RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDisablePersonalAccessTokensSupportWhenDisablingPaTsAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingAPatWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate struct {
+	// pat can be set to enable or disable Personal Access Tokens support.
+	//
+	// When disabling PATs, any existing Host Authentication Tokens for the SCM
+	// integration's runner and host that were created using a PAT will be deleted.
+	// This might lead to users being unable to access their repositories until they
+	// re-authenticate.
+	Pat param.Field[bool] `json:"pat,required"`
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDisablePersonalAccessTokensSupportWhenDisablingPaTsAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingAPatWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDisablePersonalAccessTokensSupportWhenDisablingPaTsAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingAPatWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate) implementsRunnerConfigurationScmIntegrationUpdateParamsBodyUnion() {
 }
 
 // Define the version of the Connect protocol

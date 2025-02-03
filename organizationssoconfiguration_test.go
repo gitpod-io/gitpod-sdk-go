@@ -86,7 +86,9 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Update(context.TODO(), gitpod.OrganizationSSOConfigurationUpdateParams{
-		Body:                   gitpod.OrganizationSSOConfigurationUpdateParamsBody{},
+		Body: gitpod.OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider{
+			ClientID: gitpod.F("x"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

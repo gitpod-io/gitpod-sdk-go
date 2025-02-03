@@ -26,7 +26,9 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
-		Body:                   gitpod.RunnerConfigurationScmIntegrationNewParamsBody{},
+		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet{
+			OAuthClientID: gitpod.F("oauthClientId"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -82,7 +84,9 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Update(context.TODO(), gitpod.RunnerConfigurationScmIntegrationUpdateParams{
-		Body:                   gitpod.RunnerConfigurationScmIntegrationUpdateParamsBody{},
+		Body: gitpod.RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate{
+			OAuthClientID: gitpod.F("oauthClientId"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

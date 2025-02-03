@@ -39,16 +39,14 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByObject{
-				Manual:                gitpod.F(true),
-				PostDevcontainerStart: gitpod.F(true),
-				PostEnvironmentStart:  gitpod.F(true),
+			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByManual{
+				Manual: gitpod.F(true),
 			}}),
 		}),
 		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpec{
 			Command: gitpod.F("command"),
-			RunsOn: gitpod.F[gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnUnion](gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnDocker{
-				Docker: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnDockerDocker{
+			RunsOn: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOn{
+				Docker: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnDocker{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
@@ -111,9 +109,13 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		DependsOn:              gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		Metadata:               gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadata{}),
-		Spec:                   gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsSpec{}),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Metadata: gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsMetadataUnion](gitpod.EnvironmentAutomationTaskUpdateParamsMetadataDescription{
+			Description: gitpod.F("description"),
+		}),
+		Spec: gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnion](gitpod.EnvironmentAutomationTaskUpdateParamsSpecCommand{
+			Command: gitpod.F("command"),
+		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
