@@ -61,10 +61,10 @@ func (r *RunnerConfigurationService) Validate(ctx context.Context, params Runner
 
 type RunnerConfigurationValidateResponse struct {
 	// This field can have the runtime type of
-	// [RunnerConfigurationValidateResponseObjectEnvironmentClass].
+	// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass].
 	EnvironmentClass interface{} `json:"environmentClass"`
 	// This field can have the runtime type of
-	// [RunnerConfigurationValidateResponseObjectScmIntegration].
+	// [RunnerConfigurationValidateResponseScmIntegrationScmIntegration].
 	ScmIntegration interface{}                             `json:"scmIntegration"`
 	JSON           runnerConfigurationValidateResponseJSON `json:"-"`
 	union          RunnerConfigurationValidateResponseUnion
@@ -96,16 +96,14 @@ func (r *RunnerConfigurationValidateResponse) UnmarshalJSON(data []byte) (err er
 // can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [RunnerConfigurationValidateResponseObject],
-// [RunnerConfigurationValidateResponseObject],
-// [RunnerConfigurationValidateResponseObject].
+// [RunnerConfigurationValidateResponseEnvironmentClass],
+// [RunnerConfigurationValidateResponseScmIntegration].
 func (r RunnerConfigurationValidateResponse) AsUnion() RunnerConfigurationValidateResponseUnion {
 	return r.union
 }
 
-// Union satisfied by [RunnerConfigurationValidateResponseObject],
-// [RunnerConfigurationValidateResponseObject] or
-// [RunnerConfigurationValidateResponseObject].
+// Union satisfied by [RunnerConfigurationValidateResponseEnvironmentClass] or
+// [RunnerConfigurationValidateResponseScmIntegration].
 type RunnerConfigurationValidateResponseUnion interface {
 	implementsRunnerConfigurationValidateResponse()
 }
@@ -116,82 +114,354 @@ func init() {
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseObject{}),
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseEnvironmentClass{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseObject{}),
-		},
-		apijson.UnionVariant{
-			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseObject{}),
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseScmIntegration{}),
 		},
 	)
 }
 
-type RunnerConfigurationValidateResponseObject struct {
-	EnvironmentClass RunnerConfigurationValidateResponseObjectEnvironmentClass `json:"environmentClass,required"`
-	ScmIntegration   RunnerConfigurationValidateResponseObjectScmIntegration   `json:"scmIntegration"`
-	JSON             runnerConfigurationValidateResponseObjectJSON             `json:"-"`
+type RunnerConfigurationValidateResponseEnvironmentClass struct {
+	EnvironmentClass RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass `json:"environmentClass,required"`
+	JSON             runnerConfigurationValidateResponseEnvironmentClassJSON             `json:"-"`
 }
 
-// runnerConfigurationValidateResponseObjectJSON contains the JSON metadata for the
-// struct [RunnerConfigurationValidateResponseObject]
-type runnerConfigurationValidateResponseObjectJSON struct {
+// runnerConfigurationValidateResponseEnvironmentClassJSON contains the JSON
+// metadata for the struct [RunnerConfigurationValidateResponseEnvironmentClass]
+type runnerConfigurationValidateResponseEnvironmentClassJSON struct {
 	EnvironmentClass apijson.Field
-	ScmIntegration   apijson.Field
 	raw              string
 	ExtraFields      map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationValidateResponseObject) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationValidateResponseEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationValidateResponseObjectJSON) RawJSON() string {
+func (r runnerConfigurationValidateResponseEnvironmentClassJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r RunnerConfigurationValidateResponseObject) implementsRunnerConfigurationValidateResponse() {}
-
-type RunnerConfigurationValidateResponseObjectEnvironmentClass struct {
-	JSON runnerConfigurationValidateResponseObjectEnvironmentClassJSON `json:"-"`
+func (r RunnerConfigurationValidateResponseEnvironmentClass) implementsRunnerConfigurationValidateResponse() {
 }
 
-// runnerConfigurationValidateResponseObjectEnvironmentClassJSON contains the JSON
-// metadata for the struct
-// [RunnerConfigurationValidateResponseObjectEnvironmentClass]
-type runnerConfigurationValidateResponseObjectEnvironmentClassJSON struct {
+type RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass struct {
+	DescriptionError string                                                                  `json:"descriptionError"`
+	DisplayNameError string                                                                  `json:"displayNameError"`
+	JSON             runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassJSON `json:"-"`
+	union            RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassUnion
+}
+
+// runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassJSON contains
+// the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass]
+type runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassJSON struct {
+	DescriptionError apijson.Field
+	DisplayNameError apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r *RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	*r = RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
+}
+
+// AsUnion returns a
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassUnion]
+// interface which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError],
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError].
+func (r RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass) AsUnion() RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassUnion {
+	return r.union
+}
+
+// Union satisfied by
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError]
+// or
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError].
+type RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassUnion interface {
+	implementsRunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError{}),
+		},
+	)
+}
+
+type RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError struct {
+	DescriptionError string                                                                                  `json:"descriptionError,required"`
+	JSON             runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionErrorJSON `json:"-"`
+}
+
+// runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionErrorJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError]
+type runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionErrorJSON struct {
+	DescriptionError apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDescriptionError) implementsRunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass() {
+}
+
+type RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError struct {
+	DisplayNameError string                                                                                  `json:"displayNameError,required"`
+	JSON             runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameErrorJSON `json:"-"`
+}
+
+// runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameErrorJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError]
+type runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameErrorJSON struct {
+	DisplayNameError apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseEnvironmentClassEnvironmentClassDisplayNameError) implementsRunnerConfigurationValidateResponseEnvironmentClassEnvironmentClass() {
+}
+
+type RunnerConfigurationValidateResponseScmIntegration struct {
+	ScmIntegration RunnerConfigurationValidateResponseScmIntegrationScmIntegration `json:"scmIntegration,required"`
+	JSON           runnerConfigurationValidateResponseScmIntegrationJSON           `json:"-"`
+}
+
+// runnerConfigurationValidateResponseScmIntegrationJSON contains the JSON metadata
+// for the struct [RunnerConfigurationValidateResponseScmIntegration]
+type runnerConfigurationValidateResponseScmIntegrationJSON struct {
+	ScmIntegration apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponseScmIntegration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseScmIntegrationJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseScmIntegration) implementsRunnerConfigurationValidateResponse() {
+}
+
+type RunnerConfigurationValidateResponseScmIntegrationScmIntegration struct {
+	HostError  string                                                              `json:"hostError"`
+	OAuthError string                                                              `json:"oauthError"`
+	PatError   string                                                              `json:"patError"`
+	ScmIDError string                                                              `json:"scmIdError"`
+	JSON       runnerConfigurationValidateResponseScmIntegrationScmIntegrationJSON `json:"-"`
+	union      RunnerConfigurationValidateResponseScmIntegrationScmIntegrationUnion
+}
+
+// runnerConfigurationValidateResponseScmIntegrationScmIntegrationJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegration]
+type runnerConfigurationValidateResponseScmIntegrationScmIntegrationJSON struct {
+	HostError   apijson.Field
+	OAuthError  apijson.Field
+	PatError    apijson.Field
+	ScmIDError  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationValidateResponseObjectEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationValidateResponseObjectEnvironmentClassJSON) RawJSON() string {
+func (r runnerConfigurationValidateResponseScmIntegrationScmIntegrationJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerConfigurationValidateResponseObjectScmIntegration struct {
-	JSON runnerConfigurationValidateResponseObjectScmIntegrationJSON `json:"-"`
+func (r *RunnerConfigurationValidateResponseScmIntegrationScmIntegration) UnmarshalJSON(data []byte) (err error) {
+	*r = RunnerConfigurationValidateResponseScmIntegrationScmIntegration{}
+	err = apijson.UnmarshalRoot(data, &r.union)
+	if err != nil {
+		return err
+	}
+	return apijson.Port(r.union, &r)
 }
 
-// runnerConfigurationValidateResponseObjectScmIntegrationJSON contains the JSON
-// metadata for the struct
-// [RunnerConfigurationValidateResponseObjectScmIntegration]
-type runnerConfigurationValidateResponseObjectScmIntegrationJSON struct {
+// AsUnion returns a
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationUnion] interface
+// which you can cast to the specific types for more type safety.
+//
+// Possible runtime types of the union are
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError],
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError],
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError],
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError].
+func (r RunnerConfigurationValidateResponseScmIntegrationScmIntegration) AsUnion() RunnerConfigurationValidateResponseScmIntegrationScmIntegrationUnion {
+	return r.union
+}
+
+// Union satisfied by
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError],
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError],
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError] or
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError].
+type RunnerConfigurationValidateResponseScmIntegrationScmIntegrationUnion interface {
+	implementsRunnerConfigurationValidateResponseScmIntegrationScmIntegration()
+}
+
+func init() {
+	apijson.RegisterUnion(
+		reflect.TypeOf((*RunnerConfigurationValidateResponseScmIntegrationScmIntegrationUnion)(nil)).Elem(),
+		"",
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError{}),
+		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError{}),
+		},
+	)
+}
+
+type RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError struct {
+	HostError string                                                                       `json:"hostError,required"`
+	JSON      runnerConfigurationValidateResponseScmIntegrationScmIntegrationHostErrorJSON `json:"-"`
+}
+
+// runnerConfigurationValidateResponseScmIntegrationScmIntegrationHostErrorJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError]
+type runnerConfigurationValidateResponseScmIntegrationScmIntegrationHostErrorJSON struct {
+	HostError   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationValidateResponseObjectScmIntegration) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationValidateResponseObjectScmIntegrationJSON) RawJSON() string {
+func (r runnerConfigurationValidateResponseScmIntegrationScmIntegrationHostErrorJSON) RawJSON() string {
 	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseScmIntegrationScmIntegrationHostError) implementsRunnerConfigurationValidateResponseScmIntegrationScmIntegration() {
+}
+
+type RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError struct {
+	OAuthError string                                                                        `json:"oauthError,required"`
+	JSON       runnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthErrorJSON `json:"-"`
+}
+
+// runnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthErrorJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError]
+type runnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthErrorJSON struct {
+	OAuthError  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseScmIntegrationScmIntegrationOAuthError) implementsRunnerConfigurationValidateResponseScmIntegrationScmIntegration() {
+}
+
+type RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError struct {
+	PatError string                                                                      `json:"patError,required"`
+	JSON     runnerConfigurationValidateResponseScmIntegrationScmIntegrationPatErrorJSON `json:"-"`
+}
+
+// runnerConfigurationValidateResponseScmIntegrationScmIntegrationPatErrorJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError]
+type runnerConfigurationValidateResponseScmIntegrationScmIntegrationPatErrorJSON struct {
+	PatError    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseScmIntegrationScmIntegrationPatErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseScmIntegrationScmIntegrationPatError) implementsRunnerConfigurationValidateResponseScmIntegrationScmIntegration() {
+}
+
+type RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError struct {
+	ScmIDError string                                                                        `json:"scmIdError,required"`
+	JSON       runnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDErrorJSON `json:"-"`
+}
+
+// runnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDErrorJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError]
+type runnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDErrorJSON struct {
+	ScmIDError  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDErrorJSON) RawJSON() string {
+	return r.raw
+}
+
+func (r RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDError) implementsRunnerConfigurationValidateResponseScmIntegrationScmIntegration() {
 }
 
 type RunnerConfigurationValidateParams struct {
@@ -221,7 +491,6 @@ func (r RunnerConfigurationValidateParamsBody) implementsRunnerConfigurationVali
 
 // Satisfied by [RunnerConfigurationValidateParamsBodyObject],
 // [RunnerConfigurationValidateParamsBodyObject],
-// [RunnerConfigurationValidateParamsBodyObject],
 // [RunnerConfigurationValidateParamsBody].
 type RunnerConfigurationValidateParamsBodyUnion interface {
 	implementsRunnerConfigurationValidateParamsBodyUnion()
@@ -230,7 +499,6 @@ type RunnerConfigurationValidateParamsBodyUnion interface {
 type RunnerConfigurationValidateParamsBodyObject struct {
 	EnvironmentClass param.Field[RunnerConfigurationValidateParamsBodyObjectEnvironmentClass] `json:"environmentClass,required"`
 	RunnerID         param.Field[string]                                                      `json:"runnerId" format:"uuid"`
-	ScmIntegration   param.Field[RunnerConfigurationValidateParamsBodyObjectScmIntegration]   `json:"scmIntegration"`
 }
 
 func (r RunnerConfigurationValidateParamsBodyObject) MarshalJSON() (data []byte, err error) {
@@ -268,13 +536,6 @@ type RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration st
 }
 
 func (r RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type RunnerConfigurationValidateParamsBodyObjectScmIntegration struct {
-}
-
-func (r RunnerConfigurationValidateParamsBodyObjectScmIntegration) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

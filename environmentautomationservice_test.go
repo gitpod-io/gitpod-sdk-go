@@ -38,10 +38,8 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationServiceNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationServiceNewParamsMetadataTriggeredByObject{
-				Manual:                gitpod.F(true),
-				PostDevcontainerStart: gitpod.F(true),
-				PostEnvironmentStart:  gitpod.F(true),
+			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationServiceNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationServiceNewParamsMetadataTriggeredByManual{
+				Manual: gitpod.F(true),
 			}}),
 		}),
 		Spec: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpec{
@@ -51,8 +49,8 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 				Stop:  gitpod.F("stop"),
 			}),
 			DesiredPhase: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecDesiredPhaseServicePhaseUnspecified),
-			RunsOn: gitpod.F[gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOnUnion](gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOnDocker{
-				Docker: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOnDockerDocker{
+			RunsOn: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOn{
+				Docker: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsSpecRunsOnDocker{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
@@ -116,10 +114,18 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Services.Update(context.TODO(), gitpod.EnvironmentAutomationServiceUpdateParams{
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1),
 		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Metadata:               gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsMetadata{}),
-		Spec:                   gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsSpec{}),
-		Status:                 gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsStatus{}),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Metadata: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsMetadataUnion](gitpod.EnvironmentAutomationServiceUpdateParamsMetadataDescription{
+			Description: gitpod.F("description"),
+		}),
+		Spec: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsSpecUnion](gitpod.EnvironmentAutomationServiceUpdateParamsSpecCommands{
+			Commands: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsSpecCommandsCommandsUnion](gitpod.EnvironmentAutomationServiceUpdateParamsSpecCommandsCommandsReady{
+				Ready: gitpod.F("ready"),
+			}),
+		}),
+		Status: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsStatusUnion](gitpod.EnvironmentAutomationServiceUpdateParamsStatusFailureMessage{
+			FailureMessage: gitpod.F("failureMessage"),
+		}),
+		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

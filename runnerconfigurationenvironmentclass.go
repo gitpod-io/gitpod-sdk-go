@@ -446,7 +446,7 @@ func (r RunnerConfigurationEnvironmentClassGetParamsConnect) IsKnown() bool {
 }
 
 type RunnerConfigurationEnvironmentClassUpdateParams struct {
-	Body RunnerConfigurationEnvironmentClassUpdateParamsBody `json:"body,required"`
+	Body RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -458,10 +458,57 @@ func (r RunnerConfigurationEnvironmentClassUpdateParams) MarshalJSON() (data []b
 }
 
 type RunnerConfigurationEnvironmentClassUpdateParamsBody struct {
+	Description param.Field[string] `json:"description"`
+	DisplayName param.Field[string] `json:"displayName"`
+	Enabled     param.Field[bool]   `json:"enabled"`
 }
 
 func (r RunnerConfigurationEnvironmentClassUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBody) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
+}
+
+// Satisfied by [RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription],
+// [RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName],
+// [RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled],
+// [RunnerConfigurationEnvironmentClassUpdateParamsBody].
+type RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion interface {
+	implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion()
+}
+
+type RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription struct {
+	Description param.Field[string] `json:"description,required"`
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
+}
+
+type RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName struct {
+	DisplayName param.Field[string] `json:"displayName,required"`
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
+}
+
+type RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled struct {
+	Enabled param.Field[bool] `json:"enabled,required"`
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
 }
 
 // Define the version of the Connect protocol

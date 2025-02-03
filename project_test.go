@@ -26,21 +26,13 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
-		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassObject{
+		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass{
 			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			LocalRunner:        gitpod.F(true),
 		}),
 		Initializer: gitpod.F(gitpod.ProjectNewParamsInitializer{
-			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpecUnion{gitpod.ProjectNewParamsInitializerSpecsObject{
-				ContextURL: gitpod.F(gitpod.ProjectNewParamsInitializerSpecsObjectContextURL{
+			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpecUnion{gitpod.ProjectNewParamsInitializerSpecsContextURL{
+				ContextURL: gitpod.F(gitpod.ProjectNewParamsInitializerSpecsContextURLContextURL{
 					URL: gitpod.F("https://example.com"),
-				}),
-				Git: gitpod.F(gitpod.ProjectNewParamsInitializerSpecsObjectGit{
-					CheckoutLocation:  gitpod.F("checkoutLocation"),
-					CloneTarget:       gitpod.F("cloneTarget"),
-					RemoteUri:         gitpod.F("remoteUri"),
-					TargetMode:        gitpod.F(gitpod.ProjectNewParamsInitializerSpecsObjectGitTargetModeCloneTargetModeUnspecified),
-					UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 				}),
 			}}),
 		}),
@@ -102,7 +94,9 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Update(context.TODO(), gitpod.ProjectUpdateParams{
-		Body:                   gitpod.ProjectUpdateParamsBody{},
+		Body: gitpod.ProjectUpdateParamsBodyAutomationsFilePathIsThePathToTheAutomationsFileRelativeToTheRepoRoot{
+			AutomationsFilePath: gitpod.F("automationsFilePath"),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.ProjectUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

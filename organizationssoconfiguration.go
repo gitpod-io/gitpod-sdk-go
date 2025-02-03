@@ -555,7 +555,7 @@ func (r OrganizationSSOConfigurationGetParamsConnect) IsKnown() bool {
 }
 
 type OrganizationSSOConfigurationUpdateParams struct {
-	Body OrganizationSSOConfigurationUpdateParamsBody `json:"body,required"`
+	Body OrganizationSSOConfigurationUpdateParamsBodyUnion `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -567,10 +567,126 @@ func (r OrganizationSSOConfigurationUpdateParams) MarshalJSON() (data []byte, er
 }
 
 type OrganizationSSOConfigurationUpdateParamsBody struct {
+	// client_id is the client ID of the SSO provider
+	ClientID param.Field[string] `json:"clientId"`
+	// client_secret is the client secret of the SSO provider
+	ClientSecret param.Field[string] `json:"clientSecret"`
+	EmailDomain  param.Field[string] `json:"emailDomain"`
+	// issuer_url is the URL of the IdP issuer
+	IssuerURL param.Field[string] `json:"issuerUrl" format:"uri"`
+	// state is the state of the SSO configuration
+	State param.Field[OrganizationSSOConfigurationUpdateParamsBodyState] `json:"state"`
 }
 
 func (r OrganizationSSOConfigurationUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBody) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
+}
+
+// Satisfied by
+// [OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider],
+// [OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider],
+// [OrganizationSSOConfigurationUpdateParamsBodyEmailDomain],
+// [OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer],
+// [OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration],
+// [OrganizationSSOConfigurationUpdateParamsBody].
+type OrganizationSSOConfigurationUpdateParamsBodyUnion interface {
+	implementsOrganizationSSOConfigurationUpdateParamsBodyUnion()
+}
+
+type OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider struct {
+	// client_id is the client ID of the SSO provider
+	ClientID param.Field[string] `json:"clientId,required"`
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
+}
+
+type OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider struct {
+	// client_secret is the client secret of the SSO provider
+	ClientSecret param.Field[string] `json:"clientSecret,required"`
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
+}
+
+type OrganizationSSOConfigurationUpdateParamsBodyEmailDomain struct {
+	EmailDomain param.Field[string] `json:"emailDomain,required"`
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyEmailDomain) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyEmailDomain) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
+}
+
+type OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer struct {
+	// issuer_url is the URL of the IdP issuer
+	IssuerURL param.Field[string] `json:"issuerUrl,required" format:"uri"`
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
+}
+
+type OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration struct {
+	// state is the state of the SSO configuration
+	State param.Field[OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState] `json:"state,required"`
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
+}
+
+// state is the state of the SSO configuration
+type OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState string
+
+const (
+	OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
+	OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateInactive    OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
+	OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateActive      OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
+)
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState) IsKnown() bool {
+	switch r {
+	case OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateInactive, OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateActive:
+		return true
+	}
+	return false
+}
+
+// state is the state of the SSO configuration
+type OrganizationSSOConfigurationUpdateParamsBodyState string
+
+const (
+	OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationUpdateParamsBodyState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
+	OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateInactive    OrganizationSSOConfigurationUpdateParamsBodyState = "SSO_CONFIGURATION_STATE_INACTIVE"
+	OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateActive      OrganizationSSOConfigurationUpdateParamsBodyState = "SSO_CONFIGURATION_STATE_ACTIVE"
+)
+
+func (r OrganizationSSOConfigurationUpdateParamsBodyState) IsKnown() bool {
+	switch r {
+	case OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateInactive, OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateActive:
+		return true
+	}
+	return false
 }
 
 // Define the version of the Connect protocol

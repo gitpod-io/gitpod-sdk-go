@@ -84,7 +84,11 @@ func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Update(context.TODO(), gitpod.OrganizationUpdateParams{
-		Body:                   gitpod.OrganizationUpdateParamsBody{},
+		Body: gitpod.OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganization{
+			InviteDomains: gitpod.F(gitpod.OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganizationInviteDomains{
+				Domains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
+			}),
+		},
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -166,9 +170,8 @@ func TestOrganizationJoinWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Join(context.TODO(), gitpod.OrganizationJoinParams{
-		Body: gitpod.OrganizationJoinParamsBodyObject{
-			InviteID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Body: gitpod.OrganizationJoinParamsBodyInviteIDIsTheUniqueIdentifierOfTheInviteToJoinTheOrganization{
+			InviteID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		},
 		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationJoinParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
