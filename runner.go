@@ -291,8 +291,12 @@ type RunnerNewResponseRunner struct {
 	// RunnerKind represents the kind of a runner
 	Kind RunnerNewResponseRunnerKind `json:"kind"`
 	// The runner's name which is shown to users
-	Name     string `json:"name"`
-	RunnerID string `json:"runnerId"`
+	Name string `json:"name"`
+	// RunnerProvider identifies the specific implementation type of a runner. Each
+	// provider maps to a specific kind of runner (local or remote), as specified below
+	// for each provider.
+	Provider RunnerNewResponseRunnerProvider `json:"provider"`
+	RunnerID string                          `json:"runnerId"`
 	// The runner's specification
 	Spec RunnerNewResponseRunnerSpec `json:"spec"`
 	// RunnerStatus represents the status of a runner
@@ -397,6 +401,7 @@ type runnerNewResponseRunnerJSON struct {
 	Creator     apijson.Field
 	Kind        apijson.Field
 	Name        apijson.Field
+	Provider    apijson.Field
 	RunnerID    apijson.Field
 	Spec        apijson.Field
 	Status      apijson.Field
@@ -472,6 +477,26 @@ const (
 func (r RunnerNewResponseRunnerKind) IsKnown() bool {
 	switch r {
 	case RunnerNewResponseRunnerKindRunnerKindUnspecified, RunnerNewResponseRunnerKindRunnerKindLocal, RunnerNewResponseRunnerKindRunnerKindRemote, RunnerNewResponseRunnerKindRunnerKindLocalConfiguration:
+		return true
+	}
+	return false
+}
+
+// RunnerProvider identifies the specific implementation type of a runner. Each
+// provider maps to a specific kind of runner (local or remote), as specified below
+// for each provider.
+type RunnerNewResponseRunnerProvider string
+
+const (
+	RunnerNewResponseRunnerProviderRunnerProviderUnspecified RunnerNewResponseRunnerProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerNewResponseRunnerProviderRunnerProviderAwsEc2      RunnerNewResponseRunnerProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerNewResponseRunnerProviderRunnerProviderLinuxHost   RunnerNewResponseRunnerProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerNewResponseRunnerProviderRunnerProviderDesktopMac  RunnerNewResponseRunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+)
+
+func (r RunnerNewResponseRunnerProvider) IsKnown() bool {
+	switch r {
+	case RunnerNewResponseRunnerProviderRunnerProviderUnspecified, RunnerNewResponseRunnerProviderRunnerProviderAwsEc2, RunnerNewResponseRunnerProviderRunnerProviderLinuxHost, RunnerNewResponseRunnerProviderRunnerProviderDesktopMac:
 		return true
 	}
 	return false
@@ -882,8 +907,12 @@ type RunnerGetResponseRunner struct {
 	// RunnerKind represents the kind of a runner
 	Kind RunnerGetResponseRunnerKind `json:"kind"`
 	// The runner's name which is shown to users
-	Name     string `json:"name"`
-	RunnerID string `json:"runnerId"`
+	Name string `json:"name"`
+	// RunnerProvider identifies the specific implementation type of a runner. Each
+	// provider maps to a specific kind of runner (local or remote), as specified below
+	// for each provider.
+	Provider RunnerGetResponseRunnerProvider `json:"provider"`
+	RunnerID string                          `json:"runnerId"`
 	// The runner's specification
 	Spec RunnerGetResponseRunnerSpec `json:"spec"`
 	// RunnerStatus represents the status of a runner
@@ -988,6 +1017,7 @@ type runnerGetResponseRunnerJSON struct {
 	Creator     apijson.Field
 	Kind        apijson.Field
 	Name        apijson.Field
+	Provider    apijson.Field
 	RunnerID    apijson.Field
 	Spec        apijson.Field
 	Status      apijson.Field
@@ -1063,6 +1093,26 @@ const (
 func (r RunnerGetResponseRunnerKind) IsKnown() bool {
 	switch r {
 	case RunnerGetResponseRunnerKindRunnerKindUnspecified, RunnerGetResponseRunnerKindRunnerKindLocal, RunnerGetResponseRunnerKindRunnerKindRemote, RunnerGetResponseRunnerKindRunnerKindLocalConfiguration:
+		return true
+	}
+	return false
+}
+
+// RunnerProvider identifies the specific implementation type of a runner. Each
+// provider maps to a specific kind of runner (local or remote), as specified below
+// for each provider.
+type RunnerGetResponseRunnerProvider string
+
+const (
+	RunnerGetResponseRunnerProviderRunnerProviderUnspecified RunnerGetResponseRunnerProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerGetResponseRunnerProviderRunnerProviderAwsEc2      RunnerGetResponseRunnerProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerGetResponseRunnerProviderRunnerProviderLinuxHost   RunnerGetResponseRunnerProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerGetResponseRunnerProviderRunnerProviderDesktopMac  RunnerGetResponseRunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+)
+
+func (r RunnerGetResponseRunnerProvider) IsKnown() bool {
+	switch r {
+	case RunnerGetResponseRunnerProviderRunnerProviderUnspecified, RunnerGetResponseRunnerProviderRunnerProviderAwsEc2, RunnerGetResponseRunnerProviderRunnerProviderLinuxHost, RunnerGetResponseRunnerProviderRunnerProviderDesktopMac:
 		return true
 	}
 	return false
@@ -1504,8 +1554,12 @@ type RunnerListResponseRunner struct {
 	// RunnerKind represents the kind of a runner
 	Kind RunnerListResponseRunnersKind `json:"kind"`
 	// The runner's name which is shown to users
-	Name     string `json:"name"`
-	RunnerID string `json:"runnerId"`
+	Name string `json:"name"`
+	// RunnerProvider identifies the specific implementation type of a runner. Each
+	// provider maps to a specific kind of runner (local or remote), as specified below
+	// for each provider.
+	Provider RunnerListResponseRunnersProvider `json:"provider"`
+	RunnerID string                            `json:"runnerId"`
 	// The runner's specification
 	Spec RunnerListResponseRunnersSpec `json:"spec"`
 	// RunnerStatus represents the status of a runner
@@ -1610,6 +1664,7 @@ type runnerListResponseRunnerJSON struct {
 	Creator     apijson.Field
 	Kind        apijson.Field
 	Name        apijson.Field
+	Provider    apijson.Field
 	RunnerID    apijson.Field
 	Spec        apijson.Field
 	Status      apijson.Field
@@ -1685,6 +1740,26 @@ const (
 func (r RunnerListResponseRunnersKind) IsKnown() bool {
 	switch r {
 	case RunnerListResponseRunnersKindRunnerKindUnspecified, RunnerListResponseRunnersKindRunnerKindLocal, RunnerListResponseRunnersKindRunnerKindRemote, RunnerListResponseRunnersKindRunnerKindLocalConfiguration:
+		return true
+	}
+	return false
+}
+
+// RunnerProvider identifies the specific implementation type of a runner. Each
+// provider maps to a specific kind of runner (local or remote), as specified below
+// for each provider.
+type RunnerListResponseRunnersProvider string
+
+const (
+	RunnerListResponseRunnersProviderRunnerProviderUnspecified RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerListResponseRunnersProviderRunnerProviderAwsEc2      RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerListResponseRunnersProviderRunnerProviderLinuxHost   RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerListResponseRunnersProviderRunnerProviderDesktopMac  RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+)
+
+func (r RunnerListResponseRunnersProvider) IsKnown() bool {
+	switch r {
+	case RunnerListResponseRunnersProviderRunnerProviderUnspecified, RunnerListResponseRunnersProviderRunnerProviderAwsEc2, RunnerListResponseRunnersProviderRunnerProviderLinuxHost, RunnerListResponseRunnersProviderRunnerProviderDesktopMac:
 		return true
 	}
 	return false
@@ -2090,8 +2165,12 @@ type RunnerNewParams struct {
 	// RunnerKind represents the kind of a runner
 	Kind param.Field[RunnerNewParamsKind] `json:"kind"`
 	// The runner name for humans
-	Name param.Field[string]              `json:"name"`
-	Spec param.Field[RunnerNewParamsSpec] `json:"spec"`
+	Name param.Field[string] `json:"name"`
+	// RunnerProvider identifies the specific implementation type of a runner. Each
+	// provider maps to a specific kind of runner (local or remote), as specified below
+	// for each provider.
+	Provider param.Field[RunnerNewParamsProvider] `json:"provider"`
+	Spec     param.Field[RunnerNewParamsSpec]     `json:"spec"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
@@ -2128,6 +2207,26 @@ const (
 func (r RunnerNewParamsKind) IsKnown() bool {
 	switch r {
 	case RunnerNewParamsKindRunnerKindUnspecified, RunnerNewParamsKindRunnerKindLocal, RunnerNewParamsKindRunnerKindRemote, RunnerNewParamsKindRunnerKindLocalConfiguration:
+		return true
+	}
+	return false
+}
+
+// RunnerProvider identifies the specific implementation type of a runner. Each
+// provider maps to a specific kind of runner (local or remote), as specified below
+// for each provider.
+type RunnerNewParamsProvider string
+
+const (
+	RunnerNewParamsProviderRunnerProviderUnspecified RunnerNewParamsProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerNewParamsProviderRunnerProviderAwsEc2      RunnerNewParamsProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerNewParamsProviderRunnerProviderLinuxHost   RunnerNewParamsProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerNewParamsProviderRunnerProviderDesktopMac  RunnerNewParamsProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+)
+
+func (r RunnerNewParamsProvider) IsKnown() bool {
+	switch r {
+	case RunnerNewParamsProviderRunnerProviderUnspecified, RunnerNewParamsProviderRunnerProviderAwsEc2, RunnerNewParamsProviderRunnerProviderLinuxHost, RunnerNewParamsProviderRunnerProviderDesktopMac:
 		return true
 	}
 	return false
@@ -2287,7 +2386,7 @@ func (r RunnerGetParamsConnect) IsKnown() bool {
 }
 
 type RunnerUpdateParams struct {
-	Body RunnerUpdateParamsBodyUnion `json:"body,required"`
+	Body RunnerUpdateParamsBody `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -2299,207 +2398,10 @@ func (r RunnerUpdateParams) MarshalJSON() (data []byte, err error) {
 }
 
 type RunnerUpdateParamsBody struct {
-	// The runner's name which is shown to users
-	Name param.Field[string]      `json:"name"`
-	Spec param.Field[interface{}] `json:"spec"`
 }
 
 func (r RunnerUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBody) implementsRunnerUpdateParamsBodyUnion() {}
-
-// Satisfied by [RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers],
-// [RunnerUpdateParamsBodySpec], [RunnerUpdateParamsBody].
-type RunnerUpdateParamsBodyUnion interface {
-	implementsRunnerUpdateParamsBodyUnion()
-}
-
-type RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers struct {
-	// The runner's name which is shown to users
-	Name param.Field[string] `json:"name,required"`
-}
-
-func (r RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers) implementsRunnerUpdateParamsBodyUnion() {
-}
-
-type RunnerUpdateParamsBodySpec struct {
-	Spec param.Field[RunnerUpdateParamsBodySpecSpecUnion] `json:"spec,required"`
-}
-
-func (r RunnerUpdateParamsBodySpec) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpec) implementsRunnerUpdateParamsBodyUnion() {}
-
-type RunnerUpdateParamsBodySpecSpec struct {
-	Configuration param.Field[interface{}] `json:"configuration"`
-	// RunnerPhase represents the phase a runner is in
-	DesiredPhase param.Field[RunnerUpdateParamsBodySpecSpecDesiredPhase] `json:"desiredPhase"`
-}
-
-func (r RunnerUpdateParamsBodySpecSpec) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpecSpec) implementsRunnerUpdateParamsBodySpecSpecUnion() {}
-
-// Satisfied by [RunnerUpdateParamsBodySpecSpecConfiguration],
-// [RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners],
-// [RunnerUpdateParamsBodySpecSpec].
-type RunnerUpdateParamsBodySpecSpecUnion interface {
-	implementsRunnerUpdateParamsBodySpecSpecUnion()
-}
-
-type RunnerUpdateParamsBodySpecSpecConfiguration struct {
-	Configuration param.Field[RunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion] `json:"configuration,required"`
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfiguration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfiguration) implementsRunnerUpdateParamsBodySpecSpecUnion() {
-}
-
-type RunnerUpdateParamsBodySpecSpecConfigurationConfiguration struct {
-	// auto_update indicates whether the runner should automatically update itself.
-	AutoUpdate param.Field[bool] `json:"autoUpdate"`
-	// The release channel the runner is on
-	ReleaseChannel param.Field[RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel] `json:"releaseChannel"`
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfiguration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfiguration) implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion() {
-}
-
-// Satisfied by
-// [RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself],
-// [RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn],
-// [RunnerUpdateParamsBodySpecSpecConfigurationConfiguration].
-type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion interface {
-	implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion()
-}
-
-type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself struct {
-	// auto_update indicates whether the runner should automatically update itself.
-	AutoUpdate param.Field[bool] `json:"autoUpdate,required"`
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationAutoUpdateIndicatesWhetherTheRunnerShouldAutomaticallyUpdateItself) implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion() {
-}
-
-type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn struct {
-	// The release channel the runner is on
-	ReleaseChannel param.Field[RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel] `json:"releaseChannel,required"`
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOn) implementsRunnerUpdateParamsBodySpecSpecConfigurationConfigurationUnion() {
-}
-
-// The release channel the runner is on
-type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel string
-
-const (
-	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelUnspecified RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelStable      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelLatest      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
-)
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannel) IsKnown() bool {
-	switch r {
-	case RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelUnspecified, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelStable, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationTheReleaseChannelTheRunnerIsOnReleaseChannelRunnerReleaseChannelLatest:
-		return true
-	}
-	return false
-}
-
-// The release channel the runner is on
-type RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel string
-
-const (
-	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelUnspecified RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelStable      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelLatest      RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
-)
-
-func (r RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannel) IsKnown() bool {
-	switch r {
-	case RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelUnspecified, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelStable, RunnerUpdateParamsBodySpecSpecConfigurationConfigurationReleaseChannelRunnerReleaseChannelLatest:
-		return true
-	}
-	return false
-}
-
-type RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners struct {
-	// RunnerPhase represents the phase a runner is in
-	DesiredPhase param.Field[RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase] `json:"desiredPhase,required"`
-}
-
-func (r RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunners) implementsRunnerUpdateParamsBodySpecSpecUnion() {
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase string
-
-const (
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseUnspecified RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseCreated     RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_CREATED"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseInactive    RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseActive      RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleting    RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_DELETING"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleted     RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_DELETED"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDegraded    RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhase) IsKnown() bool {
-	switch r {
-	case RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseUnspecified, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseCreated, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseInactive, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseActive, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleting, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDeleted, RunnerUpdateParamsBodySpecSpecDesiredPhaseCanCurrentlyOnlyBeUpdatedOnLocalConfigurationRunnersToToggleWhetherLocalRunnersAreAllowedForRunningEnvironmentsInTheOrganizationSetToActiveToEnableLocalRunnersInactiveToDisableAllLocalRunnersExistingLocalRunnersAndTheirEnvironmentsWillStopAndCannotBeStartedAgainUntilTheDesiredPhaseIsSetToActiveUseThisCarefullyAsItWillAffectAllUsersInTheOrganizationWhoUseLocalRunnersDesiredPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
-}
-
-// RunnerPhase represents the phase a runner is in
-type RunnerUpdateParamsBodySpecSpecDesiredPhase string
-
-const (
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseUnspecified RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseCreated     RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_CREATED"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseInactive    RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseActive      RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleting    RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_DELETING"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleted     RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_DELETED"
-	RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDegraded    RunnerUpdateParamsBodySpecSpecDesiredPhase = "RUNNER_PHASE_DEGRADED"
-)
-
-func (r RunnerUpdateParamsBodySpecSpecDesiredPhase) IsKnown() bool {
-	switch r {
-	case RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseUnspecified, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseCreated, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseInactive, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseActive, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleting, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDeleted, RunnerUpdateParamsBodySpecSpecDesiredPhaseRunnerPhaseDegraded:
-		return true
-	}
-	return false
 }
 
 // Define the version of the Connect protocol

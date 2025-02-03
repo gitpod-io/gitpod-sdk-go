@@ -38,9 +38,16 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsContextURL{
-						ContextURL: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializerSpecsContextURLContextURL{
+					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsObject{
+						ContextURL: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializerSpecsObjectContextURL{
 							URL: gitpod.F("https://example.com"),
+						}),
+						Git: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializerSpecsObjectGit{
+							CheckoutLocation:  gitpod.F("checkoutLocation"),
+							CloneTarget:       gitpod.F("cloneTarget"),
+							RemoteUri:         gitpod.F("remoteUri"),
+							TargetMode:        gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializerSpecsObjectGitTargetModeCloneTargetModeUnspecified),
+							UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 						}),
 					}}),
 				}),
@@ -62,6 +69,8 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentNewParamsSpecSecretUnion{gitpod.EnvironmentNewParamsSpecSecretsObject{
 				EnvironmentVariable: gitpod.F("environmentVariable"),
+				FilePath:            gitpod.F("filePath"),
+				GitCredentialHost:   gitpod.F("gitCredentialHost"),
 				Name:                gitpod.F("name"),
 				Session:             gitpod.F("session"),
 				Source:              gitpod.F("source"),
@@ -130,9 +139,7 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Update(context.TODO(), gitpod.EnvironmentUpdateParams{
-		Body: gitpod.EnvironmentUpdateParamsBodyMetadata{
-			Metadata: gitpod.F[any](map[string]interface{}{}),
-		},
+		Body:                   gitpod.EnvironmentUpdateParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
@@ -227,9 +234,16 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
 				Initializer: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsContextURL{
-						ContextURL: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsContextURLContextURL{
+					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsObject{
+						ContextURL: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsObjectContextURL{
 							URL: gitpod.F("https://example.com"),
+						}),
+						Git: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsObjectGit{
+							CheckoutLocation:  gitpod.F("checkoutLocation"),
+							CloneTarget:       gitpod.F("cloneTarget"),
+							RemoteUri:         gitpod.F("remoteUri"),
+							TargetMode:        gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsObjectGitTargetModeCloneTargetModeUnspecified),
+							UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 						}),
 					}}),
 				}),
@@ -251,6 +265,8 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecretUnion{gitpod.EnvironmentNewFromProjectParamsSpecSecretsObject{
 				EnvironmentVariable: gitpod.F("environmentVariable"),
+				FilePath:            gitpod.F("filePath"),
+				GitCredentialHost:   gitpod.F("gitCredentialHost"),
 				Name:                gitpod.F("name"),
 				Session:             gitpod.F("session"),
 				Source:              gitpod.F("source"),

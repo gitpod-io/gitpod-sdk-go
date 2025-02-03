@@ -479,43 +479,30 @@ func (r EventWatchParamsBody) MarshalJSON() (data []byte, err error) {
 
 func (r EventWatchParamsBody) implementsEventWatchParamsBodyUnion() {}
 
-// Satisfied by
-// [EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment],
-// [EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued],
-// [EventWatchParamsBody].
+// Satisfied by [EventWatchParamsBodyObject], [EventWatchParamsBodyObject],
+// [EventWatchParamsBodyObject], [EventWatchParamsBody].
 type EventWatchParamsBodyUnion interface {
 	implementsEventWatchParamsBodyUnion()
 }
 
-type EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment struct {
+type EventWatchParamsBodyObject struct {
 	// Environment scope produces events for the environment itself, all tasks, task
 	// executions,
 	//
 	// and services associated with that environment.
 	EnvironmentID param.Field[string] `json:"environmentId,required"`
-}
-
-func (r EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment) implementsEventWatchParamsBodyUnion() {
-}
-
-type EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued struct {
 	// Organization scope produces events for all projects, runners and environments
 	//
 	// the caller can see within their organization. No task, task execution or service
 	// events are produed.
-	Organization param.Field[bool] `json:"organization,required"`
+	Organization param.Field[bool] `json:"organization"`
 }
 
-func (r EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued) MarshalJSON() (data []byte, err error) {
+func (r EventWatchParamsBodyObject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued) implementsEventWatchParamsBodyUnion() {
-}
+func (r EventWatchParamsBodyObject) implementsEventWatchParamsBodyUnion() {}
 
 // Define the version of the Connect protocol
 type EventWatchParamsConnectProtocolVersion float64

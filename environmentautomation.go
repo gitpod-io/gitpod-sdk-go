@@ -123,11 +123,11 @@ func (r EnvironmentAutomationUpsertParamsAutomationsFile) MarshalJSON() (data []
 }
 
 type EnvironmentAutomationUpsertParamsAutomationsFileServices struct {
-	Commands    param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands] `json:"commands"`
-	Description param.Field[string]                                                           `json:"description"`
-	Name        param.Field[string]                                                           `json:"name"`
-	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn]   `json:"runsOn"`
-	TriggeredBy param.Field[[]string]                                                         `json:"triggeredBy"`
+	Commands    param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands]    `json:"commands"`
+	Description param.Field[string]                                                              `json:"description"`
+	Name        param.Field[string]                                                              `json:"name"`
+	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion] `json:"runsOn"`
+	TriggeredBy param.Field[[]string]                                                            `json:"triggeredBy"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileServices) MarshalJSON() (data []byte, err error) {
@@ -165,29 +165,51 @@ func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands) Marsha
 }
 
 type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn struct {
-	Docker param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker] `json:"docker,required"`
+	Docker param.Field[interface{}] `json:"docker"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn) implementsEnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion() {
+}
+
+// Satisfied by
+// [EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker],
+// [EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker],
+// [EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn].
+type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion interface {
+	implementsEnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion()
+}
+
 type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker struct {
-	Environment param.Field[[]string] `json:"environment"`
-	Image       param.Field[string]   `json:"image"`
+	Docker param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDockerDocker] `json:"docker,required"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker) implementsEnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion() {
+}
+
+type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDockerDocker struct {
+	Environment param.Field[[]string] `json:"environment"`
+	Image       param.Field[string]   `json:"image"`
+}
+
+func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDockerDocker) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type EnvironmentAutomationUpsertParamsAutomationsFileTasks struct {
-	Command     param.Field[string]                                                      `json:"command"`
-	DependsOn   param.Field[[]string]                                                    `json:"dependsOn"`
-	Description param.Field[string]                                                      `json:"description"`
-	Name        param.Field[string]                                                      `json:"name"`
-	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn] `json:"runsOn"`
-	TriggeredBy param.Field[[]string]                                                    `json:"triggeredBy"`
+	Command     param.Field[string]                                                           `json:"command"`
+	DependsOn   param.Field[[]string]                                                         `json:"dependsOn"`
+	Description param.Field[string]                                                           `json:"description"`
+	Name        param.Field[string]                                                           `json:"name"`
+	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion] `json:"runsOn"`
+	TriggeredBy param.Field[[]string]                                                         `json:"triggeredBy"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileTasks) MarshalJSON() (data []byte, err error) {
@@ -195,18 +217,40 @@ func (r EnvironmentAutomationUpsertParamsAutomationsFileTasks) MarshalJSON() (da
 }
 
 type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn struct {
-	Docker param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker] `json:"docker,required"`
+	Docker param.Field[interface{}] `json:"docker"`
 }
 
 func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn) implementsEnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion() {
+}
+
+// Satisfied by
+// [EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker],
+// [EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker],
+// [EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn].
+type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion interface {
+	implementsEnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion()
+}
+
 type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker struct {
+	Docker param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDockerDocker] `json:"docker,required"`
+}
+
+func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker) implementsEnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion() {
+}
+
+type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDockerDocker struct {
 	Environment param.Field[[]string] `json:"environment"`
 	Image       param.Field[string]   `json:"image"`
 }
 
-func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDockerDocker) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

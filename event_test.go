@@ -56,8 +56,9 @@ func TestEventWatchWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Events.Watch(context.TODO(), gitpod.EventWatchParams{
-		Body: gitpod.EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment{
+		Body: gitpod.EventWatchParamsBodyObject{
 			EnvironmentID: gitpod.F("environmentId"),
+			Organization:  gitpod.F(true),
 		},
 		ConnectProtocolVersion: gitpod.F(gitpod.EventWatchParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),

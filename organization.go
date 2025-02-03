@@ -1882,7 +1882,7 @@ func (r OrganizationGetParamsConnect) IsKnown() bool {
 }
 
 type OrganizationUpdateParams struct {
-	Body OrganizationUpdateParamsBodyUnion `json:"body,required"`
+	Body OrganizationUpdateParamsBody `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[OrganizationUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Define the timeout, in ms
@@ -1894,57 +1894,10 @@ func (r OrganizationUpdateParams) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationUpdateParamsBody struct {
-	InviteDomains param.Field[interface{}] `json:"inviteDomains"`
-	// name is the new name of the organization
-	Name param.Field[string] `json:"name"`
 }
 
 func (r OrganizationUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationUpdateParamsBody) implementsOrganizationUpdateParamsBodyUnion() {}
-
-// Satisfied by
-// [OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganization],
-// [OrganizationUpdateParamsBodyNameIsTheNewNameOfTheOrganization],
-// [OrganizationUpdateParamsBody].
-type OrganizationUpdateParamsBodyUnion interface {
-	implementsOrganizationUpdateParamsBodyUnion()
-}
-
-type OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganization struct {
-	// invite_domains is the domain allowlist of the organization
-	InviteDomains param.Field[OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganizationInviteDomains] `json:"inviteDomains,required"`
-}
-
-func (r OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganization) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganization) implementsOrganizationUpdateParamsBodyUnion() {
-}
-
-// invite_domains is the domain allowlist of the organization
-type OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganizationInviteDomains struct {
-	// domains is the list of domains that are allowed to join the organization
-	Domains param.Field[[]string] `json:"domains"`
-}
-
-func (r OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganizationInviteDomains) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type OrganizationUpdateParamsBodyNameIsTheNewNameOfTheOrganization struct {
-	// name is the new name of the organization
-	Name param.Field[string] `json:"name,required"`
-}
-
-func (r OrganizationUpdateParamsBodyNameIsTheNewNameOfTheOrganization) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationUpdateParamsBodyNameIsTheNewNameOfTheOrganization) implementsOrganizationUpdateParamsBodyUnion() {
 }
 
 // Define the version of the Connect protocol
@@ -2103,37 +2056,25 @@ func (r OrganizationJoinParamsBody) MarshalJSON() (data []byte, err error) {
 
 func (r OrganizationJoinParamsBody) implementsOrganizationJoinParamsBodyUnion() {}
 
-// Satisfied by
-// [OrganizationJoinParamsBodyInviteIDIsTheUniqueIdentifierOfTheInviteToJoinTheOrganization],
-// [OrganizationJoinParamsBodyOrganizationIDIsTheUniqueIdentifierOfTheOrganizationToJoin],
+// Satisfied by [OrganizationJoinParamsBodyObject],
+// [OrganizationJoinParamsBodyObject], [OrganizationJoinParamsBodyObject],
 // [OrganizationJoinParamsBody].
 type OrganizationJoinParamsBodyUnion interface {
 	implementsOrganizationJoinParamsBodyUnion()
 }
 
-type OrganizationJoinParamsBodyInviteIDIsTheUniqueIdentifierOfTheInviteToJoinTheOrganization struct {
+type OrganizationJoinParamsBodyObject struct {
 	// invite_id is the unique identifier of the invite to join the organization.
 	InviteID param.Field[string] `json:"inviteId,required" format:"uuid"`
-}
-
-func (r OrganizationJoinParamsBodyInviteIDIsTheUniqueIdentifierOfTheInviteToJoinTheOrganization) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationJoinParamsBodyInviteIDIsTheUniqueIdentifierOfTheInviteToJoinTheOrganization) implementsOrganizationJoinParamsBodyUnion() {
-}
-
-type OrganizationJoinParamsBodyOrganizationIDIsTheUniqueIdentifierOfTheOrganizationToJoin struct {
 	// organization_id is the unique identifier of the Organization to join.
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 }
 
-func (r OrganizationJoinParamsBodyOrganizationIDIsTheUniqueIdentifierOfTheOrganizationToJoin) MarshalJSON() (data []byte, err error) {
+func (r OrganizationJoinParamsBodyObject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r OrganizationJoinParamsBodyOrganizationIDIsTheUniqueIdentifierOfTheOrganizationToJoin) implementsOrganizationJoinParamsBodyUnion() {
-}
+func (r OrganizationJoinParamsBodyObject) implementsOrganizationJoinParamsBodyUnion() {}
 
 // Define the version of the Connect protocol
 type OrganizationJoinParamsConnectProtocolVersion float64

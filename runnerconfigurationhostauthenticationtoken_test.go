@@ -89,9 +89,7 @@ func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *t
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.Update(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParams{
-		Body: gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyExpiresAt{
-			ExpiresAt: gitpod.F(time.Now()),
-		},
+		Body:                   gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBody{},
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})

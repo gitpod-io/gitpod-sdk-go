@@ -37,8 +37,8 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 					}),
 					Description: gitpod.F("description"),
 					Name:        gitpod.F("x"),
-					RunsOn: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn{
-						Docker: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker{
+					RunsOn: gitpod.F[gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnUnion](gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker{
+						Docker: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDockerDocker{
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
@@ -52,8 +52,8 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 					DependsOn:   gitpod.F([]string{"string"}),
 					Description: gitpod.F("description"),
 					Name:        gitpod.F("x"),
-					RunsOn: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn{
-						Docker: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker{
+					RunsOn: gitpod.F[gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnUnion](gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker{
+						Docker: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDockerDocker{
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),

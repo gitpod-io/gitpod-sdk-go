@@ -164,12 +164,14 @@ func (r *RunnerConfigurationSchemaGetResponseSchemaEnvironmentClass) UnmarshalJS
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
+// [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject].
 func (r RunnerConfigurationSchemaGetResponseSchemaEnvironmentClass) AsUnion() RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesUnion {
 	return r.union
 }
 
 // Union satisfied by
+// [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
 // [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject],
@@ -203,17 +205,25 @@ func init() {
 			TypeFilter: gjson.JSON,
 			Type:       reflect.TypeOf(RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject{}),
 		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject{}),
+		},
 	)
 }
 
 type RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObject struct {
-	Bool        RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectBool `json:"bool,required"`
-	ID          string                                                                 `json:"id"`
-	Description string                                                                 `json:"description"`
-	Name        string                                                                 `json:"name"`
-	Required    bool                                                                   `json:"required"`
-	Secret      bool                                                                   `json:"secret"`
-	JSON        runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectJSON `json:"-"`
+	Bool        RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectBool    `json:"bool,required"`
+	ID          string                                                                    `json:"id"`
+	Description string                                                                    `json:"description"`
+	Display     RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplay `json:"display"`
+	Enum        RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnum    `json:"enum"`
+	Int         RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectInt     `json:"int"`
+	Name        string                                                                    `json:"name"`
+	Required    bool                                                                      `json:"required"`
+	Secret      bool                                                                      `json:"secret"`
+	String      RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectString  `json:"string"`
+	JSON        runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectJSON    `json:"-"`
 }
 
 // runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectJSON contains
@@ -223,9 +233,13 @@ type runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectJSON stru
 	Bool        apijson.Field
 	ID          apijson.Field
 	Description apijson.Field
+	Display     apijson.Field
+	Enum        apijson.Field
+	Int         apijson.Field
 	Name        apijson.Field
 	Required    apijson.Field
 	Secret      apijson.Field
+	String      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -260,6 +274,102 @@ func (r *RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectBool)
 }
 
 func (r runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectBoolJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplay struct {
+	Default string                                                                        `json:"default"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplayJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplayJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplay]
+type runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplayJSON struct {
+	Default     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplay) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectDisplayJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnum struct {
+	Default string                                                                     `json:"default"`
+	Values  []string                                                                   `json:"values"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnumJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnumJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnum]
+type runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnumJSON struct {
+	Default     apijson.Field
+	Values      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnum) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectEnumJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectInt struct {
+	Default int64                                                                     `json:"default"`
+	Max     int64                                                                     `json:"max"`
+	Min     int64                                                                     `json:"min"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectIntJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectIntJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectInt]
+type runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectIntJSON struct {
+	Default     apijson.Field
+	Max         apijson.Field
+	Min         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectInt) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectIntJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectString struct {
+	Default string                                                                       `json:"default"`
+	Pattern string                                                                       `json:"pattern"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectStringJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectStringJSON
+// contains the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectString]
+type runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectStringJSON struct {
+	Default     apijson.Field
+	Pattern     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectString) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaEnvironmentClassesObjectStringJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -326,12 +436,14 @@ func (r *RunnerConfigurationSchemaGetResponseSchemaRunnerConfig) UnmarshalJSON(d
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
+// [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject].
 func (r RunnerConfigurationSchemaGetResponseSchemaRunnerConfig) AsUnion() RunnerConfigurationSchemaGetResponseSchemaRunnerConfigUnion {
 	return r.union
 }
 
 // Union satisfied by
+// [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
 // [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject],
@@ -365,17 +477,25 @@ func init() {
 			TypeFilter: gjson.JSON,
 			Type:       reflect.TypeOf(RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject{}),
 		},
+		apijson.UnionVariant{
+			TypeFilter: gjson.JSON,
+			Type:       reflect.TypeOf(RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject{}),
+		},
 	)
 }
 
 type RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObject struct {
-	Bool        RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectBool `json:"bool,required"`
-	ID          string                                                           `json:"id"`
-	Description string                                                           `json:"description"`
-	Name        string                                                           `json:"name"`
-	Required    bool                                                             `json:"required"`
-	Secret      bool                                                             `json:"secret"`
-	JSON        runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectJSON `json:"-"`
+	Bool        RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectBool    `json:"bool,required"`
+	ID          string                                                              `json:"id"`
+	Description string                                                              `json:"description"`
+	Display     RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplay `json:"display"`
+	Enum        RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnum    `json:"enum"`
+	Int         RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectInt     `json:"int"`
+	Name        string                                                              `json:"name"`
+	Required    bool                                                                `json:"required"`
+	Secret      bool                                                                `json:"secret"`
+	String      RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectString  `json:"string"`
+	JSON        runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectJSON    `json:"-"`
 }
 
 // runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectJSON contains the
@@ -385,9 +505,13 @@ type runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectJSON struct {
 	Bool        apijson.Field
 	ID          apijson.Field
 	Description apijson.Field
+	Display     apijson.Field
+	Enum        apijson.Field
+	Int         apijson.Field
 	Name        apijson.Field
 	Required    apijson.Field
 	Secret      apijson.Field
+	String      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -422,6 +546,102 @@ func (r *RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectBool) Unmar
 }
 
 func (r runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectBoolJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplay struct {
+	Default string                                                                  `json:"default"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplayJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplayJSON contains
+// the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplay]
+type runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplayJSON struct {
+	Default     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplay) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectDisplayJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnum struct {
+	Default string                                                               `json:"default"`
+	Values  []string                                                             `json:"values"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnumJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnumJSON contains
+// the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnum]
+type runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnumJSON struct {
+	Default     apijson.Field
+	Values      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnum) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectEnumJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectInt struct {
+	Default int64                                                               `json:"default"`
+	Max     int64                                                               `json:"max"`
+	Min     int64                                                               `json:"min"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectIntJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectIntJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectInt]
+type runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectIntJSON struct {
+	Default     apijson.Field
+	Max         apijson.Field
+	Min         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectInt) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectIntJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectString struct {
+	Default string                                                                 `json:"default"`
+	Pattern string                                                                 `json:"pattern"`
+	JSON    runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectStringJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectStringJSON contains
+// the JSON metadata for the struct
+// [RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectString]
+type runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectStringJSON struct {
+	Default     apijson.Field
+	Pattern     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectString) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaGetResponseSchemaRunnerConfigObjectStringJSON) RawJSON() string {
 	return r.raw
 }
 
