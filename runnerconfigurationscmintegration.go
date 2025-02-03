@@ -58,7 +58,7 @@ func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, para
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -394,45 +394,15 @@ func (r RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion) IsKnow
 }
 
 type RunnerConfigurationScmIntegrationGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationScmIntegrationGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationScmIntegrationGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationScmIntegrationGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                            `query:"message"`
+	ID                     param.Field[string]                                                           `json:"id" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [RunnerConfigurationScmIntegrationGetParams]'s query
-// parameters as `url.Values`.
-func (r RunnerConfigurationScmIntegrationGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationScmIntegrationGetParamsEncoding string
-
-const (
-	RunnerConfigurationScmIntegrationGetParamsEncodingProto RunnerConfigurationScmIntegrationGetParamsEncoding = "proto"
-	RunnerConfigurationScmIntegrationGetParamsEncodingJson  RunnerConfigurationScmIntegrationGetParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationScmIntegrationGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationGetParamsEncodingProto, RunnerConfigurationScmIntegrationGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r RunnerConfigurationScmIntegrationGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -445,38 +415,6 @@ const (
 func (r RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type RunnerConfigurationScmIntegrationGetParamsCompression string
-
-const (
-	RunnerConfigurationScmIntegrationGetParamsCompressionIdentity RunnerConfigurationScmIntegrationGetParamsCompression = "identity"
-	RunnerConfigurationScmIntegrationGetParamsCompressionGzip     RunnerConfigurationScmIntegrationGetParamsCompression = "gzip"
-	RunnerConfigurationScmIntegrationGetParamsCompressionBr       RunnerConfigurationScmIntegrationGetParamsCompression = "br"
-)
-
-func (r RunnerConfigurationScmIntegrationGetParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationGetParamsCompressionIdentity, RunnerConfigurationScmIntegrationGetParamsCompressionGzip, RunnerConfigurationScmIntegrationGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationGetParamsConnect string
-
-const (
-	RunnerConfigurationScmIntegrationGetParamsConnectV1 RunnerConfigurationScmIntegrationGetParamsConnect = "v1"
-)
-
-func (r RunnerConfigurationScmIntegrationGetParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationGetParamsConnectV1:
 		return true
 	}
 	return false

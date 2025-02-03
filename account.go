@@ -44,7 +44,7 @@ func (r *AccountService) Get(ctx context.Context, params AccountGetParams, opts 
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.AccountService/GetAccount"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -73,7 +73,7 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, params AccountGetSS
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.AccountService/GetSSOLoginURL"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -234,44 +234,15 @@ func (r accountListLoginProvidersResponsePaginationJSON) RawJSON() string {
 }
 
 type AccountGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[AccountGetParamsEncoding] `query:"encoding,required"`
+	Body interface{} `json:"body,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[AccountGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[AccountGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[AccountGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                  `query:"message"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [AccountGetParams]'s query parameters as `url.Values`.
-func (r AccountGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type AccountGetParamsEncoding string
-
-const (
-	AccountGetParamsEncodingProto AccountGetParamsEncoding = "proto"
-	AccountGetParamsEncodingJson  AccountGetParamsEncoding = "json"
-)
-
-func (r AccountGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case AccountGetParamsEncodingProto, AccountGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r AccountGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r.Body)
 }
 
 // Define the version of the Connect protocol
@@ -284,38 +255,6 @@ const (
 func (r AccountGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case AccountGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type AccountGetParamsCompression string
-
-const (
-	AccountGetParamsCompressionIdentity AccountGetParamsCompression = "identity"
-	AccountGetParamsCompressionGzip     AccountGetParamsCompression = "gzip"
-	AccountGetParamsCompressionBr       AccountGetParamsCompression = "br"
-)
-
-func (r AccountGetParamsCompression) IsKnown() bool {
-	switch r {
-	case AccountGetParamsCompressionIdentity, AccountGetParamsCompressionGzip, AccountGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type AccountGetParamsConnect string
-
-const (
-	AccountGetParamsConnectV1 AccountGetParamsConnect = "v1"
-)
-
-func (r AccountGetParamsConnect) IsKnown() bool {
-	switch r {
-	case AccountGetParamsConnectV1:
 		return true
 	}
 	return false
@@ -349,45 +288,18 @@ func (r AccountDeleteParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type AccountGetSSOLoginURLParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[AccountGetSSOLoginURLParamsEncoding] `query:"encoding,required"`
+	// return_to is the URL the user will be redirected to after login
+	ReturnTo param.Field[string] `json:"returnTo,required" format:"uri"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[AccountGetSSOLoginURLParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[AccountGetSSOLoginURLParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[AccountGetSSOLoginURLParamsConnect] `query:"connect"`
-	Message param.Field[string]                             `query:"message"`
+	// email is the email the user wants to login with
+	Email param.Field[string] `json:"email" format:"email"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [AccountGetSSOLoginURLParams]'s query parameters as
-// `url.Values`.
-func (r AccountGetSSOLoginURLParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type AccountGetSSOLoginURLParamsEncoding string
-
-const (
-	AccountGetSSOLoginURLParamsEncodingProto AccountGetSSOLoginURLParamsEncoding = "proto"
-	AccountGetSSOLoginURLParamsEncodingJson  AccountGetSSOLoginURLParamsEncoding = "json"
-)
-
-func (r AccountGetSSOLoginURLParamsEncoding) IsKnown() bool {
-	switch r {
-	case AccountGetSSOLoginURLParamsEncodingProto, AccountGetSSOLoginURLParamsEncodingJson:
-		return true
-	}
-	return false
+func (r AccountGetSSOLoginURLParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -400,38 +312,6 @@ const (
 func (r AccountGetSSOLoginURLParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case AccountGetSSOLoginURLParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type AccountGetSSOLoginURLParamsCompression string
-
-const (
-	AccountGetSSOLoginURLParamsCompressionIdentity AccountGetSSOLoginURLParamsCompression = "identity"
-	AccountGetSSOLoginURLParamsCompressionGzip     AccountGetSSOLoginURLParamsCompression = "gzip"
-	AccountGetSSOLoginURLParamsCompressionBr       AccountGetSSOLoginURLParamsCompression = "br"
-)
-
-func (r AccountGetSSOLoginURLParamsCompression) IsKnown() bool {
-	switch r {
-	case AccountGetSSOLoginURLParamsCompressionIdentity, AccountGetSSOLoginURLParamsCompressionGzip, AccountGetSSOLoginURLParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type AccountGetSSOLoginURLParamsConnect string
-
-const (
-	AccountGetSSOLoginURLParamsConnectV1 AccountGetSSOLoginURLParamsConnect = "v1"
-)
-
-func (r AccountGetSSOLoginURLParamsConnect) IsKnown() bool {
-	switch r {
-	case AccountGetSSOLoginURLParamsConnectV1:
 		return true
 	}
 	return false

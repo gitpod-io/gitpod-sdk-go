@@ -82,12 +82,8 @@ func TestUserPatGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.Pats.Get(context.TODO(), gitpod.UserPatGetParams{
-		Encoding:               gitpod.F(gitpod.UserPatGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.UserPatGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.UserPatGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.UserPatGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		PersonalAccessTokenID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

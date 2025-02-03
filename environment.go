@@ -68,7 +68,7 @@ func (r *EnvironmentService) Get(ctx context.Context, params EnvironmentGetParam
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -8459,44 +8459,16 @@ func (r EnvironmentNewParamsSpecTimeout) MarshalJSON() (data []byte, err error) 
 }
 
 type EnvironmentGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                      `query:"message"`
+	// environment_id specifies the environment to get
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EnvironmentGetParams]'s query parameters as `url.Values`.
-func (r EnvironmentGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentGetParamsEncoding string
-
-const (
-	EnvironmentGetParamsEncodingProto EnvironmentGetParamsEncoding = "proto"
-	EnvironmentGetParamsEncodingJson  EnvironmentGetParamsEncoding = "json"
-)
-
-func (r EnvironmentGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentGetParamsEncodingProto, EnvironmentGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -8509,38 +8481,6 @@ const (
 func (r EnvironmentGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case EnvironmentGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type EnvironmentGetParamsCompression string
-
-const (
-	EnvironmentGetParamsCompressionIdentity EnvironmentGetParamsCompression = "identity"
-	EnvironmentGetParamsCompressionGzip     EnvironmentGetParamsCompression = "gzip"
-	EnvironmentGetParamsCompressionBr       EnvironmentGetParamsCompression = "br"
-)
-
-func (r EnvironmentGetParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentGetParamsCompressionIdentity, EnvironmentGetParamsCompressionGzip, EnvironmentGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type EnvironmentGetParamsConnect string
-
-const (
-	EnvironmentGetParamsConnectV1 EnvironmentGetParamsConnect = "v1"
-)
-
-func (r EnvironmentGetParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentGetParamsConnectV1:
 		return true
 	}
 	return false

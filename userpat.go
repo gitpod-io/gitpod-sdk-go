@@ -73,7 +73,7 @@ func (r *UserPatService) Get(ctx context.Context, params UserPatGetParams, opts 
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/GetPersonalAccessToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -953,44 +953,15 @@ func (r UserPatDeleteParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type UserPatGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[UserPatGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[UserPatGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[UserPatGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[UserPatGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                  `query:"message"`
+	PersonalAccessTokenID  param.Field[string]                                 `json:"personalAccessTokenId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [UserPatGetParams]'s query parameters as `url.Values`.
-func (r UserPatGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type UserPatGetParamsEncoding string
-
-const (
-	UserPatGetParamsEncodingProto UserPatGetParamsEncoding = "proto"
-	UserPatGetParamsEncodingJson  UserPatGetParamsEncoding = "json"
-)
-
-func (r UserPatGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case UserPatGetParamsEncodingProto, UserPatGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r UserPatGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -1003,38 +974,6 @@ const (
 func (r UserPatGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case UserPatGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type UserPatGetParamsCompression string
-
-const (
-	UserPatGetParamsCompressionIdentity UserPatGetParamsCompression = "identity"
-	UserPatGetParamsCompressionGzip     UserPatGetParamsCompression = "gzip"
-	UserPatGetParamsCompressionBr       UserPatGetParamsCompression = "br"
-)
-
-func (r UserPatGetParamsCompression) IsKnown() bool {
-	switch r {
-	case UserPatGetParamsCompressionIdentity, UserPatGetParamsCompressionGzip, UserPatGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type UserPatGetParamsConnect string
-
-const (
-	UserPatGetParamsConnectV1 UserPatGetParamsConnect = "v1"
-)
-
-func (r UserPatGetParamsConnect) IsKnown() bool {
-	switch r {
-	case UserPatGetParamsConnectV1:
 		return true
 	}
 	return false

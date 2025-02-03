@@ -63,7 +63,7 @@ func (r *EnvironmentAutomationTaskService) Get(ctx context.Context, params Envir
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTask"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -2496,45 +2496,15 @@ func (r EnvironmentAutomationTaskNewParamsSpecRunsOnDocker) MarshalJSON() (data 
 }
 
 type EnvironmentAutomationTaskGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentAutomationTaskGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentAutomationTaskGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentAutomationTaskGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                    `query:"message"`
+	ID                     param.Field[string]                                                   `json:"id" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EnvironmentAutomationTaskGetParams]'s query parameters as
-// `url.Values`.
-func (r EnvironmentAutomationTaskGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentAutomationTaskGetParamsEncoding string
-
-const (
-	EnvironmentAutomationTaskGetParamsEncodingProto EnvironmentAutomationTaskGetParamsEncoding = "proto"
-	EnvironmentAutomationTaskGetParamsEncodingJson  EnvironmentAutomationTaskGetParamsEncoding = "json"
-)
-
-func (r EnvironmentAutomationTaskGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskGetParamsEncodingProto, EnvironmentAutomationTaskGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationTaskGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -2547,38 +2517,6 @@ const (
 func (r EnvironmentAutomationTaskGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case EnvironmentAutomationTaskGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type EnvironmentAutomationTaskGetParamsCompression string
-
-const (
-	EnvironmentAutomationTaskGetParamsCompressionIdentity EnvironmentAutomationTaskGetParamsCompression = "identity"
-	EnvironmentAutomationTaskGetParamsCompressionGzip     EnvironmentAutomationTaskGetParamsCompression = "gzip"
-	EnvironmentAutomationTaskGetParamsCompressionBr       EnvironmentAutomationTaskGetParamsCompression = "br"
-)
-
-func (r EnvironmentAutomationTaskGetParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskGetParamsCompressionIdentity, EnvironmentAutomationTaskGetParamsCompressionGzip, EnvironmentAutomationTaskGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskGetParamsConnect string
-
-const (
-	EnvironmentAutomationTaskGetParamsConnectV1 EnvironmentAutomationTaskGetParamsConnect = "v1"
-)
-
-func (r EnvironmentAutomationTaskGetParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskGetParamsConnectV1:
 		return true
 	}
 	return false

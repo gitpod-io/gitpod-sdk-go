@@ -63,7 +63,7 @@ func (r *ProjectService) Get(ctx context.Context, params ProjectGetParams, opts 
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/GetProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -3929,44 +3929,16 @@ func (r ProjectNewParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type ProjectGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[ProjectGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[ProjectGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[ProjectGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[ProjectGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                  `query:"message"`
+	// project_id specifies the project identifier
+	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [ProjectGetParams]'s query parameters as `url.Values`.
-func (r ProjectGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type ProjectGetParamsEncoding string
-
-const (
-	ProjectGetParamsEncodingProto ProjectGetParamsEncoding = "proto"
-	ProjectGetParamsEncodingJson  ProjectGetParamsEncoding = "json"
-)
-
-func (r ProjectGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case ProjectGetParamsEncodingProto, ProjectGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r ProjectGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -3979,38 +3951,6 @@ const (
 func (r ProjectGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case ProjectGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type ProjectGetParamsCompression string
-
-const (
-	ProjectGetParamsCompressionIdentity ProjectGetParamsCompression = "identity"
-	ProjectGetParamsCompressionGzip     ProjectGetParamsCompression = "gzip"
-	ProjectGetParamsCompressionBr       ProjectGetParamsCompression = "br"
-)
-
-func (r ProjectGetParamsCompression) IsKnown() bool {
-	switch r {
-	case ProjectGetParamsCompressionIdentity, ProjectGetParamsCompressionGzip, ProjectGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type ProjectGetParamsConnect string
-
-const (
-	ProjectGetParamsConnectV1 ProjectGetParamsConnect = "v1"
-)
-
-func (r ProjectGetParamsConnect) IsKnown() bool {
-	switch r {
-	case ProjectGetParamsConnectV1:
 		return true
 	}
 	return false

@@ -59,12 +59,8 @@ func TestRunnerConfigurationHostAuthenticationTokenGetWithOptionalParams(t *test
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.Get(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenGetParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

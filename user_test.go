@@ -26,12 +26,8 @@ func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.GetAuthenticatedUser(context.TODO(), gitpod.UserGetAuthenticatedUserParams{
-		Encoding:               gitpod.F(gitpod.UserGetAuthenticatedUserParamsEncodingProto),
+		Body:                   map[string]interface{}{},
 		ConnectProtocolVersion: gitpod.F(gitpod.UserGetAuthenticatedUserParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.UserGetAuthenticatedUserParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.UserGetAuthenticatedUserParamsConnectV1),
-		Message:                gitpod.F("message"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

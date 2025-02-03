@@ -48,7 +48,7 @@ func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, par
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -1510,45 +1510,15 @@ func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsP
 type EnvironmentAutomationTaskExecutionStopResponse = interface{}
 
 type EnvironmentAutomationTaskExecutionGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentAutomationTaskExecutionGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentAutomationTaskExecutionGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentAutomationTaskExecutionGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                             `query:"message"`
+	ID                     param.Field[string]                                                            `json:"id" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [EnvironmentAutomationTaskExecutionGetParams]'s query
-// parameters as `url.Values`.
-func (r EnvironmentAutomationTaskExecutionGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentAutomationTaskExecutionGetParamsEncoding string
-
-const (
-	EnvironmentAutomationTaskExecutionGetParamsEncodingProto EnvironmentAutomationTaskExecutionGetParamsEncoding = "proto"
-	EnvironmentAutomationTaskExecutionGetParamsEncodingJson  EnvironmentAutomationTaskExecutionGetParamsEncoding = "json"
-)
-
-func (r EnvironmentAutomationTaskExecutionGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionGetParamsEncodingProto, EnvironmentAutomationTaskExecutionGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationTaskExecutionGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -1561,38 +1531,6 @@ const (
 func (r EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type EnvironmentAutomationTaskExecutionGetParamsCompression string
-
-const (
-	EnvironmentAutomationTaskExecutionGetParamsCompressionIdentity EnvironmentAutomationTaskExecutionGetParamsCompression = "identity"
-	EnvironmentAutomationTaskExecutionGetParamsCompressionGzip     EnvironmentAutomationTaskExecutionGetParamsCompression = "gzip"
-	EnvironmentAutomationTaskExecutionGetParamsCompressionBr       EnvironmentAutomationTaskExecutionGetParamsCompression = "br"
-)
-
-func (r EnvironmentAutomationTaskExecutionGetParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionGetParamsCompressionIdentity, EnvironmentAutomationTaskExecutionGetParamsCompressionGzip, EnvironmentAutomationTaskExecutionGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskExecutionGetParamsConnect string
-
-const (
-	EnvironmentAutomationTaskExecutionGetParamsConnectV1 EnvironmentAutomationTaskExecutionGetParamsConnect = "v1"
-)
-
-func (r EnvironmentAutomationTaskExecutionGetParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionGetParamsConnectV1:
 		return true
 	}
 	return false

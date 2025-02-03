@@ -90,7 +90,7 @@ func (r *SecretService) GetValue(ctx context.Context, params SecretGetValueParam
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/GetSecretValue"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -1327,44 +1327,15 @@ func (r SecretDeleteParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type SecretGetValueParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[SecretGetValueParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[SecretGetValueParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[SecretGetValueParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[SecretGetValueParamsConnect] `query:"connect"`
-	Message param.Field[string]                      `query:"message"`
+	SecretID               param.Field[string]                                     `json:"secretId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [SecretGetValueParams]'s query parameters as `url.Values`.
-func (r SecretGetValueParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type SecretGetValueParamsEncoding string
-
-const (
-	SecretGetValueParamsEncodingProto SecretGetValueParamsEncoding = "proto"
-	SecretGetValueParamsEncodingJson  SecretGetValueParamsEncoding = "json"
-)
-
-func (r SecretGetValueParamsEncoding) IsKnown() bool {
-	switch r {
-	case SecretGetValueParamsEncodingProto, SecretGetValueParamsEncodingJson:
-		return true
-	}
-	return false
+func (r SecretGetValueParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -1377,38 +1348,6 @@ const (
 func (r SecretGetValueParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case SecretGetValueParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type SecretGetValueParamsCompression string
-
-const (
-	SecretGetValueParamsCompressionIdentity SecretGetValueParamsCompression = "identity"
-	SecretGetValueParamsCompressionGzip     SecretGetValueParamsCompression = "gzip"
-	SecretGetValueParamsCompressionBr       SecretGetValueParamsCompression = "br"
-)
-
-func (r SecretGetValueParamsCompression) IsKnown() bool {
-	switch r {
-	case SecretGetValueParamsCompressionIdentity, SecretGetValueParamsCompressionGzip, SecretGetValueParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type SecretGetValueParamsConnect string
-
-const (
-	SecretGetValueParamsConnectV1 SecretGetValueParamsConnect = "v1"
-)
-
-func (r SecretGetValueParamsConnect) IsKnown() bool {
-	switch r {
-	case SecretGetValueParamsConnectV1:
 		return true
 	}
 	return false

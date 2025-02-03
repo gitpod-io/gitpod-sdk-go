@@ -58,7 +58,7 @@ func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, params Or
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetSSOConfiguration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -466,45 +466,16 @@ func (r OrganizationSSOConfigurationNewParamsConnectProtocolVersion) IsKnown() b
 }
 
 type OrganizationSSOConfigurationGetParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[OrganizationSSOConfigurationGetParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[OrganizationSSOConfigurationGetParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[OrganizationSSOConfigurationGetParamsConnect] `query:"connect"`
-	Message param.Field[string]                                       `query:"message"`
+	// sso_configuration_id is the ID of the SSO configuration to get
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [OrganizationSSOConfigurationGetParams]'s query parameters
-// as `url.Values`.
-func (r OrganizationSSOConfigurationGetParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type OrganizationSSOConfigurationGetParamsEncoding string
-
-const (
-	OrganizationSSOConfigurationGetParamsEncodingProto OrganizationSSOConfigurationGetParamsEncoding = "proto"
-	OrganizationSSOConfigurationGetParamsEncodingJson  OrganizationSSOConfigurationGetParamsEncoding = "json"
-)
-
-func (r OrganizationSSOConfigurationGetParamsEncoding) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationGetParamsEncodingProto, OrganizationSSOConfigurationGetParamsEncodingJson:
-		return true
-	}
-	return false
+func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -517,38 +488,6 @@ const (
 func (r OrganizationSSOConfigurationGetParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case OrganizationSSOConfigurationGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type OrganizationSSOConfigurationGetParamsCompression string
-
-const (
-	OrganizationSSOConfigurationGetParamsCompressionIdentity OrganizationSSOConfigurationGetParamsCompression = "identity"
-	OrganizationSSOConfigurationGetParamsCompressionGzip     OrganizationSSOConfigurationGetParamsCompression = "gzip"
-	OrganizationSSOConfigurationGetParamsCompressionBr       OrganizationSSOConfigurationGetParamsCompression = "br"
-)
-
-func (r OrganizationSSOConfigurationGetParamsCompression) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationGetParamsCompressionIdentity, OrganizationSSOConfigurationGetParamsCompressionGzip, OrganizationSSOConfigurationGetParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationGetParamsConnect string
-
-const (
-	OrganizationSSOConfigurationGetParamsConnectV1 OrganizationSSOConfigurationGetParamsConnect = "v1"
-)
-
-func (r OrganizationSSOConfigurationGetParamsConnect) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationGetParamsConnectV1:
 		return true
 	}
 	return false

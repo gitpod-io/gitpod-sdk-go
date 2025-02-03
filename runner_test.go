@@ -62,12 +62,8 @@ func TestRunnerGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Get(context.TODO(), gitpod.RunnerGetParams{
-		Encoding:               gitpod.F(gitpod.RunnerGetParamsEncodingProto),
 		ConnectProtocolVersion: gitpod.F(gitpod.RunnerGetParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerGetParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerGetParamsConnectV1),
-		Message:                gitpod.F("message"),
+		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {

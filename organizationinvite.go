@@ -6,10 +6,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
@@ -77,7 +75,7 @@ func (r *OrganizationInviteService) GetSummary(ctx context.Context, params Organ
 	}
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -251,45 +249,15 @@ func (r OrganizationInviteGetParamsConnectProtocolVersion) IsKnown() bool {
 }
 
 type OrganizationInviteGetSummaryParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[OrganizationInviteGetSummaryParamsEncoding] `query:"encoding,required"`
 	// Define the version of the Connect protocol
 	ConnectProtocolVersion param.Field[OrganizationInviteGetSummaryParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[OrganizationInviteGetSummaryParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[OrganizationInviteGetSummaryParamsConnect] `query:"connect"`
-	Message param.Field[string]                                    `query:"message"`
+	InviteID               param.Field[string]                                                   `json:"inviteId" format:"uuid"`
 	// Define the timeout, in ms
 	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
-// URLQuery serializes [OrganizationInviteGetSummaryParams]'s query parameters as
-// `url.Values`.
-func (r OrganizationInviteGetSummaryParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// Define which encoding or 'Message-Codec' to use
-type OrganizationInviteGetSummaryParamsEncoding string
-
-const (
-	OrganizationInviteGetSummaryParamsEncodingProto OrganizationInviteGetSummaryParamsEncoding = "proto"
-	OrganizationInviteGetSummaryParamsEncodingJson  OrganizationInviteGetSummaryParamsEncoding = "json"
-)
-
-func (r OrganizationInviteGetSummaryParamsEncoding) IsKnown() bool {
-	switch r {
-	case OrganizationInviteGetSummaryParamsEncodingProto, OrganizationInviteGetSummaryParamsEncodingJson:
-		return true
-	}
-	return false
+func (r OrganizationInviteGetSummaryParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // Define the version of the Connect protocol
@@ -302,38 +270,6 @@ const (
 func (r OrganizationInviteGetSummaryParamsConnectProtocolVersion) IsKnown() bool {
 	switch r {
 	case OrganizationInviteGetSummaryParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type OrganizationInviteGetSummaryParamsCompression string
-
-const (
-	OrganizationInviteGetSummaryParamsCompressionIdentity OrganizationInviteGetSummaryParamsCompression = "identity"
-	OrganizationInviteGetSummaryParamsCompressionGzip     OrganizationInviteGetSummaryParamsCompression = "gzip"
-	OrganizationInviteGetSummaryParamsCompressionBr       OrganizationInviteGetSummaryParamsCompression = "br"
-)
-
-func (r OrganizationInviteGetSummaryParamsCompression) IsKnown() bool {
-	switch r {
-	case OrganizationInviteGetSummaryParamsCompressionIdentity, OrganizationInviteGetSummaryParamsCompressionGzip, OrganizationInviteGetSummaryParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type OrganizationInviteGetSummaryParamsConnect string
-
-const (
-	OrganizationInviteGetSummaryParamsConnectV1 OrganizationInviteGetSummaryParamsConnect = "v1"
-)
-
-func (r OrganizationInviteGetSummaryParamsConnect) IsKnown() bool {
-	switch r {
-	case OrganizationInviteGetSummaryParamsConnectV1:
 		return true
 	}
 	return false
