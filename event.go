@@ -14,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/jsonl"
 )
 
 // EventService contains methods and other services that help with interacting with
@@ -51,7 +52,11 @@ func (r *EventService) List(ctx context.Context, params EventListParams, opts ..
 }
 
 // WatchEvents streams all requests events to the client
-func (r *EventService) Watch(ctx context.Context, params EventWatchParams, opts ...option.RequestOption) (res *EventWatchResponse, err error) {
+func (r *EventService) WatchStreaming(ctx context.Context, params EventWatchParams, opts ...option.RequestOption) (stream *jsonl.Stream[EventWatchResponse]) {
+	var (
+		raw *http.Response
+		err error
+	)
 	if params.ConnectProtocolVersion.Present {
 		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
 	}
@@ -59,10 +64,10 @@ func (r *EventService) Watch(ctx context.Context, params EventWatchParams, opts 
 		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
 	}
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/connect+json")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/jsonl")}, opts...)
 	path := "gitpod.v1.EventService/WatchEvents"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
+	return jsonl.NewStream[EventWatchResponse](raw, err)
 }
 
 type EventListResponse struct {
