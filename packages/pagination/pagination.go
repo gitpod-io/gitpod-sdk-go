@@ -10,21 +10,42 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
+type PersonalAccessTokensPagePagination[T any] struct {
+	NextToken            string                                 `json:"nextToken"`
+	PersonalAccessTokens []T                                    `json:"personal_access_tokens"`
+	JSON                 personalAccessTokensPagePaginationJSON `json:"-"`
+}
+
+// personalAccessTokensPagePaginationJSON contains the JSON metadata for the struct
+// [PersonalAccessTokensPagePagination[T]]
+type personalAccessTokensPagePaginationJSON struct {
+	NextToken            apijson.Field
+	PersonalAccessTokens apijson.Field
+	raw                  string
+	ExtraFields          map[string]apijson.Field
+}
+
+func (r *PersonalAccessTokensPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r personalAccessTokensPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type PersonalAccessTokensPage[T any] struct {
-	PersonalAccessTokens []T                          `json:"personal_access_tokens"`
-	NextToken            string                       `json:"nextToken"`
-	JSON                 personalAccessTokensPageJSON `json:"-"`
-	cfg                  *requestconfig.RequestConfig
-	res                  *http.Response
+	Pagination PersonalAccessTokensPagePagination[T] `json:"pagination"`
+	JSON       personalAccessTokensPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // personalAccessTokensPageJSON contains the JSON metadata for the struct
 // [PersonalAccessTokensPage[T]]
 type personalAccessTokensPageJSON struct {
-	PersonalAccessTokens apijson.Field
-	NextToken            apijson.Field
-	raw                  string
-	ExtraFields          map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *PersonalAccessTokensPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -39,7 +60,7 @@ func (r personalAccessTokensPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *PersonalAccessTokensPage[T]) GetNextPage() (res *PersonalAccessTokensPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -80,17 +101,17 @@ func NewPersonalAccessTokensPageAutoPager[T any](page *PersonalAccessTokensPage[
 }
 
 func (r *PersonalAccessTokensPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.PersonalAccessTokens) == 0 {
+	if r.page == nil || len(r.page.Pagination.PersonalAccessTokens) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.PersonalAccessTokens) {
+	if r.idx >= len(r.page.Pagination.PersonalAccessTokens) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.PersonalAccessTokens) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.PersonalAccessTokens) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.PersonalAccessTokens[r.idx]
+	r.cur = r.page.Pagination.PersonalAccessTokens[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -108,21 +129,42 @@ func (r *PersonalAccessTokensPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type OrganizationsPagePagination[T any] struct {
+	NextToken     string                          `json:"nextToken"`
+	Organizations []T                             `json:"organizations"`
+	JSON          organizationsPagePaginationJSON `json:"-"`
+}
+
+// organizationsPagePaginationJSON contains the JSON metadata for the struct
+// [OrganizationsPagePagination[T]]
+type organizationsPagePaginationJSON struct {
+	NextToken     apijson.Field
+	Organizations apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *OrganizationsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type OrganizationsPage[T any] struct {
-	Organizations []T                   `json:"organizations"`
-	NextToken     string                `json:"nextToken"`
-	JSON          organizationsPageJSON `json:"-"`
-	cfg           *requestconfig.RequestConfig
-	res           *http.Response
+	Pagination OrganizationsPagePagination[T] `json:"pagination"`
+	JSON       organizationsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // organizationsPageJSON contains the JSON metadata for the struct
 // [OrganizationsPage[T]]
 type organizationsPageJSON struct {
-	Organizations apijson.Field
-	NextToken     apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *OrganizationsPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -137,7 +179,7 @@ func (r organizationsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *OrganizationsPage[T]) GetNextPage() (res *OrganizationsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -178,17 +220,17 @@ func NewOrganizationsPageAutoPager[T any](page *OrganizationsPage[T], err error)
 }
 
 func (r *OrganizationsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Organizations) == 0 {
+	if r.page == nil || len(r.page.Pagination.Organizations) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Organizations) {
+	if r.idx >= len(r.page.Pagination.Organizations) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Organizations) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Organizations) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Organizations[r.idx]
+	r.cur = r.page.Pagination.Organizations[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -206,18 +248,39 @@ func (r *OrganizationsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type MembersPagePagination[T any] struct {
+	Members   []T                       `json:"members"`
+	NextToken string                    `json:"nextToken"`
+	JSON      membersPagePaginationJSON `json:"-"`
+}
+
+// membersPagePaginationJSON contains the JSON metadata for the struct
+// [MembersPagePagination[T]]
+type membersPagePaginationJSON struct {
+	Members     apijson.Field
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MembersPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r membersPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type MembersPage[T any] struct {
-	Members   []T             `json:"members"`
-	NextToken string          `json:"nextToken"`
-	JSON      membersPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination MembersPagePagination[T] `json:"pagination"`
+	JSON       membersPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // membersPageJSON contains the JSON metadata for the struct [MembersPage[T]]
 type membersPageJSON struct {
-	Members     apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -234,7 +297,7 @@ func (r membersPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *MembersPage[T]) GetNextPage() (res *MembersPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -275,17 +338,17 @@ func NewMembersPageAutoPager[T any](page *MembersPage[T], err error) *MembersPag
 }
 
 func (r *MembersPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Members) == 0 {
+	if r.page == nil || len(r.page.Pagination.Members) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Members) {
+	if r.idx >= len(r.page.Pagination.Members) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Members) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Members) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Members[r.idx]
+	r.cur = r.page.Pagination.Members[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -303,21 +366,42 @@ func (r *MembersPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type SSOConfigurationsPagePagination[T any] struct {
+	NextToken         string                              `json:"nextToken"`
+	SSOConfigurations []T                                 `json:"sso_configurations"`
+	JSON              ssoConfigurationsPagePaginationJSON `json:"-"`
+}
+
+// ssoConfigurationsPagePaginationJSON contains the JSON metadata for the struct
+// [SSOConfigurationsPagePagination[T]]
+type ssoConfigurationsPagePaginationJSON struct {
+	NextToken         apijson.Field
+	SSOConfigurations apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *SSOConfigurationsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r ssoConfigurationsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type SSOConfigurationsPage[T any] struct {
-	SSOConfigurations []T                       `json:"sso_configurations"`
-	NextToken         string                    `json:"nextToken"`
-	JSON              ssoConfigurationsPageJSON `json:"-"`
-	cfg               *requestconfig.RequestConfig
-	res               *http.Response
+	Pagination SSOConfigurationsPagePagination[T] `json:"pagination"`
+	JSON       ssoConfigurationsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // ssoConfigurationsPageJSON contains the JSON metadata for the struct
 // [SSOConfigurationsPage[T]]
 type ssoConfigurationsPageJSON struct {
-	SSOConfigurations apijson.Field
-	NextToken         apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *SSOConfigurationsPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -332,7 +416,7 @@ func (r ssoConfigurationsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *SSOConfigurationsPage[T]) GetNextPage() (res *SSOConfigurationsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -373,17 +457,17 @@ func NewSSOConfigurationsPageAutoPager[T any](page *SSOConfigurationsPage[T], er
 }
 
 func (r *SSOConfigurationsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.SSOConfigurations) == 0 {
+	if r.page == nil || len(r.page.Pagination.SSOConfigurations) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.SSOConfigurations) {
+	if r.idx >= len(r.page.Pagination.SSOConfigurations) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.SSOConfigurations) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.SSOConfigurations) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.SSOConfigurations[r.idx]
+	r.cur = r.page.Pagination.SSOConfigurations[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -401,21 +485,42 @@ func (r *SSOConfigurationsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type LoginProvidersPagePagination[T any] struct {
+	LoginProviders []T                              `json:"login_providers"`
+	NextToken      string                           `json:"nextToken"`
+	JSON           loginProvidersPagePaginationJSON `json:"-"`
+}
+
+// loginProvidersPagePaginationJSON contains the JSON metadata for the struct
+// [LoginProvidersPagePagination[T]]
+type loginProvidersPagePaginationJSON struct {
+	LoginProviders apijson.Field
+	NextToken      apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *LoginProvidersPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r loginProvidersPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type LoginProvidersPage[T any] struct {
-	LoginProviders []T                    `json:"login_providers"`
-	NextToken      string                 `json:"nextToken"`
-	JSON           loginProvidersPageJSON `json:"-"`
-	cfg            *requestconfig.RequestConfig
-	res            *http.Response
+	Pagination LoginProvidersPagePagination[T] `json:"pagination"`
+	JSON       loginProvidersPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // loginProvidersPageJSON contains the JSON metadata for the struct
 // [LoginProvidersPage[T]]
 type loginProvidersPageJSON struct {
-	LoginProviders apijson.Field
-	NextToken      apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *LoginProvidersPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -430,7 +535,7 @@ func (r loginProvidersPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *LoginProvidersPage[T]) GetNextPage() (res *LoginProvidersPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -471,17 +576,17 @@ func NewLoginProvidersPageAutoPager[T any](page *LoginProvidersPage[T], err erro
 }
 
 func (r *LoginProvidersPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.LoginProviders) == 0 {
+	if r.page == nil || len(r.page.Pagination.LoginProviders) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.LoginProviders) {
+	if r.idx >= len(r.page.Pagination.LoginProviders) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.LoginProviders) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.LoginProviders) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.LoginProviders[r.idx]
+	r.cur = r.page.Pagination.LoginProviders[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -499,18 +604,39 @@ func (r *LoginProvidersPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type EditorsPagePagination[T any] struct {
+	Editors   []T                       `json:"editors"`
+	NextToken string                    `json:"nextToken"`
+	JSON      editorsPagePaginationJSON `json:"-"`
+}
+
+// editorsPagePaginationJSON contains the JSON metadata for the struct
+// [EditorsPagePagination[T]]
+type editorsPagePaginationJSON struct {
+	Editors     apijson.Field
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EditorsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r editorsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type EditorsPage[T any] struct {
-	Editors   []T             `json:"editors"`
-	NextToken string          `json:"nextToken"`
-	JSON      editorsPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination EditorsPagePagination[T] `json:"pagination"`
+	JSON       editorsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // editorsPageJSON contains the JSON metadata for the struct [EditorsPage[T]]
 type editorsPageJSON struct {
-	Editors     apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -527,7 +653,7 @@ func (r editorsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EditorsPage[T]) GetNextPage() (res *EditorsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -568,17 +694,17 @@ func NewEditorsPageAutoPager[T any](page *EditorsPage[T], err error) *EditorsPag
 }
 
 func (r *EditorsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Editors) == 0 {
+	if r.page == nil || len(r.page.Pagination.Editors) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Editors) {
+	if r.idx >= len(r.page.Pagination.Editors) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Editors) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Editors) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Editors[r.idx]
+	r.cur = r.page.Pagination.Editors[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -596,18 +722,39 @@ func (r *EditorsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type TokensPagePagination[T any] struct {
+	NextToken string                   `json:"nextToken"`
+	Tokens    []T                      `json:"tokens"`
+	JSON      tokensPagePaginationJSON `json:"-"`
+}
+
+// tokensPagePaginationJSON contains the JSON metadata for the struct
+// [TokensPagePagination[T]]
+type tokensPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Tokens      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TokensPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r tokensPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type TokensPage[T any] struct {
-	Tokens    []T            `json:"tokens"`
-	NextToken string         `json:"nextToken"`
-	JSON      tokensPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination TokensPagePagination[T] `json:"pagination"`
+	JSON       tokensPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // tokensPageJSON contains the JSON metadata for the struct [TokensPage[T]]
 type tokensPageJSON struct {
-	Tokens      apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -624,7 +771,7 @@ func (r tokensPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *TokensPage[T]) GetNextPage() (res *TokensPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -665,17 +812,17 @@ func NewTokensPageAutoPager[T any](page *TokensPage[T], err error) *TokensPageAu
 }
 
 func (r *TokensPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Tokens) == 0 {
+	if r.page == nil || len(r.page.Pagination.Tokens) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Tokens) {
+	if r.idx >= len(r.page.Pagination.Tokens) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Tokens) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Tokens) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Tokens[r.idx]
+	r.cur = r.page.Pagination.Tokens[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -693,21 +840,42 @@ func (r *TokensPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type IntegrationsPagePagination[T any] struct {
+	Integrations []T                            `json:"integrations"`
+	NextToken    string                         `json:"nextToken"`
+	JSON         integrationsPagePaginationJSON `json:"-"`
+}
+
+// integrationsPagePaginationJSON contains the JSON metadata for the struct
+// [IntegrationsPagePagination[T]]
+type integrationsPagePaginationJSON struct {
+	Integrations apijson.Field
+	NextToken    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *IntegrationsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r integrationsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type IntegrationsPage[T any] struct {
-	Integrations []T                  `json:"integrations"`
-	NextToken    string               `json:"nextToken"`
-	JSON         integrationsPageJSON `json:"-"`
-	cfg          *requestconfig.RequestConfig
-	res          *http.Response
+	Pagination IntegrationsPagePagination[T] `json:"pagination"`
+	JSON       integrationsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // integrationsPageJSON contains the JSON metadata for the struct
 // [IntegrationsPage[T]]
 type integrationsPageJSON struct {
-	Integrations apijson.Field
-	NextToken    apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *IntegrationsPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -722,7 +890,7 @@ func (r integrationsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *IntegrationsPage[T]) GetNextPage() (res *IntegrationsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -763,17 +931,17 @@ func NewIntegrationsPageAutoPager[T any](page *IntegrationsPage[T], err error) *
 }
 
 func (r *IntegrationsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Integrations) == 0 {
+	if r.page == nil || len(r.page.Pagination.Integrations) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Integrations) {
+	if r.idx >= len(r.page.Pagination.Integrations) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Integrations) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Integrations) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Integrations[r.idx]
+	r.cur = r.page.Pagination.Integrations[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -791,21 +959,42 @@ func (r *IntegrationsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type EnvironmentClassesPagePagination[T any] struct {
+	EnvironmentClasses []T                                  `json:"environment_classes"`
+	NextToken          string                               `json:"nextToken"`
+	JSON               environmentClassesPagePaginationJSON `json:"-"`
+}
+
+// environmentClassesPagePaginationJSON contains the JSON metadata for the struct
+// [EnvironmentClassesPagePagination[T]]
+type environmentClassesPagePaginationJSON struct {
+	EnvironmentClasses apijson.Field
+	NextToken          apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *EnvironmentClassesPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentClassesPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type EnvironmentClassesPage[T any] struct {
-	EnvironmentClasses []T                        `json:"environment_classes"`
-	NextToken          string                     `json:"nextToken"`
-	JSON               environmentClassesPageJSON `json:"-"`
-	cfg                *requestconfig.RequestConfig
-	res                *http.Response
+	Pagination EnvironmentClassesPagePagination[T] `json:"pagination"`
+	JSON       environmentClassesPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // environmentClassesPageJSON contains the JSON metadata for the struct
 // [EnvironmentClassesPage[T]]
 type environmentClassesPageJSON struct {
-	EnvironmentClasses apijson.Field
-	NextToken          apijson.Field
-	raw                string
-	ExtraFields        map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *EnvironmentClassesPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -820,7 +1009,7 @@ func (r environmentClassesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EnvironmentClassesPage[T]) GetNextPage() (res *EnvironmentClassesPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -861,17 +1050,17 @@ func NewEnvironmentClassesPageAutoPager[T any](page *EnvironmentClassesPage[T], 
 }
 
 func (r *EnvironmentClassesPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.EnvironmentClasses) == 0 {
+	if r.page == nil || len(r.page.Pagination.EnvironmentClasses) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.EnvironmentClasses) {
+	if r.idx >= len(r.page.Pagination.EnvironmentClasses) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.EnvironmentClasses) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.EnvironmentClasses) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.EnvironmentClasses[r.idx]
+	r.cur = r.page.Pagination.EnvironmentClasses[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -889,18 +1078,39 @@ func (r *EnvironmentClassesPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type RunnersPagePagination[T any] struct {
+	NextToken string                    `json:"nextToken"`
+	Runners   []T                       `json:"runners"`
+	JSON      runnersPagePaginationJSON `json:"-"`
+}
+
+// runnersPagePaginationJSON contains the JSON metadata for the struct
+// [RunnersPagePagination[T]]
+type runnersPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Runners     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnersPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnersPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type RunnersPage[T any] struct {
-	Runners   []T             `json:"runners"`
-	NextToken string          `json:"nextToken"`
-	JSON      runnersPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination RunnersPagePagination[T] `json:"pagination"`
+	JSON       runnersPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // runnersPageJSON contains the JSON metadata for the struct [RunnersPage[T]]
 type runnersPageJSON struct {
-	Runners     apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -917,7 +1127,7 @@ func (r runnersPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *RunnersPage[T]) GetNextPage() (res *RunnersPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -958,17 +1168,17 @@ func NewRunnersPageAutoPager[T any](page *RunnersPage[T], err error) *RunnersPag
 }
 
 func (r *RunnersPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Runners) == 0 {
+	if r.page == nil || len(r.page.Pagination.Runners) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Runners) {
+	if r.idx >= len(r.page.Pagination.Runners) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Runners) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Runners) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Runners[r.idx]
+	r.cur = r.page.Pagination.Runners[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -986,18 +1196,39 @@ func (r *RunnersPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type PoliciesPagePagination[T any] struct {
+	NextToken string                     `json:"nextToken"`
+	Policies  []T                        `json:"policies"`
+	JSON      policiesPagePaginationJSON `json:"-"`
+}
+
+// policiesPagePaginationJSON contains the JSON metadata for the struct
+// [PoliciesPagePagination[T]]
+type policiesPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Policies    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *PoliciesPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r policiesPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type PoliciesPage[T any] struct {
-	Policies  []T              `json:"policies"`
-	NextToken string           `json:"nextToken"`
-	JSON      policiesPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination PoliciesPagePagination[T] `json:"pagination"`
+	JSON       policiesPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // policiesPageJSON contains the JSON metadata for the struct [PoliciesPage[T]]
 type policiesPageJSON struct {
-	Policies    apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1014,7 +1245,7 @@ func (r policiesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *PoliciesPage[T]) GetNextPage() (res *PoliciesPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1055,17 +1286,17 @@ func NewPoliciesPageAutoPager[T any](page *PoliciesPage[T], err error) *Policies
 }
 
 func (r *PoliciesPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Policies) == 0 {
+	if r.page == nil || len(r.page.Pagination.Policies) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Policies) {
+	if r.idx >= len(r.page.Pagination.Policies) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Policies) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Policies) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Policies[r.idx]
+	r.cur = r.page.Pagination.Policies[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1083,21 +1314,42 @@ func (r *PoliciesPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type EnvironmentsPagePagination[T any] struct {
+	Environments []T                            `json:"environments"`
+	NextToken    string                         `json:"nextToken"`
+	JSON         environmentsPagePaginationJSON `json:"-"`
+}
+
+// environmentsPagePaginationJSON contains the JSON metadata for the struct
+// [EnvironmentsPagePagination[T]]
+type environmentsPagePaginationJSON struct {
+	Environments apijson.Field
+	NextToken    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *EnvironmentsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type EnvironmentsPage[T any] struct {
-	Environments []T                  `json:"environments"`
-	NextToken    string               `json:"nextToken"`
-	JSON         environmentsPageJSON `json:"-"`
-	cfg          *requestconfig.RequestConfig
-	res          *http.Response
+	Pagination EnvironmentsPagePagination[T] `json:"pagination"`
+	JSON       environmentsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // environmentsPageJSON contains the JSON metadata for the struct
 // [EnvironmentsPage[T]]
 type environmentsPageJSON struct {
-	Environments apijson.Field
-	NextToken    apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *EnvironmentsPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -1112,7 +1364,7 @@ func (r environmentsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EnvironmentsPage[T]) GetNextPage() (res *EnvironmentsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1153,17 +1405,17 @@ func NewEnvironmentsPageAutoPager[T any](page *EnvironmentsPage[T], err error) *
 }
 
 func (r *EnvironmentsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Environments) == 0 {
+	if r.page == nil || len(r.page.Pagination.Environments) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Environments) {
+	if r.idx >= len(r.page.Pagination.Environments) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Environments) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Environments) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Environments[r.idx]
+	r.cur = r.page.Pagination.Environments[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1181,18 +1433,39 @@ func (r *EnvironmentsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type ServicesPagePagination[T any] struct {
+	NextToken string                     `json:"nextToken"`
+	Services  []T                        `json:"services"`
+	JSON      servicesPagePaginationJSON `json:"-"`
+}
+
+// servicesPagePaginationJSON contains the JSON metadata for the struct
+// [ServicesPagePagination[T]]
+type servicesPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Services    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ServicesPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r servicesPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type ServicesPage[T any] struct {
-	Services  []T              `json:"services"`
-	NextToken string           `json:"nextToken"`
-	JSON      servicesPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination ServicesPagePagination[T] `json:"pagination"`
+	JSON       servicesPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // servicesPageJSON contains the JSON metadata for the struct [ServicesPage[T]]
 type servicesPageJSON struct {
-	Services    apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1209,7 +1482,7 @@ func (r servicesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *ServicesPage[T]) GetNextPage() (res *ServicesPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1250,17 +1523,17 @@ func NewServicesPageAutoPager[T any](page *ServicesPage[T], err error) *Services
 }
 
 func (r *ServicesPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Services) == 0 {
+	if r.page == nil || len(r.page.Pagination.Services) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Services) {
+	if r.idx >= len(r.page.Pagination.Services) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Services) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Services) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Services[r.idx]
+	r.cur = r.page.Pagination.Services[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1278,18 +1551,39 @@ func (r *ServicesPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type TasksPagePagination[T any] struct {
+	NextToken string                  `json:"nextToken"`
+	Tasks     []T                     `json:"tasks"`
+	JSON      tasksPagePaginationJSON `json:"-"`
+}
+
+// tasksPagePaginationJSON contains the JSON metadata for the struct
+// [TasksPagePagination[T]]
+type tasksPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Tasks       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TasksPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r tasksPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type TasksPage[T any] struct {
-	Tasks     []T           `json:"tasks"`
-	NextToken string        `json:"nextToken"`
-	JSON      tasksPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination TasksPagePagination[T] `json:"pagination"`
+	JSON       tasksPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // tasksPageJSON contains the JSON metadata for the struct [TasksPage[T]]
 type tasksPageJSON struct {
-	Tasks       apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1306,7 +1600,7 @@ func (r tasksPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *TasksPage[T]) GetNextPage() (res *TasksPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1347,17 +1641,17 @@ func NewTasksPageAutoPager[T any](page *TasksPage[T], err error) *TasksPageAutoP
 }
 
 func (r *TasksPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Tasks) == 0 {
+	if r.page == nil || len(r.page.Pagination.Tasks) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Tasks) {
+	if r.idx >= len(r.page.Pagination.Tasks) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Tasks) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Tasks) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Tasks[r.idx]
+	r.cur = r.page.Pagination.Tasks[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1375,21 +1669,42 @@ func (r *TasksPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type TaskExecutionsPagePagination[T any] struct {
+	NextToken      string                           `json:"nextToken"`
+	TaskExecutions []T                              `json:"task_executions"`
+	JSON           taskExecutionsPagePaginationJSON `json:"-"`
+}
+
+// taskExecutionsPagePaginationJSON contains the JSON metadata for the struct
+// [TaskExecutionsPagePagination[T]]
+type taskExecutionsPagePaginationJSON struct {
+	NextToken      apijson.Field
+	TaskExecutions apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *TaskExecutionsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r taskExecutionsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type TaskExecutionsPage[T any] struct {
-	TaskExecutions []T                    `json:"task_executions"`
-	NextToken      string                 `json:"nextToken"`
-	JSON           taskExecutionsPageJSON `json:"-"`
-	cfg            *requestconfig.RequestConfig
-	res            *http.Response
+	Pagination TaskExecutionsPagePagination[T] `json:"pagination"`
+	JSON       taskExecutionsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // taskExecutionsPageJSON contains the JSON metadata for the struct
 // [TaskExecutionsPage[T]]
 type taskExecutionsPageJSON struct {
-	TaskExecutions apijson.Field
-	NextToken      apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *TaskExecutionsPage[T]) UnmarshalJSON(data []byte) (err error) {
@@ -1404,7 +1719,7 @@ func (r taskExecutionsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *TaskExecutionsPage[T]) GetNextPage() (res *TaskExecutionsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1445,17 +1760,17 @@ func NewTaskExecutionsPageAutoPager[T any](page *TaskExecutionsPage[T], err erro
 }
 
 func (r *TaskExecutionsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.TaskExecutions) == 0 {
+	if r.page == nil || len(r.page.Pagination.TaskExecutions) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.TaskExecutions) {
+	if r.idx >= len(r.page.Pagination.TaskExecutions) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.TaskExecutions) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.TaskExecutions) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.TaskExecutions[r.idx]
+	r.cur = r.page.Pagination.TaskExecutions[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1473,18 +1788,39 @@ func (r *TaskExecutionsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type EntriesPagePagination[T any] struct {
+	Entries   []T                       `json:"entries"`
+	NextToken string                    `json:"nextToken"`
+	JSON      entriesPagePaginationJSON `json:"-"`
+}
+
+// entriesPagePaginationJSON contains the JSON metadata for the struct
+// [EntriesPagePagination[T]]
+type entriesPagePaginationJSON struct {
+	Entries     apijson.Field
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EntriesPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r entriesPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type EntriesPage[T any] struct {
-	Entries   []T             `json:"entries"`
-	NextToken string          `json:"nextToken"`
-	JSON      entriesPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination EntriesPagePagination[T] `json:"pagination"`
+	JSON       entriesPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // entriesPageJSON contains the JSON metadata for the struct [EntriesPage[T]]
 type entriesPageJSON struct {
-	Entries     apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1501,7 +1837,7 @@ func (r entriesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EntriesPage[T]) GetNextPage() (res *EntriesPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1542,17 +1878,17 @@ func NewEntriesPageAutoPager[T any](page *EntriesPage[T], err error) *EntriesPag
 }
 
 func (r *EntriesPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Entries) == 0 {
+	if r.page == nil || len(r.page.Pagination.Entries) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Entries) {
+	if r.idx >= len(r.page.Pagination.Entries) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Entries) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Entries) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Entries[r.idx]
+	r.cur = r.page.Pagination.Entries[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1570,18 +1906,39 @@ func (r *EntriesPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type GroupsPagePagination[T any] struct {
+	Groups    []T                      `json:"groups"`
+	NextToken string                   `json:"nextToken"`
+	JSON      groupsPagePaginationJSON `json:"-"`
+}
+
+// groupsPagePaginationJSON contains the JSON metadata for the struct
+// [GroupsPagePagination[T]]
+type groupsPagePaginationJSON struct {
+	Groups      apijson.Field
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GroupsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r groupsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type GroupsPage[T any] struct {
-	Groups    []T            `json:"groups"`
-	NextToken string         `json:"nextToken"`
-	JSON      groupsPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination GroupsPagePagination[T] `json:"pagination"`
+	JSON       groupsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // groupsPageJSON contains the JSON metadata for the struct [GroupsPage[T]]
 type groupsPageJSON struct {
-	Groups      apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1598,7 +1955,7 @@ func (r groupsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *GroupsPage[T]) GetNextPage() (res *GroupsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1639,17 +1996,17 @@ func NewGroupsPageAutoPager[T any](page *GroupsPage[T], err error) *GroupsPageAu
 }
 
 func (r *GroupsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Groups) == 0 {
+	if r.page == nil || len(r.page.Pagination.Groups) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Groups) {
+	if r.idx >= len(r.page.Pagination.Groups) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Groups) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Groups) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Groups[r.idx]
+	r.cur = r.page.Pagination.Groups[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1667,18 +2024,39 @@ func (r *GroupsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type ProjectsPagePagination[T any] struct {
+	NextToken string                     `json:"nextToken"`
+	Projects  []T                        `json:"projects"`
+	JSON      projectsPagePaginationJSON `json:"-"`
+}
+
+// projectsPagePaginationJSON contains the JSON metadata for the struct
+// [ProjectsPagePagination[T]]
+type projectsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Projects    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type ProjectsPage[T any] struct {
-	Projects  []T              `json:"projects"`
-	NextToken string           `json:"nextToken"`
-	JSON      projectsPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination ProjectsPagePagination[T] `json:"pagination"`
+	JSON       projectsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // projectsPageJSON contains the JSON metadata for the struct [ProjectsPage[T]]
 type projectsPageJSON struct {
-	Projects    apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1695,7 +2073,7 @@ func (r projectsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *ProjectsPage[T]) GetNextPage() (res *ProjectsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1736,17 +2114,17 @@ func NewProjectsPageAutoPager[T any](page *ProjectsPage[T], err error) *Projects
 }
 
 func (r *ProjectsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Projects) == 0 {
+	if r.page == nil || len(r.page.Pagination.Projects) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Projects) {
+	if r.idx >= len(r.page.Pagination.Projects) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Projects) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Projects) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Projects[r.idx]
+	r.cur = r.page.Pagination.Projects[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
@@ -1764,18 +2142,39 @@ func (r *ProjectsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type SecretsPagePagination[T any] struct {
+	NextToken string                    `json:"nextToken"`
+	Secrets   []T                       `json:"secrets"`
+	JSON      secretsPagePaginationJSON `json:"-"`
+}
+
+// secretsPagePaginationJSON contains the JSON metadata for the struct
+// [SecretsPagePagination[T]]
+type secretsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	Secrets     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretsPagePagination[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
 type SecretsPage[T any] struct {
-	Secrets   []T             `json:"secrets"`
-	NextToken string          `json:"nextToken"`
-	JSON      secretsPageJSON `json:"-"`
-	cfg       *requestconfig.RequestConfig
-	res       *http.Response
+	Pagination SecretsPagePagination[T] `json:"pagination"`
+	JSON       secretsPageJSON          `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
 }
 
 // secretsPageJSON contains the JSON metadata for the struct [SecretsPage[T]]
 type secretsPageJSON struct {
-	Secrets     apijson.Field
-	NextToken   apijson.Field
+	Pagination  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -1792,7 +2191,7 @@ func (r secretsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *SecretsPage[T]) GetNextPage() (res *SecretsPage[T], err error) {
-	next := r.NextToken
+	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
 	}
@@ -1833,17 +2232,17 @@ func NewSecretsPageAutoPager[T any](page *SecretsPage[T], err error) *SecretsPag
 }
 
 func (r *SecretsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Secrets) == 0 {
+	if r.page == nil || len(r.page.Pagination.Secrets) == 0 {
 		return false
 	}
-	if r.idx >= len(r.page.Secrets) {
+	if r.idx >= len(r.page.Pagination.Secrets) {
 		r.idx = 0
 		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Secrets) == 0 {
+		if r.err != nil || r.page == nil || len(r.page.Pagination.Secrets) == 0 {
 			return false
 		}
 	}
-	r.cur = r.page.Secrets[r.idx]
+	r.cur = r.page.Pagination.Secrets[r.idx]
 	r.run += 1
 	r.idx += 1
 	return true
