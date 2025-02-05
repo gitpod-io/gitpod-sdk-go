@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go/internal/param"
+	"github.com/gitpod-io/flex-sdk-go/internal/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc

@@ -8,13 +8,13 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
-	"github.com/stainless-sdks/gitpod-go/internal/param"
-	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
-	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/jsonl"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
+	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
+	"github.com/gitpod-io/flex-sdk-go/internal/apiquery"
+	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/packages/jsonl"
+	"github.com/gitpod-io/flex-sdk-go/packages/pagination"
 )
 
 // EventService contains methods and other services that help with interacting with

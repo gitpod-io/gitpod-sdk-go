@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 type closureTransport struct {

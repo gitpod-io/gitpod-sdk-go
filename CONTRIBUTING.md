@@ -41,7 +41,7 @@ To use a local version of this library from source in another project, edit the 
 directive. This can be done through the CLI with the following:
 
 ```sh
-$ go mod edit -replace github.com/stainless-sdks/gitpod-go=/path/to/gitpod-go
+$ go mod edit -replace github.com/gitpod-io/flex-sdk-go=/path/to/flex-sdk-go
 ```
 
 ## Running tests
