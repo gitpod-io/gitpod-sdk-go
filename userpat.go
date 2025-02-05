@@ -13,6 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // UserPatService contains methods and other services that help with interacting
@@ -35,11 +36,26 @@ func NewUserPatService(opts ...option.RequestOption) (r *UserPatService) {
 }
 
 // ListPersonalAccessTokens
-func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *UserPatListResponse, err error) {
+func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[UserPatListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.UserService/ListPersonalAccessTokens"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListPersonalAccessTokens
+func (r *UserPatService) ListAutoPaging(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[UserPatListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeletePersonalAccessToken
@@ -59,52 +75,6 @@ func (r *UserPatService) Get(ctx context.Context, body UserPatGetParams, opts ..
 }
 
 type UserPatListResponse struct {
-	Pagination           UserPatListResponsePagination            `json:"pagination"`
-	PersonalAccessTokens []UserPatListResponsePersonalAccessToken `json:"personalAccessTokens"`
-	JSON                 userPatListResponseJSON                  `json:"-"`
-}
-
-// userPatListResponseJSON contains the JSON metadata for the struct
-// [UserPatListResponse]
-type userPatListResponseJSON struct {
-	Pagination           apijson.Field
-	PersonalAccessTokens apijson.Field
-	raw                  string
-	ExtraFields          map[string]apijson.Field
-}
-
-func (r *UserPatListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userPatListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type UserPatListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                            `json:"nextToken"`
-	JSON      userPatListResponsePaginationJSON `json:"-"`
-}
-
-// userPatListResponsePaginationJSON contains the JSON metadata for the struct
-// [UserPatListResponsePagination]
-type userPatListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *UserPatListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userPatListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type UserPatListResponsePersonalAccessToken struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -194,9 +164,9 @@ type UserPatListResponsePersonalAccessToken struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt   time.Time                                      `json:"createdAt" format:"date-time"`
-	Creator     UserPatListResponsePersonalAccessTokensCreator `json:"creator"`
-	Description string                                         `json:"description"`
+	CreatedAt   time.Time                  `json:"createdAt" format:"date-time"`
+	Creator     UserPatListResponseCreator `json:"creator"`
+	Description string                     `json:"description"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -374,14 +344,14 @@ type UserPatListResponsePersonalAccessToken struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	LastUsed time.Time                                  `json:"lastUsed" format:"date-time"`
-	UserID   string                                     `json:"userId" format:"uuid"`
-	JSON     userPatListResponsePersonalAccessTokenJSON `json:"-"`
+	LastUsed time.Time               `json:"lastUsed" format:"date-time"`
+	UserID   string                  `json:"userId" format:"uuid"`
+	JSON     userPatListResponseJSON `json:"-"`
 }
 
-// userPatListResponsePersonalAccessTokenJSON contains the JSON metadata for the
-// struct [UserPatListResponsePersonalAccessToken]
-type userPatListResponsePersonalAccessTokenJSON struct {
+// userPatListResponseJSON contains the JSON metadata for the struct
+// [UserPatListResponse]
+type userPatListResponseJSON struct {
 	ID          apijson.Field
 	CreatedAt   apijson.Field
 	Creator     apijson.Field
@@ -393,54 +363,54 @@ type userPatListResponsePersonalAccessTokenJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *UserPatListResponsePersonalAccessToken) UnmarshalJSON(data []byte) (err error) {
+func (r *UserPatListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r userPatListResponsePersonalAccessTokenJSON) RawJSON() string {
+func (r userPatListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type UserPatListResponsePersonalAccessTokensCreator struct {
+type UserPatListResponseCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal UserPatListResponsePersonalAccessTokensCreatorPrincipal `json:"principal"`
-	JSON      userPatListResponsePersonalAccessTokensCreatorJSON      `json:"-"`
+	Principal UserPatListResponseCreatorPrincipal `json:"principal"`
+	JSON      userPatListResponseCreatorJSON      `json:"-"`
 }
 
-// userPatListResponsePersonalAccessTokensCreatorJSON contains the JSON metadata
-// for the struct [UserPatListResponsePersonalAccessTokensCreator]
-type userPatListResponsePersonalAccessTokensCreatorJSON struct {
+// userPatListResponseCreatorJSON contains the JSON metadata for the struct
+// [UserPatListResponseCreator]
+type userPatListResponseCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *UserPatListResponsePersonalAccessTokensCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *UserPatListResponseCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r userPatListResponsePersonalAccessTokensCreatorJSON) RawJSON() string {
+func (r userPatListResponseCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type UserPatListResponsePersonalAccessTokensCreatorPrincipal string
+type UserPatListResponseCreatorPrincipal string
 
 const (
-	UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalUnspecified    UserPatListResponsePersonalAccessTokensCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalAccount        UserPatListResponsePersonalAccessTokensCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalUser           UserPatListResponsePersonalAccessTokensCreatorPrincipal = "PRINCIPAL_USER"
-	UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalRunner         UserPatListResponsePersonalAccessTokensCreatorPrincipal = "PRINCIPAL_RUNNER"
-	UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalEnvironment    UserPatListResponsePersonalAccessTokensCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalServiceAccount UserPatListResponsePersonalAccessTokensCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	UserPatListResponseCreatorPrincipalPrincipalUnspecified    UserPatListResponseCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	UserPatListResponseCreatorPrincipalPrincipalAccount        UserPatListResponseCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	UserPatListResponseCreatorPrincipalPrincipalUser           UserPatListResponseCreatorPrincipal = "PRINCIPAL_USER"
+	UserPatListResponseCreatorPrincipalPrincipalRunner         UserPatListResponseCreatorPrincipal = "PRINCIPAL_RUNNER"
+	UserPatListResponseCreatorPrincipalPrincipalEnvironment    UserPatListResponseCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	UserPatListResponseCreatorPrincipalPrincipalServiceAccount UserPatListResponseCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r UserPatListResponsePersonalAccessTokensCreatorPrincipal) IsKnown() bool {
+func (r UserPatListResponseCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalUnspecified, UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalAccount, UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalUser, UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalRunner, UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalEnvironment, UserPatListResponsePersonalAccessTokensCreatorPrincipalPrincipalServiceAccount:
+	case UserPatListResponseCreatorPrincipalPrincipalUnspecified, UserPatListResponseCreatorPrincipalPrincipalAccount, UserPatListResponseCreatorPrincipalPrincipalUser, UserPatListResponseCreatorPrincipalPrincipalRunner, UserPatListResponseCreatorPrincipalPrincipalEnvironment, UserPatListResponseCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false

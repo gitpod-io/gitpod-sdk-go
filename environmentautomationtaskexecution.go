@@ -14,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -46,11 +47,26 @@ func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, bod
 }
 
 // ListTaskExecutions
-func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
+func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *pagination.TaskExecutionsPage[EnvironmentAutomationTaskExecutionListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListTaskExecutions
+func (r *EnvironmentAutomationTaskExecutionService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) *pagination.TaskExecutionsPageAutoPager[EnvironmentAutomationTaskExecutionListResponse] {
+	return pagination.NewTaskExecutionsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // StopTaskExecution
@@ -751,18 +767,22 @@ func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStepsPha
 }
 
 type EnvironmentAutomationTaskExecutionListResponse struct {
-	Pagination     EnvironmentAutomationTaskExecutionListResponsePagination      `json:"pagination"`
-	TaskExecutions []EnvironmentAutomationTaskExecutionListResponseTaskExecution `json:"taskExecutions"`
-	JSON           environmentAutomationTaskExecutionListResponseJSON            `json:"-"`
+	ID       string                                                 `json:"id" format:"uuid"`
+	Metadata EnvironmentAutomationTaskExecutionListResponseMetadata `json:"metadata"`
+	Spec     EnvironmentAutomationTaskExecutionListResponseSpec     `json:"spec"`
+	Status   EnvironmentAutomationTaskExecutionListResponseStatus   `json:"status"`
+	JSON     environmentAutomationTaskExecutionListResponseJSON     `json:"-"`
 }
 
 // environmentAutomationTaskExecutionListResponseJSON contains the JSON metadata
 // for the struct [EnvironmentAutomationTaskExecutionListResponse]
 type environmentAutomationTaskExecutionListResponseJSON struct {
-	Pagination     apijson.Field
-	TaskExecutions apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	ID          apijson.Field
+	Metadata    apijson.Field
+	Spec        apijson.Field
+	Status      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *EnvironmentAutomationTaskExecutionListResponse) UnmarshalJSON(data []byte) (err error) {
@@ -773,59 +793,7 @@ func (r environmentAutomationTaskExecutionListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentAutomationTaskExecutionListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                                       `json:"nextToken"`
-	JSON      environmentAutomationTaskExecutionListResponsePaginationJSON `json:"-"`
-}
-
-// environmentAutomationTaskExecutionListResponsePaginationJSON contains the JSON
-// metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponsePagination]
-type environmentAutomationTaskExecutionListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionListResponseTaskExecution struct {
-	ID       string                                                               `json:"id" format:"uuid"`
-	Metadata EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata `json:"metadata"`
-	Spec     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpec     `json:"spec"`
-	Status   EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus   `json:"status"`
-	JSON     environmentAutomationTaskExecutionListResponseTaskExecutionJSON      `json:"-"`
-}
-
-// environmentAutomationTaskExecutionListResponseTaskExecutionJSON contains the
-// JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecution]
-type environmentAutomationTaskExecutionListResponseTaskExecutionJSON struct {
-	ID          apijson.Field
-	Metadata    apijson.Field
-	Spec        apijson.Field
-	Status      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecution) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata struct {
+type EnvironmentAutomationTaskExecutionListResponseMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -1005,7 +973,7 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata struct
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator describes the principal who created/started the task run.
-	Creator EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreator `json:"creator"`
+	Creator EnvironmentAutomationTaskExecutionListResponseMetadataCreator `json:"creator"`
 	// environment_id is the ID of the environment in which the task run is executed.
 	EnvironmentID string `json:"environmentId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
@@ -1100,14 +1068,13 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata struct
 	// started_by describes the trigger that started the task execution.
 	StartedBy string `json:"startedBy"`
 	// task_id is the ID of the main task being executed.
-	TaskID string                                                                   `json:"taskId" format:"uuid"`
-	JSON   environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataJSON `json:"-"`
+	TaskID string                                                     `json:"taskId" format:"uuid"`
+	JSON   environmentAutomationTaskExecutionListResponseMetadataJSON `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataJSON struct {
+// environmentAutomationTaskExecutionListResponseMetadataJSON contains the JSON
+// metadata for the struct [EnvironmentAutomationTaskExecutionListResponseMetadata]
+type environmentAutomationTaskExecutionListResponseMetadataJSON struct {
 	CompletedAt   apijson.Field
 	CreatedAt     apijson.Field
 	Creator       apijson.Field
@@ -1119,134 +1086,132 @@ type environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataJSON st
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseMetadata) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseMetadataJSON) RawJSON() string {
 	return r.raw
 }
 
 // creator describes the principal who created/started the task run.
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreator struct {
+type EnvironmentAutomationTaskExecutionListResponseMetadataCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal `json:"principal"`
-	JSON      environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorJSON      `json:"-"`
+	Principal EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal `json:"principal"`
+	JSON      environmentAutomationTaskExecutionListResponseMetadataCreatorJSON      `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreator]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorJSON struct {
+// environmentAutomationTaskExecutionListResponseMetadataCreatorJSON contains the
+// JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseMetadataCreator]
+type environmentAutomationTaskExecutionListResponseMetadataCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseMetadataCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseMetadataCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal string
+type EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal string
 
 const (
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_USER"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipal) IsKnown() bool {
+func (r EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadataCreatorPrincipalPrincipalServiceAccount:
+	case EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskExecutionListResponseMetadataCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
 }
 
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpec struct {
+type EnvironmentAutomationTaskExecutionListResponseSpec struct {
 	// desired_phase is the phase the task execution should be in. Used to stop a
 	// running task execution early.
-	DesiredPhase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase `json:"desiredPhase"`
+	DesiredPhase EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase `json:"desiredPhase"`
 	// plan is a list of groups of steps. The steps in a group are executed
 	// concurrently, while the groups are executed sequentially. The order of the
 	// groups is the order in which they are executed.
-	Plan []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlan `json:"plan"`
-	JSON environmentAutomationTaskExecutionListResponseTaskExecutionsSpecJSON   `json:"-"`
+	Plan []EnvironmentAutomationTaskExecutionListResponseSpecPlan `json:"plan"`
+	JSON environmentAutomationTaskExecutionListResponseSpecJSON   `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecJSON contains
-// the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpec]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecJSON struct {
+// environmentAutomationTaskExecutionListResponseSpecJSON contains the JSON
+// metadata for the struct [EnvironmentAutomationTaskExecutionListResponseSpec]
+type environmentAutomationTaskExecutionListResponseSpecJSON struct {
 	DesiredPhase apijson.Field
 	Plan         apijson.Field
 	raw          string
 	ExtraFields  map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpec) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseSpec) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseSpecJSON) RawJSON() string {
 	return r.raw
 }
 
 // desired_phase is the phase the task execution should be in. Used to stop a
 // running task execution early.
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase string
+type EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase string
 
 const (
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase = "TASK_EXECUTION_PHASE_STOPPED"
+	EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
+	EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase = "TASK_EXECUTION_PHASE_PENDING"
+	EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase = "TASK_EXECUTION_PHASE_RUNNING"
+	EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
+	EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase = "TASK_EXECUTION_PHASE_FAILED"
+	EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase = "TASK_EXECUTION_PHASE_STOPPED"
 )
 
-func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase) IsKnown() bool {
+func (r EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhaseTaskExecutionPhaseStopped:
+	case EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseSpecDesiredPhaseTaskExecutionPhaseStopped:
 		return true
 	}
 	return false
 }
 
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlan struct {
-	Steps []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep `json:"steps"`
-	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON   `json:"-"`
+type EnvironmentAutomationTaskExecutionListResponseSpecPlan struct {
+	Steps []EnvironmentAutomationTaskExecutionListResponseSpecPlanStep `json:"steps"`
+	JSON  environmentAutomationTaskExecutionListResponseSpecPlanJSON   `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlan]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON struct {
+// environmentAutomationTaskExecutionListResponseSpecPlanJSON contains the JSON
+// metadata for the struct [EnvironmentAutomationTaskExecutionListResponseSpecPlan]
+type environmentAutomationTaskExecutionListResponseSpecPlanJSON struct {
 	Steps       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlan) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseSpecPlan) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseSpecPlanJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep struct {
+type EnvironmentAutomationTaskExecutionListResponseSpecPlanStep struct {
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
 	// This field can have the runtime type of [[]string].
@@ -1254,16 +1219,16 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep st
 	Label     string      `json:"label"`
 	ServiceID string      `json:"serviceId" format:"uuid"`
 	// This field can have the runtime type of
-	// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObjectTask].
-	Task  interface{}                                                                  `json:"task"`
-	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON `json:"-"`
-	union EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion
+	// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObjectTask].
+	Task  interface{}                                                    `json:"task"`
+	JSON  environmentAutomationTaskExecutionListResponseSpecPlanStepJSON `json:"-"`
+	union EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsUnion
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON struct {
+// environmentAutomationTaskExecutionListResponseSpecPlanStepJSON contains the JSON
+// metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStep]
+type environmentAutomationTaskExecutionListResponseSpecPlanStepJSON struct {
 	ID          apijson.Field
 	DependsOn   apijson.Field
 	Label       apijson.Field
@@ -1273,12 +1238,12 @@ type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSO
 	ExtraFields map[string]apijson.Field
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseSpecPlanStepJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
-	*r = EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep{}
+func (r *EnvironmentAutomationTaskExecutionListResponseSpecPlanStep) UnmarshalJSON(data []byte) (err error) {
+	*r = EnvironmentAutomationTaskExecutionListResponseSpecPlanStep{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -1287,52 +1252,51 @@ func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanSte
 }
 
 // AsUnion returns a
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion]
-// interface which you can cast to the specific types for more type safety.
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsUnion] interface
+// which you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject],
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject].
-func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep) AsUnion() EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion {
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject],
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject].
+func (r EnvironmentAutomationTaskExecutionListResponseSpecPlanStep) AsUnion() EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsUnion {
 	return r.union
 }
 
 // Union satisfied by
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject]
-// or
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject].
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion interface {
-	implementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep()
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject] or
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject].
+type EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsUnion interface {
+	implementsEnvironmentAutomationTaskExecutionListResponseSpecPlanStep()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsUnion)(nil)).Elem(),
+		reflect.TypeOf((*EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject{}),
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject{}),
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject{}),
 		},
 	)
 }
 
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject struct {
+type EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject struct {
 	ServiceID string `json:"serviceId,required" format:"uuid"`
 	// ID is the ID of the execution step
-	ID        string                                                                              `json:"id" format:"uuid"`
-	DependsOn []string                                                                            `json:"dependsOn"`
-	Label     string                                                                              `json:"label"`
-	JSON      environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObjectJSON `json:"-"`
+	ID        string                                                                `json:"id" format:"uuid"`
+	DependsOn []string                                                              `json:"dependsOn"`
+	Label     string                                                                `json:"label"`
+	JSON      environmentAutomationTaskExecutionListResponseSpecPlanStepsObjectJSON `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObjectJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObjectJSON struct {
+// environmentAutomationTaskExecutionListResponseSpecPlanStepsObjectJSON contains
+// the JSON metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject]
+type environmentAutomationTaskExecutionListResponseSpecPlanStepsObjectJSON struct {
 	ServiceID   apijson.Field
 	ID          apijson.Field
 	DependsOn   apijson.Field
@@ -1341,18 +1305,18 @@ type environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsOb
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObjectJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseSpecPlanStepsObjectJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStepsObject) implementsEnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep() {
+func (r EnvironmentAutomationTaskExecutionListResponseSpecPlanStepsObject) implementsEnvironmentAutomationTaskExecutionListResponseSpecPlanStep() {
 }
 
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
+type EnvironmentAutomationTaskExecutionListResponseStatus struct {
 	// failure_message summarises why the task execution failed to operate. If this is
 	// non-empty the task execution has failed to operate and will likely transition to
 	// a failed state.
@@ -1361,7 +1325,7 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
 	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
 	// the phase of a task execution represents the aggregated phase of all steps.
-	Phase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase `json:"phase"`
+	Phase EnvironmentAutomationTaskExecutionListResponseStatusPhase `json:"phase"`
 	// version of the status update. Task executions themselves are unversioned, but
 	// their status has different versions. The value of this field has no semantic
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
@@ -1370,14 +1334,13 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
 	StatusVersion string `json:"statusVersion"`
 	// steps provides the status for each individual step of the task execution. If a
 	// step is missing it has not yet started.
-	Steps []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep `json:"steps"`
-	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON   `json:"-"`
+	Steps []EnvironmentAutomationTaskExecutionListResponseStatusStep `json:"steps"`
+	JSON  environmentAutomationTaskExecutionListResponseStatusJSON   `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON contains
-// the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON struct {
+// environmentAutomationTaskExecutionListResponseStatusJSON contains the JSON
+// metadata for the struct [EnvironmentAutomationTaskExecutionListResponseStatus]
+type environmentAutomationTaskExecutionListResponseStatusJSON struct {
 	FailureMessage apijson.Field
 	LogURL         apijson.Field
 	Phase          apijson.Field
@@ -1387,49 +1350,49 @@ type environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON stru
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseStatus) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseStatusJSON) RawJSON() string {
 	return r.raw
 }
 
 // the phase of a task execution represents the aggregated phase of all steps.
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase string
+type EnvironmentAutomationTaskExecutionListResponseStatusPhase string
 
 const (
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase = "TASK_EXECUTION_PHASE_STOPPED"
+	EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListResponseStatusPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
+	EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListResponseStatusPhase = "TASK_EXECUTION_PHASE_PENDING"
+	EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListResponseStatusPhase = "TASK_EXECUTION_PHASE_RUNNING"
+	EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListResponseStatusPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
+	EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListResponseStatusPhase = "TASK_EXECUTION_PHASE_FAILED"
+	EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListResponseStatusPhase = "TASK_EXECUTION_PHASE_STOPPED"
 )
 
-func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase) IsKnown() bool {
+func (r EnvironmentAutomationTaskExecutionListResponseStatusPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhaseTaskExecutionPhaseStopped:
+	case EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseStatusPhaseTaskExecutionPhaseStopped:
 		return true
 	}
 	return false
 }
 
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep struct {
+type EnvironmentAutomationTaskExecutionListResponseStatusStep struct {
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
 	// failure_message summarises why the step failed to operate. If this is non-empty
 	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the execution step
-	Phase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase `json:"phase"`
-	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJSON   `json:"-"`
+	Phase EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase `json:"phase"`
+	JSON  environmentAutomationTaskExecutionListResponseStatusStepJSON   `json:"-"`
 }
 
-// environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJSON
-// contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep]
-type environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJSON struct {
+// environmentAutomationTaskExecutionListResponseStatusStepJSON contains the JSON
+// metadata for the struct
+// [EnvironmentAutomationTaskExecutionListResponseStatusStep]
+type environmentAutomationTaskExecutionListResponseStatusStepJSON struct {
 	ID             apijson.Field
 	FailureMessage apijson.Field
 	Phase          apijson.Field
@@ -1437,29 +1400,29 @@ type environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJSON 
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskExecutionListResponseStatusStep) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepJSON) RawJSON() string {
+func (r environmentAutomationTaskExecutionListResponseStatusStepJSON) RawJSON() string {
 	return r.raw
 }
 
 // phase is the current phase of the execution step
-type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase string
+type EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase string
 
 const (
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_PENDING"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_FAILED"
-	EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase = "TASK_EXECUTION_PHASE_STOPPED"
+	EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
+	EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase = "TASK_EXECUTION_PHASE_PENDING"
+	EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase = "TASK_EXECUTION_PHASE_RUNNING"
+	EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
+	EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase = "TASK_EXECUTION_PHASE_FAILED"
+	EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase = "TASK_EXECUTION_PHASE_STOPPED"
 )
 
-func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhase) IsKnown() bool {
+func (r EnvironmentAutomationTaskExecutionListResponseStatusStepsPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsPhaseTaskExecutionPhaseStopped:
+	case EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListResponseStatusStepsPhaseTaskExecutionPhaseStopped:
 		return true
 	}
 	return false
