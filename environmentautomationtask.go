@@ -64,7 +64,7 @@ func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, body Envi
 }
 
 // ListTasks
-func (r *EnvironmentAutomationTaskService) List(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentAutomationTaskListResponse], err error) {
+func (r *EnvironmentAutomationTaskService) List(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) (res *pagination.TasksPage[EnvironmentAutomationTaskListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -82,8 +82,8 @@ func (r *EnvironmentAutomationTaskService) List(ctx context.Context, params Envi
 }
 
 // ListTasks
-func (r *EnvironmentAutomationTaskService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentAutomationTaskListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *EnvironmentAutomationTaskService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) *pagination.TasksPageAutoPager[EnvironmentAutomationTaskListResponse] {
+	return pagination.NewTasksPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteTask
@@ -1014,18 +1014,25 @@ func (r environmentAutomationTaskGetResponseTaskSpecRunsOnDockerJSON) RawJSON() 
 type EnvironmentAutomationTaskUpdateResponse = interface{}
 
 type EnvironmentAutomationTaskListResponse struct {
-	Pagination EnvironmentAutomationTaskListResponsePagination `json:"pagination"`
-	Tasks      []EnvironmentAutomationTaskListResponseTask     `json:"tasks"`
-	JSON       environmentAutomationTaskListResponseJSON       `json:"-"`
+	ID string `json:"id" format:"uuid"`
+	// dependencies specifies the IDs of the automations this task depends on.
+	DependsOn     []string                                      `json:"dependsOn" format:"uuid"`
+	EnvironmentID string                                        `json:"environmentId" format:"uuid"`
+	Metadata      EnvironmentAutomationTaskListResponseMetadata `json:"metadata"`
+	Spec          EnvironmentAutomationTaskListResponseSpec     `json:"spec"`
+	JSON          environmentAutomationTaskListResponseJSON     `json:"-"`
 }
 
 // environmentAutomationTaskListResponseJSON contains the JSON metadata for the
 // struct [EnvironmentAutomationTaskListResponse]
 type environmentAutomationTaskListResponseJSON struct {
-	Pagination  apijson.Field
-	Tasks       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID            apijson.Field
+	DependsOn     apijson.Field
+	EnvironmentID apijson.Field
+	Metadata      apijson.Field
+	Spec          apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
 }
 
 func (r *EnvironmentAutomationTaskListResponse) UnmarshalJSON(data []byte) (err error) {
@@ -1036,60 +1043,7 @@ func (r environmentAutomationTaskListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentAutomationTaskListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                              `json:"nextToken"`
-	JSON      environmentAutomationTaskListResponsePaginationJSON `json:"-"`
-}
-
-// environmentAutomationTaskListResponsePaginationJSON contains the JSON metadata
-// for the struct [EnvironmentAutomationTaskListResponsePagination]
-type environmentAutomationTaskListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskListResponseTask struct {
-	ID string `json:"id" format:"uuid"`
-	// dependencies specifies the IDs of the automations this task depends on.
-	DependsOn     []string                                           `json:"dependsOn" format:"uuid"`
-	EnvironmentID string                                             `json:"environmentId" format:"uuid"`
-	Metadata      EnvironmentAutomationTaskListResponseTasksMetadata `json:"metadata"`
-	Spec          EnvironmentAutomationTaskListResponseTasksSpec     `json:"spec"`
-	JSON          environmentAutomationTaskListResponseTaskJSON      `json:"-"`
-}
-
-// environmentAutomationTaskListResponseTaskJSON contains the JSON metadata for the
-// struct [EnvironmentAutomationTaskListResponseTask]
-type environmentAutomationTaskListResponseTaskJSON struct {
-	ID            apijson.Field
-	DependsOn     apijson.Field
-	EnvironmentID apijson.Field
-	Metadata      apijson.Field
-	Spec          apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *EnvironmentAutomationTaskListResponseTask) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentAutomationTaskListResponseTaskJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentAutomationTaskListResponseTasksMetadata struct {
+type EnvironmentAutomationTaskListResponseMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -1180,7 +1134,7 @@ type EnvironmentAutomationTaskListResponseTasksMetadata struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator describes the principal who created the task.
-	Creator EnvironmentAutomationTaskListResponseTasksMetadataCreator `json:"creator"`
+	Creator EnvironmentAutomationTaskListResponseMetadataCreator `json:"creator"`
 	// description is a user-facing description for the task. It can be used to provide
 	// context and documentation for the task.
 	Description string `json:"description"`
@@ -1193,13 +1147,13 @@ type EnvironmentAutomationTaskListResponseTasksMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy `json:"triggeredBy"`
-	JSON        environmentAutomationTaskListResponseTasksMetadataJSON          `json:"-"`
+	TriggeredBy []EnvironmentAutomationTaskListResponseMetadataTriggeredBy `json:"triggeredBy"`
+	JSON        environmentAutomationTaskListResponseMetadataJSON          `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksMetadataJSON contains the JSON
-// metadata for the struct [EnvironmentAutomationTaskListResponseTasksMetadata]
-type environmentAutomationTaskListResponseTasksMetadataJSON struct {
+// environmentAutomationTaskListResponseMetadataJSON contains the JSON metadata for
+// the struct [EnvironmentAutomationTaskListResponseMetadata]
+type environmentAutomationTaskListResponseMetadataJSON struct {
 	CreatedAt   apijson.Field
 	Creator     apijson.Field
 	Description apijson.Field
@@ -1210,56 +1164,55 @@ type environmentAutomationTaskListResponseTasksMetadataJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksMetadata) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseMetadata) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksMetadataJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseMetadataJSON) RawJSON() string {
 	return r.raw
 }
 
 // creator describes the principal who created the task.
-type EnvironmentAutomationTaskListResponseTasksMetadataCreator struct {
+type EnvironmentAutomationTaskListResponseMetadataCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal `json:"principal"`
-	JSON      environmentAutomationTaskListResponseTasksMetadataCreatorJSON      `json:"-"`
+	Principal EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal `json:"principal"`
+	JSON      environmentAutomationTaskListResponseMetadataCreatorJSON      `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksMetadataCreatorJSON contains the JSON
-// metadata for the struct
-// [EnvironmentAutomationTaskListResponseTasksMetadataCreator]
-type environmentAutomationTaskListResponseTasksMetadataCreatorJSON struct {
+// environmentAutomationTaskListResponseMetadataCreatorJSON contains the JSON
+// metadata for the struct [EnvironmentAutomationTaskListResponseMetadataCreator]
+type environmentAutomationTaskListResponseMetadataCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksMetadataCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseMetadataCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksMetadataCreatorJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseMetadataCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal string
+type EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal string
 
 const (
-	EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal = "PRINCIPAL_USER"
-	EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
-	EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalAccount        EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalUser           EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalRunner         EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal) IsKnown() bool {
+func (r EnvironmentAutomationTaskListResponseMetadataCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipalPrincipalServiceAccount:
+	case EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalAccount, EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalUser, EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalRunner, EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentAutomationTaskListResponseMetadataCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
@@ -1269,18 +1222,18 @@ func (r EnvironmentAutomationTaskListResponseTasksMetadataCreatorPrincipal) IsKn
 // `post_environment_start` field indicates that the automation should be triggered
 // after the environment has started. The `post_devcontainer_start` field indicates
 // that the automation should be triggered after the dev container has started.
-type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy struct {
-	Manual                bool                                                              `json:"manual"`
-	PostDevcontainerStart bool                                                              `json:"postDevcontainerStart"`
-	PostEnvironmentStart  bool                                                              `json:"postEnvironmentStart"`
-	JSON                  environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON `json:"-"`
-	union                 EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion
+type EnvironmentAutomationTaskListResponseMetadataTriggeredBy struct {
+	Manual                bool                                                         `json:"manual"`
+	PostDevcontainerStart bool                                                         `json:"postDevcontainerStart"`
+	PostEnvironmentStart  bool                                                         `json:"postEnvironmentStart"`
+	JSON                  environmentAutomationTaskListResponseMetadataTriggeredByJSON `json:"-"`
+	union                 EnvironmentAutomationTaskListResponseMetadataTriggeredByUnion
 }
 
-// environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON contains the
-// JSON metadata for the struct
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy]
-type environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON struct {
+// environmentAutomationTaskListResponseMetadataTriggeredByJSON contains the JSON
+// metadata for the struct
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredBy]
+type environmentAutomationTaskListResponseMetadataTriggeredByJSON struct {
 	Manual                apijson.Field
 	PostDevcontainerStart apijson.Field
 	PostEnvironmentStart  apijson.Field
@@ -1288,12 +1241,12 @@ type environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON struct {
 	ExtraFields           map[string]apijson.Field
 }
 
-func (r environmentAutomationTaskListResponseTasksMetadataTriggeredByJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseMetadataTriggeredByJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
-	*r = EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy{}
+func (r *EnvironmentAutomationTaskListResponseMetadataTriggeredBy) UnmarshalJSON(data []byte) (err error) {
+	*r = EnvironmentAutomationTaskListResponseMetadataTriggeredBy{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -1302,14 +1255,14 @@ func (r *EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy) Unmarsha
 }
 
 // AsUnion returns a
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion] interface
-// which you can cast to the specific types for more type safety.
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByUnion] interface which
+// you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual],
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart],
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart].
-func (r EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy) AsUnion() EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion {
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByManual],
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart],
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart].
+func (r EnvironmentAutomationTaskListResponseMetadataTriggeredBy) AsUnion() EnvironmentAutomationTaskListResponseMetadataTriggeredByUnion {
 	return r.union
 }
 
@@ -1319,176 +1272,175 @@ func (r EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy) AsUnion()
 // that the automation should be triggered after the dev container has started.
 //
 // Union satisfied by
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual],
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart]
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByManual],
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart]
 // or
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart].
-type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion interface {
-	implementsEnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy()
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart].
+type EnvironmentAutomationTaskListResponseMetadataTriggeredByUnion interface {
+	implementsEnvironmentAutomationTaskListResponseMetadataTriggeredBy()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByUnion)(nil)).Elem(),
+		reflect.TypeOf((*EnvironmentAutomationTaskListResponseMetadataTriggeredByUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual{}),
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskListResponseMetadataTriggeredByManual{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart{}),
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart{}),
+			Type:       reflect.TypeOf(EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart{}),
 		},
 	)
 }
 
-type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual struct {
-	Manual bool                                                                    `json:"manual,required"`
-	JSON   environmentAutomationTaskListResponseTasksMetadataTriggeredByManualJSON `json:"-"`
+type EnvironmentAutomationTaskListResponseMetadataTriggeredByManual struct {
+	Manual bool                                                               `json:"manual,required"`
+	JSON   environmentAutomationTaskListResponseMetadataTriggeredByManualJSON `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksMetadataTriggeredByManualJSON contains
-// the JSON metadata for the struct
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual]
-type environmentAutomationTaskListResponseTasksMetadataTriggeredByManualJSON struct {
+// environmentAutomationTaskListResponseMetadataTriggeredByManualJSON contains the
+// JSON metadata for the struct
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByManual]
+type environmentAutomationTaskListResponseMetadataTriggeredByManualJSON struct {
 	Manual      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseMetadataTriggeredByManual) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksMetadataTriggeredByManualJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseMetadataTriggeredByManualJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByManual) implementsEnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy() {
+func (r EnvironmentAutomationTaskListResponseMetadataTriggeredByManual) implementsEnvironmentAutomationTaskListResponseMetadataTriggeredBy() {
 }
 
-type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart struct {
-	PostDevcontainerStart bool                                                                                   `json:"postDevcontainerStart,required"`
-	JSON                  environmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStartJSON `json:"-"`
+type EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart struct {
+	PostDevcontainerStart bool                                                                              `json:"postDevcontainerStart,required"`
+	JSON                  environmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStartJSON `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStartJSON
+// environmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStartJSON
 // contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart]
-type environmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStartJSON struct {
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart]
+type environmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStartJSON struct {
 	PostDevcontainerStart apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStartJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStartJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostDevcontainerStart) implementsEnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy() {
+func (r EnvironmentAutomationTaskListResponseMetadataTriggeredByPostDevcontainerStart) implementsEnvironmentAutomationTaskListResponseMetadataTriggeredBy() {
 }
 
-type EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart struct {
-	PostEnvironmentStart bool                                                                                  `json:"postEnvironmentStart,required"`
-	JSON                 environmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStartJSON `json:"-"`
+type EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart struct {
+	PostEnvironmentStart bool                                                                             `json:"postEnvironmentStart,required"`
+	JSON                 environmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStartJSON `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStartJSON
+// environmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStartJSON
 // contains the JSON metadata for the struct
-// [EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart]
-type environmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStartJSON struct {
+// [EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart]
+type environmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStartJSON struct {
 	PostEnvironmentStart apijson.Field
 	raw                  string
 	ExtraFields          map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStartJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStartJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentAutomationTaskListResponseTasksMetadataTriggeredByPostEnvironmentStart) implementsEnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy() {
+func (r EnvironmentAutomationTaskListResponseMetadataTriggeredByPostEnvironmentStart) implementsEnvironmentAutomationTaskListResponseMetadataTriggeredBy() {
 }
 
-type EnvironmentAutomationTaskListResponseTasksSpec struct {
+type EnvironmentAutomationTaskListResponseSpec struct {
 	// command contains the command the task should execute
 	Command string `json:"command"`
 	// runs_on specifies the environment the task should run on.
-	RunsOn EnvironmentAutomationTaskListResponseTasksSpecRunsOn `json:"runsOn"`
-	JSON   environmentAutomationTaskListResponseTasksSpecJSON   `json:"-"`
+	RunsOn EnvironmentAutomationTaskListResponseSpecRunsOn `json:"runsOn"`
+	JSON   environmentAutomationTaskListResponseSpecJSON   `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksSpecJSON contains the JSON metadata
-// for the struct [EnvironmentAutomationTaskListResponseTasksSpec]
-type environmentAutomationTaskListResponseTasksSpecJSON struct {
+// environmentAutomationTaskListResponseSpecJSON contains the JSON metadata for the
+// struct [EnvironmentAutomationTaskListResponseSpec]
+type environmentAutomationTaskListResponseSpecJSON struct {
 	Command     apijson.Field
 	RunsOn      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksSpec) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseSpec) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksSpecJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseSpecJSON) RawJSON() string {
 	return r.raw
 }
 
 // runs_on specifies the environment the task should run on.
-type EnvironmentAutomationTaskListResponseTasksSpecRunsOn struct {
-	Docker EnvironmentAutomationTaskListResponseTasksSpecRunsOnDocker `json:"docker,required"`
-	JSON   environmentAutomationTaskListResponseTasksSpecRunsOnJSON   `json:"-"`
+type EnvironmentAutomationTaskListResponseSpecRunsOn struct {
+	Docker EnvironmentAutomationTaskListResponseSpecRunsOnDocker `json:"docker,required"`
+	JSON   environmentAutomationTaskListResponseSpecRunsOnJSON   `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksSpecRunsOnJSON contains the JSON
-// metadata for the struct [EnvironmentAutomationTaskListResponseTasksSpecRunsOn]
-type environmentAutomationTaskListResponseTasksSpecRunsOnJSON struct {
+// environmentAutomationTaskListResponseSpecRunsOnJSON contains the JSON metadata
+// for the struct [EnvironmentAutomationTaskListResponseSpecRunsOn]
+type environmentAutomationTaskListResponseSpecRunsOnJSON struct {
 	Docker      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksSpecRunsOn) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseSpecRunsOn) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksSpecRunsOnJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseSpecRunsOnJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentAutomationTaskListResponseTasksSpecRunsOnDocker struct {
-	Environment []string                                                       `json:"environment"`
-	Image       string                                                         `json:"image"`
-	JSON        environmentAutomationTaskListResponseTasksSpecRunsOnDockerJSON `json:"-"`
+type EnvironmentAutomationTaskListResponseSpecRunsOnDocker struct {
+	Environment []string                                                  `json:"environment"`
+	Image       string                                                    `json:"image"`
+	JSON        environmentAutomationTaskListResponseSpecRunsOnDockerJSON `json:"-"`
 }
 
-// environmentAutomationTaskListResponseTasksSpecRunsOnDockerJSON contains the JSON
-// metadata for the struct
-// [EnvironmentAutomationTaskListResponseTasksSpecRunsOnDocker]
-type environmentAutomationTaskListResponseTasksSpecRunsOnDockerJSON struct {
+// environmentAutomationTaskListResponseSpecRunsOnDockerJSON contains the JSON
+// metadata for the struct [EnvironmentAutomationTaskListResponseSpecRunsOnDocker]
+type environmentAutomationTaskListResponseSpecRunsOnDockerJSON struct {
 	Environment apijson.Field
 	Image       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentAutomationTaskListResponseTasksSpecRunsOnDocker) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentAutomationTaskListResponseSpecRunsOnDocker) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentAutomationTaskListResponseTasksSpecRunsOnDockerJSON) RawJSON() string {
+func (r environmentAutomationTaskListResponseSpecRunsOnDockerJSON) RawJSON() string {
 	return r.raw
 }
 

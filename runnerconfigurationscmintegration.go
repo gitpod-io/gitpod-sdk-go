@@ -59,7 +59,7 @@ func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, b
 }
 
 // ListSCMIntegrations returns all SCM integrations configured for a runner.
-func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerConfigurationScmIntegrationListResponse], err error) {
+func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) (res *pagination.IntegrationsPage[RunnerConfigurationScmIntegrationListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -77,8 +77,8 @@ func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, par
 }
 
 // ListSCMIntegrations returns all SCM integrations configured for a runner.
-func (r *RunnerConfigurationScmIntegrationService) ListAutoPaging(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerConfigurationScmIntegrationListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *RunnerConfigurationScmIntegrationService) ListAutoPaging(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) *pagination.IntegrationsPageAutoPager[RunnerConfigurationScmIntegrationListResponse] {
+	return pagination.NewIntegrationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteSCMIntegration deletes an existing SCM integration on a runner.
@@ -184,31 +184,7 @@ func (r runnerConfigurationScmIntegrationGetResponseIntegrationOAuthJSON) RawJSO
 type RunnerConfigurationScmIntegrationUpdateResponse = interface{}
 
 type RunnerConfigurationScmIntegrationListResponse struct {
-	Integrations []RunnerConfigurationScmIntegrationListResponseIntegration `json:"integrations"`
-	// pagination contains the pagination options for listing scm integrations
-	Pagination RunnerConfigurationScmIntegrationListResponsePagination `json:"pagination"`
-	JSON       runnerConfigurationScmIntegrationListResponseJSON       `json:"-"`
-}
-
-// runnerConfigurationScmIntegrationListResponseJSON contains the JSON metadata for
-// the struct [RunnerConfigurationScmIntegrationListResponse]
-type runnerConfigurationScmIntegrationListResponseJSON struct {
-	Integrations apijson.Field
-	Pagination   apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationScmIntegrationListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationScmIntegrationListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerConfigurationScmIntegrationListResponseIntegration struct {
-	OAuth RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth `json:"oauth,required"`
+	OAuth RunnerConfigurationScmIntegrationListResponseOAuth `json:"oauth,required"`
 	// id is the unique identifier of the SCM integration
 	ID       string `json:"id"`
 	Host     string `json:"host"`
@@ -216,14 +192,13 @@ type RunnerConfigurationScmIntegrationListResponseIntegration struct {
 	RunnerID string `json:"runnerId"`
 	// scm_id references the scm_id in the runner's configuration schema that this
 	// integration is for
-	ScmID string                                                       `json:"scmId"`
-	JSON  runnerConfigurationScmIntegrationListResponseIntegrationJSON `json:"-"`
+	ScmID string                                            `json:"scmId"`
+	JSON  runnerConfigurationScmIntegrationListResponseJSON `json:"-"`
 }
 
-// runnerConfigurationScmIntegrationListResponseIntegrationJSON contains the JSON
-// metadata for the struct
-// [RunnerConfigurationScmIntegrationListResponseIntegration]
-type runnerConfigurationScmIntegrationListResponseIntegrationJSON struct {
+// runnerConfigurationScmIntegrationListResponseJSON contains the JSON metadata for
+// the struct [RunnerConfigurationScmIntegrationListResponse]
+type runnerConfigurationScmIntegrationListResponseJSON struct {
 	OAuth       apijson.Field
 	ID          apijson.Field
 	Host        apijson.Field
@@ -234,63 +209,37 @@ type runnerConfigurationScmIntegrationListResponseIntegrationJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationScmIntegrationListResponseIntegration) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationScmIntegrationListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationScmIntegrationListResponseIntegrationJSON) RawJSON() string {
+func (r runnerConfigurationScmIntegrationListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth struct {
+type RunnerConfigurationScmIntegrationListResponseOAuth struct {
 	// client_id is the OAuth app's client ID in clear text.
 	ClientID string `json:"clientId"`
 	// encrypted_client_secret is the OAuth app's secret encrypted with the runner's
 	// public key.
-	EncryptedClientSecret string                                                             `json:"encryptedClientSecret" format:"byte"`
-	JSON                  runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON `json:"-"`
+	EncryptedClientSecret string                                                 `json:"encryptedClientSecret" format:"byte"`
+	JSON                  runnerConfigurationScmIntegrationListResponseOAuthJSON `json:"-"`
 }
 
-// runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON contains the
-// JSON metadata for the struct
-// [RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth]
-type runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON struct {
+// runnerConfigurationScmIntegrationListResponseOAuthJSON contains the JSON
+// metadata for the struct [RunnerConfigurationScmIntegrationListResponseOAuth]
+type runnerConfigurationScmIntegrationListResponseOAuthJSON struct {
 	ClientID              apijson.Field
 	EncryptedClientSecret apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationScmIntegrationListResponseIntegrationsOAuth) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationScmIntegrationListResponseOAuth) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing scm integrations
-type RunnerConfigurationScmIntegrationListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                                      `json:"nextToken"`
-	JSON      runnerConfigurationScmIntegrationListResponsePaginationJSON `json:"-"`
-}
-
-// runnerConfigurationScmIntegrationListResponsePaginationJSON contains the JSON
-// metadata for the struct
-// [RunnerConfigurationScmIntegrationListResponsePagination]
-type runnerConfigurationScmIntegrationListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationScmIntegrationListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationScmIntegrationListResponsePaginationJSON) RawJSON() string {
+func (r runnerConfigurationScmIntegrationListResponseOAuthJSON) RawJSON() string {
 	return r.raw
 }
 

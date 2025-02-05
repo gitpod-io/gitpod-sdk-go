@@ -12,7 +12,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // EnvironmentClassService contains methods and other services that help with
@@ -37,28 +36,11 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 // ListEnvironmentClasses returns the list of environment classes with runner
 // details a user is able to use based on the query buf:lint:ignore
 // RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentClassListResponse], err error) {
-	var raw *http.Response
+func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *EnvironmentClassListResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironmentClasses"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the query buf:lint:ignore
-// RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentClassListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
 }
 
 type EnvironmentClassListResponse struct {

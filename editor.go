@@ -43,7 +43,7 @@ func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...o
 }
 
 // ListEditors lists all editors available to the caller
-func (r *EditorService) List(ctx context.Context, params EditorListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EditorListResponse], err error) {
+func (r *EditorService) List(ctx context.Context, params EditorListParams, opts ...option.RequestOption) (res *pagination.EditorsPage[EditorListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -61,8 +61,8 @@ func (r *EditorService) List(ctx context.Context, params EditorListParams, opts 
 }
 
 // ListEditors lists all editors available to the caller
-func (r *EditorService) ListAutoPaging(ctx context.Context, params EditorListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EditorListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *EditorService) ListAutoPaging(ctx context.Context, params EditorListParams, opts ...option.RequestOption) *pagination.EditorsPageAutoPager[EditorListResponse] {
+	return pagination.NewEditorsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // ResolveEditorURL resolves the editor's URL for an environment
@@ -130,44 +130,19 @@ func (r editorGetResponseEditorJSON) RawJSON() string {
 }
 
 type EditorListResponse struct {
-	// editors contains the list of editors
-	Editors []EditorListResponseEditor `json:"editors"`
-	// pagination contains the pagination options for listing environments
-	Pagination EditorListResponsePagination `json:"pagination"`
-	JSON       editorListResponseJSON       `json:"-"`
+	ID                       string                 `json:"id"`
+	Alias                    string                 `json:"alias"`
+	IconURL                  string                 `json:"iconUrl"`
+	InstallationInstructions string                 `json:"installationInstructions"`
+	Name                     string                 `json:"name"`
+	ShortDescription         string                 `json:"shortDescription"`
+	URLTemplate              string                 `json:"urlTemplate"`
+	JSON                     editorListResponseJSON `json:"-"`
 }
 
 // editorListResponseJSON contains the JSON metadata for the struct
 // [EditorListResponse]
 type editorListResponseJSON struct {
-	Editors     apijson.Field
-	Pagination  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EditorListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r editorListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type EditorListResponseEditor struct {
-	ID                       string                       `json:"id"`
-	Alias                    string                       `json:"alias"`
-	IconURL                  string                       `json:"iconUrl"`
-	InstallationInstructions string                       `json:"installationInstructions"`
-	Name                     string                       `json:"name"`
-	ShortDescription         string                       `json:"shortDescription"`
-	URLTemplate              string                       `json:"urlTemplate"`
-	JSON                     editorListResponseEditorJSON `json:"-"`
-}
-
-// editorListResponseEditorJSON contains the JSON metadata for the struct
-// [EditorListResponseEditor]
-type editorListResponseEditorJSON struct {
 	ID                       apijson.Field
 	Alias                    apijson.Field
 	IconURL                  apijson.Field
@@ -179,39 +154,11 @@ type editorListResponseEditorJSON struct {
 	ExtraFields              map[string]apijson.Field
 }
 
-func (r *EditorListResponseEditor) UnmarshalJSON(data []byte) (err error) {
+func (r *EditorListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r editorListResponseEditorJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing environments
-type EditorListResponsePagination struct {
-	// Token for the next set of results that was returned as next_token of a
-	// PaginationResponse
-	Token string `json:"token"`
-	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
-	// Maximum 100.
-	PageSize int64                            `json:"pageSize"`
-	JSON     editorListResponsePaginationJSON `json:"-"`
-}
-
-// editorListResponsePaginationJSON contains the JSON metadata for the struct
-// [EditorListResponsePagination]
-type editorListResponsePaginationJSON struct {
-	Token       apijson.Field
-	PageSize    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EditorListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r editorListResponsePaginationJSON) RawJSON() string {
+func (r editorListResponseJSON) RawJSON() string {
 	return r.raw
 }
 

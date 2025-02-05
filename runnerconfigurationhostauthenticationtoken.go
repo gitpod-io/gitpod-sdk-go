@@ -61,7 +61,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.C
 }
 
 // ListHostAuthenticationTokens
-func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerConfigurationHostAuthenticationTokenListResponse], err error) {
+func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *pagination.TokensPage[RunnerConfigurationHostAuthenticationTokenListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -79,8 +79,8 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Con
 }
 
 // ListHostAuthenticationTokens
-func (r *RunnerConfigurationHostAuthenticationTokenService) ListAutoPaging(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerConfigurationHostAuthenticationTokenListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *RunnerConfigurationHostAuthenticationTokenService) ListAutoPaging(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) *pagination.TokensPageAutoPager[RunnerConfigurationHostAuthenticationTokenListResponse] {
+	return pagination.NewTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteHostAuthenticationToken
@@ -408,53 +408,6 @@ func (r RunnerConfigurationHostAuthenticationTokenGetResponseTokenSource) IsKnow
 type RunnerConfigurationHostAuthenticationTokenUpdateResponse = interface{}
 
 type RunnerConfigurationHostAuthenticationTokenListResponse struct {
-	Pagination RunnerConfigurationHostAuthenticationTokenListResponsePagination `json:"pagination"`
-	Tokens     []RunnerConfigurationHostAuthenticationTokenListResponseToken    `json:"tokens"`
-	JSON       runnerConfigurationHostAuthenticationTokenListResponseJSON       `json:"-"`
-}
-
-// runnerConfigurationHostAuthenticationTokenListResponseJSON contains the JSON
-// metadata for the struct [RunnerConfigurationHostAuthenticationTokenListResponse]
-type runnerConfigurationHostAuthenticationTokenListResponseJSON struct {
-	Pagination  apijson.Field
-	Tokens      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationHostAuthenticationTokenListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationHostAuthenticationTokenListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerConfigurationHostAuthenticationTokenListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                                               `json:"nextToken"`
-	JSON      runnerConfigurationHostAuthenticationTokenListResponsePaginationJSON `json:"-"`
-}
-
-// runnerConfigurationHostAuthenticationTokenListResponsePaginationJSON contains
-// the JSON metadata for the struct
-// [RunnerConfigurationHostAuthenticationTokenListResponsePagination]
-type runnerConfigurationHostAuthenticationTokenListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationHostAuthenticationTokenListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationHostAuthenticationTokenListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerConfigurationHostAuthenticationTokenListResponseToken struct {
 	ID string `json:"id"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -544,18 +497,17 @@ type RunnerConfigurationHostAuthenticationTokenListResponseToken struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	ExpiresAt time.Time                                                          `json:"expiresAt" format:"date-time"`
-	Host      string                                                             `json:"host"`
-	RunnerID  string                                                             `json:"runnerId"`
-	Source    RunnerConfigurationHostAuthenticationTokenListResponseTokensSource `json:"source"`
-	UserID    string                                                             `json:"userId"`
-	JSON      runnerConfigurationHostAuthenticationTokenListResponseTokenJSON    `json:"-"`
+	ExpiresAt time.Time                                                    `json:"expiresAt" format:"date-time"`
+	Host      string                                                       `json:"host"`
+	RunnerID  string                                                       `json:"runnerId"`
+	Source    RunnerConfigurationHostAuthenticationTokenListResponseSource `json:"source"`
+	UserID    string                                                       `json:"userId"`
+	JSON      runnerConfigurationHostAuthenticationTokenListResponseJSON   `json:"-"`
 }
 
-// runnerConfigurationHostAuthenticationTokenListResponseTokenJSON contains the
-// JSON metadata for the struct
-// [RunnerConfigurationHostAuthenticationTokenListResponseToken]
-type runnerConfigurationHostAuthenticationTokenListResponseTokenJSON struct {
+// runnerConfigurationHostAuthenticationTokenListResponseJSON contains the JSON
+// metadata for the struct [RunnerConfigurationHostAuthenticationTokenListResponse]
+type runnerConfigurationHostAuthenticationTokenListResponseJSON struct {
 	ID          apijson.Field
 	ExpiresAt   apijson.Field
 	Host        apijson.Field
@@ -566,25 +518,25 @@ type runnerConfigurationHostAuthenticationTokenListResponseTokenJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerConfigurationHostAuthenticationTokenListResponseToken) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerConfigurationHostAuthenticationTokenListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerConfigurationHostAuthenticationTokenListResponseTokenJSON) RawJSON() string {
+func (r runnerConfigurationHostAuthenticationTokenListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerConfigurationHostAuthenticationTokenListResponseTokensSource string
+type RunnerConfigurationHostAuthenticationTokenListResponseSource string
 
 const (
-	RunnerConfigurationHostAuthenticationTokenListResponseTokensSourceHostAuthenticationTokenSourceUnspecified RunnerConfigurationHostAuthenticationTokenListResponseTokensSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_UNSPECIFIED"
-	RunnerConfigurationHostAuthenticationTokenListResponseTokensSourceHostAuthenticationTokenSourceOAuth       RunnerConfigurationHostAuthenticationTokenListResponseTokensSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_OAUTH"
-	RunnerConfigurationHostAuthenticationTokenListResponseTokensSourceHostAuthenticationTokenSourcePat         RunnerConfigurationHostAuthenticationTokenListResponseTokensSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_PAT"
+	RunnerConfigurationHostAuthenticationTokenListResponseSourceHostAuthenticationTokenSourceUnspecified RunnerConfigurationHostAuthenticationTokenListResponseSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_UNSPECIFIED"
+	RunnerConfigurationHostAuthenticationTokenListResponseSourceHostAuthenticationTokenSourceOAuth       RunnerConfigurationHostAuthenticationTokenListResponseSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_OAUTH"
+	RunnerConfigurationHostAuthenticationTokenListResponseSourceHostAuthenticationTokenSourcePat         RunnerConfigurationHostAuthenticationTokenListResponseSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_PAT"
 )
 
-func (r RunnerConfigurationHostAuthenticationTokenListResponseTokensSource) IsKnown() bool {
+func (r RunnerConfigurationHostAuthenticationTokenListResponseSource) IsKnown() bool {
 	switch r {
-	case RunnerConfigurationHostAuthenticationTokenListResponseTokensSourceHostAuthenticationTokenSourceUnspecified, RunnerConfigurationHostAuthenticationTokenListResponseTokensSourceHostAuthenticationTokenSourceOAuth, RunnerConfigurationHostAuthenticationTokenListResponseTokensSourceHostAuthenticationTokenSourcePat:
+	case RunnerConfigurationHostAuthenticationTokenListResponseSourceHostAuthenticationTokenSourceUnspecified, RunnerConfigurationHostAuthenticationTokenListResponseSourceHostAuthenticationTokenSourceOAuth, RunnerConfigurationHostAuthenticationTokenListResponseSourceHostAuthenticationTokenSourcePat:
 		return true
 	}
 	return false

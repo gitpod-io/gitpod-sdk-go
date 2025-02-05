@@ -13,7 +13,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // UserPatService contains methods and other services that help with interacting
@@ -36,26 +35,11 @@ func NewUserPatService(opts ...option.RequestOption) (r *UserPatService) {
 }
 
 // ListPersonalAccessTokens
-func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[UserPatListResponse], err error) {
-	var raw *http.Response
+func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *UserPatListResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.UserService/ListPersonalAccessTokens"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// ListPersonalAccessTokens
-func (r *UserPatService) ListAutoPaging(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[UserPatListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
 }
 
 // DeletePersonalAccessToken

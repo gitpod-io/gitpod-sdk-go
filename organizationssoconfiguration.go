@@ -12,7 +12,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // OrganizationSSOConfigurationService contains methods and other services that
@@ -59,26 +58,11 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 }
 
 // ListSSOConfigurations lists all SSO configurations matching provided filters.
-func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[OrganizationSSOConfigurationListResponse], err error) {
-	var raw *http.Response
+func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationListResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListSSOConfigurations"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// ListSSOConfigurations lists all SSO configurations matching provided filters.
-func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[OrganizationSSOConfigurationListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
 }
 
 // DeleteSSOConfiguration deletes an SSO configuration.

@@ -51,7 +51,7 @@ func (r *RunnerPolicyService) Update(ctx context.Context, body RunnerPolicyUpdat
 }
 
 // ListRunnerPolicies lists runner policies.
-func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerPolicyListResponse], err error) {
+func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[RunnerPolicyListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -69,8 +69,8 @@ func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListP
 }
 
 // ListRunnerPolicies lists runner policies.
-func (r *RunnerPolicyService) ListAutoPaging(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerPolicyListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *RunnerPolicyService) ListAutoPaging(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) *pagination.PoliciesPageAutoPager[RunnerPolicyListResponse] {
+	return pagination.NewPoliciesPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteRunnerPolicy deletes a runner policy.
@@ -206,16 +206,17 @@ func (r RunnerPolicyUpdateResponsePolicyRole) IsKnown() bool {
 }
 
 type RunnerPolicyListResponse struct {
-	Pagination RunnerPolicyListResponsePagination `json:"pagination"`
-	Policies   []RunnerPolicyListResponsePolicy   `json:"policies"`
-	JSON       runnerPolicyListResponseJSON       `json:"-"`
+	GroupID string `json:"groupId" format:"uuid"`
+	// role is the role assigned to the group
+	Role RunnerPolicyListResponseRole `json:"role"`
+	JSON runnerPolicyListResponseJSON `json:"-"`
 }
 
 // runnerPolicyListResponseJSON contains the JSON metadata for the struct
 // [RunnerPolicyListResponse]
 type runnerPolicyListResponseJSON struct {
-	Pagination  apijson.Field
-	Policies    apijson.Field
+	GroupID     apijson.Field
+	Role        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -228,65 +229,18 @@ func (r runnerPolicyListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerPolicyListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                 `json:"nextToken"`
-	JSON      runnerPolicyListResponsePaginationJSON `json:"-"`
-}
-
-// runnerPolicyListResponsePaginationJSON contains the JSON metadata for the struct
-// [RunnerPolicyListResponsePagination]
-type runnerPolicyListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerPolicyListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerPolicyListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerPolicyListResponsePolicy struct {
-	GroupID string `json:"groupId" format:"uuid"`
-	// role is the role assigned to the group
-	Role RunnerPolicyListResponsePoliciesRole `json:"role"`
-	JSON runnerPolicyListResponsePolicyJSON   `json:"-"`
-}
-
-// runnerPolicyListResponsePolicyJSON contains the JSON metadata for the struct
-// [RunnerPolicyListResponsePolicy]
-type runnerPolicyListResponsePolicyJSON struct {
-	GroupID     apijson.Field
-	Role        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerPolicyListResponsePolicy) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerPolicyListResponsePolicyJSON) RawJSON() string {
-	return r.raw
-}
-
 // role is the role assigned to the group
-type RunnerPolicyListResponsePoliciesRole string
+type RunnerPolicyListResponseRole string
 
 const (
-	RunnerPolicyListResponsePoliciesRoleRunnerRoleUnspecified RunnerPolicyListResponsePoliciesRole = "RUNNER_ROLE_UNSPECIFIED"
-	RunnerPolicyListResponsePoliciesRoleRunnerRoleAdmin       RunnerPolicyListResponsePoliciesRole = "RUNNER_ROLE_ADMIN"
-	RunnerPolicyListResponsePoliciesRoleRunnerRoleUser        RunnerPolicyListResponsePoliciesRole = "RUNNER_ROLE_USER"
+	RunnerPolicyListResponseRoleRunnerRoleUnspecified RunnerPolicyListResponseRole = "RUNNER_ROLE_UNSPECIFIED"
+	RunnerPolicyListResponseRoleRunnerRoleAdmin       RunnerPolicyListResponseRole = "RUNNER_ROLE_ADMIN"
+	RunnerPolicyListResponseRoleRunnerRoleUser        RunnerPolicyListResponseRole = "RUNNER_ROLE_USER"
 )
 
-func (r RunnerPolicyListResponsePoliciesRole) IsKnown() bool {
+func (r RunnerPolicyListResponseRole) IsKnown() bool {
 	switch r {
-	case RunnerPolicyListResponsePoliciesRoleRunnerRoleUnspecified, RunnerPolicyListResponsePoliciesRoleRunnerRoleAdmin, RunnerPolicyListResponsePoliciesRoleRunnerRoleUser:
+	case RunnerPolicyListResponseRoleRunnerRoleUnspecified, RunnerPolicyListResponseRoleRunnerRoleAdmin, RunnerPolicyListResponseRoleRunnerRoleUser:
 		return true
 	}
 	return false

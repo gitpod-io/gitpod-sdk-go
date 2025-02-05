@@ -12,7 +12,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // RunnerConfigurationEnvironmentClassService contains methods and other services
@@ -61,27 +60,11 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 
 // ListEnvironmentClasses returns all environment classes configured for a runner.
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerConfigurationEnvironmentClassListResponse], err error) {
-	var raw *http.Response
+func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassListResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// ListEnvironmentClasses returns all environment classes configured for a runner.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerConfigurationEnvironmentClassListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
 }
 
 type RunnerConfigurationEnvironmentClassNewResponse struct {

@@ -14,7 +14,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -47,26 +46,11 @@ func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, bod
 }
 
 // ListTaskExecutions
-func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentAutomationTaskExecutionListResponse], err error) {
-	var raw *http.Response
+func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// ListTaskExecutions
-func (r *EnvironmentAutomationTaskExecutionService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentAutomationTaskExecutionListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
 }
 
 // StopTaskExecution

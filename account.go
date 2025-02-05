@@ -12,7 +12,6 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // AccountService contains methods and other services that help with interacting
@@ -61,27 +60,11 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 
 // ListLoginProviders returns the list of login providers matching the provided
 // filters.
-func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[AccountListLoginProvidersResponse], err error) {
-	var raw *http.Response
+func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) (res *AccountListLoginProvidersResponse, err error) {
 	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.AccountService/ListLoginProviders"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// ListLoginProviders returns the list of login providers matching the provided
-// filters.
-func (r *AccountService) ListLoginProvidersAutoPaging(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[AccountListLoginProvidersResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.ListLoginProviders(ctx, params, opts...))
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
 }
 
 type AccountGetResponse struct {

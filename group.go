@@ -36,7 +36,7 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 }
 
 // ListGroups lists groups
-func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[GroupListResponse], err error) {
+func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.GroupsPage[GroupListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -54,34 +54,11 @@ func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ..
 }
 
 // ListGroups lists groups
-func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[GroupListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.GroupsPageAutoPager[GroupListResponse] {
+	return pagination.NewGroupsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 type GroupListResponse struct {
-	Groups     []GroupListResponseGroup    `json:"groups"`
-	Pagination GroupListResponsePagination `json:"pagination"`
-	JSON       groupListResponseJSON       `json:"-"`
-}
-
-// groupListResponseJSON contains the JSON metadata for the struct
-// [GroupListResponse]
-type groupListResponseJSON struct {
-	Groups      apijson.Field
-	Pagination  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *GroupListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r groupListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type GroupListResponseGroup struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -264,13 +241,13 @@ type GroupListResponseGroup struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                  `json:"updatedAt" format:"date-time"`
-	JSON      groupListResponseGroupJSON `json:"-"`
+	UpdatedAt time.Time             `json:"updatedAt" format:"date-time"`
+	JSON      groupListResponseJSON `json:"-"`
 }
 
-// groupListResponseGroupJSON contains the JSON metadata for the struct
-// [GroupListResponseGroup]
-type groupListResponseGroupJSON struct {
+// groupListResponseJSON contains the JSON metadata for the struct
+// [GroupListResponse]
+type groupListResponseJSON struct {
 	ID             apijson.Field
 	CreatedAt      apijson.Field
 	Name           apijson.Field
@@ -281,34 +258,11 @@ type groupListResponseGroupJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *GroupListResponseGroup) UnmarshalJSON(data []byte) (err error) {
+func (r *GroupListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r groupListResponseGroupJSON) RawJSON() string {
-	return r.raw
-}
-
-type GroupListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                          `json:"nextToken"`
-	JSON      groupListResponsePaginationJSON `json:"-"`
-}
-
-// groupListResponsePaginationJSON contains the JSON metadata for the struct
-// [GroupListResponsePagination]
-type groupListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *GroupListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r groupListResponsePaginationJSON) RawJSON() string {
+func (r groupListResponseJSON) RawJSON() string {
 	return r.raw
 }
 

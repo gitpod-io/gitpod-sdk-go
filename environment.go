@@ -69,7 +69,7 @@ func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateP
 }
 
 // ListEnvironments returns a list of environments that match the query.
-func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentListResponse], err error) {
+func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) (res *pagination.EnvironmentsPage[EnvironmentListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -87,8 +87,8 @@ func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListPar
 }
 
 // ListEnvironments returns a list of environments that match the query.
-func (r *EnvironmentService) ListAutoPaging(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *EnvironmentService) ListAutoPaging(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) *pagination.EnvironmentsPageAutoPager[EnvironmentListResponse] {
+	return pagination.NewEnvironmentsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteEnvironment deletes an environment. When the environment is running, it
@@ -3967,21 +3967,31 @@ func (r EnvironmentGetResponseEnvironmentStatusSSHPublicKeysPhase) IsKnown() boo
 
 type EnvironmentUpdateResponse = interface{}
 
+// +resource get environment
 type EnvironmentListResponse struct {
-	// environments are the environments that matched the query
-	Environments []EnvironmentListResponseEnvironment `json:"environments"`
-	// pagination contains the pagination options for listing environments
-	Pagination EnvironmentListResponsePagination `json:"pagination"`
-	JSON       environmentListResponseJSON       `json:"-"`
+	// ID is a unique identifier of this environment. No other environment with the
+	// same name must be managed by this environment manager
+	ID string `json:"id"`
+	// EnvironmentMetadata is data associated with an environment that's required for
+	// other parts of the system to function
+	Metadata EnvironmentListResponseMetadata `json:"metadata"`
+	// EnvironmentSpec specifies the configuration of an environment for an environment
+	// start
+	Spec EnvironmentListResponseSpec `json:"spec"`
+	// EnvironmentStatus describes an environment status
+	Status EnvironmentListResponseStatus `json:"status"`
+	JSON   environmentListResponseJSON   `json:"-"`
 }
 
 // environmentListResponseJSON contains the JSON metadata for the struct
 // [EnvironmentListResponse]
 type environmentListResponseJSON struct {
-	Environments apijson.Field
-	Pagination   apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	ID          apijson.Field
+	Metadata    apijson.Field
+	Spec        apijson.Field
+	Status      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *EnvironmentListResponse) UnmarshalJSON(data []byte) (err error) {
@@ -3992,44 +4002,9 @@ func (r environmentListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// +resource get environment
-type EnvironmentListResponseEnvironment struct {
-	// ID is a unique identifier of this environment. No other environment with the
-	// same name must be managed by this environment manager
-	ID string `json:"id"`
-	// EnvironmentMetadata is data associated with an environment that's required for
-	// other parts of the system to function
-	Metadata EnvironmentListResponseEnvironmentsMetadata `json:"metadata"`
-	// EnvironmentSpec specifies the configuration of an environment for an environment
-	// start
-	Spec EnvironmentListResponseEnvironmentsSpec `json:"spec"`
-	// EnvironmentStatus describes an environment status
-	Status EnvironmentListResponseEnvironmentsStatus `json:"status"`
-	JSON   environmentListResponseEnvironmentJSON    `json:"-"`
-}
-
-// environmentListResponseEnvironmentJSON contains the JSON metadata for the struct
-// [EnvironmentListResponseEnvironment]
-type environmentListResponseEnvironmentJSON struct {
-	ID          apijson.Field
-	Metadata    apijson.Field
-	Spec        apijson.Field
-	Status      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentListResponseEnvironment) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentListResponseEnvironmentJSON) RawJSON() string {
-	return r.raw
-}
-
 // EnvironmentMetadata is data associated with an environment that's required for
 // other parts of the system to function
-type EnvironmentListResponseEnvironmentsMetadata struct {
+type EnvironmentListResponseMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
@@ -4123,7 +4098,7 @@ type EnvironmentListResponseEnvironmentsMetadata struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
-	Creator EnvironmentListResponseEnvironmentsMetadataCreator `json:"creator"`
+	Creator EnvironmentListResponseMetadataCreator `json:"creator"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -4224,13 +4199,13 @@ type EnvironmentListResponseEnvironmentsMetadata struct {
 	// project.
 	ProjectID string `json:"projectId"`
 	// Runner is the ID of the runner that runs this environment.
-	RunnerID string                                          `json:"runnerId"`
-	JSON     environmentListResponseEnvironmentsMetadataJSON `json:"-"`
+	RunnerID string                              `json:"runnerId"`
+	JSON     environmentListResponseMetadataJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsMetadataJSON contains the JSON metadata for
-// the struct [EnvironmentListResponseEnvironmentsMetadata]
-type environmentListResponseEnvironmentsMetadataJSON struct {
+// environmentListResponseMetadataJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseMetadata]
+type environmentListResponseMetadataJSON struct {
 	Annotations        apijson.Field
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
@@ -4244,55 +4219,55 @@ type environmentListResponseEnvironmentsMetadataJSON struct {
 	ExtraFields        map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsMetadata) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseMetadata) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsMetadataJSON) RawJSON() string {
+func (r environmentListResponseMetadataJSON) RawJSON() string {
 	return r.raw
 }
 
 // creator is the identity of the creator of the environment
-type EnvironmentListResponseEnvironmentsMetadataCreator struct {
+type EnvironmentListResponseMetadataCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal `json:"principal"`
-	JSON      environmentListResponseEnvironmentsMetadataCreatorJSON      `json:"-"`
+	Principal EnvironmentListResponseMetadataCreatorPrincipal `json:"principal"`
+	JSON      environmentListResponseMetadataCreatorJSON      `json:"-"`
 }
 
-// environmentListResponseEnvironmentsMetadataCreatorJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsMetadataCreator]
-type environmentListResponseEnvironmentsMetadataCreatorJSON struct {
+// environmentListResponseMetadataCreatorJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseMetadataCreator]
+type environmentListResponseMetadataCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsMetadataCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseMetadataCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsMetadataCreatorJSON) RawJSON() string {
+func (r environmentListResponseMetadataCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal string
+type EnvironmentListResponseMetadataCreatorPrincipal string
 
 const (
-	EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalAccount        EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalUser           EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal = "PRINCIPAL_USER"
-	EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalRunner         EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
-	EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	EnvironmentListResponseMetadataCreatorPrincipalPrincipalUnspecified    EnvironmentListResponseMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EnvironmentListResponseMetadataCreatorPrincipalPrincipalAccount        EnvironmentListResponseMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	EnvironmentListResponseMetadataCreatorPrincipalPrincipalUser           EnvironmentListResponseMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	EnvironmentListResponseMetadataCreatorPrincipalPrincipalRunner         EnvironmentListResponseMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	EnvironmentListResponseMetadataCreatorPrincipalPrincipalEnvironment    EnvironmentListResponseMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EnvironmentListResponseMetadataCreatorPrincipalPrincipalServiceAccount EnvironmentListResponseMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal) IsKnown() bool {
+func (r EnvironmentListResponseMetadataCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalAccount, EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalUser, EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalRunner, EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentListResponseEnvironmentsMetadataCreatorPrincipalPrincipalServiceAccount:
+	case EnvironmentListResponseMetadataCreatorPrincipalPrincipalUnspecified, EnvironmentListResponseMetadataCreatorPrincipalPrincipalAccount, EnvironmentListResponseMetadataCreatorPrincipalPrincipalUser, EnvironmentListResponseMetadataCreatorPrincipalPrincipalRunner, EnvironmentListResponseMetadataCreatorPrincipalPrincipalEnvironment, EnvironmentListResponseMetadataCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
@@ -4300,37 +4275,37 @@ func (r EnvironmentListResponseEnvironmentsMetadataCreatorPrincipal) IsKnown() b
 
 // EnvironmentSpec specifies the configuration of an environment for an environment
 // start
-type EnvironmentListResponseEnvironmentsSpec struct {
+type EnvironmentListResponseSpec struct {
 	// Admission level describes who can access an environment instance and its ports.
-	Admission EnvironmentListResponseEnvironmentsSpecAdmission `json:"admission"`
+	Admission EnvironmentListResponseSpecAdmission `json:"admission"`
 	// automations_file is the automations file spec of the environment
-	AutomationsFile EnvironmentListResponseEnvironmentsSpecAutomationsFile `json:"automationsFile"`
+	AutomationsFile EnvironmentListResponseSpecAutomationsFile `json:"automationsFile"`
 	// content is the content spec of the environment
-	Content EnvironmentListResponseEnvironmentsSpecContent `json:"content"`
+	Content EnvironmentListResponseSpecContent `json:"content"`
 	// Phase is the desired phase of the environment
-	DesiredPhase EnvironmentListResponseEnvironmentsSpecDesiredPhase `json:"desiredPhase"`
+	DesiredPhase EnvironmentListResponseSpecDesiredPhase `json:"desiredPhase"`
 	// devcontainer is the devcontainer spec of the environment
-	Devcontainer EnvironmentListResponseEnvironmentsSpecDevcontainer `json:"devcontainer"`
+	Devcontainer EnvironmentListResponseSpecDevcontainer `json:"devcontainer"`
 	// machine is the machine spec of the environment
-	Machine EnvironmentListResponseEnvironmentsSpecMachine `json:"machine"`
+	Machine EnvironmentListResponseSpecMachine `json:"machine"`
 	// ports is the set of ports which ought to be exposed to the internet
-	Ports []EnvironmentListResponseEnvironmentsSpecPort `json:"ports"`
+	Ports []EnvironmentListResponseSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
-	Secrets []EnvironmentListResponseEnvironmentsSpecSecret `json:"secrets"`
+	Secrets []EnvironmentListResponseSpecSecret `json:"secrets"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
 	SpecVersion string `json:"specVersion"`
 	// ssh_public_keys are the public keys used to ssh into the environment
-	SSHPublicKeys []EnvironmentListResponseEnvironmentsSpecSSHPublicKey `json:"sshPublicKeys"`
+	SSHPublicKeys []EnvironmentListResponseSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
-	Timeout EnvironmentListResponseEnvironmentsSpecTimeout `json:"timeout"`
-	JSON    environmentListResponseEnvironmentsSpecJSON    `json:"-"`
+	Timeout EnvironmentListResponseSpecTimeout `json:"timeout"`
+	JSON    environmentListResponseSpecJSON    `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecJSON contains the JSON metadata for the
-// struct [EnvironmentListResponseEnvironmentsSpec]
-type environmentListResponseEnvironmentsSpecJSON struct {
+// environmentListResponseSpecJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseSpec]
+type environmentListResponseSpecJSON struct {
 	Admission       apijson.Field
 	AutomationsFile apijson.Field
 	Content         apijson.Field
@@ -4346,33 +4321,33 @@ type environmentListResponseEnvironmentsSpecJSON struct {
 	ExtraFields     map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpec) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpec) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecJSON) RawJSON() string {
+func (r environmentListResponseSpecJSON) RawJSON() string {
 	return r.raw
 }
 
 // Admission level describes who can access an environment instance and its ports.
-type EnvironmentListResponseEnvironmentsSpecAdmission string
+type EnvironmentListResponseSpecAdmission string
 
 const (
-	EnvironmentListResponseEnvironmentsSpecAdmissionAdmissionLevelUnspecified EnvironmentListResponseEnvironmentsSpecAdmission = "ADMISSION_LEVEL_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsSpecAdmissionAdmissionLevelOwnerOnly   EnvironmentListResponseEnvironmentsSpecAdmission = "ADMISSION_LEVEL_OWNER_ONLY"
-	EnvironmentListResponseEnvironmentsSpecAdmissionAdmissionLevelEveryone    EnvironmentListResponseEnvironmentsSpecAdmission = "ADMISSION_LEVEL_EVERYONE"
+	EnvironmentListResponseSpecAdmissionAdmissionLevelUnspecified EnvironmentListResponseSpecAdmission = "ADMISSION_LEVEL_UNSPECIFIED"
+	EnvironmentListResponseSpecAdmissionAdmissionLevelOwnerOnly   EnvironmentListResponseSpecAdmission = "ADMISSION_LEVEL_OWNER_ONLY"
+	EnvironmentListResponseSpecAdmissionAdmissionLevelEveryone    EnvironmentListResponseSpecAdmission = "ADMISSION_LEVEL_EVERYONE"
 )
 
-func (r EnvironmentListResponseEnvironmentsSpecAdmission) IsKnown() bool {
+func (r EnvironmentListResponseSpecAdmission) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsSpecAdmissionAdmissionLevelUnspecified, EnvironmentListResponseEnvironmentsSpecAdmissionAdmissionLevelOwnerOnly, EnvironmentListResponseEnvironmentsSpecAdmissionAdmissionLevelEveryone:
+	case EnvironmentListResponseSpecAdmissionAdmissionLevelUnspecified, EnvironmentListResponseSpecAdmissionAdmissionLevelOwnerOnly, EnvironmentListResponseSpecAdmissionAdmissionLevelEveryone:
 		return true
 	}
 	return false
 }
 
 // automations_file is the automations file spec of the environment
-type EnvironmentListResponseEnvironmentsSpecAutomationsFile struct {
+type EnvironmentListResponseSpecAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
 	// environment, relative to the repo root. path must not be absolute (start with a
 	// /):
@@ -4380,43 +4355,43 @@ type EnvironmentListResponseEnvironmentsSpecAutomationsFile struct {
 	// ```
 	// this.matches('^$|^[^/].*')
 	// ```
-	AutomationsFilePath string                                                     `json:"automationsFilePath"`
-	Session             string                                                     `json:"session"`
-	JSON                environmentListResponseEnvironmentsSpecAutomationsFileJSON `json:"-"`
+	AutomationsFilePath string                                         `json:"automationsFilePath"`
+	Session             string                                         `json:"session"`
+	JSON                environmentListResponseSpecAutomationsFileJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecAutomationsFileJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsSpecAutomationsFile]
-type environmentListResponseEnvironmentsSpecAutomationsFileJSON struct {
+// environmentListResponseSpecAutomationsFileJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseSpecAutomationsFile]
+type environmentListResponseSpecAutomationsFileJSON struct {
 	AutomationsFilePath apijson.Field
 	Session             apijson.Field
 	raw                 string
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecAutomationsFile) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecAutomationsFile) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecAutomationsFileJSON) RawJSON() string {
+func (r environmentListResponseSpecAutomationsFileJSON) RawJSON() string {
 	return r.raw
 }
 
 // content is the content spec of the environment
-type EnvironmentListResponseEnvironmentsSpecContent struct {
+type EnvironmentListResponseSpecContent struct {
 	// The Git email address
 	GitEmail string `json:"gitEmail"`
 	// The Git username
 	GitUsername string `json:"gitUsername"`
 	// EnvironmentInitializer specifies how an environment is to be initialized
-	Initializer EnvironmentListResponseEnvironmentsSpecContentInitializer `json:"initializer"`
-	Session     string                                                    `json:"session"`
-	JSON        environmentListResponseEnvironmentsSpecContentJSON        `json:"-"`
+	Initializer EnvironmentListResponseSpecContentInitializer `json:"initializer"`
+	Session     string                                        `json:"session"`
+	JSON        environmentListResponseSpecContentJSON        `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecContentJSON contains the JSON metadata
-// for the struct [EnvironmentListResponseEnvironmentsSpecContent]
-type environmentListResponseEnvironmentsSpecContentJSON struct {
+// environmentListResponseSpecContentJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseSpecContent]
+type environmentListResponseSpecContentJSON struct {
 	GitEmail    apijson.Field
 	GitUsername apijson.Field
 	Initializer apijson.Field
@@ -4425,64 +4400,62 @@ type environmentListResponseEnvironmentsSpecContentJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContent) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecContent) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecContentJSON) RawJSON() string {
+func (r environmentListResponseSpecContentJSON) RawJSON() string {
 	return r.raw
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
-type EnvironmentListResponseEnvironmentsSpecContentInitializer struct {
-	Specs []EnvironmentListResponseEnvironmentsSpecContentInitializerSpec `json:"specs"`
-	JSON  environmentListResponseEnvironmentsSpecContentInitializerJSON   `json:"-"`
+type EnvironmentListResponseSpecContentInitializer struct {
+	Specs []EnvironmentListResponseSpecContentInitializerSpec `json:"specs"`
+	JSON  environmentListResponseSpecContentInitializerJSON   `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecContentInitializerJSON contains the JSON
-// metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecContentInitializer]
-type environmentListResponseEnvironmentsSpecContentInitializerJSON struct {
+// environmentListResponseSpecContentInitializerJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseSpecContentInitializer]
+type environmentListResponseSpecContentInitializerJSON struct {
 	Specs       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContentInitializer) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecContentInitializer) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecContentInitializerJSON) RawJSON() string {
+func (r environmentListResponseSpecContentInitializerJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpec struct {
+type EnvironmentListResponseSpecContentInitializerSpec struct {
 	// This field can have the runtime type of
-	// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURL].
+	// [EnvironmentListResponseSpecContentInitializerSpecsContextURLContextURL].
 	ContextURL interface{} `json:"contextUrl"`
 	// This field can have the runtime type of
-	// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGit].
-	Git   interface{}                                                       `json:"git"`
-	JSON  environmentListResponseEnvironmentsSpecContentInitializerSpecJSON `json:"-"`
-	union EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion
+	// [EnvironmentListResponseSpecContentInitializerSpecsGitGit].
+	Git   interface{}                                           `json:"git"`
+	JSON  environmentListResponseSpecContentInitializerSpecJSON `json:"-"`
+	union EnvironmentListResponseSpecContentInitializerSpecsUnion
 }
 
-// environmentListResponseEnvironmentsSpecContentInitializerSpecJSON contains the
-// JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpec]
-type environmentListResponseEnvironmentsSpecContentInitializerSpecJSON struct {
+// environmentListResponseSpecContentInitializerSpecJSON contains the JSON metadata
+// for the struct [EnvironmentListResponseSpecContentInitializerSpec]
+type environmentListResponseSpecContentInitializerSpecJSON struct {
 	ContextURL  apijson.Field
 	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r environmentListResponseEnvironmentsSpecContentInitializerSpecJSON) RawJSON() string {
+func (r environmentListResponseSpecContentInitializerSpecJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
-	*r = EnvironmentListResponseEnvironmentsSpecContentInitializerSpec{}
+func (r *EnvironmentListResponseSpecContentInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	*r = EnvironmentListResponseSpecContentInitializerSpec{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -4490,113 +4463,111 @@ func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpec) Unmarsha
 	return apijson.Port(r.union, &r)
 }
 
-// AsUnion returns a
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion] interface
-// which you can cast to the specific types for more type safety.
+// AsUnion returns a [EnvironmentListResponseSpecContentInitializerSpecsUnion]
+// interface which you can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL],
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit].
-func (r EnvironmentListResponseEnvironmentsSpecContentInitializerSpec) AsUnion() EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion {
+// [EnvironmentListResponseSpecContentInitializerSpecsContextURL],
+// [EnvironmentListResponseSpecContentInitializerSpecsGit].
+func (r EnvironmentListResponseSpecContentInitializerSpec) AsUnion() EnvironmentListResponseSpecContentInitializerSpecsUnion {
 	return r.union
 }
 
 // Union satisfied by
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL] or
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit].
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion interface {
-	implementsEnvironmentListResponseEnvironmentsSpecContentInitializerSpec()
+// [EnvironmentListResponseSpecContentInitializerSpecsContextURL] or
+// [EnvironmentListResponseSpecContentInitializerSpecsGit].
+type EnvironmentListResponseSpecContentInitializerSpecsUnion interface {
+	implementsEnvironmentListResponseSpecContentInitializerSpec()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsUnion)(nil)).Elem(),
+		reflect.TypeOf((*EnvironmentListResponseSpecContentInitializerSpecsUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseSpecContentInitializerSpecsContextURL{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseSpecContentInitializerSpecsGit{}),
 		},
 	)
 }
 
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL struct {
-	ContextURL EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
-	JSON       environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLJSON       `json:"-"`
+type EnvironmentListResponseSpecContentInitializerSpecsContextURL struct {
+	ContextURL EnvironmentListResponseSpecContentInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
+	JSON       environmentListResponseSpecContentInitializerSpecsContextURLJSON       `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLJSON
-// contains the JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL]
-type environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLJSON struct {
+// environmentListResponseSpecContentInitializerSpecsContextURLJSON contains the
+// JSON metadata for the struct
+// [EnvironmentListResponseSpecContentInitializerSpecsContextURL]
+type environmentListResponseSpecContentInitializerSpecsContextURLJSON struct {
 	ContextURL  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecContentInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLJSON) RawJSON() string {
+func (r environmentListResponseSpecContentInitializerSpecsContextURLJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURL) implementsEnvironmentListResponseEnvironmentsSpecContentInitializerSpec() {
+func (r EnvironmentListResponseSpecContentInitializerSpecsContextURL) implementsEnvironmentListResponseSpecContentInitializerSpec() {
 }
 
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURL struct {
+type EnvironmentListResponseSpecContentInitializerSpecsContextURLContextURL struct {
 	// url is the URL from which the environment is created
-	URL  string                                                                                 `json:"url" format:"uri"`
-	JSON environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURLJSON `json:"-"`
+	URL  string                                                                     `json:"url" format:"uri"`
+	JSON environmentListResponseSpecContentInitializerSpecsContextURLContextURLJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURLJSON
+// environmentListResponseSpecContentInitializerSpecsContextURLContextURLJSON
 // contains the JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURL]
-type environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURLJSON struct {
+// [EnvironmentListResponseSpecContentInitializerSpecsContextURLContextURL]
+type environmentListResponseSpecContentInitializerSpecsContextURLContextURLJSON struct {
 	URL         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecContentInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecContentInitializerSpecsContextURLContextURLJSON) RawJSON() string {
+func (r environmentListResponseSpecContentInitializerSpecsContextURLContextURLJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit struct {
-	Git  EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGit  `json:"git,required"`
-	JSON environmentListResponseEnvironmentsSpecContentInitializerSpecsGitJSON `json:"-"`
+type EnvironmentListResponseSpecContentInitializerSpecsGit struct {
+	Git  EnvironmentListResponseSpecContentInitializerSpecsGitGit  `json:"git,required"`
+	JSON environmentListResponseSpecContentInitializerSpecsGitJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecContentInitializerSpecsGitJSON contains
-// the JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit]
-type environmentListResponseEnvironmentsSpecContentInitializerSpecsGitJSON struct {
+// environmentListResponseSpecContentInitializerSpecsGitJSON contains the JSON
+// metadata for the struct [EnvironmentListResponseSpecContentInitializerSpecsGit]
+type environmentListResponseSpecContentInitializerSpecsGitJSON struct {
 	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecContentInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecContentInitializerSpecsGitJSON) RawJSON() string {
+func (r environmentListResponseSpecContentInitializerSpecsGitJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGit) implementsEnvironmentListResponseEnvironmentsSpecContentInitializerSpec() {
+func (r EnvironmentListResponseSpecContentInitializerSpecsGit) implementsEnvironmentListResponseSpecContentInitializerSpec() {
 }
 
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGit struct {
+type EnvironmentListResponseSpecContentInitializerSpecsGitGit struct {
 	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
@@ -4604,16 +4575,16 @@ type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGit struct
 	// remote_uri is the Git remote origin
 	RemoteUri string `json:"remoteUri"`
 	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
-	TargetMode EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode `json:"targetMode"`
+	TargetMode EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
-	UpstreamRemoteUri string                                                                   `json:"upstreamRemoteUri"`
-	JSON              environmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitJSON `json:"-"`
+	UpstreamRemoteUri string                                                       `json:"upstreamRemoteUri"`
+	JSON              environmentListResponseSpecContentInitializerSpecsGitGitJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitJSON
-// contains the JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGit]
-type environmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitJSON struct {
+// environmentListResponseSpecContentInitializerSpecsGitGitJSON contains the JSON
+// metadata for the struct
+// [EnvironmentListResponseSpecContentInitializerSpecsGitGit]
+type environmentListResponseSpecContentInitializerSpecsGitGitJSON struct {
 	CheckoutLocation  apijson.Field
 	CloneTarget       apijson.Field
 	RemoteUri         apijson.Field
@@ -4623,124 +4594,124 @@ type environmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitJSON st
 	ExtraFields       map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecContentInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitJSON) RawJSON() string {
+func (r environmentListResponseSpecContentInitializerSpecsGitGitJSON) RawJSON() string {
 	return r.raw
 }
 
 // CloneTargetMode is the target state in which we want to leave a GitEnvironment
-type EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode string
+type EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode string
 
 const (
-	EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
-	EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
-	EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
-	EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+	EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
 )
 
-func (r EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetMode) IsKnown() bool {
+func (r EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetMode) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, EnvironmentListResponseEnvironmentsSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+	case EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, EnvironmentListResponseSpecContentInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
 		return true
 	}
 	return false
 }
 
 // Phase is the desired phase of the environment
-type EnvironmentListResponseEnvironmentsSpecDesiredPhase string
+type EnvironmentListResponseSpecDesiredPhase string
 
 const (
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseUnspecified EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseCreating    EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseStarting    EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_STARTING"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseRunning     EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_RUNNING"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseUpdating    EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_UPDATING"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseStopping    EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_STOPPING"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseStopped     EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_STOPPED"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseDeleting    EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_DELETING"
-	EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseDeleted     EnvironmentListResponseEnvironmentsSpecDesiredPhase = "ENVIRONMENT_PHASE_DELETED"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseUnspecified EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseCreating    EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_CREATING"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseStarting    EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_STARTING"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseRunning     EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_RUNNING"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseUpdating    EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_UPDATING"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseStopping    EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_STOPPING"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseStopped     EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_STOPPED"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseDeleting    EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_DELETING"
+	EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseDeleted     EnvironmentListResponseSpecDesiredPhase = "ENVIRONMENT_PHASE_DELETED"
 )
 
-func (r EnvironmentListResponseEnvironmentsSpecDesiredPhase) IsKnown() bool {
+func (r EnvironmentListResponseSpecDesiredPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseUnspecified, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseCreating, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseStarting, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseRunning, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseUpdating, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseStopping, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseStopped, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseDeleting, EnvironmentListResponseEnvironmentsSpecDesiredPhaseEnvironmentPhaseDeleted:
+	case EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseUnspecified, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseCreating, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseStarting, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseRunning, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseUpdating, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseStopping, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseStopped, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseDeleting, EnvironmentListResponseSpecDesiredPhaseEnvironmentPhaseDeleted:
 		return true
 	}
 	return false
 }
 
 // devcontainer is the devcontainer spec of the environment
-type EnvironmentListResponseEnvironmentsSpecDevcontainer struct {
+type EnvironmentListResponseSpecDevcontainer struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
 	// ```
 	// this.matches('^$|^[^/].*')
 	// ```
-	DevcontainerFilePath string                                                  `json:"devcontainerFilePath"`
-	Session              string                                                  `json:"session"`
-	JSON                 environmentListResponseEnvironmentsSpecDevcontainerJSON `json:"-"`
+	DevcontainerFilePath string                                      `json:"devcontainerFilePath"`
+	Session              string                                      `json:"session"`
+	JSON                 environmentListResponseSpecDevcontainerJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecDevcontainerJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsSpecDevcontainer]
-type environmentListResponseEnvironmentsSpecDevcontainerJSON struct {
+// environmentListResponseSpecDevcontainerJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseSpecDevcontainer]
+type environmentListResponseSpecDevcontainerJSON struct {
 	DevcontainerFilePath apijson.Field
 	Session              apijson.Field
 	raw                  string
 	ExtraFields          map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecDevcontainer) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecDevcontainer) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecDevcontainerJSON) RawJSON() string {
+func (r environmentListResponseSpecDevcontainerJSON) RawJSON() string {
 	return r.raw
 }
 
 // machine is the machine spec of the environment
-type EnvironmentListResponseEnvironmentsSpecMachine struct {
+type EnvironmentListResponseSpecMachine struct {
 	// Class denotes the class of the environment we ought to start
-	Class   string                                             `json:"class" format:"uuid"`
-	Session string                                             `json:"session"`
-	JSON    environmentListResponseEnvironmentsSpecMachineJSON `json:"-"`
+	Class   string                                 `json:"class" format:"uuid"`
+	Session string                                 `json:"session"`
+	JSON    environmentListResponseSpecMachineJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecMachineJSON contains the JSON metadata
-// for the struct [EnvironmentListResponseEnvironmentsSpecMachine]
-type environmentListResponseEnvironmentsSpecMachineJSON struct {
+// environmentListResponseSpecMachineJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseSpecMachine]
+type environmentListResponseSpecMachineJSON struct {
 	Class       apijson.Field
 	Session     apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecMachine) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecMachine) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecMachineJSON) RawJSON() string {
+func (r environmentListResponseSpecMachineJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsSpecPort struct {
+type EnvironmentListResponseSpecPort struct {
 	// Admission level describes who can access an environment instance and its ports.
-	Admission EnvironmentListResponseEnvironmentsSpecPortsAdmission `json:"admission"`
+	Admission EnvironmentListResponseSpecPortsAdmission `json:"admission"`
 	// name of this port
 	Name string `json:"name"`
 	// port number
-	Port int64                                           `json:"port"`
-	JSON environmentListResponseEnvironmentsSpecPortJSON `json:"-"`
+	Port int64                               `json:"port"`
+	JSON environmentListResponseSpecPortJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecPortJSON contains the JSON metadata for
-// the struct [EnvironmentListResponseEnvironmentsSpecPort]
-type environmentListResponseEnvironmentsSpecPortJSON struct {
+// environmentListResponseSpecPortJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseSpecPort]
+type environmentListResponseSpecPortJSON struct {
 	Admission   apijson.Field
 	Name        apijson.Field
 	Port        apijson.Field
@@ -4748,32 +4719,32 @@ type environmentListResponseEnvironmentsSpecPortJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecPort) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecPort) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecPortJSON) RawJSON() string {
+func (r environmentListResponseSpecPortJSON) RawJSON() string {
 	return r.raw
 }
 
 // Admission level describes who can access an environment instance and its ports.
-type EnvironmentListResponseEnvironmentsSpecPortsAdmission string
+type EnvironmentListResponseSpecPortsAdmission string
 
 const (
-	EnvironmentListResponseEnvironmentsSpecPortsAdmissionAdmissionLevelUnspecified EnvironmentListResponseEnvironmentsSpecPortsAdmission = "ADMISSION_LEVEL_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsSpecPortsAdmissionAdmissionLevelOwnerOnly   EnvironmentListResponseEnvironmentsSpecPortsAdmission = "ADMISSION_LEVEL_OWNER_ONLY"
-	EnvironmentListResponseEnvironmentsSpecPortsAdmissionAdmissionLevelEveryone    EnvironmentListResponseEnvironmentsSpecPortsAdmission = "ADMISSION_LEVEL_EVERYONE"
+	EnvironmentListResponseSpecPortsAdmissionAdmissionLevelUnspecified EnvironmentListResponseSpecPortsAdmission = "ADMISSION_LEVEL_UNSPECIFIED"
+	EnvironmentListResponseSpecPortsAdmissionAdmissionLevelOwnerOnly   EnvironmentListResponseSpecPortsAdmission = "ADMISSION_LEVEL_OWNER_ONLY"
+	EnvironmentListResponseSpecPortsAdmissionAdmissionLevelEveryone    EnvironmentListResponseSpecPortsAdmission = "ADMISSION_LEVEL_EVERYONE"
 )
 
-func (r EnvironmentListResponseEnvironmentsSpecPortsAdmission) IsKnown() bool {
+func (r EnvironmentListResponseSpecPortsAdmission) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsSpecPortsAdmissionAdmissionLevelUnspecified, EnvironmentListResponseEnvironmentsSpecPortsAdmissionAdmissionLevelOwnerOnly, EnvironmentListResponseEnvironmentsSpecPortsAdmissionAdmissionLevelEveryone:
+	case EnvironmentListResponseSpecPortsAdmissionAdmissionLevelUnspecified, EnvironmentListResponseSpecPortsAdmissionAdmissionLevelOwnerOnly, EnvironmentListResponseSpecPortsAdmissionAdmissionLevelEveryone:
 		return true
 	}
 	return false
 }
 
-type EnvironmentListResponseEnvironmentsSpecSecret struct {
+type EnvironmentListResponseSpecSecret struct {
 	EnvironmentVariable string `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          string `json:"filePath"`
@@ -4786,14 +4757,14 @@ type EnvironmentListResponseEnvironmentsSpecSecret struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                            `json:"sourceRef"`
-	JSON      environmentListResponseEnvironmentsSpecSecretJSON `json:"-"`
-	union     EnvironmentListResponseEnvironmentsSpecSecretsUnion
+	SourceRef string                                `json:"sourceRef"`
+	JSON      environmentListResponseSpecSecretJSON `json:"-"`
+	union     EnvironmentListResponseSpecSecretsUnion
 }
 
-// environmentListResponseEnvironmentsSpecSecretJSON contains the JSON metadata for
-// the struct [EnvironmentListResponseEnvironmentsSpecSecret]
-type environmentListResponseEnvironmentsSpecSecretJSON struct {
+// environmentListResponseSpecSecretJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseSpecSecret]
+type environmentListResponseSpecSecretJSON struct {
 	EnvironmentVariable apijson.Field
 	FilePath            apijson.Field
 	GitCredentialHost   apijson.Field
@@ -4805,12 +4776,12 @@ type environmentListResponseEnvironmentsSpecSecretJSON struct {
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r environmentListResponseEnvironmentsSpecSecretJSON) RawJSON() string {
+func (r environmentListResponseSpecSecretJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecSecret) UnmarshalJSON(data []byte) (err error) {
-	*r = EnvironmentListResponseEnvironmentsSpecSecret{}
+func (r *EnvironmentListResponseSpecSecret) UnmarshalJSON(data []byte) (err error) {
+	*r = EnvironmentListResponseSpecSecret{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -4818,44 +4789,44 @@ func (r *EnvironmentListResponseEnvironmentsSpecSecret) UnmarshalJSON(data []byt
 	return apijson.Port(r.union, &r)
 }
 
-// AsUnion returns a [EnvironmentListResponseEnvironmentsSpecSecretsUnion]
-// interface which you can cast to the specific types for more type safety.
+// AsUnion returns a [EnvironmentListResponseSpecSecretsUnion] interface which you
+// can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [EnvironmentListResponseEnvironmentsSpecSecretsObject],
-// [EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
-// [EnvironmentListResponseEnvironmentsSpecSecretsObject].
-func (r EnvironmentListResponseEnvironmentsSpecSecret) AsUnion() EnvironmentListResponseEnvironmentsSpecSecretsUnion {
+// [EnvironmentListResponseSpecSecretsObject],
+// [EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted],
+// [EnvironmentListResponseSpecSecretsObject].
+func (r EnvironmentListResponseSpecSecret) AsUnion() EnvironmentListResponseSpecSecretsUnion {
 	return r.union
 }
 
-// Union satisfied by [EnvironmentListResponseEnvironmentsSpecSecretsObject],
-// [EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
-// or [EnvironmentListResponseEnvironmentsSpecSecretsObject].
-type EnvironmentListResponseEnvironmentsSpecSecretsUnion interface {
-	implementsEnvironmentListResponseEnvironmentsSpecSecret()
+// Union satisfied by [EnvironmentListResponseSpecSecretsObject],
+// [EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+// or [EnvironmentListResponseSpecSecretsObject].
+type EnvironmentListResponseSpecSecretsUnion interface {
+	implementsEnvironmentListResponseSpecSecret()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*EnvironmentListResponseEnvironmentsSpecSecretsUnion)(nil)).Elem(),
+		reflect.TypeOf((*EnvironmentListResponseSpecSecretsUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsObject{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseSpecSecretsObject{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(EnvironmentListResponseEnvironmentsSpecSecretsObject{}),
+			Type:       reflect.TypeOf(EnvironmentListResponseSpecSecretsObject{}),
 		},
 	)
 }
 
-type EnvironmentListResponseEnvironmentsSpecSecretsObject struct {
+type EnvironmentListResponseSpecSecretsObject struct {
 	EnvironmentVariable string `json:"environmentVariable,required"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
@@ -4865,13 +4836,13 @@ type EnvironmentListResponseEnvironmentsSpecSecretsObject struct {
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                   `json:"sourceRef"`
-	JSON      environmentListResponseEnvironmentsSpecSecretsObjectJSON `json:"-"`
+	SourceRef string                                       `json:"sourceRef"`
+	JSON      environmentListResponseSpecSecretsObjectJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecSecretsObjectJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsSpecSecretsObject]
-type environmentListResponseEnvironmentsSpecSecretsObjectJSON struct {
+// environmentListResponseSpecSecretsObjectJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseSpecSecretsObject]
+type environmentListResponseSpecSecretsObjectJSON struct {
 	EnvironmentVariable apijson.Field
 	Name                apijson.Field
 	Session             apijson.Field
@@ -4881,18 +4852,17 @@ type environmentListResponseEnvironmentsSpecSecretsObjectJSON struct {
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecSecretsObject) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecSecretsObject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecSecretsObjectJSON) RawJSON() string {
+func (r environmentListResponseSpecSecretsObjectJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentListResponseEnvironmentsSpecSecretsObject) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
-}
+func (r EnvironmentListResponseSpecSecretsObject) implementsEnvironmentListResponseSpecSecret() {}
 
-type EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
+type EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted struct {
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath string `json:"filePath,required"`
 	// name is the human readable description of the secret
@@ -4903,14 +4873,14 @@ type EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDev
 	// source is the source of the secret, for now control-plane or runner
 	Source string `json:"source"`
 	// source_ref into the source, in case of control-plane this is uuid of the secret
-	SourceRef string                                                                                                          `json:"sourceRef"`
-	JSON      environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON `json:"-"`
+	SourceRef string                                                                                              `json:"sourceRef"`
+	JSON      environmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON
+// environmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON
 // contains the JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
-type environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON struct {
+// [EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted]
+type environmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON struct {
 	FilePath    apijson.Field
 	Name        apijson.Field
 	Session     apijson.Field
@@ -4920,44 +4890,44 @@ type environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDev
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON) RawJSON() string {
+func (r environmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMountedJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r EnvironmentListResponseEnvironmentsSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentListResponseEnvironmentsSpecSecret() {
+func (r EnvironmentListResponseSpecSecretsFilePathIsThePathInsideTheDevcontainerWhereTheSecretIsMounted) implementsEnvironmentListResponseSpecSecret() {
 }
 
-type EnvironmentListResponseEnvironmentsSpecSSHPublicKey struct {
+type EnvironmentListResponseSpecSSHPublicKey struct {
 	// id is the unique identifier of the public key
 	ID string `json:"id"`
 	// value is the actual public key in the public key file format
-	Value string                                                  `json:"value"`
-	JSON  environmentListResponseEnvironmentsSpecSSHPublicKeyJSON `json:"-"`
+	Value string                                      `json:"value"`
+	JSON  environmentListResponseSpecSSHPublicKeyJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecSSHPublicKeyJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsSpecSSHPublicKey]
-type environmentListResponseEnvironmentsSpecSSHPublicKeyJSON struct {
+// environmentListResponseSpecSSHPublicKeyJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseSpecSSHPublicKey]
+type environmentListResponseSpecSSHPublicKeyJSON struct {
 	ID          apijson.Field
 	Value       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecSSHPublicKey) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecSSHPublicKey) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecSSHPublicKeyJSON) RawJSON() string {
+func (r environmentListResponseSpecSSHPublicKeyJSON) RawJSON() string {
 	return r.raw
 }
 
 // Timeout configures the environment timeout
-type EnvironmentListResponseEnvironmentsSpecTimeout struct {
+type EnvironmentListResponseSpecTimeout struct {
 	// A Duration represents a signed, fixed-length span of time represented as a count
 	// of seconds and fractions of seconds at nanosecond resolution. It is independent
 	// of any calendar and concepts like "day" or "month". It is related to Timestamp
@@ -5015,55 +4985,55 @@ type EnvironmentListResponseEnvironmentsSpecTimeout struct {
 	// while 3 seconds and 1 nanosecond should be expressed in JSON format as
 	// "3.000000001s", and 3 seconds and 1 microsecond should be expressed in JSON
 	// format as "3.000001s".
-	Disconnected string                                             `json:"disconnected" format:"regex"`
-	JSON         environmentListResponseEnvironmentsSpecTimeoutJSON `json:"-"`
+	Disconnected string                                 `json:"disconnected" format:"regex"`
+	JSON         environmentListResponseSpecTimeoutJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsSpecTimeoutJSON contains the JSON metadata
-// for the struct [EnvironmentListResponseEnvironmentsSpecTimeout]
-type environmentListResponseEnvironmentsSpecTimeoutJSON struct {
+// environmentListResponseSpecTimeoutJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseSpecTimeout]
+type environmentListResponseSpecTimeoutJSON struct {
 	Disconnected apijson.Field
 	raw          string
 	ExtraFields  map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsSpecTimeout) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseSpecTimeout) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsSpecTimeoutJSON) RawJSON() string {
+func (r environmentListResponseSpecTimeoutJSON) RawJSON() string {
 	return r.raw
 }
 
 // EnvironmentStatus describes an environment status
-type EnvironmentListResponseEnvironmentsStatus struct {
+type EnvironmentListResponseStatus struct {
 	// EnvironmentActivitySignal used to signal activity for an environment.
-	ActivitySignal EnvironmentListResponseEnvironmentsStatusActivitySignal `json:"activitySignal"`
+	ActivitySignal EnvironmentListResponseStatusActivitySignal `json:"activitySignal"`
 	// automations_file contains the status of the automations file.
-	AutomationsFile EnvironmentListResponseEnvironmentsStatusAutomationsFile `json:"automationsFile"`
+	AutomationsFile EnvironmentListResponseStatusAutomationsFile `json:"automationsFile"`
 	// content contains the status of the environment content.
-	Content EnvironmentListResponseEnvironmentsStatusContent `json:"content"`
+	Content EnvironmentListResponseStatusContent `json:"content"`
 	// devcontainer contains the status of the devcontainer.
-	Devcontainer EnvironmentListResponseEnvironmentsStatusDevcontainer `json:"devcontainer"`
+	Devcontainer EnvironmentListResponseStatusDevcontainer `json:"devcontainer"`
 	// environment_url contains the URL at which the environment can be accessed. This
 	// field is only set if the environment is running.
-	EnvironmentURLs EnvironmentListResponseEnvironmentsStatusEnvironmentURLs `json:"environmentUrls"`
+	EnvironmentURLs EnvironmentListResponseStatusEnvironmentURLs `json:"environmentUrls"`
 	// failure_message summarises why the environment failed to operate. If this is
 	// non-empty the environment has failed to operate and will likely transition to a
 	// stopped state.
 	FailureMessage []string `json:"failureMessage"`
 	// machine contains the status of the environment machine
-	Machine EnvironmentListResponseEnvironmentsStatusMachine `json:"machine"`
+	Machine EnvironmentListResponseStatusMachine `json:"machine"`
 	// the phase of an environment is a simple, high-level summary of where the
 	// environment is in its lifecycle
-	Phase EnvironmentListResponseEnvironmentsStatusPhase `json:"phase"`
+	Phase EnvironmentListResponseStatusPhase `json:"phase"`
 	// RunnerACK is the acknowledgement from the runner that is has received the
 	// environment spec.
-	RunnerAck EnvironmentListResponseEnvironmentsStatusRunnerAck `json:"runnerAck"`
+	RunnerAck EnvironmentListResponseStatusRunnerAck `json:"runnerAck"`
 	// secrets contains the status of the environment secrets
-	Secrets []EnvironmentListResponseEnvironmentsStatusSecret `json:"secrets"`
+	Secrets []EnvironmentListResponseStatusSecret `json:"secrets"`
 	// ssh_public_keys contains the status of the environment ssh public keys
-	SSHPublicKeys []EnvironmentListResponseEnvironmentsStatusSSHPublicKey `json:"sshPublicKeys"`
+	SSHPublicKeys []EnvironmentListResponseStatusSSHPublicKey `json:"sshPublicKeys"`
 	// version of the status update. Environment instances themselves are unversioned,
 	// but their status has different versions. The value of this field has no semantic
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
@@ -5072,13 +5042,13 @@ type EnvironmentListResponseEnvironmentsStatus struct {
 	StatusVersion string `json:"statusVersion"`
 	// warning_message contains warnings, e.g. when the environment is present but not
 	// in the expected state.
-	WarningMessage []string                                      `json:"warningMessage"`
-	JSON           environmentListResponseEnvironmentsStatusJSON `json:"-"`
+	WarningMessage []string                          `json:"warningMessage"`
+	JSON           environmentListResponseStatusJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusJSON contains the JSON metadata for the
-// struct [EnvironmentListResponseEnvironmentsStatus]
-type environmentListResponseEnvironmentsStatusJSON struct {
+// environmentListResponseStatusJSON contains the JSON metadata for the struct
+// [EnvironmentListResponseStatus]
+type environmentListResponseStatusJSON struct {
 	ActivitySignal  apijson.Field
 	AutomationsFile apijson.Field
 	Content         apijson.Field
@@ -5096,16 +5066,16 @@ type environmentListResponseEnvironmentsStatusJSON struct {
 	ExtraFields     map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatus) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatus) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusJSON) RawJSON() string {
+func (r environmentListResponseStatusJSON) RawJSON() string {
 	return r.raw
 }
 
 // EnvironmentActivitySignal used to signal activity for an environment.
-type EnvironmentListResponseEnvironmentsStatusActivitySignal struct {
+type EnvironmentListResponseStatusActivitySignal struct {
 	// source of the activity signal, such as "VS Code", "SSH", or "Automations". It
 	// should be a human-readable string that describes the source of the activity
 	// signal.
@@ -5198,51 +5168,49 @@ type EnvironmentListResponseEnvironmentsStatusActivitySignal struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	Timestamp time.Time                                                   `json:"timestamp" format:"date-time"`
-	JSON      environmentListResponseEnvironmentsStatusActivitySignalJSON `json:"-"`
+	Timestamp time.Time                                       `json:"timestamp" format:"date-time"`
+	JSON      environmentListResponseStatusActivitySignalJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusActivitySignalJSON contains the JSON
-// metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusActivitySignal]
-type environmentListResponseEnvironmentsStatusActivitySignalJSON struct {
+// environmentListResponseStatusActivitySignalJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseStatusActivitySignal]
+type environmentListResponseStatusActivitySignalJSON struct {
 	Source      apijson.Field
 	Timestamp   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusActivitySignal) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusActivitySignal) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusActivitySignalJSON) RawJSON() string {
+func (r environmentListResponseStatusActivitySignalJSON) RawJSON() string {
 	return r.raw
 }
 
 // automations_file contains the status of the automations file.
-type EnvironmentListResponseEnvironmentsStatusAutomationsFile struct {
+type EnvironmentListResponseStatusAutomationsFile struct {
 	// automations_file_path is the path to the automations file relative to the repo
 	// root.
 	AutomationsFilePath string `json:"automationsFilePath"`
 	// automations_file_presence indicates how an automations file is present in the
 	// environment.
-	AutomationsFilePresence EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence `json:"automationsFilePresence"`
+	AutomationsFilePresence EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence `json:"automationsFilePresence"`
 	// failure_message contains the reason the automations file failed to be applied.
 	// This is only set if the phase is FAILED.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the automations file.
-	Phase EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase `json:"phase"`
+	Phase EnvironmentListResponseStatusAutomationsFilePhase `json:"phase"`
 	// session is the automations file session that is currently applied in the
 	// environment.
-	Session string                                                       `json:"session"`
-	JSON    environmentListResponseEnvironmentsStatusAutomationsFileJSON `json:"-"`
+	Session string                                           `json:"session"`
+	JSON    environmentListResponseStatusAutomationsFileJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusAutomationsFileJSON contains the JSON
-// metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusAutomationsFile]
-type environmentListResponseEnvironmentsStatusAutomationsFileJSON struct {
+// environmentListResponseStatusAutomationsFileJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseStatusAutomationsFile]
+type environmentListResponseStatusAutomationsFileJSON struct {
 	AutomationsFilePath     apijson.Field
 	AutomationsFilePresence apijson.Field
 	FailureMessage          apijson.Field
@@ -5252,55 +5220,55 @@ type environmentListResponseEnvironmentsStatusAutomationsFileJSON struct {
 	ExtraFields             map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusAutomationsFile) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusAutomationsFile) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusAutomationsFileJSON) RawJSON() string {
+func (r environmentListResponseStatusAutomationsFileJSON) RawJSON() string {
 	return r.raw
 }
 
 // automations_file_presence indicates how an automations file is present in the
 // environment.
-type EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence string
+type EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceUnspecified EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence = "PRESENCE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceAbsent      EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence = "PRESENCE_ABSENT"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceDiscovered  EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence = "PRESENCE_DISCOVERED"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceSpecified   EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence = "PRESENCE_SPECIFIED"
+	EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceUnspecified EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence = "PRESENCE_UNSPECIFIED"
+	EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceAbsent      EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence = "PRESENCE_ABSENT"
+	EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceDiscovered  EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence = "PRESENCE_DISCOVERED"
+	EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceSpecified   EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence = "PRESENCE_SPECIFIED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresence) IsKnown() bool {
+func (r EnvironmentListResponseStatusAutomationsFileAutomationsFilePresence) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceUnspecified, EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceAbsent, EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceDiscovered, EnvironmentListResponseEnvironmentsStatusAutomationsFileAutomationsFilePresencePresenceSpecified:
+	case EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceUnspecified, EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceAbsent, EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceDiscovered, EnvironmentListResponseStatusAutomationsFileAutomationsFilePresencePresenceSpecified:
 		return true
 	}
 	return false
 }
 
 // phase is the current phase of the automations file.
-type EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase string
+type EnvironmentListResponseStatusAutomationsFilePhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseUnspecified  EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase = "CONTENT_PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseCreating     EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase = "CONTENT_PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseInitializing EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase = "CONTENT_PHASE_INITIALIZING"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseReady        EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase = "CONTENT_PHASE_READY"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseUpdating     EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase = "CONTENT_PHASE_UPDATING"
-	EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseFailed       EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase = "CONTENT_PHASE_FAILED"
+	EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseUnspecified  EnvironmentListResponseStatusAutomationsFilePhase = "CONTENT_PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseCreating     EnvironmentListResponseStatusAutomationsFilePhase = "CONTENT_PHASE_CREATING"
+	EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseInitializing EnvironmentListResponseStatusAutomationsFilePhase = "CONTENT_PHASE_INITIALIZING"
+	EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseReady        EnvironmentListResponseStatusAutomationsFilePhase = "CONTENT_PHASE_READY"
+	EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseUpdating     EnvironmentListResponseStatusAutomationsFilePhase = "CONTENT_PHASE_UPDATING"
+	EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseFailed       EnvironmentListResponseStatusAutomationsFilePhase = "CONTENT_PHASE_FAILED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusAutomationsFilePhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusAutomationsFilePhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseUnspecified, EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseCreating, EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseInitializing, EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseReady, EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseUpdating, EnvironmentListResponseEnvironmentsStatusAutomationsFilePhaseContentPhaseFailed:
+	case EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseUnspecified, EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseCreating, EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseInitializing, EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseReady, EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseUpdating, EnvironmentListResponseStatusAutomationsFilePhaseContentPhaseFailed:
 		return true
 	}
 	return false
 }
 
 // content contains the status of the environment content.
-type EnvironmentListResponseEnvironmentsStatusContent struct {
+type EnvironmentListResponseStatusContent struct {
 	// content_location_in_machine is the location of the content in the machine
 	ContentLocationInMachine string `json:"contentLocationInMachine"`
 	// failure_message contains the reason the content initialization failed.
@@ -5308,20 +5276,20 @@ type EnvironmentListResponseEnvironmentsStatusContent struct {
 	// git is the Git working copy status of the environment. Note: this is a
 	// best-effort field and more often than not will not be present. Its absence does
 	// not indicate the absence of a working copy.
-	Git EnvironmentListResponseEnvironmentsStatusContentGit `json:"git"`
+	Git EnvironmentListResponseStatusContentGit `json:"git"`
 	// phase is the current phase of the environment content
-	Phase EnvironmentListResponseEnvironmentsStatusContentPhase `json:"phase"`
+	Phase EnvironmentListResponseStatusContentPhase `json:"phase"`
 	// session is the session that is currently active in the environment.
 	Session string `json:"session"`
 	// warning_message contains warnings, e.g. when the content is present but not in
 	// the expected state.
-	WarningMessage string                                               `json:"warningMessage"`
-	JSON           environmentListResponseEnvironmentsStatusContentJSON `json:"-"`
+	WarningMessage string                                   `json:"warningMessage"`
+	JSON           environmentListResponseStatusContentJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusContentJSON contains the JSON metadata
-// for the struct [EnvironmentListResponseEnvironmentsStatusContent]
-type environmentListResponseEnvironmentsStatusContentJSON struct {
+// environmentListResponseStatusContentJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusContent]
+type environmentListResponseStatusContentJSON struct {
 	ContentLocationInMachine apijson.Field
 	FailureMessage           apijson.Field
 	Git                      apijson.Field
@@ -5332,23 +5300,23 @@ type environmentListResponseEnvironmentsStatusContentJSON struct {
 	ExtraFields              map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusContent) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusContent) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusContentJSON) RawJSON() string {
+func (r environmentListResponseStatusContentJSON) RawJSON() string {
 	return r.raw
 }
 
 // git is the Git working copy status of the environment. Note: this is a
 // best-effort field and more often than not will not be present. Its absence does
 // not indicate the absence of a working copy.
-type EnvironmentListResponseEnvironmentsStatusContentGit struct {
+type EnvironmentListResponseStatusContentGit struct {
 	// branch is branch we're currently on
 	Branch string `json:"branch"`
 	// changed_files is an array of changed files in the environment, possibly
 	// truncated
-	ChangedFiles []EnvironmentListResponseEnvironmentsStatusContentGitChangedFile `json:"changedFiles"`
+	ChangedFiles []EnvironmentListResponseStatusContentGitChangedFile `json:"changedFiles"`
 	// clone_url is the repository url as you would pass it to "git clone". Only HTTPS
 	// clone URLs are supported.
 	CloneURL string `json:"cloneUrl"`
@@ -5359,13 +5327,13 @@ type EnvironmentListResponseEnvironmentsStatusContentGit struct {
 	TotalUnpushedCommits int64 `json:"totalUnpushedCommits"`
 	// unpushed_commits is an array of unpushed changes in the environment, possibly
 	// truncated
-	UnpushedCommits []string                                                `json:"unpushedCommits"`
-	JSON            environmentListResponseEnvironmentsStatusContentGitJSON `json:"-"`
+	UnpushedCommits []string                                    `json:"unpushedCommits"`
+	JSON            environmentListResponseStatusContentGitJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusContentGitJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsStatusContentGit]
-type environmentListResponseEnvironmentsStatusContentGitJSON struct {
+// environmentListResponseStatusContentGitJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusContentGit]
+type environmentListResponseStatusContentGitJSON struct {
 	Branch               apijson.Field
 	ChangedFiles         apijson.Field
 	CloneURL             apijson.Field
@@ -5377,84 +5345,83 @@ type environmentListResponseEnvironmentsStatusContentGitJSON struct {
 	ExtraFields          map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusContentGit) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusContentGit) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusContentGitJSON) RawJSON() string {
+func (r environmentListResponseStatusContentGitJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsStatusContentGitChangedFile struct {
+type EnvironmentListResponseStatusContentGitChangedFile struct {
 	// ChangeType is the type of change that happened to the file
-	ChangeType EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType `json:"changeType"`
+	ChangeType EnvironmentListResponseStatusContentGitChangedFilesChangeType `json:"changeType"`
 	// path is the path of the file
-	Path string                                                             `json:"path"`
-	JSON environmentListResponseEnvironmentsStatusContentGitChangedFileJSON `json:"-"`
+	Path string                                                 `json:"path"`
+	JSON environmentListResponseStatusContentGitChangedFileJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusContentGitChangedFileJSON contains the
-// JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusContentGitChangedFile]
-type environmentListResponseEnvironmentsStatusContentGitChangedFileJSON struct {
+// environmentListResponseStatusContentGitChangedFileJSON contains the JSON
+// metadata for the struct [EnvironmentListResponseStatusContentGitChangedFile]
+type environmentListResponseStatusContentGitChangedFileJSON struct {
 	ChangeType  apijson.Field
 	Path        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusContentGitChangedFile) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusContentGitChangedFile) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusContentGitChangedFileJSON) RawJSON() string {
+func (r environmentListResponseStatusContentGitChangedFileJSON) RawJSON() string {
 	return r.raw
 }
 
 // ChangeType is the type of change that happened to the file
-type EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType string
+type EnvironmentListResponseStatusContentGitChangedFilesChangeType string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified        EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeAdded              EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_ADDED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeModified           EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_MODIFIED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeDeleted            EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_DELETED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeRenamed            EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_RENAMED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeCopied             EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_COPIED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeUpdatedButUnmerged EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_UPDATED_BUT_UNMERGED"
-	EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeUntracked          EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_UNTRACKED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified        EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_UNSPECIFIED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeAdded              EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_ADDED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeModified           EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_MODIFIED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeDeleted            EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_DELETED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeRenamed            EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_RENAMED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeCopied             EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_COPIED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeUpdatedButUnmerged EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_UPDATED_BUT_UNMERGED"
+	EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeUntracked          EnvironmentListResponseStatusContentGitChangedFilesChangeType = "CHANGE_TYPE_UNTRACKED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeType) IsKnown() bool {
+func (r EnvironmentListResponseStatusContentGitChangedFilesChangeType) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeAdded, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeModified, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeDeleted, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeRenamed, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeCopied, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeUpdatedButUnmerged, EnvironmentListResponseEnvironmentsStatusContentGitChangedFilesChangeTypeChangeTypeUntracked:
+	case EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeUnspecified, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeAdded, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeModified, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeDeleted, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeRenamed, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeCopied, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeUpdatedButUnmerged, EnvironmentListResponseStatusContentGitChangedFilesChangeTypeChangeTypeUntracked:
 		return true
 	}
 	return false
 }
 
 // phase is the current phase of the environment content
-type EnvironmentListResponseEnvironmentsStatusContentPhase string
+type EnvironmentListResponseStatusContentPhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseUnspecified  EnvironmentListResponseEnvironmentsStatusContentPhase = "CONTENT_PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseCreating     EnvironmentListResponseEnvironmentsStatusContentPhase = "CONTENT_PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseInitializing EnvironmentListResponseEnvironmentsStatusContentPhase = "CONTENT_PHASE_INITIALIZING"
-	EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseReady        EnvironmentListResponseEnvironmentsStatusContentPhase = "CONTENT_PHASE_READY"
-	EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseUpdating     EnvironmentListResponseEnvironmentsStatusContentPhase = "CONTENT_PHASE_UPDATING"
-	EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseFailed       EnvironmentListResponseEnvironmentsStatusContentPhase = "CONTENT_PHASE_FAILED"
+	EnvironmentListResponseStatusContentPhaseContentPhaseUnspecified  EnvironmentListResponseStatusContentPhase = "CONTENT_PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusContentPhaseContentPhaseCreating     EnvironmentListResponseStatusContentPhase = "CONTENT_PHASE_CREATING"
+	EnvironmentListResponseStatusContentPhaseContentPhaseInitializing EnvironmentListResponseStatusContentPhase = "CONTENT_PHASE_INITIALIZING"
+	EnvironmentListResponseStatusContentPhaseContentPhaseReady        EnvironmentListResponseStatusContentPhase = "CONTENT_PHASE_READY"
+	EnvironmentListResponseStatusContentPhaseContentPhaseUpdating     EnvironmentListResponseStatusContentPhase = "CONTENT_PHASE_UPDATING"
+	EnvironmentListResponseStatusContentPhaseContentPhaseFailed       EnvironmentListResponseStatusContentPhase = "CONTENT_PHASE_FAILED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusContentPhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusContentPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseUnspecified, EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseCreating, EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseInitializing, EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseReady, EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseUpdating, EnvironmentListResponseEnvironmentsStatusContentPhaseContentPhaseFailed:
+	case EnvironmentListResponseStatusContentPhaseContentPhaseUnspecified, EnvironmentListResponseStatusContentPhaseContentPhaseCreating, EnvironmentListResponseStatusContentPhaseContentPhaseInitializing, EnvironmentListResponseStatusContentPhaseContentPhaseReady, EnvironmentListResponseStatusContentPhaseContentPhaseUpdating, EnvironmentListResponseStatusContentPhaseContentPhaseFailed:
 		return true
 	}
 	return false
 }
 
 // devcontainer contains the status of the devcontainer.
-type EnvironmentListResponseEnvironmentsStatusDevcontainer struct {
+type EnvironmentListResponseStatusDevcontainer struct {
 	// container_id is the ID of the container.
 	ContainerID string `json:"containerId"`
 	// container_name is the name of the container that is used to connect to the
@@ -5468,11 +5435,11 @@ type EnvironmentListResponseEnvironmentsStatusDevcontainer struct {
 	DevcontainerFilePath string `json:"devcontainerFilePath"`
 	// devcontainer_file_presence indicates how the devcontainer file is present in the
 	// repo.
-	DevcontainerFilePresence EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence `json:"devcontainerFilePresence"`
+	DevcontainerFilePresence EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence `json:"devcontainerFilePresence"`
 	// failure_message contains the reason the devcontainer failed to operate.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the devcontainer
-	Phase EnvironmentListResponseEnvironmentsStatusDevcontainerPhase `json:"phase"`
+	Phase EnvironmentListResponseStatusDevcontainerPhase `json:"phase"`
 	// remote_user is the user that is used to connect to the devcontainer
 	RemoteUser string `json:"remoteUser"`
 	// remote_workspace_folder is the folder that is used to connect to the
@@ -5485,13 +5452,13 @@ type EnvironmentListResponseEnvironmentsStatusDevcontainer struct {
 	Session string `json:"session"`
 	// warning_message contains warnings, e.g. when the devcontainer is present but not
 	// in the expected state.
-	WarningMessage string                                                    `json:"warningMessage"`
-	JSON           environmentListResponseEnvironmentsStatusDevcontainerJSON `json:"-"`
+	WarningMessage string                                        `json:"warningMessage"`
+	JSON           environmentListResponseStatusDevcontainerJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusDevcontainerJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsStatusDevcontainer]
-type environmentListResponseEnvironmentsStatusDevcontainerJSON struct {
+// environmentListResponseStatusDevcontainerJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusDevcontainer]
+type environmentListResponseStatusDevcontainerJSON struct {
 	ContainerID              apijson.Field
 	ContainerName            apijson.Field
 	DevcontainerconfigInSync apijson.Field
@@ -5508,47 +5475,47 @@ type environmentListResponseEnvironmentsStatusDevcontainerJSON struct {
 	ExtraFields              map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusDevcontainer) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusDevcontainer) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusDevcontainerJSON) RawJSON() string {
+func (r environmentListResponseStatusDevcontainerJSON) RawJSON() string {
 	return r.raw
 }
 
 // devcontainer_file_presence indicates how the devcontainer file is present in the
 // repo.
-type EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence string
+type EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceUnspecified EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence = "PRESENCE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceGenerated   EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence = "PRESENCE_GENERATED"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceDiscovered  EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence = "PRESENCE_DISCOVERED"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceSpecified   EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence = "PRESENCE_SPECIFIED"
+	EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceUnspecified EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence = "PRESENCE_UNSPECIFIED"
+	EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceGenerated   EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence = "PRESENCE_GENERATED"
+	EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceDiscovered  EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence = "PRESENCE_DISCOVERED"
+	EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceSpecified   EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence = "PRESENCE_SPECIFIED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresence) IsKnown() bool {
+func (r EnvironmentListResponseStatusDevcontainerDevcontainerFilePresence) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceUnspecified, EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceGenerated, EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceDiscovered, EnvironmentListResponseEnvironmentsStatusDevcontainerDevcontainerFilePresencePresenceSpecified:
+	case EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceUnspecified, EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceGenerated, EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceDiscovered, EnvironmentListResponseStatusDevcontainerDevcontainerFilePresencePresenceSpecified:
 		return true
 	}
 	return false
 }
 
 // phase is the current phase of the devcontainer
-type EnvironmentListResponseEnvironmentsStatusDevcontainerPhase string
+type EnvironmentListResponseStatusDevcontainerPhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseUnspecified EnvironmentListResponseEnvironmentsStatusDevcontainerPhase = "PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseCreating    EnvironmentListResponseEnvironmentsStatusDevcontainerPhase = "PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseRunning     EnvironmentListResponseEnvironmentsStatusDevcontainerPhase = "PHASE_RUNNING"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseStopped     EnvironmentListResponseEnvironmentsStatusDevcontainerPhase = "PHASE_STOPPED"
-	EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseFailed      EnvironmentListResponseEnvironmentsStatusDevcontainerPhase = "PHASE_FAILED"
+	EnvironmentListResponseStatusDevcontainerPhasePhaseUnspecified EnvironmentListResponseStatusDevcontainerPhase = "PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusDevcontainerPhasePhaseCreating    EnvironmentListResponseStatusDevcontainerPhase = "PHASE_CREATING"
+	EnvironmentListResponseStatusDevcontainerPhasePhaseRunning     EnvironmentListResponseStatusDevcontainerPhase = "PHASE_RUNNING"
+	EnvironmentListResponseStatusDevcontainerPhasePhaseStopped     EnvironmentListResponseStatusDevcontainerPhase = "PHASE_STOPPED"
+	EnvironmentListResponseStatusDevcontainerPhasePhaseFailed      EnvironmentListResponseStatusDevcontainerPhase = "PHASE_FAILED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusDevcontainerPhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusDevcontainerPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseUnspecified, EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseCreating, EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseRunning, EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseStopped, EnvironmentListResponseEnvironmentsStatusDevcontainerPhasePhaseFailed:
+	case EnvironmentListResponseStatusDevcontainerPhasePhaseUnspecified, EnvironmentListResponseStatusDevcontainerPhasePhaseCreating, EnvironmentListResponseStatusDevcontainerPhasePhaseRunning, EnvironmentListResponseStatusDevcontainerPhasePhaseStopped, EnvironmentListResponseStatusDevcontainerPhasePhaseFailed:
 		return true
 	}
 	return false
@@ -5556,19 +5523,18 @@ func (r EnvironmentListResponseEnvironmentsStatusDevcontainerPhase) IsKnown() bo
 
 // environment_url contains the URL at which the environment can be accessed. This
 // field is only set if the environment is running.
-type EnvironmentListResponseEnvironmentsStatusEnvironmentURLs struct {
+type EnvironmentListResponseStatusEnvironmentURLs struct {
 	// logs is the URL at which the environment logs can be accessed.
-	Logs  string                                                         `json:"logs"`
-	Ports []EnvironmentListResponseEnvironmentsStatusEnvironmentURLsPort `json:"ports"`
+	Logs  string                                             `json:"logs"`
+	Ports []EnvironmentListResponseStatusEnvironmentURLsPort `json:"ports"`
 	// SSH is the URL at which the environment can be accessed via SSH.
-	SSH  EnvironmentListResponseEnvironmentsStatusEnvironmentURLsSSH  `json:"ssh"`
-	JSON environmentListResponseEnvironmentsStatusEnvironmentURLsJSON `json:"-"`
+	SSH  EnvironmentListResponseStatusEnvironmentURLsSSH  `json:"ssh"`
+	JSON environmentListResponseStatusEnvironmentURLsJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusEnvironmentURLsJSON contains the JSON
-// metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusEnvironmentURLs]
-type environmentListResponseEnvironmentsStatusEnvironmentURLsJSON struct {
+// environmentListResponseStatusEnvironmentURLsJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseStatusEnvironmentURLs]
+type environmentListResponseStatusEnvironmentURLsJSON struct {
 	Logs        apijson.Field
 	Ports       apijson.Field
 	SSH         apijson.Field
@@ -5576,85 +5542,83 @@ type environmentListResponseEnvironmentsStatusEnvironmentURLsJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusEnvironmentURLs) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusEnvironmentURLs) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusEnvironmentURLsJSON) RawJSON() string {
+func (r environmentListResponseStatusEnvironmentURLsJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsStatusEnvironmentURLsPort struct {
+type EnvironmentListResponseStatusEnvironmentURLsPort struct {
 	// port is the port number of the environment port
 	Port int64 `json:"port"`
 	// url is the URL at which the environment port can be accessed
-	URL  string                                                           `json:"url"`
-	JSON environmentListResponseEnvironmentsStatusEnvironmentURLsPortJSON `json:"-"`
+	URL  string                                               `json:"url"`
+	JSON environmentListResponseStatusEnvironmentURLsPortJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusEnvironmentURLsPortJSON contains the
-// JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusEnvironmentURLsPort]
-type environmentListResponseEnvironmentsStatusEnvironmentURLsPortJSON struct {
+// environmentListResponseStatusEnvironmentURLsPortJSON contains the JSON metadata
+// for the struct [EnvironmentListResponseStatusEnvironmentURLsPort]
+type environmentListResponseStatusEnvironmentURLsPortJSON struct {
 	Port        apijson.Field
 	URL         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusEnvironmentURLsPort) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusEnvironmentURLsPort) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusEnvironmentURLsPortJSON) RawJSON() string {
+func (r environmentListResponseStatusEnvironmentURLsPortJSON) RawJSON() string {
 	return r.raw
 }
 
 // SSH is the URL at which the environment can be accessed via SSH.
-type EnvironmentListResponseEnvironmentsStatusEnvironmentURLsSSH struct {
-	URL  string                                                          `json:"url"`
-	JSON environmentListResponseEnvironmentsStatusEnvironmentURLsSSHJSON `json:"-"`
+type EnvironmentListResponseStatusEnvironmentURLsSSH struct {
+	URL  string                                              `json:"url"`
+	JSON environmentListResponseStatusEnvironmentURLsSSHJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusEnvironmentURLsSSHJSON contains the
-// JSON metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusEnvironmentURLsSSH]
-type environmentListResponseEnvironmentsStatusEnvironmentURLsSSHJSON struct {
+// environmentListResponseStatusEnvironmentURLsSSHJSON contains the JSON metadata
+// for the struct [EnvironmentListResponseStatusEnvironmentURLsSSH]
+type environmentListResponseStatusEnvironmentURLsSSHJSON struct {
 	URL         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusEnvironmentURLsSSH) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusEnvironmentURLsSSH) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusEnvironmentURLsSSHJSON) RawJSON() string {
+func (r environmentListResponseStatusEnvironmentURLsSSHJSON) RawJSON() string {
 	return r.raw
 }
 
 // machine contains the status of the environment machine
-type EnvironmentListResponseEnvironmentsStatusMachine struct {
+type EnvironmentListResponseStatusMachine struct {
 	// failure_message contains the reason the machine failed to operate.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the environment machine
-	Phase EnvironmentListResponseEnvironmentsStatusMachinePhase `json:"phase"`
+	Phase EnvironmentListResponseStatusMachinePhase `json:"phase"`
 	// session is the session that is currently active in the machine.
 	Session string `json:"session"`
 	// timeout contains the reason the environment has timed out. If this field is
 	// empty, the environment has not timed out.
 	Timeout string `json:"timeout"`
 	// versions contains the versions of components in the machine.
-	Versions EnvironmentListResponseEnvironmentsStatusMachineVersions `json:"versions"`
+	Versions EnvironmentListResponseStatusMachineVersions `json:"versions"`
 	// warning_message contains warnings, e.g. when the machine is present but not in
 	// the expected state.
-	WarningMessage string                                               `json:"warningMessage"`
-	JSON           environmentListResponseEnvironmentsStatusMachineJSON `json:"-"`
+	WarningMessage string                                   `json:"warningMessage"`
+	JSON           environmentListResponseStatusMachineJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusMachineJSON contains the JSON metadata
-// for the struct [EnvironmentListResponseEnvironmentsStatusMachine]
-type environmentListResponseEnvironmentsStatusMachineJSON struct {
+// environmentListResponseStatusMachineJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusMachine]
+type environmentListResponseStatusMachineJSON struct {
 	FailureMessage apijson.Field
 	Phase          apijson.Field
 	Session        apijson.Field
@@ -5665,80 +5629,79 @@ type environmentListResponseEnvironmentsStatusMachineJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusMachine) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusMachine) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusMachineJSON) RawJSON() string {
+func (r environmentListResponseStatusMachineJSON) RawJSON() string {
 	return r.raw
 }
 
 // phase is the current phase of the environment machine
-type EnvironmentListResponseEnvironmentsStatusMachinePhase string
+type EnvironmentListResponseStatusMachinePhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseUnspecified EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseCreating    EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseStarting    EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_STARTING"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseRunning     EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_RUNNING"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseStopping    EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_STOPPING"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseStopped     EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_STOPPED"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseDeleting    EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_DELETING"
-	EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseDeleted     EnvironmentListResponseEnvironmentsStatusMachinePhase = "PHASE_DELETED"
+	EnvironmentListResponseStatusMachinePhasePhaseUnspecified EnvironmentListResponseStatusMachinePhase = "PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusMachinePhasePhaseCreating    EnvironmentListResponseStatusMachinePhase = "PHASE_CREATING"
+	EnvironmentListResponseStatusMachinePhasePhaseStarting    EnvironmentListResponseStatusMachinePhase = "PHASE_STARTING"
+	EnvironmentListResponseStatusMachinePhasePhaseRunning     EnvironmentListResponseStatusMachinePhase = "PHASE_RUNNING"
+	EnvironmentListResponseStatusMachinePhasePhaseStopping    EnvironmentListResponseStatusMachinePhase = "PHASE_STOPPING"
+	EnvironmentListResponseStatusMachinePhasePhaseStopped     EnvironmentListResponseStatusMachinePhase = "PHASE_STOPPED"
+	EnvironmentListResponseStatusMachinePhasePhaseDeleting    EnvironmentListResponseStatusMachinePhase = "PHASE_DELETING"
+	EnvironmentListResponseStatusMachinePhasePhaseDeleted     EnvironmentListResponseStatusMachinePhase = "PHASE_DELETED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusMachinePhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusMachinePhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseUnspecified, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseCreating, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseStarting, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseRunning, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseStopping, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseStopped, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseDeleting, EnvironmentListResponseEnvironmentsStatusMachinePhasePhaseDeleted:
+	case EnvironmentListResponseStatusMachinePhasePhaseUnspecified, EnvironmentListResponseStatusMachinePhasePhaseCreating, EnvironmentListResponseStatusMachinePhasePhaseStarting, EnvironmentListResponseStatusMachinePhasePhaseRunning, EnvironmentListResponseStatusMachinePhasePhaseStopping, EnvironmentListResponseStatusMachinePhasePhaseStopped, EnvironmentListResponseStatusMachinePhasePhaseDeleting, EnvironmentListResponseStatusMachinePhasePhaseDeleted:
 		return true
 	}
 	return false
 }
 
 // versions contains the versions of components in the machine.
-type EnvironmentListResponseEnvironmentsStatusMachineVersions struct {
-	SupervisorCommit  string                                                       `json:"supervisorCommit"`
-	SupervisorVersion string                                                       `json:"supervisorVersion"`
-	JSON              environmentListResponseEnvironmentsStatusMachineVersionsJSON `json:"-"`
+type EnvironmentListResponseStatusMachineVersions struct {
+	SupervisorCommit  string                                           `json:"supervisorCommit"`
+	SupervisorVersion string                                           `json:"supervisorVersion"`
+	JSON              environmentListResponseStatusMachineVersionsJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusMachineVersionsJSON contains the JSON
-// metadata for the struct
-// [EnvironmentListResponseEnvironmentsStatusMachineVersions]
-type environmentListResponseEnvironmentsStatusMachineVersionsJSON struct {
+// environmentListResponseStatusMachineVersionsJSON contains the JSON metadata for
+// the struct [EnvironmentListResponseStatusMachineVersions]
+type environmentListResponseStatusMachineVersionsJSON struct {
 	SupervisorCommit  apijson.Field
 	SupervisorVersion apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusMachineVersions) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusMachineVersions) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusMachineVersionsJSON) RawJSON() string {
+func (r environmentListResponseStatusMachineVersionsJSON) RawJSON() string {
 	return r.raw
 }
 
 // the phase of an environment is a simple, high-level summary of where the
 // environment is in its lifecycle
-type EnvironmentListResponseEnvironmentsStatusPhase string
+type EnvironmentListResponseStatusPhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseUnspecified EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseCreating    EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseStarting    EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_STARTING"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseRunning     EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_RUNNING"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseUpdating    EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_UPDATING"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseStopping    EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_STOPPING"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseStopped     EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_STOPPED"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseDeleting    EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_DELETING"
-	EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseDeleted     EnvironmentListResponseEnvironmentsStatusPhase = "ENVIRONMENT_PHASE_DELETED"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseUnspecified EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseCreating    EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_CREATING"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseStarting    EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_STARTING"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseRunning     EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_RUNNING"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseUpdating    EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_UPDATING"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseStopping    EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_STOPPING"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseStopped     EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_STOPPED"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseDeleting    EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_DELETING"
+	EnvironmentListResponseStatusPhaseEnvironmentPhaseDeleted     EnvironmentListResponseStatusPhase = "ENVIRONMENT_PHASE_DELETED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusPhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseUnspecified, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseCreating, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseStarting, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseRunning, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseUpdating, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseStopping, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseStopped, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseDeleting, EnvironmentListResponseEnvironmentsStatusPhaseEnvironmentPhaseDeleted:
+	case EnvironmentListResponseStatusPhaseEnvironmentPhaseUnspecified, EnvironmentListResponseStatusPhaseEnvironmentPhaseCreating, EnvironmentListResponseStatusPhaseEnvironmentPhaseStarting, EnvironmentListResponseStatusPhaseEnvironmentPhaseRunning, EnvironmentListResponseStatusPhaseEnvironmentPhaseUpdating, EnvironmentListResponseStatusPhaseEnvironmentPhaseStopping, EnvironmentListResponseStatusPhaseEnvironmentPhaseStopped, EnvironmentListResponseStatusPhaseEnvironmentPhaseDeleting, EnvironmentListResponseStatusPhaseEnvironmentPhaseDeleted:
 		return true
 	}
 	return false
@@ -5746,16 +5709,16 @@ func (r EnvironmentListResponseEnvironmentsStatusPhase) IsKnown() bool {
 
 // RunnerACK is the acknowledgement from the runner that is has received the
 // environment spec.
-type EnvironmentListResponseEnvironmentsStatusRunnerAck struct {
-	Message     string                                                       `json:"message"`
-	SpecVersion string                                                       `json:"specVersion"`
-	StatusCode  EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode `json:"statusCode"`
-	JSON        environmentListResponseEnvironmentsStatusRunnerAckJSON       `json:"-"`
+type EnvironmentListResponseStatusRunnerAck struct {
+	Message     string                                           `json:"message"`
+	SpecVersion string                                           `json:"specVersion"`
+	StatusCode  EnvironmentListResponseStatusRunnerAckStatusCode `json:"statusCode"`
+	JSON        environmentListResponseStatusRunnerAckJSON       `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusRunnerAckJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsStatusRunnerAck]
-type environmentListResponseEnvironmentsStatusRunnerAckJSON struct {
+// environmentListResponseStatusRunnerAckJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusRunnerAck]
+type environmentListResponseStatusRunnerAckJSON struct {
 	Message     apijson.Field
 	SpecVersion apijson.Field
 	StatusCode  apijson.Field
@@ -5763,47 +5726,47 @@ type environmentListResponseEnvironmentsStatusRunnerAckJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusRunnerAck) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusRunnerAck) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusRunnerAckJSON) RawJSON() string {
+func (r environmentListResponseStatusRunnerAckJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode string
+type EnvironmentListResponseStatusRunnerAckStatusCode string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeUnspecified        EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode = "STATUS_CODE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeOk                 EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode = "STATUS_CODE_OK"
-	EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeInvalidResource    EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode = "STATUS_CODE_INVALID_RESOURCE"
-	EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeFailedPrecondition EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode = "STATUS_CODE_FAILED_PRECONDITION"
+	EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeUnspecified        EnvironmentListResponseStatusRunnerAckStatusCode = "STATUS_CODE_UNSPECIFIED"
+	EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeOk                 EnvironmentListResponseStatusRunnerAckStatusCode = "STATUS_CODE_OK"
+	EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeInvalidResource    EnvironmentListResponseStatusRunnerAckStatusCode = "STATUS_CODE_INVALID_RESOURCE"
+	EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeFailedPrecondition EnvironmentListResponseStatusRunnerAckStatusCode = "STATUS_CODE_FAILED_PRECONDITION"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCode) IsKnown() bool {
+func (r EnvironmentListResponseStatusRunnerAckStatusCode) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeUnspecified, EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeOk, EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeInvalidResource, EnvironmentListResponseEnvironmentsStatusRunnerAckStatusCodeStatusCodeFailedPrecondition:
+	case EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeUnspecified, EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeOk, EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeInvalidResource, EnvironmentListResponseStatusRunnerAckStatusCodeStatusCodeFailedPrecondition:
 		return true
 	}
 	return false
 }
 
-type EnvironmentListResponseEnvironmentsStatusSecret struct {
+type EnvironmentListResponseStatusSecret struct {
 	// failure_message contains the reason the secret failed to be materialize.
-	FailureMessage string                                                `json:"failureMessage"`
-	Phase          EnvironmentListResponseEnvironmentsStatusSecretsPhase `json:"phase"`
-	SecretName     string                                                `json:"secretName"`
+	FailureMessage string                                    `json:"failureMessage"`
+	Phase          EnvironmentListResponseStatusSecretsPhase `json:"phase"`
+	SecretName     string                                    `json:"secretName"`
 	// session is the session that is currently active in the environment.
 	Session string `json:"session"`
 	// warning_message contains warnings, e.g. when the secret is present but not in
 	// the expected state.
-	WarningMessage string                                              `json:"warningMessage"`
-	JSON           environmentListResponseEnvironmentsStatusSecretJSON `json:"-"`
+	WarningMessage string                                  `json:"warningMessage"`
+	JSON           environmentListResponseStatusSecretJSON `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusSecretJSON contains the JSON metadata
-// for the struct [EnvironmentListResponseEnvironmentsStatusSecret]
-type environmentListResponseEnvironmentsStatusSecretJSON struct {
+// environmentListResponseStatusSecretJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusSecret]
+type environmentListResponseStatusSecretJSON struct {
 	FailureMessage apijson.Field
 	Phase          apijson.Field
 	SecretName     apijson.Field
@@ -5813,100 +5776,76 @@ type environmentListResponseEnvironmentsStatusSecretJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusSecret) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusSecret) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusSecretJSON) RawJSON() string {
+func (r environmentListResponseStatusSecretJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentListResponseEnvironmentsStatusSecretsPhase string
+type EnvironmentListResponseStatusSecretsPhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseUnspecified  EnvironmentListResponseEnvironmentsStatusSecretsPhase = "CONTENT_PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseCreating     EnvironmentListResponseEnvironmentsStatusSecretsPhase = "CONTENT_PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseInitializing EnvironmentListResponseEnvironmentsStatusSecretsPhase = "CONTENT_PHASE_INITIALIZING"
-	EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseReady        EnvironmentListResponseEnvironmentsStatusSecretsPhase = "CONTENT_PHASE_READY"
-	EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseUpdating     EnvironmentListResponseEnvironmentsStatusSecretsPhase = "CONTENT_PHASE_UPDATING"
-	EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseFailed       EnvironmentListResponseEnvironmentsStatusSecretsPhase = "CONTENT_PHASE_FAILED"
+	EnvironmentListResponseStatusSecretsPhaseContentPhaseUnspecified  EnvironmentListResponseStatusSecretsPhase = "CONTENT_PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusSecretsPhaseContentPhaseCreating     EnvironmentListResponseStatusSecretsPhase = "CONTENT_PHASE_CREATING"
+	EnvironmentListResponseStatusSecretsPhaseContentPhaseInitializing EnvironmentListResponseStatusSecretsPhase = "CONTENT_PHASE_INITIALIZING"
+	EnvironmentListResponseStatusSecretsPhaseContentPhaseReady        EnvironmentListResponseStatusSecretsPhase = "CONTENT_PHASE_READY"
+	EnvironmentListResponseStatusSecretsPhaseContentPhaseUpdating     EnvironmentListResponseStatusSecretsPhase = "CONTENT_PHASE_UPDATING"
+	EnvironmentListResponseStatusSecretsPhaseContentPhaseFailed       EnvironmentListResponseStatusSecretsPhase = "CONTENT_PHASE_FAILED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusSecretsPhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusSecretsPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseUnspecified, EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseCreating, EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseInitializing, EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseReady, EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseUpdating, EnvironmentListResponseEnvironmentsStatusSecretsPhaseContentPhaseFailed:
+	case EnvironmentListResponseStatusSecretsPhaseContentPhaseUnspecified, EnvironmentListResponseStatusSecretsPhaseContentPhaseCreating, EnvironmentListResponseStatusSecretsPhaseContentPhaseInitializing, EnvironmentListResponseStatusSecretsPhaseContentPhaseReady, EnvironmentListResponseStatusSecretsPhaseContentPhaseUpdating, EnvironmentListResponseStatusSecretsPhaseContentPhaseFailed:
 		return true
 	}
 	return false
 }
 
-type EnvironmentListResponseEnvironmentsStatusSSHPublicKey struct {
+type EnvironmentListResponseStatusSSHPublicKey struct {
 	// id is the unique identifier of the public key
 	ID string `json:"id"`
 	// phase is the current phase of the public key
-	Phase EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase `json:"phase"`
-	JSON  environmentListResponseEnvironmentsStatusSSHPublicKeyJSON   `json:"-"`
+	Phase EnvironmentListResponseStatusSSHPublicKeysPhase `json:"phase"`
+	JSON  environmentListResponseStatusSSHPublicKeyJSON   `json:"-"`
 }
 
-// environmentListResponseEnvironmentsStatusSSHPublicKeyJSON contains the JSON
-// metadata for the struct [EnvironmentListResponseEnvironmentsStatusSSHPublicKey]
-type environmentListResponseEnvironmentsStatusSSHPublicKeyJSON struct {
+// environmentListResponseStatusSSHPublicKeyJSON contains the JSON metadata for the
+// struct [EnvironmentListResponseStatusSSHPublicKey]
+type environmentListResponseStatusSSHPublicKeyJSON struct {
 	ID          apijson.Field
 	Phase       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentListResponseEnvironmentsStatusSSHPublicKey) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentListResponseStatusSSHPublicKey) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentListResponseEnvironmentsStatusSSHPublicKeyJSON) RawJSON() string {
+func (r environmentListResponseStatusSSHPublicKeyJSON) RawJSON() string {
 	return r.raw
 }
 
 // phase is the current phase of the public key
-type EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase string
+type EnvironmentListResponseStatusSSHPublicKeysPhase string
 
 const (
-	EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseUnspecified  EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase = "CONTENT_PHASE_UNSPECIFIED"
-	EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseCreating     EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase = "CONTENT_PHASE_CREATING"
-	EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseInitializing EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase = "CONTENT_PHASE_INITIALIZING"
-	EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseReady        EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase = "CONTENT_PHASE_READY"
-	EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseUpdating     EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase = "CONTENT_PHASE_UPDATING"
-	EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseFailed       EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase = "CONTENT_PHASE_FAILED"
+	EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseUnspecified  EnvironmentListResponseStatusSSHPublicKeysPhase = "CONTENT_PHASE_UNSPECIFIED"
+	EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseCreating     EnvironmentListResponseStatusSSHPublicKeysPhase = "CONTENT_PHASE_CREATING"
+	EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseInitializing EnvironmentListResponseStatusSSHPublicKeysPhase = "CONTENT_PHASE_INITIALIZING"
+	EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseReady        EnvironmentListResponseStatusSSHPublicKeysPhase = "CONTENT_PHASE_READY"
+	EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseUpdating     EnvironmentListResponseStatusSSHPublicKeysPhase = "CONTENT_PHASE_UPDATING"
+	EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseFailed       EnvironmentListResponseStatusSSHPublicKeysPhase = "CONTENT_PHASE_FAILED"
 )
 
-func (r EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhase) IsKnown() bool {
+func (r EnvironmentListResponseStatusSSHPublicKeysPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseUnspecified, EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseCreating, EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseInitializing, EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseReady, EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseUpdating, EnvironmentListResponseEnvironmentsStatusSSHPublicKeysPhaseContentPhaseFailed:
+	case EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseUnspecified, EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseCreating, EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseInitializing, EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseReady, EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseUpdating, EnvironmentListResponseStatusSSHPublicKeysPhaseContentPhaseFailed:
 		return true
 	}
 	return false
-}
-
-// pagination contains the pagination options for listing environments
-type EnvironmentListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                `json:"nextToken"`
-	JSON      environmentListResponsePaginationJSON `json:"-"`
-}
-
-// environmentListResponsePaginationJSON contains the JSON metadata for the struct
-// [EnvironmentListResponsePagination]
-type environmentListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentListResponsePaginationJSON) RawJSON() string {
-	return r.raw
 }
 
 type EnvironmentDeleteResponse = interface{}

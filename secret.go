@@ -46,7 +46,7 @@ func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...o
 }
 
 // ListSecrets lists secrets.
-func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[SecretListResponse], err error) {
+func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.SecretsPage[SecretListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -64,8 +64,8 @@ func (r *SecretService) List(ctx context.Context, params SecretListParams, opts 
 }
 
 // ListSecrets lists secrets.
-func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[SecretListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListParams, opts ...option.RequestOption) *pagination.SecretsPageAutoPager[SecretListResponse] {
+	return pagination.NewSecretsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteSecret deletes a secret.
@@ -232,54 +232,6 @@ func (r SecretNewResponseSecretAbsolutePathToTheFileWhereTheSecretIsMounted) imp
 }
 
 type SecretListResponse struct {
-	// pagination contains the pagination options for listing secrets
-	Pagination SecretListResponsePagination `json:"pagination"`
-	Secrets    []SecretListResponseSecret   `json:"secrets"`
-	JSON       secretListResponseJSON       `json:"-"`
-}
-
-// secretListResponseJSON contains the JSON metadata for the struct
-// [SecretListResponse]
-type secretListResponseJSON struct {
-	Pagination  apijson.Field
-	Secrets     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *SecretListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r secretListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing secrets
-type SecretListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                           `json:"nextToken"`
-	JSON      secretListResponsePaginationJSON `json:"-"`
-}
-
-// secretListResponsePaginationJSON contains the JSON metadata for the struct
-// [SecretListResponsePagination]
-type secretListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *SecretListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r secretListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type SecretListResponseSecret struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -371,8 +323,8 @@ type SecretListResponseSecret struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// This field can have the runtime type of
-	// [SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator],
-	// [SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreator].
+	// [SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator],
+	// [SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreator].
 	Creator interface{} `json:"creator"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
@@ -471,14 +423,14 @@ type SecretListResponseSecret struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
-	JSON      secretListResponseSecretJSON `json:"-"`
-	union     SecretListResponseSecretsUnion
+	UpdatedAt time.Time              `json:"updatedAt" format:"date-time"`
+	JSON      secretListResponseJSON `json:"-"`
+	union     SecretListResponseUnion
 }
 
-// secretListResponseSecretJSON contains the JSON metadata for the struct
-// [SecretListResponseSecret]
-type secretListResponseSecretJSON struct {
+// secretListResponseJSON contains the JSON metadata for the struct
+// [SecretListResponse]
+type secretListResponseJSON struct {
 	ID                  apijson.Field
 	CreatedAt           apijson.Field
 	Creator             apijson.Field
@@ -491,12 +443,12 @@ type secretListResponseSecretJSON struct {
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r secretListResponseSecretJSON) RawJSON() string {
+func (r secretListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *SecretListResponseSecret) UnmarshalJSON(data []byte) (err error) {
-	*r = SecretListResponseSecret{}
+func (r *SecretListResponse) UnmarshalJSON(data []byte) (err error) {
+	*r = SecretListResponse{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -504,39 +456,39 @@ func (r *SecretListResponseSecret) UnmarshalJSON(data []byte) (err error) {
 	return apijson.Port(r.union, &r)
 }
 
-// AsUnion returns a [SecretListResponseSecretsUnion] interface which you can cast
-// to the specific types for more type safety.
+// AsUnion returns a [SecretListResponseUnion] interface which you can cast to the
+// specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret],
-// [SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted].
-func (r SecretListResponseSecret) AsUnion() SecretListResponseSecretsUnion {
+// [SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret],
+// [SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted].
+func (r SecretListResponse) AsUnion() SecretListResponseUnion {
 	return r.union
 }
 
 // Union satisfied by
-// [SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret]
-// or [SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted].
-type SecretListResponseSecretsUnion interface {
-	implementsSecretListResponseSecret()
+// [SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret]
+// or [SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted].
+type SecretListResponseUnion interface {
+	implementsSecretListResponse()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*SecretListResponseSecretsUnion)(nil)).Elem(),
+		reflect.TypeOf((*SecretListResponseUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret{}),
+			Type:       reflect.TypeOf(SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted{}),
+			Type:       reflect.TypeOf(SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted{}),
 		},
 	)
 }
 
-type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret struct {
+type SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret struct {
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable bool   `json:"environmentVariable,required"`
@@ -631,7 +583,7 @@ type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheS
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the secret
-	Creator SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator `json:"creator"`
+	Creator SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator `json:"creator"`
 	// Name of the secret for humans.
 	Name string `json:"name"`
 	// The Project ID this Secret belongs to
@@ -724,14 +676,14 @@ type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheS
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                                                                                         `json:"updatedAt" format:"date-time"`
-	JSON      secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON `json:"-"`
+	UpdatedAt time.Time                                                                                  `json:"updatedAt" format:"date-time"`
+	JSON      secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON `json:"-"`
 }
 
-// secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON
+// secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON
 // contains the JSON metadata for the struct
-// [SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret]
-type secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON struct {
+// [SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret]
+type secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON struct {
 	EnvironmentVariable apijson.Field
 	ID                  apijson.Field
 	CreatedAt           apijson.Field
@@ -743,65 +695,65 @@ type secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheS
 	ExtraFields         map[string]apijson.Field
 }
 
-func (r *SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret) UnmarshalJSON(data []byte) (err error) {
+func (r *SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON) RawJSON() string {
+func (r secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret) implementsSecretListResponseSecret() {
+func (r SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret) implementsSecretListResponse() {
 }
 
 // creator is the identity of the creator of the secret
-type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator struct {
+type SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal `json:"principal"`
-	JSON      secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON      `json:"-"`
+	Principal SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal `json:"principal"`
+	JSON      secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON      `json:"-"`
 }
 
-// secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON
+// secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON
 // contains the JSON metadata for the struct
-// [SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator]
-type secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON struct {
+// [SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator]
+type secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r secretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON) RawJSON() string {
+func (r secretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal string
+type SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal string
 
 const (
-	SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUnspecified    SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalAccount        SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUser           SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_USER"
-	SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalRunner         SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_RUNNER"
-	SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalEnvironment    SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalServiceAccount SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUnspecified    SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalAccount        SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUser           SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_USER"
+	SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalRunner         SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_RUNNER"
+	SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalEnvironment    SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalServiceAccount SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal) IsKnown() bool {
+func (r SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUnspecified, SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalAccount, SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUser, SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalRunner, SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalEnvironment, SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalServiceAccount:
+	case SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUnspecified, SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalAccount, SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalUser, SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalRunner, SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalEnvironment, SecretListResponseSecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecretCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
 }
 
-type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted struct {
+type SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted struct {
 	// absolute path to the file where the secret is mounted
 	FilePath string `json:"filePath,required"`
 	ID       string `json:"id" format:"uuid"`
@@ -895,7 +847,7 @@ type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted struc
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the secret
-	Creator SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreator `json:"creator"`
+	Creator SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreator `json:"creator"`
 	// Name of the secret for humans.
 	Name string `json:"name"`
 	// The Project ID this Secret belongs to
@@ -988,14 +940,14 @@ type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted struc
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                                                                 `json:"updatedAt" format:"date-time"`
-	JSON      secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedJSON `json:"-"`
+	UpdatedAt time.Time                                                          `json:"updatedAt" format:"date-time"`
+	JSON      secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedJSON `json:"-"`
 }
 
-// secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedJSON
-// contains the JSON metadata for the struct
-// [SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted]
-type secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedJSON struct {
+// secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedJSON contains the
+// JSON metadata for the struct
+// [SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted]
+type secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedJSON struct {
 	FilePath    apijson.Field
 	ID          apijson.Field
 	CreatedAt   apijson.Field
@@ -1007,59 +959,59 @@ type secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedJSON s
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
+func (r *SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedJSON) RawJSON() string {
+func (r secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted) implementsSecretListResponseSecret() {
+func (r SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMounted) implementsSecretListResponse() {
 }
 
 // creator is the identity of the creator of the secret
-type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreator struct {
+type SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal `json:"principal"`
-	JSON      secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON      `json:"-"`
+	Principal SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal `json:"principal"`
+	JSON      secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON      `json:"-"`
 }
 
-// secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON
+// secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON
 // contains the JSON metadata for the struct
-// [SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreator]
-type secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON struct {
+// [SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreator]
+type secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r secretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON) RawJSON() string {
+func (r secretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal string
+type SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal string
 
 const (
-	SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUnspecified    SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalAccount        SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUser           SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_USER"
-	SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalRunner         SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_RUNNER"
-	SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalEnvironment    SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalServiceAccount SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUnspecified    SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalAccount        SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUser           SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_USER"
+	SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalRunner         SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_RUNNER"
+	SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalEnvironment    SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalServiceAccount SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal) IsKnown() bool {
+func (r SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUnspecified, SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalAccount, SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUser, SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalRunner, SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalEnvironment, SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalServiceAccount:
+	case SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUnspecified, SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalAccount, SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalUser, SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalRunner, SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalEnvironment, SecretListResponseAbsolutePathToTheFileWhereTheSecretIsMountedCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false

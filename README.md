@@ -171,7 +171,7 @@ with additional helper methods like `.GetNextPage()`, e.g.:
 ```go
 page, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{})
 for page != nil {
-	for _, service := range page.Pagination.PersonalAccessTokens {
+	for _, service := range page.Services {
 		fmt.Printf("%+v\n", service)
 	}
 	page, err = page.GetNextPage()
