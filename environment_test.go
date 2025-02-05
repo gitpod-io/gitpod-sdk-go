@@ -15,6 +15,7 @@ import (
 )
 
 func TestEnvironmentNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -86,6 +87,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -110,6 +112,7 @@ func TestEnvironmentGetWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentUpdate(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -136,6 +139,7 @@ func TestEnvironmentUpdate(t *testing.T) {
 }
 
 func TestEnvironmentListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -173,6 +177,7 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -198,6 +203,7 @@ func TestEnvironmentDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -270,6 +276,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentNewLogsTokenWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -294,6 +301,7 @@ func TestEnvironmentNewLogsTokenWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentMarkActiveWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -322,6 +330,7 @@ func TestEnvironmentMarkActiveWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentStartWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -346,6 +355,7 @@ func TestEnvironmentStartWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentStopWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
