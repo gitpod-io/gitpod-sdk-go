@@ -13,8 +13,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
-func TestAccountGet(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+func TestAccountGetWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -27,7 +26,7 @@ func TestAccountGet(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.Get(context.TODO(), gitpod.AccountGetParams{
-		Body: map[string]interface{}{},
+		Empty: gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -39,7 +38,6 @@ func TestAccountGet(t *testing.T) {
 }
 
 func TestAccountDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -64,7 +62,6 @@ func TestAccountDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -90,7 +87,6 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 }
 
 func TestAccountListLoginProvidersWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
