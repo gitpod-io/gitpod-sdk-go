@@ -218,11 +218,11 @@ func (r UserGetAuthenticatedUserResponseUserStatus) IsKnown() bool {
 type UserSetSuspendedResponse = interface{}
 
 type UserGetAuthenticatedUserParams struct {
-	Body interface{} `json:"body,required"`
+	Empty param.Field[bool] `json:"empty"`
 }
 
 func (r UserGetAuthenticatedUserParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
+	return apijson.MarshalRoot(r)
 }
 
 type UserSetSuspendedParams struct {

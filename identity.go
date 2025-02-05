@@ -179,11 +179,11 @@ func (r IdentityExchangeTokenParams) MarshalJSON() (data []byte, err error) {
 }
 
 type IdentityGetAuthenticatedIdentityParams struct {
-	Body interface{} `json:"body,required"`
+	Empty param.Field[bool] `json:"empty"`
 }
 
 func (r IdentityGetAuthenticatedIdentityParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
+	return apijson.MarshalRoot(r)
 }
 
 type IdentityGetIDTokenParams struct {

@@ -14,7 +14,6 @@ import (
 )
 
 func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -43,7 +42,6 @@ func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationGetWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -68,7 +66,6 @@ func TestOrganizationSSOConfigurationGetWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationUpdate(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -95,7 +92,6 @@ func TestOrganizationSSOConfigurationUpdate(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -126,7 +122,6 @@ func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
