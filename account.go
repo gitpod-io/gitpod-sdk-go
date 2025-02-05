@@ -12,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // AccountService contains methods and other services that help with interacting
@@ -60,11 +61,27 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 
 // ListLoginProviders returns the list of login providers matching the provided
 // filters.
-func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) (res *AccountListLoginProvidersResponse, err error) {
+func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) (res *pagination.LoginProvidersPage[AccountListLoginProvidersResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.AccountService/ListLoginProviders"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListLoginProviders returns the list of login providers matching the provided
+// filters.
+func (r *AccountService) ListLoginProvidersAutoPaging(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) *pagination.LoginProvidersPageAutoPager[AccountListLoginProvidersResponse] {
+	return pagination.NewLoginProvidersPageAutoPager(r.ListLoginProviders(ctx, params, opts...))
 }
 
 type AccountGetResponse struct {
@@ -136,18 +153,21 @@ func (r accountGetSSOLoginURLResponseJSON) RawJSON() string {
 }
 
 type AccountListLoginProvidersResponse struct {
-	LoginProviders []AccountListLoginProvidersResponseLoginProvider `json:"loginProviders"`
-	Pagination     AccountListLoginProvidersResponsePagination      `json:"pagination"`
-	JSON           accountListLoginProvidersResponseJSON            `json:"-"`
+	// login_url is the URL to redirect the browser agent to for login
+	LoginURL string `json:"loginUrl"`
+	// provider is the provider used by this login method, e.g. "github", "google",
+	// "custom"
+	Provider string                                `json:"provider"`
+	JSON     accountListLoginProvidersResponseJSON `json:"-"`
 }
 
 // accountListLoginProvidersResponseJSON contains the JSON metadata for the struct
 // [AccountListLoginProvidersResponse]
 type accountListLoginProvidersResponseJSON struct {
-	LoginProviders apijson.Field
-	Pagination     apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	LoginURL    apijson.Field
+	Provider    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *AccountListLoginProvidersResponse) UnmarshalJSON(data []byte) (err error) {
@@ -155,55 +175,6 @@ func (r *AccountListLoginProvidersResponse) UnmarshalJSON(data []byte) (err erro
 }
 
 func (r accountListLoginProvidersResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type AccountListLoginProvidersResponseLoginProvider struct {
-	// login_url is the URL to redirect the browser agent to for login
-	LoginURL string `json:"loginUrl"`
-	// provider is the provider used by this login method, e.g. "github", "google",
-	// "custom"
-	Provider string                                             `json:"provider"`
-	JSON     accountListLoginProvidersResponseLoginProviderJSON `json:"-"`
-}
-
-// accountListLoginProvidersResponseLoginProviderJSON contains the JSON metadata
-// for the struct [AccountListLoginProvidersResponseLoginProvider]
-type accountListLoginProvidersResponseLoginProviderJSON struct {
-	LoginURL    apijson.Field
-	Provider    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountListLoginProvidersResponseLoginProvider) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountListLoginProvidersResponseLoginProviderJSON) RawJSON() string {
-	return r.raw
-}
-
-type AccountListLoginProvidersResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                          `json:"nextToken"`
-	JSON      accountListLoginProvidersResponsePaginationJSON `json:"-"`
-}
-
-// accountListLoginProvidersResponsePaginationJSON contains the JSON metadata for
-// the struct [AccountListLoginProvidersResponsePagination]
-type accountListLoginProvidersResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AccountListLoginProvidersResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r accountListLoginProvidersResponsePaginationJSON) RawJSON() string {
 	return r.raw
 }
 

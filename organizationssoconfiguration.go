@@ -12,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // OrganizationSSOConfigurationService contains methods and other services that
@@ -58,11 +59,26 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 }
 
 // ListSSOConfigurations lists all SSO configurations matching provided filters.
-func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationListResponse, err error) {
+func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.SSOConfigurationsPage[OrganizationSSOConfigurationListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListSSOConfigurations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListSSOConfigurations lists all SSO configurations matching provided filters.
+func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) *pagination.SSOConfigurationsPageAutoPager[OrganizationSSOConfigurationListResponse] {
+	return pagination.NewSSOConfigurationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteSSOConfiguration deletes an SSO configuration.
@@ -274,53 +290,6 @@ func (r OrganizationSSOConfigurationGetResponseSSOConfigurationState) IsKnown() 
 type OrganizationSSOConfigurationUpdateResponse = interface{}
 
 type OrganizationSSOConfigurationListResponse struct {
-	Pagination OrganizationSSOConfigurationListResponsePagination `json:"pagination"`
-	// sso_configurations are the SSO configurations for the organization
-	SSOConfigurations []OrganizationSSOConfigurationListResponseSSOConfiguration `json:"ssoConfigurations"`
-	JSON              organizationSSOConfigurationListResponseJSON               `json:"-"`
-}
-
-// organizationSSOConfigurationListResponseJSON contains the JSON metadata for the
-// struct [OrganizationSSOConfigurationListResponse]
-type organizationSSOConfigurationListResponseJSON struct {
-	Pagination        apijson.Field
-	SSOConfigurations apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *OrganizationSSOConfigurationListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationSSOConfigurationListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type OrganizationSSOConfigurationListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                                 `json:"nextToken"`
-	JSON      organizationSSOConfigurationListResponsePaginationJSON `json:"-"`
-}
-
-// organizationSSOConfigurationListResponsePaginationJSON contains the JSON
-// metadata for the struct [OrganizationSSOConfigurationListResponsePagination]
-type organizationSSOConfigurationListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationSSOConfigurationListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationSSOConfigurationListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type OrganizationSSOConfigurationListResponseSSOConfiguration struct {
 	// id is the unique identifier of the SSO configuration
 	ID string `json:"id" format:"uuid"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
@@ -332,16 +301,15 @@ type OrganizationSSOConfigurationListResponseSSOConfiguration struct {
 	IssuerURL      string `json:"issuerUrl"`
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// provider_type defines the type of the SSO configuration
-	ProviderType OrganizationSSOConfigurationListResponseSSOConfigurationsProviderType `json:"providerType"`
+	ProviderType OrganizationSSOConfigurationListResponseProviderType `json:"providerType"`
 	// state is the state of the SSO configuration
-	State OrganizationSSOConfigurationListResponseSSOConfigurationsState `json:"state"`
-	JSON  organizationSSOConfigurationListResponseSSOConfigurationJSON   `json:"-"`
+	State OrganizationSSOConfigurationListResponseState `json:"state"`
+	JSON  organizationSSOConfigurationListResponseJSON  `json:"-"`
 }
 
-// organizationSSOConfigurationListResponseSSOConfigurationJSON contains the JSON
-// metadata for the struct
-// [OrganizationSSOConfigurationListResponseSSOConfiguration]
-type organizationSSOConfigurationListResponseSSOConfigurationJSON struct {
+// organizationSSOConfigurationListResponseJSON contains the JSON metadata for the
+// struct [OrganizationSSOConfigurationListResponse]
+type organizationSSOConfigurationListResponseJSON struct {
 	ID             apijson.Field
 	Claims         apijson.Field
 	ClientID       apijson.Field
@@ -354,43 +322,43 @@ type organizationSSOConfigurationListResponseSSOConfigurationJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *OrganizationSSOConfigurationListResponseSSOConfiguration) UnmarshalJSON(data []byte) (err error) {
+func (r *OrganizationSSOConfigurationListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r organizationSSOConfigurationListResponseSSOConfigurationJSON) RawJSON() string {
+func (r organizationSSOConfigurationListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
 // provider_type defines the type of the SSO configuration
-type OrganizationSSOConfigurationListResponseSSOConfigurationsProviderType string
+type OrganizationSSOConfigurationListResponseProviderType string
 
 const (
-	OrganizationSSOConfigurationListResponseSSOConfigurationsProviderTypeProviderTypeUnspecified OrganizationSSOConfigurationListResponseSSOConfigurationsProviderType = "PROVIDER_TYPE_UNSPECIFIED"
-	OrganizationSSOConfigurationListResponseSSOConfigurationsProviderTypeProviderTypeBuiltin     OrganizationSSOConfigurationListResponseSSOConfigurationsProviderType = "PROVIDER_TYPE_BUILTIN"
-	OrganizationSSOConfigurationListResponseSSOConfigurationsProviderTypeProviderTypeCustom      OrganizationSSOConfigurationListResponseSSOConfigurationsProviderType = "PROVIDER_TYPE_CUSTOM"
+	OrganizationSSOConfigurationListResponseProviderTypeProviderTypeUnspecified OrganizationSSOConfigurationListResponseProviderType = "PROVIDER_TYPE_UNSPECIFIED"
+	OrganizationSSOConfigurationListResponseProviderTypeProviderTypeBuiltin     OrganizationSSOConfigurationListResponseProviderType = "PROVIDER_TYPE_BUILTIN"
+	OrganizationSSOConfigurationListResponseProviderTypeProviderTypeCustom      OrganizationSSOConfigurationListResponseProviderType = "PROVIDER_TYPE_CUSTOM"
 )
 
-func (r OrganizationSSOConfigurationListResponseSSOConfigurationsProviderType) IsKnown() bool {
+func (r OrganizationSSOConfigurationListResponseProviderType) IsKnown() bool {
 	switch r {
-	case OrganizationSSOConfigurationListResponseSSOConfigurationsProviderTypeProviderTypeUnspecified, OrganizationSSOConfigurationListResponseSSOConfigurationsProviderTypeProviderTypeBuiltin, OrganizationSSOConfigurationListResponseSSOConfigurationsProviderTypeProviderTypeCustom:
+	case OrganizationSSOConfigurationListResponseProviderTypeProviderTypeUnspecified, OrganizationSSOConfigurationListResponseProviderTypeProviderTypeBuiltin, OrganizationSSOConfigurationListResponseProviderTypeProviderTypeCustom:
 		return true
 	}
 	return false
 }
 
 // state is the state of the SSO configuration
-type OrganizationSSOConfigurationListResponseSSOConfigurationsState string
+type OrganizationSSOConfigurationListResponseState string
 
 const (
-	OrganizationSSOConfigurationListResponseSSOConfigurationsStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationListResponseSSOConfigurationsState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	OrganizationSSOConfigurationListResponseSSOConfigurationsStateSSOConfigurationStateInactive    OrganizationSSOConfigurationListResponseSSOConfigurationsState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	OrganizationSSOConfigurationListResponseSSOConfigurationsStateSSOConfigurationStateActive      OrganizationSSOConfigurationListResponseSSOConfigurationsState = "SSO_CONFIGURATION_STATE_ACTIVE"
+	OrganizationSSOConfigurationListResponseStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationListResponseState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
+	OrganizationSSOConfigurationListResponseStateSSOConfigurationStateInactive    OrganizationSSOConfigurationListResponseState = "SSO_CONFIGURATION_STATE_INACTIVE"
+	OrganizationSSOConfigurationListResponseStateSSOConfigurationStateActive      OrganizationSSOConfigurationListResponseState = "SSO_CONFIGURATION_STATE_ACTIVE"
 )
 
-func (r OrganizationSSOConfigurationListResponseSSOConfigurationsState) IsKnown() bool {
+func (r OrganizationSSOConfigurationListResponseState) IsKnown() bool {
 	switch r {
-	case OrganizationSSOConfigurationListResponseSSOConfigurationsStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationListResponseSSOConfigurationsStateSSOConfigurationStateInactive, OrganizationSSOConfigurationListResponseSSOConfigurationsStateSSOConfigurationStateActive:
+	case OrganizationSSOConfigurationListResponseStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationListResponseStateSSOConfigurationStateInactive, OrganizationSSOConfigurationListResponseStateSSOConfigurationStateActive:
 		return true
 	}
 	return false

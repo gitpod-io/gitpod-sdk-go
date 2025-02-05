@@ -268,7 +268,7 @@ func (r environmentClassesPagePaginationJSON) RawJSON() string {
 }
 
 type EnvironmentClassesPage[T any] struct {
-	EnvironmentClasses []T                              `json:"environment_classes"`
+	EnvironmentClasses []T                              `json:"environmentClasses"`
 	Pagination         EnvironmentClassesPagePagination `json:"pagination"`
 	JSON               environmentClassesPageJSON       `json:"-"`
 	cfg                *requestconfig.RequestConfig
@@ -743,7 +743,7 @@ func (r loginProvidersPagePaginationJSON) RawJSON() string {
 }
 
 type LoginProvidersPage[T any] struct {
-	LoginProviders []T                          `json:"login_providers"`
+	LoginProviders []T                          `json:"loginProviders"`
 	Pagination     LoginProvidersPagePagination `json:"pagination"`
 	JSON           loginProvidersPageJSON       `json:"-"`
 	cfg            *requestconfig.RequestConfig
@@ -1100,7 +1100,7 @@ func (r personalAccessTokensPagePaginationJSON) RawJSON() string {
 
 type PersonalAccessTokensPage[T any] struct {
 	Pagination           PersonalAccessTokensPagePagination `json:"pagination"`
-	PersonalAccessTokens []T                                `json:"personal_access_tokens"`
+	PersonalAccessTokens []T                                `json:"personalAccessTokens"`
 	JSON                 personalAccessTokensPageJSON       `json:"-"`
 	cfg                  *requestconfig.RequestConfig
 	res                  *http.Response
@@ -1809,7 +1809,7 @@ func (r ssoConfigurationsPagePaginationJSON) RawJSON() string {
 
 type SSOConfigurationsPage[T any] struct {
 	Pagination        SSOConfigurationsPagePagination `json:"pagination"`
-	SSOConfigurations []T                             `json:"sso_configurations"`
+	SSOConfigurations []T                             `json:"ssoConfigurations"`
 	JSON              ssoConfigurationsPageJSON       `json:"-"`
 	cfg               *requestconfig.RequestConfig
 	res               *http.Response
@@ -1928,7 +1928,7 @@ func (r taskExecutionsPagePaginationJSON) RawJSON() string {
 
 type TaskExecutionsPage[T any] struct {
 	Pagination     TaskExecutionsPagePagination `json:"pagination"`
-	TaskExecutions []T                          `json:"task_executions"`
+	TaskExecutions []T                          `json:"taskExecutions"`
 	JSON           taskExecutionsPageJSON       `json:"-"`
 	cfg            *requestconfig.RequestConfig
 	res            *http.Response

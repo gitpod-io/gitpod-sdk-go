@@ -12,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // EnvironmentClassService contains methods and other services that help with
@@ -36,42 +37,35 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 // ListEnvironmentClasses returns the list of environment classes with runner
 // details a user is able to use based on the query buf:lint:ignore
 // RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *EnvironmentClassListResponse, err error) {
+func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[EnvironmentClassListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironmentClasses"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListEnvironmentClasses returns the list of environment classes with runner
+// details a user is able to use based on the query buf:lint:ignore
+// RPC_REQUEST_RESPONSE_UNIQUE
+func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[EnvironmentClassListResponse] {
+	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }
 
 type EnvironmentClassListResponse struct {
-	EnvironmentClasses []EnvironmentClassListResponseEnvironmentClass `json:"environmentClasses"`
-	// pagination contains the pagination options for listing environment classes
-	Pagination EnvironmentClassListResponsePagination `json:"pagination"`
-	JSON       environmentClassListResponseJSON       `json:"-"`
-}
-
-// environmentClassListResponseJSON contains the JSON metadata for the struct
-// [EnvironmentClassListResponse]
-type environmentClassListResponseJSON struct {
-	EnvironmentClasses apijson.Field
-	Pagination         apijson.Field
-	raw                string
-	ExtraFields        map[string]apijson.Field
-}
-
-func (r *EnvironmentClassListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentClassListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentClassListResponseEnvironmentClass struct {
 	// id is the unique identifier of the environment class
 	ID string `json:"id"`
 	// configuration describes the configuration of the environment class
-	Configuration []EnvironmentClassListResponseEnvironmentClassesConfiguration `json:"configuration"`
+	Configuration []EnvironmentClassListResponseConfiguration `json:"configuration"`
 	// description is a human readable description of the environment class
 	Description string `json:"description"`
 	// display_name is the human readable name of the environment class
@@ -81,13 +75,13 @@ type EnvironmentClassListResponseEnvironmentClass struct {
 	Enabled bool `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
-	RunnerID string                                           `json:"runnerId"`
-	JSON     environmentClassListResponseEnvironmentClassJSON `json:"-"`
+	RunnerID string                           `json:"runnerId"`
+	JSON     environmentClassListResponseJSON `json:"-"`
 }
 
-// environmentClassListResponseEnvironmentClassJSON contains the JSON metadata for
-// the struct [EnvironmentClassListResponseEnvironmentClass]
-type environmentClassListResponseEnvironmentClassJSON struct {
+// environmentClassListResponseJSON contains the JSON metadata for the struct
+// [EnvironmentClassListResponse]
+type environmentClassListResponseJSON struct {
 	ID            apijson.Field
 	Configuration apijson.Field
 	Description   apijson.Field
@@ -98,59 +92,34 @@ type environmentClassListResponseEnvironmentClassJSON struct {
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *EnvironmentClassListResponseEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentClassListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentClassListResponseEnvironmentClassJSON) RawJSON() string {
+func (r environmentClassListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type EnvironmentClassListResponseEnvironmentClassesConfiguration struct {
-	Key   string                                                          `json:"key"`
-	Value string                                                          `json:"value"`
-	JSON  environmentClassListResponseEnvironmentClassesConfigurationJSON `json:"-"`
+type EnvironmentClassListResponseConfiguration struct {
+	Key   string                                        `json:"key"`
+	Value string                                        `json:"value"`
+	JSON  environmentClassListResponseConfigurationJSON `json:"-"`
 }
 
-// environmentClassListResponseEnvironmentClassesConfigurationJSON contains the
-// JSON metadata for the struct
-// [EnvironmentClassListResponseEnvironmentClassesConfiguration]
-type environmentClassListResponseEnvironmentClassesConfigurationJSON struct {
+// environmentClassListResponseConfigurationJSON contains the JSON metadata for the
+// struct [EnvironmentClassListResponseConfiguration]
+type environmentClassListResponseConfigurationJSON struct {
 	Key         apijson.Field
 	Value       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *EnvironmentClassListResponseEnvironmentClassesConfiguration) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentClassListResponseConfiguration) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentClassListResponseEnvironmentClassesConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing environment classes
-type EnvironmentClassListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                     `json:"nextToken"`
-	JSON      environmentClassListResponsePaginationJSON `json:"-"`
-}
-
-// environmentClassListResponsePaginationJSON contains the JSON metadata for the
-// struct [EnvironmentClassListResponsePagination]
-type environmentClassListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentClassListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentClassListResponsePaginationJSON) RawJSON() string {
+func (r environmentClassListResponseConfigurationJSON) RawJSON() string {
 	return r.raw
 }
 
