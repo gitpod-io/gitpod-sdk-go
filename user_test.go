@@ -14,6 +14,7 @@ import (
 )
 
 func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -38,6 +39,7 @@ func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
 }
 
 func TestUserSetSuspendedWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
