@@ -13,8 +13,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
-func TestUserGetAuthenticatedUser(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -27,7 +26,7 @@ func TestUserGetAuthenticatedUser(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.GetAuthenticatedUser(context.TODO(), gitpod.UserGetAuthenticatedUserParams{
-		Body: map[string]interface{}{},
+		Empty: gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -39,7 +38,6 @@ func TestUserGetAuthenticatedUser(t *testing.T) {
 }
 
 func TestUserSetSuspendedWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

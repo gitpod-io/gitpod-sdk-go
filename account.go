@@ -179,11 +179,11 @@ func (r accountListLoginProvidersResponseJSON) RawJSON() string {
 }
 
 type AccountGetParams struct {
-	Body interface{} `json:"body,required"`
+	Empty param.Field[bool] `json:"empty"`
 }
 
 func (r AccountGetParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
+	return apijson.MarshalRoot(r)
 }
 
 type AccountDeleteParams struct {
