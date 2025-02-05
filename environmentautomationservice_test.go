@@ -27,8 +27,7 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.New(context.TODO(), gitpod.EnvironmentAutomationServiceNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsConnectProtocolVersion1),
-		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Metadata: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsMetadata{
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(gitpod.EnvironmentAutomationServiceNewParamsMetadataCreator{
@@ -58,7 +57,6 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 			Session:     gitpod.F("session"),
 			SpecVersion: gitpod.F("specVersion"),
 		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -82,9 +80,7 @@ func TestEnvironmentAutomationServiceGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Get(context.TODO(), gitpod.EnvironmentAutomationServiceGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceGetParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -108,8 +104,7 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Update(context.TODO(), gitpod.EnvironmentAutomationServiceUpdateParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Metadata: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsMetadataUnion](gitpod.EnvironmentAutomationServiceUpdateParamsMetadataDescription{
 			Description: gitpod.F("description"),
 		}),
@@ -121,7 +116,6 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 		Status: gitpod.F[gitpod.EnvironmentAutomationServiceUpdateParamsStatusUnion](gitpod.EnvironmentAutomationServiceUpdateParamsStatusFailureMessage{
 			FailureMessage: gitpod.F("failureMessage"),
 		}),
-		ConnectTimeoutMs: gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -145,13 +139,17 @@ func TestEnvironmentAutomationServiceListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationServiceListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationServiceListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationServiceListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsFilter{
+			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			References:     gitpod.F([]string{"x"}),
+			ServiceIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		}),
+		Pagination: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -175,10 +173,8 @@ func TestEnvironmentAutomationServiceDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Delete(context.TODO(), gitpod.EnvironmentAutomationServiceDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Force:                  gitpod.F(true),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Force: gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -202,9 +198,7 @@ func TestEnvironmentAutomationServiceStartWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Start(context.TODO(), gitpod.EnvironmentAutomationServiceStartParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceStartParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -228,9 +222,7 @@ func TestEnvironmentAutomationServiceStopWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Services.Stop(context.TODO(), gitpod.EnvironmentAutomationServiceStopParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationServiceStopParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -15,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -38,73 +38,58 @@ func NewSecretService(opts ...option.RequestOption) (r *SecretService) {
 }
 
 // CreateSecret creates a new secret.
-func (r *SecretService) New(ctx context.Context, params SecretNewParams, opts ...option.RequestOption) (res *SecretNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...option.RequestOption) (res *SecretNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/CreateSecret"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListSecrets lists secrets.
-func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *SecretListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[SecretListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.SecretService/ListSecrets"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListSecrets lists secrets.
+func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[SecretListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteSecret deletes a secret.
-func (r *SecretService) Delete(ctx context.Context, params SecretDeleteParams, opts ...option.RequestOption) (res *SecretDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *SecretService) Delete(ctx context.Context, body SecretDeleteParams, opts ...option.RequestOption) (res *SecretDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/DeleteSecret"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetSecretValue retrieves the value of a secret Only Environments can perform
 // this operation, and only for secrets specified on the EnvironmentSpec.
-func (r *SecretService) GetValue(ctx context.Context, params SecretGetValueParams, opts ...option.RequestOption) (res *SecretGetValueResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *SecretService) GetValue(ctx context.Context, body SecretGetValueParams, opts ...option.RequestOption) (res *SecretGetValueResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/GetSecretValue"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateSecretValue updates the value of a secret.
-func (r *SecretService) UpdateValue(ctx context.Context, params SecretUpdateValueParams, opts ...option.RequestOption) (res *SecretUpdateValueResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueParams, opts ...option.RequestOption) (res *SecretUpdateValueResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/UpdateSecretValue"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -272,9 +257,8 @@ func (r secretListResponseJSON) RawJSON() string {
 
 // pagination contains the pagination options for listing secrets
 type SecretListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                           `json:"nextToken"`
 	JSON      secretListResponsePaginationJSON `json:"-"`
 }
@@ -298,7 +282,6 @@ func (r secretListResponsePaginationJSON) RawJSON() string {
 type SecretListResponseSecret struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -401,7 +384,6 @@ type SecretListResponseSecret struct {
 	// The Project ID this Secret belongs to
 	ProjectID string `json:"projectId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -560,7 +542,6 @@ type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheS
 	EnvironmentVariable bool   `json:"environmentVariable,required"`
 	ID                  string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -656,7 +637,6 @@ type SecretListResponseSecretsSecretWillBeCreatedAsAnEnvironmentVariableWithTheS
 	// The Project ID this Secret belongs to
 	ProjectID string `json:"projectId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -826,7 +806,6 @@ type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted struc
 	FilePath string `json:"filePath,required"`
 	ID       string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -922,7 +901,6 @@ type SecretListResponseSecretsAbsolutePathToTheFileWhereTheSecretIsMounted struc
 	// The Project ID this Secret belongs to
 	ProjectID string `json:"projectId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1114,10 +1092,6 @@ type SecretUpdateValueResponse = interface{}
 
 type SecretNewParams struct {
 	Body SecretNewParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[SecretNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r SecretNewParams) MarshalJSON() (data []byte, err error) {
@@ -1196,36 +1170,16 @@ func (r SecretNewParamsBodyAbsolutePathToTheFileWhereTheSecretIsMounted) Marshal
 func (r SecretNewParamsBodyAbsolutePathToTheFileWhereTheSecretIsMounted) implementsSecretNewParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type SecretNewParamsConnectProtocolVersion float64
-
-const (
-	SecretNewParamsConnectProtocolVersion1 SecretNewParamsConnectProtocolVersion = 1
-)
-
-func (r SecretNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case SecretNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type SecretListParams struct {
+	Token    param.Field[string]                 `query:"token"`
+	PageSize param.Field[int64]                  `query:"pageSize"`
+	Filter   param.Field[SecretListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing environments
+	Pagination param.Field[SecretListParamsPagination] `json:"pagination"`
 }
 
-type SecretListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[SecretListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[SecretListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[SecretListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[SecretListParamsConnect] `query:"connect"`
-	Message param.Field[string]                  `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r SecretListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [SecretListParams]'s query parameters as `url.Values`.
@@ -1236,148 +1190,51 @@ func (r SecretListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type SecretListParamsEncoding string
-
-const (
-	SecretListParamsEncodingProto SecretListParamsEncoding = "proto"
-	SecretListParamsEncodingJson  SecretListParamsEncoding = "json"
-)
-
-func (r SecretListParamsEncoding) IsKnown() bool {
-	switch r {
-	case SecretListParamsEncodingProto, SecretListParamsEncodingJson:
-		return true
-	}
-	return false
+type SecretListParamsFilter struct {
+	// project_ids filters the response to only Secrets used by these Project IDs
+	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
 }
 
-// Define the version of the Connect protocol
-type SecretListParamsConnectProtocolVersion float64
-
-const (
-	SecretListParamsConnectProtocolVersion1 SecretListParamsConnectProtocolVersion = 1
-)
-
-func (r SecretListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case SecretListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r SecretListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type SecretListParamsCompression string
-
-const (
-	SecretListParamsCompressionIdentity SecretListParamsCompression = "identity"
-	SecretListParamsCompressionGzip     SecretListParamsCompression = "gzip"
-	SecretListParamsCompressionBr       SecretListParamsCompression = "br"
-)
-
-func (r SecretListParamsCompression) IsKnown() bool {
-	switch r {
-	case SecretListParamsCompressionIdentity, SecretListParamsCompressionGzip, SecretListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing environments
+type SecretListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type SecretListParamsConnect string
-
-const (
-	SecretListParamsConnectV1 SecretListParamsConnect = "v1"
-)
-
-func (r SecretListParamsConnect) IsKnown() bool {
-	switch r {
-	case SecretListParamsConnectV1:
-		return true
-	}
-	return false
+func (r SecretListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type SecretDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[SecretDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	SecretID               param.Field[string]                                   `json:"secretId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	SecretID param.Field[string] `json:"secretId" format:"uuid"`
 }
 
 func (r SecretDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type SecretDeleteParamsConnectProtocolVersion float64
-
-const (
-	SecretDeleteParamsConnectProtocolVersion1 SecretDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r SecretDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case SecretDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type SecretGetValueParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[SecretGetValueParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	SecretID               param.Field[string]                                     `json:"secretId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	SecretID param.Field[string] `json:"secretId" format:"uuid"`
 }
 
 func (r SecretGetValueParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type SecretGetValueParamsConnectProtocolVersion float64
-
-const (
-	SecretGetValueParamsConnectProtocolVersion1 SecretGetValueParamsConnectProtocolVersion = 1
-)
-
-func (r SecretGetValueParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case SecretGetValueParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type SecretUpdateValueParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[SecretUpdateValueParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	SecretID               param.Field[string]                                        `json:"secretId" format:"uuid"`
+	SecretID param.Field[string] `json:"secretId" format:"uuid"`
 	// value is the plaintext value of the secret
 	Value param.Field[string] `json:"value"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r SecretUpdateValueParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type SecretUpdateValueParamsConnectProtocolVersion float64
-
-const (
-	SecretUpdateValueParamsConnectProtocolVersion1 SecretUpdateValueParamsConnectProtocolVersion = 1
-)
-
-func (r SecretUpdateValueParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case SecretUpdateValueParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

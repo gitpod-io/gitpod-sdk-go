@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // EnvironmentClassService contains methods and other services that help with
@@ -35,20 +35,30 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 }
 
 // ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the
-//
-// query buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *EnvironmentClassListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+// details a user is able to use based on the query buf:lint:ignore
+// RPC_REQUEST_RESPONSE_UNIQUE
+func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentClassListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironmentClasses"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListEnvironmentClasses returns the list of environment classes with runner
+// details a user is able to use based on the query buf:lint:ignore
+// RPC_REQUEST_RESPONSE_UNIQUE
+func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentClassListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 type EnvironmentClassListResponse struct {
@@ -84,9 +94,8 @@ type EnvironmentClassListResponseEnvironmentClass struct {
 	Description string `json:"description"`
 	// display_name is the human readable name of the environment class
 	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create
-	//
-	// new environments.
+	// enabled indicates whether the environment class can be used to create new
+	// environments.
 	Enabled bool `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
@@ -141,9 +150,8 @@ func (r environmentClassListResponseEnvironmentClassesConfigurationJSON) RawJSON
 
 // pagination contains the pagination options for listing environment classes
 type EnvironmentClassListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                     `json:"nextToken"`
 	JSON      environmentClassListResponsePaginationJSON `json:"-"`
 }
@@ -165,20 +173,15 @@ func (r environmentClassListResponsePaginationJSON) RawJSON() string {
 }
 
 type EnvironmentClassListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentClassListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentClassListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentClassListParamsConnect] `query:"connect"`
-	Message param.Field[string]                            `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token    param.Field[string]                           `query:"token"`
+	PageSize param.Field[int64]                            `query:"pageSize"`
+	Filter   param.Field[EnvironmentClassListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing environment classes
+	Pagination param.Field[EnvironmentClassListParamsPagination] `json:"pagination"`
+}
+
+func (r EnvironmentClassListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [EnvironmentClassListParams]'s query parameters as
@@ -190,65 +193,26 @@ func (r EnvironmentClassListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentClassListParamsEncoding string
-
-const (
-	EnvironmentClassListParamsEncodingProto EnvironmentClassListParamsEncoding = "proto"
-	EnvironmentClassListParamsEncodingJson  EnvironmentClassListParamsEncoding = "json"
-)
-
-func (r EnvironmentClassListParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentClassListParamsEncodingProto, EnvironmentClassListParamsEncodingJson:
-		return true
-	}
-	return false
+type EnvironmentClassListParamsFilter struct {
+	// enabled filters the response to only enabled or disabled environment classes. If
+	// not set, all environment classes are returned.
+	Enabled param.Field[bool] `json:"enabled,required"`
 }
 
-// Define the version of the Connect protocol
-type EnvironmentClassListParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentClassListParamsConnectProtocolVersion1 EnvironmentClassListParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentClassListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentClassListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r EnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type EnvironmentClassListParamsCompression string
-
-const (
-	EnvironmentClassListParamsCompressionIdentity EnvironmentClassListParamsCompression = "identity"
-	EnvironmentClassListParamsCompressionGzip     EnvironmentClassListParamsCompression = "gzip"
-	EnvironmentClassListParamsCompressionBr       EnvironmentClassListParamsCompression = "br"
-)
-
-func (r EnvironmentClassListParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentClassListParamsCompressionIdentity, EnvironmentClassListParamsCompressionGzip, EnvironmentClassListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing environment classes
+type EnvironmentClassListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type EnvironmentClassListParamsConnect string
-
-const (
-	EnvironmentClassListParamsConnectV1 EnvironmentClassListParamsConnect = "v1"
-)
-
-func (r EnvironmentClassListParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentClassListParamsConnectV1:
-		return true
-	}
-	return false
+func (r EnvironmentClassListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }

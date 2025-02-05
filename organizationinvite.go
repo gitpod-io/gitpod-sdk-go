@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/stainless-sdks/gitpod-go/internal/apijson"
@@ -34,48 +33,28 @@ func NewOrganizationInviteService(opts ...option.RequestOption) (r *Organization
 
 // CreateOrganizationInvite creates an invite for the organization. Any existing
 // OrganizationInvites are invalidated and can no longer be used.
-func (r *OrganizationInviteService) New(ctx context.Context, params OrganizationInviteNewParams, opts ...option.RequestOption) (res *OrganizationInviteNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationInviteService) New(ctx context.Context, body OrganizationInviteNewParams, opts ...option.RequestOption) (res *OrganizationInviteNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateOrganizationInvite"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetOrganizationInvite retrieves invite for the organization. If no invite
 // exists, a new one is created.
-func (r *OrganizationInviteService) Get(ctx context.Context, params OrganizationInviteGetParams, opts ...option.RequestOption) (res *OrganizationInviteGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationInviteService) Get(ctx context.Context, body OrganizationInviteGetParams, opts ...option.RequestOption) (res *OrganizationInviteGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInvite"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetOrganizationInviteSummary retrieves a summary of the organization based on an
-// Invite ID.
-//
-// Used to discover which organization an invite is for.
-func (r *OrganizationInviteService) GetSummary(ctx context.Context, params OrganizationInviteGetSummaryParams, opts ...option.RequestOption) (res *OrganizationInviteGetSummaryResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+// Invite ID. Used to discover which organization an invite is for.
+func (r *OrganizationInviteService) GetSummary(ctx context.Context, body OrganizationInviteGetSummaryParams, opts ...option.RequestOption) (res *OrganizationInviteGetSummaryResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -101,9 +80,8 @@ func (r organizationInviteNewResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteNewResponseInvite struct {
-	// invite_id is the unique identifier of the invite to join the organization.
-	//
-	// Use JoinOrganization with this ID to join the organization.
+	// invite_id is the unique identifier of the invite to join the organization. Use
+	// JoinOrganization with this ID to join the organization.
 	InviteID string                                  `json:"inviteId" format:"uuid"`
 	JSON     organizationInviteNewResponseInviteJSON `json:"-"`
 }
@@ -146,9 +124,8 @@ func (r organizationInviteGetResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteGetResponseInvite struct {
-	// invite_id is the unique identifier of the invite to join the organization.
-	//
-	// Use JoinOrganization with this ID to join the organization.
+	// invite_id is the unique identifier of the invite to join the organization. Use
+	// JoinOrganization with this ID to join the organization.
 	InviteID string                                  `json:"inviteId" format:"uuid"`
 	JSON     organizationInviteGetResponseInviteJSON `json:"-"`
 }
@@ -195,82 +172,25 @@ func (r organizationInviteGetSummaryResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationInviteNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	OrganizationID         param.Field[string]                                            `json:"organizationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 }
 
 func (r OrganizationInviteNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationInviteNewParamsConnectProtocolVersion float64
-
-const (
-	OrganizationInviteNewParamsConnectProtocolVersion1 OrganizationInviteNewParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationInviteNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationInviteNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationInviteGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationInviteGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	OrganizationID         param.Field[string]                                            `json:"organizationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 }
 
 func (r OrganizationInviteGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationInviteGetParamsConnectProtocolVersion float64
-
-const (
-	OrganizationInviteGetParamsConnectProtocolVersion1 OrganizationInviteGetParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationInviteGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationInviteGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationInviteGetSummaryParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationInviteGetSummaryParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	InviteID               param.Field[string]                                                   `json:"inviteId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	InviteID param.Field[string] `json:"inviteId" format:"uuid"`
 }
 
 func (r OrganizationInviteGetSummaryParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type OrganizationInviteGetSummaryParamsConnectProtocolVersion float64
-
-const (
-	OrganizationInviteGetSummaryParamsConnectProtocolVersion1 OrganizationInviteGetSummaryParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationInviteGetSummaryParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationInviteGetSummaryParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

@@ -36,11 +36,9 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 				}),
 			}}),
 		}),
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectNewParamsConnectProtocolVersion1),
-		AutomationsFilePath:    gitpod.F("automationsFilePath"),
-		DevcontainerFilePath:   gitpod.F("devcontainerFilePath"),
-		Name:                   gitpod.F("x"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		AutomationsFilePath:  gitpod.F("automationsFilePath"),
+		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+		Name:                 gitpod.F("x"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -64,9 +62,7 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Get(context.TODO(), gitpod.ProjectGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectGetParamsConnectProtocolVersion1),
-		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -93,8 +89,6 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 		Body: gitpod.ProjectUpdateParamsBodyAutomationsFilePathIsThePathToTheAutomationsFileRelativeToTheRepoRoot{
 			AutomationsFilePath: gitpod.F("automationsFilePath"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectUpdateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -118,13 +112,12 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.List(context.TODO(), gitpod.ProjectListParams{
-		Encoding:               gitpod.F(gitpod.ProjectListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.ProjectListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.ProjectListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.ProjectListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -148,9 +141,7 @@ func TestProjectDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Delete(context.TODO(), gitpod.ProjectDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectDeleteParamsConnectProtocolVersion1),
-		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -174,10 +165,8 @@ func TestProjectNewFromEnvironmentWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.NewFromEnvironment(context.TODO(), gitpod.ProjectNewFromEnvironmentParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectNewFromEnvironmentParamsConnectProtocolVersion1),
-		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Name:                   gitpod.F("x"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Name:          gitpod.F("x"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

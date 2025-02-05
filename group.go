@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // GroupService contains methods and other services that help with interacting with
@@ -36,17 +36,26 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 }
 
 // ListGroups lists groups
-func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *GroupListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[GroupListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.GroupService/ListGroups"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListGroups lists groups
+func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[GroupListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 type GroupListResponse struct {
@@ -75,7 +84,6 @@ func (r groupListResponseJSON) RawJSON() string {
 type GroupListResponseGroup struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -169,7 +177,6 @@ type GroupListResponseGroup struct {
 	// system_managed indicates that this group is created by the system automatically
 	SystemManaged bool `json:"systemManaged"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -283,9 +290,8 @@ func (r groupListResponseGroupJSON) RawJSON() string {
 }
 
 type GroupListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                          `json:"nextToken"`
 	JSON      groupListResponsePaginationJSON `json:"-"`
 }
@@ -307,20 +313,14 @@ func (r groupListResponsePaginationJSON) RawJSON() string {
 }
 
 type GroupListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[GroupListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[GroupListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[GroupListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[GroupListParamsConnect] `query:"connect"`
-	Message param.Field[string]                 `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// pagination contains the pagination options for listing groups
+	Pagination param.Field[GroupListParamsPagination] `json:"pagination"`
+}
+
+func (r GroupListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [GroupListParams]'s query parameters as `url.Values`.
@@ -331,65 +331,16 @@ func (r GroupListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type GroupListParamsEncoding string
-
-const (
-	GroupListParamsEncodingProto GroupListParamsEncoding = "proto"
-	GroupListParamsEncodingJson  GroupListParamsEncoding = "json"
-)
-
-func (r GroupListParamsEncoding) IsKnown() bool {
-	switch r {
-	case GroupListParamsEncodingProto, GroupListParamsEncodingJson:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing groups
+type GroupListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type GroupListParamsConnectProtocolVersion float64
-
-const (
-	GroupListParamsConnectProtocolVersion1 GroupListParamsConnectProtocolVersion = 1
-)
-
-func (r GroupListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case GroupListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type GroupListParamsCompression string
-
-const (
-	GroupListParamsCompressionIdentity GroupListParamsCompression = "identity"
-	GroupListParamsCompressionGzip     GroupListParamsCompression = "gzip"
-	GroupListParamsCompressionBr       GroupListParamsCompression = "br"
-)
-
-func (r GroupListParamsCompression) IsKnown() bool {
-	switch r {
-	case GroupListParamsCompressionIdentity, GroupListParamsCompressionGzip, GroupListParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type GroupListParamsConnect string
-
-const (
-	GroupListParamsConnectV1 GroupListParamsConnect = "v1"
-)
-
-func (r GroupListParamsConnect) IsKnown() bool {
-	switch r {
-	case GroupListParamsConnectV1:
-		return true
-	}
-	return false
+func (r GroupListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }

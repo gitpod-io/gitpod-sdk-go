@@ -26,9 +26,7 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Identity.ExchangeToken(context.TODO(), gitpod.IdentityExchangeTokenParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.IdentityExchangeTokenParamsConnectProtocolVersion1),
-		ExchangeToken:          gitpod.F("exchangeToken"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ExchangeToken: gitpod.F("exchangeToken"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -39,7 +37,7 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestIdentityGetAuthenticatedIdentityWithOptionalParams(t *testing.T) {
+func TestIdentityGetAuthenticatedIdentity(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -52,9 +50,7 @@ func TestIdentityGetAuthenticatedIdentityWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{
-		Body:                   map[string]interface{}{},
-		ConnectProtocolVersion: gitpod.F(gitpod.IdentityGetAuthenticatedIdentityParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Body: map[string]interface{}{},
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -78,9 +74,7 @@ func TestIdentityGetIDTokenWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Identity.GetIDToken(context.TODO(), gitpod.IdentityGetIDTokenParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.IdentityGetIDTokenParamsConnectProtocolVersion1),
-		Audience:               gitpod.F([]string{"string"}),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Audience: gitpod.F([]string{"string"}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

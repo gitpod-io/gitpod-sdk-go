@@ -26,13 +26,15 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Classes.List(context.TODO(), gitpod.EnvironmentClassListParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentClassListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentClassListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentClassListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentClassListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.EnvironmentClassListParamsFilter{
+			Enabled: gitpod.F(true),
+		}),
+		Pagination: gitpod.F(gitpod.EnvironmentClassListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

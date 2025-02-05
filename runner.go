@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // RunnerService contains methods and other services that help with interacting
@@ -40,110 +40,80 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 }
 
 // CreateRunner creates a new runner with the server. Registrations are very
-//
 // short-lived and must be renewed every 30 seconds. Runners can be registered for
 // an entire organisation or a single user.
-func (r *RunnerService) New(ctx context.Context, params RunnerNewParams, opts ...option.RequestOption) (res *RunnerNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...option.RequestOption) (res *RunnerNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetRunner returns a single runner.
-func (r *RunnerService) Get(ctx context.Context, params RunnerGetParams, opts ...option.RequestOption) (res *RunnerGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...option.RequestOption) (res *RunnerGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/GetRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateRunner updates an environment runner.
-func (r *RunnerService) Update(ctx context.Context, params RunnerUpdateParams, opts ...option.RequestOption) (res *RunnerUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opts ...option.RequestOption) (res *RunnerUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/UpdateRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListRunners returns all runners registered in the scope.
-func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *RunnerListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerService/ListRunners"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListRunners returns all runners registered in the scope.
+func (r *RunnerService) ListAutoPaging(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteRunner deletes an environment runner.
-func (r *RunnerService) Delete(ctx context.Context, params RunnerDeleteParams, opts ...option.RequestOption) (res *RunnerDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opts ...option.RequestOption) (res *RunnerDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/DeleteRunner"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // CheckAuthenticationForHost asks a runner if the user is authenticated against a
-// particular host, e.g. an SCM system.
-//
-// If not, this function will return a URL that the user should visit to
-// authenticate, or indicate that Personal Access Tokens are supported.
-func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, params RunnerCheckAuthenticationForHostParams, opts ...option.RequestOption) (res *RunnerCheckAuthenticationForHostResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+// particular host, e.g. an SCM system. If not, this function will return a URL
+// that the user should visit to authenticate, or indicate that Personal Access
+// Tokens are supported.
+func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body RunnerCheckAuthenticationForHostParams, opts ...option.RequestOption) (res *RunnerCheckAuthenticationForHostResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CheckAuthenticationForHost"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // CreateRunnerToken returns a token that can be used to authenticate as the
-//
 // runner. Use this call to renew an outdated token - this does not expire any
 // previouly issued tokens.
-func (r *RunnerService) NewRunnerToken(ctx context.Context, params RunnerNewRunnerTokenParams, opts ...option.RequestOption) (res *RunnerNewRunnerTokenResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunnerTokenParams, opts ...option.RequestOption) (res *RunnerNewRunnerTokenResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -159,16 +129,10 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, params RunnerNewRunn
 //   - INVALID_ARGUMENT if the context URL is invalid
 //   - NOT_FOUND if the repository or branch indicated by the context URL does not
 //     exist
-func (r *RunnerService) ParseContextURL(ctx context.Context, params RunnerParseContextURLParams, opts ...option.RequestOption) (res *RunnerParseContextURLResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseContextURLParams, opts ...option.RequestOption) (res *RunnerParseContextURLResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -197,7 +161,6 @@ func (r runnerNewResponseJSON) RawJSON() string {
 
 type RunnerNewResponseRunner struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -302,7 +265,6 @@ type RunnerNewResponseRunner struct {
 	// RunnerStatus represents the status of a runner
 	Status RunnerNewResponseRunnerStatus `json:"status"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -614,7 +576,6 @@ type RunnerNewResponseRunnerStatus struct {
 	Region        string `json:"region"`
 	SystemDetails string `json:"systemDetails"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -813,7 +774,6 @@ func (r runnerGetResponseJSON) RawJSON() string {
 
 type RunnerGetResponseRunner struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -918,7 +878,6 @@ type RunnerGetResponseRunner struct {
 	// RunnerStatus represents the status of a runner
 	Status RunnerGetResponseRunnerStatus `json:"status"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1230,7 +1189,6 @@ type RunnerGetResponseRunnerStatus struct {
 	Region        string `json:"region"`
 	SystemDetails string `json:"systemDetails"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1435,9 +1393,8 @@ func (r runnerListResponseJSON) RawJSON() string {
 
 // pagination contains the pagination options for listing runners
 type RunnerListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                           `json:"nextToken"`
 	JSON      runnerListResponsePaginationJSON `json:"-"`
 }
@@ -1460,7 +1417,6 @@ func (r runnerListResponsePaginationJSON) RawJSON() string {
 
 type RunnerListResponseRunner struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1565,7 +1521,6 @@ type RunnerListResponseRunner struct {
 	// RunnerStatus represents the status of a runner
 	Status RunnerListResponseRunnersStatus `json:"status"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1877,7 +1832,6 @@ type RunnerListResponseRunnersStatus struct {
 	Region        string `json:"region"`
 	SystemDetails string `json:"systemDetails"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2160,8 +2114,6 @@ func (r runnerParseContextURLResponseGitJSON) RawJSON() string {
 }
 
 type RunnerNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// RunnerKind represents the kind of a runner
 	Kind param.Field[RunnerNewParamsKind] `json:"kind"`
 	// The runner name for humans
@@ -2171,27 +2123,10 @@ type RunnerNewParams struct {
 	// for each provider.
 	Provider param.Field[RunnerNewParamsProvider] `json:"provider"`
 	Spec     param.Field[RunnerNewParamsSpec]     `json:"spec"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerNewParamsConnectProtocolVersion float64
-
-const (
-	RunnerNewParamsConnectProtocolVersion1 RunnerNewParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 // RunnerKind represents the kind of a runner
@@ -2298,38 +2233,15 @@ func (r RunnerNewParamsSpecDesiredPhase) IsKnown() bool {
 }
 
 type RunnerGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	RunnerID               param.Field[string]                                `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerGetParamsConnectProtocolVersion1 RunnerGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerUpdateParams struct {
 	Body RunnerUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -2540,36 +2452,16 @@ func (r RunnerUpdateParamsBodySpecSpecDesiredPhase) IsKnown() bool {
 	return false
 }
 
-// Define the version of the Connect protocol
-type RunnerUpdateParamsConnectProtocolVersion float64
-
-const (
-	RunnerUpdateParamsConnectProtocolVersion1 RunnerUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type RunnerListParams struct {
+	Token    param.Field[string]                 `query:"token"`
+	PageSize param.Field[int64]                  `query:"pageSize"`
+	Filter   param.Field[RunnerListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing runners
+	Pagination param.Field[RunnerListParamsPagination] `json:"pagination"`
 }
 
-type RunnerListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerListParamsConnect] `query:"connect"`
-	Message param.Field[string]                  `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r RunnerListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [RunnerListParams]'s query parameters as `url.Values`.
@@ -2580,180 +2472,106 @@ func (r RunnerListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type RunnerListParamsEncoding string
+type RunnerListParamsFilter struct {
+	// creator_ids filters the response to only runner created by specified users
+	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
+	// kinds filters the response to only runners of the specified kinds
+	Kinds param.Field[[]RunnerListParamsFilterKind] `json:"kinds"`
+	// providers filters the response to only runners of the specified providers
+	Providers param.Field[[]RunnerListParamsFilterProvider] `json:"providers"`
+}
+
+func (r RunnerListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// RunnerKind represents the kind of a runner
+type RunnerListParamsFilterKind string
 
 const (
-	RunnerListParamsEncodingProto RunnerListParamsEncoding = "proto"
-	RunnerListParamsEncodingJson  RunnerListParamsEncoding = "json"
+	RunnerListParamsFilterKindRunnerKindUnspecified        RunnerListParamsFilterKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerListParamsFilterKindRunnerKindLocal              RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL"
+	RunnerListParamsFilterKindRunnerKindRemote             RunnerListParamsFilterKind = "RUNNER_KIND_REMOTE"
+	RunnerListParamsFilterKindRunnerKindLocalConfiguration RunnerListParamsFilterKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
-func (r RunnerListParamsEncoding) IsKnown() bool {
+func (r RunnerListParamsFilterKind) IsKnown() bool {
 	switch r {
-	case RunnerListParamsEncodingProto, RunnerListParamsEncodingJson:
+	case RunnerListParamsFilterKindRunnerKindUnspecified, RunnerListParamsFilterKindRunnerKindLocal, RunnerListParamsFilterKindRunnerKindRemote, RunnerListParamsFilterKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false
 }
 
-// Define the version of the Connect protocol
-type RunnerListParamsConnectProtocolVersion float64
+// RunnerProvider identifies the specific implementation type of a runner. Each
+// provider maps to a specific kind of runner (local or remote), as specified below
+// for each provider.
+type RunnerListParamsFilterProvider string
 
 const (
-	RunnerListParamsConnectProtocolVersion1 RunnerListParamsConnectProtocolVersion = 1
+	RunnerListParamsFilterProviderRunnerProviderUnspecified RunnerListParamsFilterProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerListParamsFilterProviderRunnerProviderAwsEc2      RunnerListParamsFilterProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerListParamsFilterProviderRunnerProviderLinuxHost   RunnerListParamsFilterProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerListParamsFilterProviderRunnerProviderDesktopMac  RunnerListParamsFilterProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
 )
 
-func (r RunnerListParamsConnectProtocolVersion) IsKnown() bool {
+func (r RunnerListParamsFilterProvider) IsKnown() bool {
 	switch r {
-	case RunnerListParamsConnectProtocolVersion1:
+	case RunnerListParamsFilterProviderRunnerProviderUnspecified, RunnerListParamsFilterProviderRunnerProviderAwsEc2, RunnerListParamsFilterProviderRunnerProviderLinuxHost, RunnerListParamsFilterProviderRunnerProviderDesktopMac:
 		return true
 	}
 	return false
 }
 
-// Which compression algorithm to use for this request
-type RunnerListParamsCompression string
-
-const (
-	RunnerListParamsCompressionIdentity RunnerListParamsCompression = "identity"
-	RunnerListParamsCompressionGzip     RunnerListParamsCompression = "gzip"
-	RunnerListParamsCompressionBr       RunnerListParamsCompression = "br"
-)
-
-func (r RunnerListParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerListParamsCompressionIdentity, RunnerListParamsCompressionGzip, RunnerListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing runners
+type RunnerListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type RunnerListParamsConnect string
-
-const (
-	RunnerListParamsConnectV1 RunnerListParamsConnect = "v1"
-)
-
-func (r RunnerListParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerListParamsConnectV1:
-		return true
-	}
-	return false
+func (r RunnerListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// force indicates whether the runner should be deleted forcefully. When force
 	// deleting a Runner, all Environments on the runner are also force deleted and
 	// regular Runner lifecycle is not respected. Force deleting can result in data
 	// loss.
 	Force    param.Field[bool]   `json:"force"`
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerDeleteParamsConnectProtocolVersion float64
-
-const (
-	RunnerDeleteParamsConnectProtocolVersion1 RunnerDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerCheckAuthenticationForHostParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerCheckAuthenticationForHostParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Host                   param.Field[string]                                                       `json:"host"`
-	RunnerID               param.Field[string]                                                       `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Host     param.Field[string] `json:"host"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerCheckAuthenticationForHostParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerCheckAuthenticationForHostParamsConnectProtocolVersion float64
-
-const (
-	RunnerCheckAuthenticationForHostParamsConnectProtocolVersion1 RunnerCheckAuthenticationForHostParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerCheckAuthenticationForHostParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerCheckAuthenticationForHostParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerNewRunnerTokenParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerNewRunnerTokenParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	RunnerID               param.Field[string]                                           `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerNewRunnerTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerNewRunnerTokenParamsConnectProtocolVersion float64
-
-const (
-	RunnerNewRunnerTokenParamsConnectProtocolVersion1 RunnerNewRunnerTokenParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerNewRunnerTokenParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerNewRunnerTokenParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerParseContextURLParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerParseContextURLParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ContextURL             param.Field[string]                                            `json:"contextUrl" format:"uri"`
-	RunnerID               param.Field[string]                                            `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ContextURL param.Field[string] `json:"contextUrl" format:"uri"`
+	RunnerID   param.Field[string] `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerParseContextURLParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerParseContextURLParamsConnectProtocolVersion float64
-
-const (
-	RunnerParseContextURLParamsConnectProtocolVersion1 RunnerParseContextURLParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerParseContextURLParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerParseContextURLParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"reflect"
 
@@ -35,16 +34,10 @@ func NewRunnerConfigurationSchemaService(opts ...option.RequestOption) (r *Runne
 }
 
 // GetRunnerConfigurationSchema retrieves the latest Runner configuration schema
-func (r *RunnerConfigurationSchemaService) Get(ctx context.Context, params RunnerConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationSchemaGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationSchemaService) Get(ctx context.Context, body RunnerConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationSchemaGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -502,28 +495,9 @@ func (r runnerConfigurationSchemaGetResponseSchemaScmPatJSON) RawJSON() string {
 }
 
 type RunnerConfigurationSchemaGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationSchemaGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	RunnerID               param.Field[string]                                                   `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerConfigurationSchemaGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationSchemaGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationSchemaGetParamsConnectProtocolVersion1 RunnerConfigurationSchemaGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationSchemaGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationSchemaGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

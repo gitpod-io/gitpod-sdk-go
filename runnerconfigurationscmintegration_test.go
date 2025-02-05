@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationScmIntegrationNew(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -29,8 +29,6 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet{
 			OAuthClientID: gitpod.F("oauthClientId"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -54,9 +52,7 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Get(context.TODO(), gitpod.RunnerConfigurationScmIntegrationGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -67,7 +63,7 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationScmIntegrationUpdate(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -83,8 +79,6 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 		Body: gitpod.RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate{
 			OAuthClientID: gitpod.F("oauthClientId"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -108,13 +102,15 @@ func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.List(context.TODO(), gitpod.RunnerConfigurationScmIntegrationListParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsFilter{
+			RunnerIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		}),
+		Pagination: gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -138,9 +134,7 @@ func TestRunnerConfigurationScmIntegrationDeleteWithOptionalParams(t *testing.T)
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Delete(context.TODO(), gitpod.RunnerConfigurationScmIntegrationDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

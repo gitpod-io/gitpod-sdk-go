@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // OrganizationService contains methods and other services that help with
@@ -40,128 +40,104 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 }
 
 // CreateOrganization creates a new Organization.
-func (r *OrganizationService) New(ctx context.Context, params OrganizationNewParams, opts ...option.RequestOption) (res *OrganizationNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) New(ctx context.Context, body OrganizationNewParams, opts ...option.RequestOption) (res *OrganizationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetOrganization retrieves a single Organization.
-func (r *OrganizationService) Get(ctx context.Context, params OrganizationGetParams, opts ...option.RequestOption) (res *OrganizationGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) Get(ctx context.Context, body OrganizationGetParams, opts ...option.RequestOption) (res *OrganizationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateOrganization updates the properties of an Organization.
-func (r *OrganizationService) Update(ctx context.Context, params OrganizationUpdateParams, opts ...option.RequestOption) (res *OrganizationUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdateParams, opts ...option.RequestOption) (res *OrganizationUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/UpdateOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListOrganizations lists all organization the caller has access to.
-func (r *OrganizationService) List(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) (res *OrganizationListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) List(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[OrganizationListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListOrganizations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListOrganizations lists all organization the caller has access to.
+func (r *OrganizationService) ListAutoPaging(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[OrganizationListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteOrganization deletes the specified organization.
-func (r *OrganizationService) Delete(ctx context.Context, params OrganizationDeleteParams, opts ...option.RequestOption) (res *OrganizationDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) Delete(ctx context.Context, body OrganizationDeleteParams, opts ...option.RequestOption) (res *OrganizationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/DeleteOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // JoinOrganization lets accounts join an Organization.
-func (r *OrganizationService) Join(ctx context.Context, params OrganizationJoinParams, opts ...option.RequestOption) (res *OrganizationJoinResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) Join(ctx context.Context, body OrganizationJoinParams, opts ...option.RequestOption) (res *OrganizationJoinResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/JoinOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // LeaveOrganization lets the passed user leave an Organization.
-func (r *OrganizationService) Leave(ctx context.Context, params OrganizationLeaveParams, opts ...option.RequestOption) (res *OrganizationLeaveResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveParams, opts ...option.RequestOption) (res *OrganizationLeaveResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/LeaveOrganization"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListMembers lists all members of the specified organization.
-func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *OrganizationListMembersResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[OrganizationListMembersResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListMembers"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListMembers lists all members of the specified organization.
+func (r *OrganizationService) ListMembersAutoPaging(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[OrganizationListMembersResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.ListMembers(ctx, params, opts...))
 }
 
 // SetRole
-func (r *OrganizationService) SetRole(ctx context.Context, params OrganizationSetRoleParams, opts ...option.RequestOption) (res *OrganizationSetRoleResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationService) SetRole(ctx context.Context, body OrganizationSetRoleParams, opts ...option.RequestOption) (res *OrganizationSetRoleResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/SetRole"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -200,7 +176,6 @@ type OrganizationNewResponseMember struct {
 	// login_provider is the login provider the user uses to sign in
 	LoginProvider string `json:"loginProvider"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -355,7 +330,6 @@ func (r OrganizationNewResponseMemberStatus) IsKnown() bool {
 type OrganizationNewResponseOrganization struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -447,7 +421,6 @@ type OrganizationNewResponseOrganization struct {
 	InviteDomains OrganizationNewResponseOrganizationInviteDomains `json:"inviteDomains"`
 	Name          string                                           `json:"name"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -607,7 +580,6 @@ func (r organizationGetResponseJSON) RawJSON() string {
 type OrganizationGetResponseOrganization struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -699,7 +671,6 @@ type OrganizationGetResponseOrganization struct {
 	InviteDomains OrganizationGetResponseOrganizationInviteDomains `json:"inviteDomains"`
 	Name          string                                           `json:"name"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -859,7 +830,6 @@ func (r organizationUpdateResponseJSON) RawJSON() string {
 type OrganizationUpdateResponseOrganization struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -951,7 +921,6 @@ type OrganizationUpdateResponseOrganization struct {
 	InviteDomains OrganizationUpdateResponseOrganizationInviteDomains `json:"inviteDomains"`
 	Name          string                                              `json:"name"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1113,7 +1082,6 @@ func (r organizationListResponseJSON) RawJSON() string {
 type OrganizationListResponseOrganization struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1205,7 +1173,6 @@ type OrganizationListResponseOrganization struct {
 	InviteDomains OrganizationListResponseOrganizationsInviteDomains `json:"inviteDomains"`
 	Name          string                                             `json:"name"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1341,9 +1308,8 @@ func (r organizationListResponseOrganizationsInviteDomainsJSON) RawJSON() string
 
 // pagination contains the pagination options for listing organizations
 type OrganizationListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                 `json:"nextToken"`
 	JSON      organizationListResponsePaginationJSON `json:"-"`
 }
@@ -1396,7 +1362,6 @@ type OrganizationJoinResponseMember struct {
 	// login_provider is the login provider the user uses to sign in
 	LoginProvider string `json:"loginProvider"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1581,7 +1546,6 @@ type OrganizationListMembersResponseMember struct {
 	// login_provider is the login provider the user uses to sign in
 	LoginProvider string `json:"loginProvider"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1734,9 +1698,8 @@ func (r OrganizationListMembersResponseMembersStatus) IsKnown() bool {
 
 // pagination contains the pagination options for listing members
 type OrganizationListMembersResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                        `json:"nextToken"`
 	JSON      organizationListMembersResponsePaginationJSON `json:"-"`
 }
@@ -1760,8 +1723,6 @@ func (r organizationListMembersResponsePaginationJSON) RawJSON() string {
 type OrganizationSetRoleResponse = interface{}
 
 type OrganizationNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// Should other Accounts with the same domain be automatically invited to the
 	// organization?
 	InviteAccountsWithMatchingDomain param.Field[bool] `json:"inviteAccountsWithMatchingDomain"`
@@ -1770,63 +1731,23 @@ type OrganizationNewParams struct {
 	JoinOrganization param.Field[bool] `json:"joinOrganization"`
 	// name is the organization name
 	Name param.Field[string] `json:"name"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationNewParamsConnectProtocolVersion float64
-
-const (
-	OrganizationNewParamsConnectProtocolVersion1 OrganizationNewParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// organization_id is the unique identifier of the Organization to retreive.
 	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationGetParamsConnectProtocolVersion float64
-
-const (
-	OrganizationGetParamsConnectProtocolVersion1 OrganizationGetParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationUpdateParams struct {
 	Body OrganizationUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -1887,36 +1808,17 @@ func (r OrganizationUpdateParamsBodyNameIsTheNewNameOfTheOrganization) MarshalJS
 func (r OrganizationUpdateParamsBodyNameIsTheNewNameOfTheOrganization) implementsOrganizationUpdateParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type OrganizationUpdateParamsConnectProtocolVersion float64
-
-const (
-	OrganizationUpdateParamsConnectProtocolVersion1 OrganizationUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type OrganizationListParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// pagination contains the pagination options for listing organizations
+	Pagination param.Field[OrganizationListParamsPagination] `json:"pagination"`
+	// scope is the scope of the organizations to list
+	Scope param.Field[OrganizationListParamsScope] `json:"scope"`
 }
 
-type OrganizationListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[OrganizationListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[OrganizationListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[OrganizationListParamsConnect] `query:"connect"`
-	Message param.Field[string]                        `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r OrganizationListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [OrganizationListParams]'s query parameters as `url.Values`.
@@ -1927,103 +1829,48 @@ func (r OrganizationListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type OrganizationListParamsEncoding string
-
-const (
-	OrganizationListParamsEncodingProto OrganizationListParamsEncoding = "proto"
-	OrganizationListParamsEncodingJson  OrganizationListParamsEncoding = "json"
-)
-
-func (r OrganizationListParamsEncoding) IsKnown() bool {
-	switch r {
-	case OrganizationListParamsEncodingProto, OrganizationListParamsEncodingJson:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing organizations
+type OrganizationListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type OrganizationListParamsConnectProtocolVersion float64
-
-const (
-	OrganizationListParamsConnectProtocolVersion1 OrganizationListParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r OrganizationListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type OrganizationListParamsCompression string
+// scope is the scope of the organizations to list
+type OrganizationListParamsScope string
 
 const (
-	OrganizationListParamsCompressionIdentity OrganizationListParamsCompression = "identity"
-	OrganizationListParamsCompressionGzip     OrganizationListParamsCompression = "gzip"
-	OrganizationListParamsCompressionBr       OrganizationListParamsCompression = "br"
+	OrganizationListParamsScopeScopeUnspecified OrganizationListParamsScope = "SCOPE_UNSPECIFIED"
+	OrganizationListParamsScopeScopeMember      OrganizationListParamsScope = "SCOPE_MEMBER"
+	OrganizationListParamsScopeScopeAll         OrganizationListParamsScope = "SCOPE_ALL"
 )
 
-func (r OrganizationListParamsCompression) IsKnown() bool {
+func (r OrganizationListParamsScope) IsKnown() bool {
 	switch r {
-	case OrganizationListParamsCompressionIdentity, OrganizationListParamsCompressionGzip, OrganizationListParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type OrganizationListParamsConnect string
-
-const (
-	OrganizationListParamsConnectV1 OrganizationListParamsConnect = "v1"
-)
-
-func (r OrganizationListParamsConnect) IsKnown() bool {
-	switch r {
-	case OrganizationListParamsConnectV1:
+	case OrganizationListParamsScopeScopeUnspecified, OrganizationListParamsScopeScopeMember, OrganizationListParamsScopeScopeAll:
 		return true
 	}
 	return false
 }
 
 type OrganizationDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// organization_id is the ID of the organization to delete
 	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationDeleteParamsConnectProtocolVersion float64
-
-const (
-	OrganizationDeleteParamsConnectProtocolVersion1 OrganizationDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationJoinParams struct {
 	Body OrganizationJoinParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationJoinParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationJoinParams) MarshalJSON() (data []byte, err error) {
@@ -2075,63 +1922,25 @@ func (r OrganizationJoinParamsBodyOrganizationIDIsTheUniqueIdentifierOfTheOrgani
 func (r OrganizationJoinParamsBodyOrganizationIDIsTheUniqueIdentifierOfTheOrganizationToJoin) implementsOrganizationJoinParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type OrganizationJoinParamsConnectProtocolVersion float64
-
-const (
-	OrganizationJoinParamsConnectProtocolVersion1 OrganizationJoinParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationJoinParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationJoinParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationLeaveParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationLeaveParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	UserID                 param.Field[string]                                        `json:"userId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	UserID param.Field[string] `json:"userId" format:"uuid"`
 }
 
 func (r OrganizationLeaveParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationLeaveParamsConnectProtocolVersion float64
-
-const (
-	OrganizationLeaveParamsConnectProtocolVersion1 OrganizationLeaveParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationLeaveParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationLeaveParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type OrganizationListMembersParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// organization_id is the ID of the organization to list members for
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
+	// pagination contains the pagination options for listing members
+	Pagination param.Field[OrganizationListMembersParamsPagination] `json:"pagination"`
 }
 
-type OrganizationListMembersParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[OrganizationListMembersParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationListMembersParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[OrganizationListMembersParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[OrganizationListMembersParamsConnect] `query:"connect"`
-	Message param.Field[string]                               `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r OrganizationListMembersParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [OrganizationListMembersParams]'s query parameters as
@@ -2143,96 +1952,28 @@ func (r OrganizationListMembersParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type OrganizationListMembersParamsEncoding string
-
-const (
-	OrganizationListMembersParamsEncodingProto OrganizationListMembersParamsEncoding = "proto"
-	OrganizationListMembersParamsEncodingJson  OrganizationListMembersParamsEncoding = "json"
-)
-
-func (r OrganizationListMembersParamsEncoding) IsKnown() bool {
-	switch r {
-	case OrganizationListMembersParamsEncodingProto, OrganizationListMembersParamsEncodingJson:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing members
+type OrganizationListMembersParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type OrganizationListMembersParamsConnectProtocolVersion float64
-
-const (
-	OrganizationListMembersParamsConnectProtocolVersion1 OrganizationListMembersParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationListMembersParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationListMembersParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type OrganizationListMembersParamsCompression string
-
-const (
-	OrganizationListMembersParamsCompressionIdentity OrganizationListMembersParamsCompression = "identity"
-	OrganizationListMembersParamsCompressionGzip     OrganizationListMembersParamsCompression = "gzip"
-	OrganizationListMembersParamsCompressionBr       OrganizationListMembersParamsCompression = "br"
-)
-
-func (r OrganizationListMembersParamsCompression) IsKnown() bool {
-	switch r {
-	case OrganizationListMembersParamsCompressionIdentity, OrganizationListMembersParamsCompressionGzip, OrganizationListMembersParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type OrganizationListMembersParamsConnect string
-
-const (
-	OrganizationListMembersParamsConnectV1 OrganizationListMembersParamsConnect = "v1"
-)
-
-func (r OrganizationListMembersParamsConnect) IsKnown() bool {
-	switch r {
-	case OrganizationListMembersParamsConnectV1:
-		return true
-	}
-	return false
+func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type OrganizationSetRoleParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationSetRoleParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	OrganizationID         param.Field[string]                                          `json:"organizationId" format:"uuid"`
-	Role                   param.Field[OrganizationSetRoleParamsRole]                   `json:"role"`
-	UserID                 param.Field[string]                                          `json:"userId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	OrganizationID param.Field[string]                        `json:"organizationId" format:"uuid"`
+	Role           param.Field[OrganizationSetRoleParamsRole] `json:"role"`
+	UserID         param.Field[string]                        `json:"userId" format:"uuid"`
 }
 
 func (r OrganizationSetRoleParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type OrganizationSetRoleParamsConnectProtocolVersion float64
-
-const (
-	OrganizationSetRoleParamsConnectProtocolVersion1 OrganizationSetRoleParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationSetRoleParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationSetRoleParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type OrganizationSetRoleParamsRole string

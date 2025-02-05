@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -36,30 +35,18 @@ func NewUserService(opts ...option.RequestOption) (r *UserService) {
 }
 
 // GetAuthenticatedUser allows to retrieve the current user.
-func (r *UserService) GetAuthenticatedUser(ctx context.Context, params UserGetAuthenticatedUserParams, opts ...option.RequestOption) (res *UserGetAuthenticatedUserResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuthenticatedUserParams, opts ...option.RequestOption) (res *UserGetAuthenticatedUserResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // SetSuspended sets the suspended state of the user.
-func (r *UserService) SetSuspended(ctx context.Context, params UserSetSuspendedParams, opts ...option.RequestOption) (res *UserSetSuspendedResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedParams, opts ...option.RequestOption) (res *UserSetSuspendedResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/SetSuspended"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -90,7 +77,6 @@ type UserGetAuthenticatedUserResponseUser struct {
 	// avatar_url is a link to the user avatar
 	AvatarURL string `json:"avatarUrl"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -233,55 +219,17 @@ type UserSetSuspendedResponse = interface{}
 
 type UserGetAuthenticatedUserParams struct {
 	Body interface{} `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[UserGetAuthenticatedUserParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r UserGetAuthenticatedUserParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r.Body)
 }
 
-// Define the version of the Connect protocol
-type UserGetAuthenticatedUserParamsConnectProtocolVersion float64
-
-const (
-	UserGetAuthenticatedUserParamsConnectProtocolVersion1 UserGetAuthenticatedUserParamsConnectProtocolVersion = 1
-)
-
-func (r UserGetAuthenticatedUserParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case UserGetAuthenticatedUserParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type UserSetSuspendedParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[UserSetSuspendedParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Suspended              param.Field[bool]                                         `json:"suspended"`
-	UserID                 param.Field[string]                                       `json:"userId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Suspended param.Field[bool]   `json:"suspended"`
+	UserID    param.Field[string] `json:"userId" format:"uuid"`
 }
 
 func (r UserSetSuspendedParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type UserSetSuspendedParamsConnectProtocolVersion float64
-
-const (
-	UserSetSuspendedParamsConnectProtocolVersion1 UserSetSuspendedParamsConnectProtocolVersion = 1
-)
-
-func (r UserSetSuspendedParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case UserSetSuspendedParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

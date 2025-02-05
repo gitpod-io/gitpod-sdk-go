@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // RunnerConfigurationEnvironmentClassService contains methods and other services
@@ -36,61 +36,52 @@ func NewRunnerConfigurationEnvironmentClassService(opts ...option.RequestOption)
 }
 
 // CreateEnvironmentClass creates a new environment class on a runner.
-func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, params RunnerConfigurationEnvironmentClassNewParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, body RunnerConfigurationEnvironmentClassNewParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetEnvironmentClass returns a single environment class configured for a runner.
-func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, params RunnerConfigurationEnvironmentClassGetParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, body RunnerConfigurationEnvironmentClassGetParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateEnvironmentClass updates an existing environment class on a runner.
-func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context, params RunnerConfigurationEnvironmentClassUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context, body RunnerConfigurationEnvironmentClassUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListEnvironmentClasses returns all environment classes configured for a runner.
-//
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerConfigurationEnvironmentClassListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListEnvironmentClasses returns all environment classes configured for a runner.
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerConfigurationEnvironmentClassListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 type RunnerConfigurationEnvironmentClassNewResponse struct {
@@ -144,9 +135,8 @@ type RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass struct {
 	Description string `json:"description"`
 	// display_name is the human readable name of the environment class
 	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create
-	//
-	// new environments.
+	// enabled indicates whether the environment class can be used to create new
+	// environments.
 	Enabled bool `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
@@ -235,9 +225,8 @@ type RunnerConfigurationEnvironmentClassListResponseEnvironmentClass struct {
 	Description string `json:"description"`
 	// display_name is the human readable name of the environment class
 	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create
-	//
-	// new environments.
+	// enabled indicates whether the environment class can be used to create new
+	// environments.
 	Enabled bool `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
@@ -293,9 +282,8 @@ func (r runnerConfigurationEnvironmentClassListResponseEnvironmentClassesConfigu
 
 // pagination contains the pagination options for listing environment classes
 type RunnerConfigurationEnvironmentClassListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                                        `json:"nextToken"`
 	JSON      runnerConfigurationEnvironmentClassListResponsePaginationJSON `json:"-"`
 }
@@ -318,33 +306,14 @@ func (r runnerConfigurationEnvironmentClassListResponsePaginationJSON) RawJSON()
 }
 
 type RunnerConfigurationEnvironmentClassNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Configuration          param.Field[[]RunnerConfigurationEnvironmentClassNewParamsConfiguration]        `json:"configuration"`
-	Description            param.Field[string]                                                             `json:"description"`
-	DisplayName            param.Field[string]                                                             `json:"displayName"`
-	RunnerID               param.Field[string]                                                             `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Configuration param.Field[[]RunnerConfigurationEnvironmentClassNewParamsConfiguration] `json:"configuration"`
+	Description   param.Field[string]                                                      `json:"description"`
+	DisplayName   param.Field[string]                                                      `json:"displayName"`
+	RunnerID      param.Field[string]                                                      `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerConfigurationEnvironmentClassNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type RunnerConfigurationEnvironmentClassNewParamsConfiguration struct {
@@ -357,38 +326,15 @@ func (r RunnerConfigurationEnvironmentClassNewParamsConfiguration) MarshalJSON()
 }
 
 type RunnerConfigurationEnvironmentClassGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	EnvironmentClassID     param.Field[string]                                                             `json:"environmentClassId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
 }
 
 func (r RunnerConfigurationEnvironmentClassGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationEnvironmentClassUpdateParams struct {
 	Body RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationEnvironmentClassUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -449,36 +395,16 @@ func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) MarshalJSON(
 func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type RunnerConfigurationEnvironmentClassListParams struct {
+	Token    param.Field[string]                                              `query:"token"`
+	PageSize param.Field[int64]                                               `query:"pageSize"`
+	Filter   param.Field[RunnerConfigurationEnvironmentClassListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing environment classes
+	Pagination param.Field[RunnerConfigurationEnvironmentClassListParamsPagination] `json:"pagination"`
 }
 
-type RunnerConfigurationEnvironmentClassListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationEnvironmentClassListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationEnvironmentClassListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationEnvironmentClassListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                               `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r RunnerConfigurationEnvironmentClassListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [RunnerConfigurationEnvironmentClassListParams]'s query
@@ -490,65 +416,26 @@ func (r RunnerConfigurationEnvironmentClassListParams) URLQuery() (v url.Values)
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationEnvironmentClassListParamsEncoding string
-
-const (
-	RunnerConfigurationEnvironmentClassListParamsEncodingProto RunnerConfigurationEnvironmentClassListParamsEncoding = "proto"
-	RunnerConfigurationEnvironmentClassListParamsEncodingJson  RunnerConfigurationEnvironmentClassListParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationEnvironmentClassListParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassListParamsEncodingProto, RunnerConfigurationEnvironmentClassListParamsEncodingJson:
-		return true
-	}
-	return false
+type RunnerConfigurationEnvironmentClassListParamsFilter struct {
+	// enabled filters the response to only enabled or disabled environment classes. If
+	// not set, all environment classes are returned.
+	Enabled param.Field[bool] `json:"enabled,required"`
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1 RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r RunnerConfigurationEnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type RunnerConfigurationEnvironmentClassListParamsCompression string
-
-const (
-	RunnerConfigurationEnvironmentClassListParamsCompressionIdentity RunnerConfigurationEnvironmentClassListParamsCompression = "identity"
-	RunnerConfigurationEnvironmentClassListParamsCompressionGzip     RunnerConfigurationEnvironmentClassListParamsCompression = "gzip"
-	RunnerConfigurationEnvironmentClassListParamsCompressionBr       RunnerConfigurationEnvironmentClassListParamsCompression = "br"
-)
-
-func (r RunnerConfigurationEnvironmentClassListParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassListParamsCompressionIdentity, RunnerConfigurationEnvironmentClassListParamsCompressionGzip, RunnerConfigurationEnvironmentClassListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing environment classes
+type RunnerConfigurationEnvironmentClassListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationEnvironmentClassListParamsConnect string
-
-const (
-	RunnerConfigurationEnvironmentClassListParamsConnectV1 RunnerConfigurationEnvironmentClassListParamsConnect = "v1"
-)
-
-func (r RunnerConfigurationEnvironmentClassListParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationEnvironmentClassListParamsConnectV1:
-		return true
-	}
-	return false
+func (r RunnerConfigurationEnvironmentClassListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }

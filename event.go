@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -15,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
 	"github.com/stainless-sdks/gitpod-go/packages/jsonl"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // EventService contains methods and other services that help with interacting with
@@ -38,35 +38,39 @@ func NewEventService(opts ...option.RequestOption) (r *EventService) {
 
 // ListAuditLogs retrieves a paginated list of audit logs for the specified
 // organization
-func (r *EventService) List(ctx context.Context, params EventListParams, opts ...option.RequestOption) (res *EventListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EventService) List(ctx context.Context, params EventListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EventListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EventService/ListAuditLogs"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListAuditLogs retrieves a paginated list of audit logs for the specified
+// organization
+func (r *EventService) ListAutoPaging(ctx context.Context, params EventListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EventListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // WatchEvents streams all requests events to the client
-func (r *EventService) WatchStreaming(ctx context.Context, params EventWatchParams, opts ...option.RequestOption) (stream *jsonl.Stream[EventWatchResponse]) {
+func (r *EventService) WatchStreaming(ctx context.Context, body EventWatchParams, opts ...option.RequestOption) (stream *jsonl.Stream[EventWatchResponse]) {
 	var (
 		raw *http.Response
 		err error
 	)
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "application/jsonl")}, opts...)
 	path := "gitpod.v1.EventService/WatchEvents"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
 	return jsonl.NewStream[EventWatchResponse](raw, err)
 }
 
@@ -100,7 +104,6 @@ type EventListResponseEntry struct {
 	ActorID        string                                 `json:"actorId"`
 	ActorPrincipal EventListResponseEntriesActorPrincipal `json:"actorPrincipal"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -268,9 +271,8 @@ func (r EventListResponseEntriesSubjectType) IsKnown() bool {
 
 // pagination contains the pagination options for listing environments
 type EventListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                          `json:"nextToken"`
 	JSON      eventListResponsePaginationJSON `json:"-"`
 }
@@ -366,20 +368,15 @@ func (r EventWatchResponseResourceType) IsKnown() bool {
 }
 
 type EventListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EventListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EventListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EventListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EventListParamsConnect] `query:"connect"`
-	Message param.Field[string]                 `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token    param.Field[string]                `query:"token"`
+	PageSize param.Field[int64]                 `query:"pageSize"`
+	Filter   param.Field[EventListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing environments
+	Pagination param.Field[EventListParamsPagination] `json:"pagination"`
+}
+
+func (r EventListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [EventListParams]'s query parameters as `url.Values`.
@@ -390,75 +387,83 @@ func (r EventListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type EventListParamsEncoding string
+type EventListParamsFilter struct {
+	ActorIDs        param.Field[[]string]                              `json:"actorIds" format:"uuid"`
+	ActorPrincipals param.Field[[]EventListParamsFilterActorPrincipal] `json:"actorPrincipals"`
+	SubjectIDs      param.Field[[]string]                              `json:"subjectIds" format:"uuid"`
+	SubjectTypes    param.Field[[]EventListParamsFilterSubjectType]    `json:"subjectTypes"`
+}
+
+func (r EventListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EventListParamsFilterActorPrincipal string
 
 const (
-	EventListParamsEncodingProto EventListParamsEncoding = "proto"
-	EventListParamsEncodingJson  EventListParamsEncoding = "json"
+	EventListParamsFilterActorPrincipalPrincipalUnspecified    EventListParamsFilterActorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EventListParamsFilterActorPrincipalPrincipalAccount        EventListParamsFilterActorPrincipal = "PRINCIPAL_ACCOUNT"
+	EventListParamsFilterActorPrincipalPrincipalUser           EventListParamsFilterActorPrincipal = "PRINCIPAL_USER"
+	EventListParamsFilterActorPrincipalPrincipalRunner         EventListParamsFilterActorPrincipal = "PRINCIPAL_RUNNER"
+	EventListParamsFilterActorPrincipalPrincipalEnvironment    EventListParamsFilterActorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EventListParamsFilterActorPrincipalPrincipalServiceAccount EventListParamsFilterActorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r EventListParamsEncoding) IsKnown() bool {
+func (r EventListParamsFilterActorPrincipal) IsKnown() bool {
 	switch r {
-	case EventListParamsEncodingProto, EventListParamsEncodingJson:
+	case EventListParamsFilterActorPrincipalPrincipalUnspecified, EventListParamsFilterActorPrincipalPrincipalAccount, EventListParamsFilterActorPrincipalPrincipalUser, EventListParamsFilterActorPrincipalPrincipalRunner, EventListParamsFilterActorPrincipalPrincipalEnvironment, EventListParamsFilterActorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
 }
 
-// Define the version of the Connect protocol
-type EventListParamsConnectProtocolVersion float64
+type EventListParamsFilterSubjectType string
 
 const (
-	EventListParamsConnectProtocolVersion1 EventListParamsConnectProtocolVersion = 1
+	EventListParamsFilterSubjectTypeResourceTypeUnspecified             EventListParamsFilterSubjectType = "RESOURCE_TYPE_UNSPECIFIED"
+	EventListParamsFilterSubjectTypeResourceTypeEnvironment             EventListParamsFilterSubjectType = "RESOURCE_TYPE_ENVIRONMENT"
+	EventListParamsFilterSubjectTypeResourceTypeRunner                  EventListParamsFilterSubjectType = "RESOURCE_TYPE_RUNNER"
+	EventListParamsFilterSubjectTypeResourceTypeProject                 EventListParamsFilterSubjectType = "RESOURCE_TYPE_PROJECT"
+	EventListParamsFilterSubjectTypeResourceTypeTask                    EventListParamsFilterSubjectType = "RESOURCE_TYPE_TASK"
+	EventListParamsFilterSubjectTypeResourceTypeTaskExecution           EventListParamsFilterSubjectType = "RESOURCE_TYPE_TASK_EXECUTION"
+	EventListParamsFilterSubjectTypeResourceTypeService                 EventListParamsFilterSubjectType = "RESOURCE_TYPE_SERVICE"
+	EventListParamsFilterSubjectTypeResourceTypeOrganization            EventListParamsFilterSubjectType = "RESOURCE_TYPE_ORGANIZATION"
+	EventListParamsFilterSubjectTypeResourceTypeUser                    EventListParamsFilterSubjectType = "RESOURCE_TYPE_USER"
+	EventListParamsFilterSubjectTypeResourceTypeEnvironmentClass        EventListParamsFilterSubjectType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
+	EventListParamsFilterSubjectTypeResourceTypeRunnerScmIntegration    EventListParamsFilterSubjectType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
+	EventListParamsFilterSubjectTypeResourceTypeHostAuthenticationToken EventListParamsFilterSubjectType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
+	EventListParamsFilterSubjectTypeResourceTypeGroup                   EventListParamsFilterSubjectType = "RESOURCE_TYPE_GROUP"
+	EventListParamsFilterSubjectTypeResourceTypePersonalAccessToken     EventListParamsFilterSubjectType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
+	EventListParamsFilterSubjectTypeResourceTypeUserPreference          EventListParamsFilterSubjectType = "RESOURCE_TYPE_USER_PREFERENCE"
+	EventListParamsFilterSubjectTypeResourceTypeServiceAccount          EventListParamsFilterSubjectType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
+	EventListParamsFilterSubjectTypeResourceTypeSecret                  EventListParamsFilterSubjectType = "RESOURCE_TYPE_SECRET"
+	EventListParamsFilterSubjectTypeResourceTypeSSOConfig               EventListParamsFilterSubjectType = "RESOURCE_TYPE_SSO_CONFIG"
 )
 
-func (r EventListParamsConnectProtocolVersion) IsKnown() bool {
+func (r EventListParamsFilterSubjectType) IsKnown() bool {
 	switch r {
-	case EventListParamsConnectProtocolVersion1:
+	case EventListParamsFilterSubjectTypeResourceTypeUnspecified, EventListParamsFilterSubjectTypeResourceTypeEnvironment, EventListParamsFilterSubjectTypeResourceTypeRunner, EventListParamsFilterSubjectTypeResourceTypeProject, EventListParamsFilterSubjectTypeResourceTypeTask, EventListParamsFilterSubjectTypeResourceTypeTaskExecution, EventListParamsFilterSubjectTypeResourceTypeService, EventListParamsFilterSubjectTypeResourceTypeOrganization, EventListParamsFilterSubjectTypeResourceTypeUser, EventListParamsFilterSubjectTypeResourceTypeEnvironmentClass, EventListParamsFilterSubjectTypeResourceTypeRunnerScmIntegration, EventListParamsFilterSubjectTypeResourceTypeHostAuthenticationToken, EventListParamsFilterSubjectTypeResourceTypeGroup, EventListParamsFilterSubjectTypeResourceTypePersonalAccessToken, EventListParamsFilterSubjectTypeResourceTypeUserPreference, EventListParamsFilterSubjectTypeResourceTypeServiceAccount, EventListParamsFilterSubjectTypeResourceTypeSecret, EventListParamsFilterSubjectTypeResourceTypeSSOConfig:
 		return true
 	}
 	return false
 }
 
-// Which compression algorithm to use for this request
-type EventListParamsCompression string
-
-const (
-	EventListParamsCompressionIdentity EventListParamsCompression = "identity"
-	EventListParamsCompressionGzip     EventListParamsCompression = "gzip"
-	EventListParamsCompressionBr       EventListParamsCompression = "br"
-)
-
-func (r EventListParamsCompression) IsKnown() bool {
-	switch r {
-	case EventListParamsCompressionIdentity, EventListParamsCompressionGzip, EventListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing environments
+type EventListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type EventListParamsConnect string
-
-const (
-	EventListParamsConnectV1 EventListParamsConnect = "v1"
-)
-
-func (r EventListParamsConnect) IsKnown() bool {
-	switch r {
-	case EventListParamsConnectV1:
-		return true
-	}
-	return false
+func (r EventListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type EventWatchParams struct {
 	Body EventWatchParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EventWatchParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EventWatchParams) MarshalJSON() (data []byte, err error) {
@@ -467,12 +472,9 @@ func (r EventWatchParams) MarshalJSON() (data []byte, err error) {
 
 type EventWatchParamsBody struct {
 	// Environment scope produces events for the environment itself, all tasks, task
-	// executions,
-	//
-	// and services associated with that environment.
+	// executions, and services associated with that environment.
 	EnvironmentID param.Field[string] `json:"environmentId"`
 	// Organization scope produces events for all projects, runners and environments
-	//
 	// the caller can see within their organization. No task, task execution or service
 	// events are produed.
 	Organization param.Field[bool] `json:"organization"`
@@ -494,9 +496,7 @@ type EventWatchParamsBodyUnion interface {
 
 type EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment struct {
 	// Environment scope produces events for the environment itself, all tasks, task
-	// executions,
-	//
-	// and services associated with that environment.
+	// executions, and services associated with that environment.
 	EnvironmentID param.Field[string] `json:"environmentId,required"`
 }
 
@@ -509,7 +509,6 @@ func (r EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItsel
 
 type EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued struct {
 	// Organization scope produces events for all projects, runners and environments
-	//
 	// the caller can see within their organization. No task, task execution or service
 	// events are produed.
 	Organization param.Field[bool] `json:"organization,required"`
@@ -520,19 +519,4 @@ func (r EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunners
 }
 
 func (r EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued) implementsEventWatchParamsBodyUnion() {
-}
-
-// Define the version of the Connect protocol
-type EventWatchParamsConnectProtocolVersion float64
-
-const (
-	EventWatchParamsConnectProtocolVersion1 EventWatchParamsConnectProtocolVersion = 1
-)
-
-func (r EventWatchParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EventWatchParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

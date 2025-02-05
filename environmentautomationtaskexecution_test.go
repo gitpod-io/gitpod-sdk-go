@@ -26,9 +26,7 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Executions.Get(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -52,13 +50,18 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Executions.List(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionListParams{
-		Encoding:               gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsFilter{
+			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified}),
+			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			TaskReferences: gitpod.F([]string{"string"}),
+		}),
+		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -82,9 +85,7 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Executions.Stop(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionStopParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

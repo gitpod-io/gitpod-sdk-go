@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // RunnerConfigurationHostAuthenticationTokenService contains methods and other
@@ -37,72 +37,57 @@ func NewRunnerConfigurationHostAuthenticationTokenService(opts ...option.Request
 }
 
 // CreateHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenGetParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenGetParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListHostAuthenticationTokens
-func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerConfigurationHostAuthenticationTokenListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListHostAuthenticationTokens"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListHostAuthenticationTokens
+func (r *RunnerConfigurationHostAuthenticationTokenService) ListAutoPaging(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerConfigurationHostAuthenticationTokenListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteHostAuthenticationToken
-func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -130,7 +115,6 @@ func (r runnerConfigurationHostAuthenticationTokenNewResponseJSON) RawJSON() str
 type RunnerConfigurationHostAuthenticationTokenNewResponseToken struct {
 	ID string `json:"id"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -288,7 +272,6 @@ func (r runnerConfigurationHostAuthenticationTokenGetResponseJSON) RawJSON() str
 type RunnerConfigurationHostAuthenticationTokenGetResponseToken struct {
 	ID string `json:"id"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -448,9 +431,8 @@ func (r runnerConfigurationHostAuthenticationTokenListResponseJSON) RawJSON() st
 }
 
 type RunnerConfigurationHostAuthenticationTokenListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                                               `json:"nextToken"`
 	JSON      runnerConfigurationHostAuthenticationTokenListResponsePaginationJSON `json:"-"`
 }
@@ -475,7 +457,6 @@ func (r runnerConfigurationHostAuthenticationTokenListResponsePaginationJSON) Ra
 type RunnerConfigurationHostAuthenticationTokenListResponseToken struct {
 	ID string `json:"id"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -612,11 +593,8 @@ func (r RunnerConfigurationHostAuthenticationTokenListResponseTokensSource) IsKn
 type RunnerConfigurationHostAuthenticationTokenDeleteResponse = interface{}
 
 type RunnerConfigurationHostAuthenticationTokenNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	Token                  param.Field[string]                                                                    `json:"token"`
+	Token param.Field[string] `json:"token"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -710,27 +688,10 @@ type RunnerConfigurationHostAuthenticationTokenNewParams struct {
 	RunnerID     param.Field[string]                                                    `json:"runnerId" format:"uuid"`
 	Source       param.Field[RunnerConfigurationHostAuthenticationTokenNewParamsSource] `json:"source"`
 	UserID       param.Field[string]                                                    `json:"userId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type RunnerConfigurationHostAuthenticationTokenNewParamsSource string
@@ -750,38 +711,15 @@ func (r RunnerConfigurationHostAuthenticationTokenNewParamsSource) IsKnown() boo
 }
 
 type RunnerConfigurationHostAuthenticationTokenGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                    `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationHostAuthenticationTokenUpdateParams struct {
 	Body RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -791,7 +729,6 @@ func (r RunnerConfigurationHostAuthenticationTokenUpdateParams) MarshalJSON() (d
 type RunnerConfigurationHostAuthenticationTokenUpdateParamsBody struct {
 	Token param.Field[string] `json:"token"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -901,7 +838,6 @@ type RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyUnion interface {
 
 type RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyExpiresAt struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1021,36 +957,15 @@ func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyToken) Marshal
 func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyToken) implementsRunnerConfigurationHostAuthenticationTokenUpdateParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type RunnerConfigurationHostAuthenticationTokenListParams struct {
+	Token      param.Field[string]                                                          `query:"token"`
+	PageSize   param.Field[int64]                                                           `query:"pageSize"`
+	Filter     param.Field[RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion] `json:"filter"`
+	Pagination param.Field[RunnerConfigurationHostAuthenticationTokenListParamsPagination]  `json:"pagination"`
 }
 
-type RunnerConfigurationHostAuthenticationTokenListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationHostAuthenticationTokenListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationHostAuthenticationTokenListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationHostAuthenticationTokenListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                                      `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r RunnerConfigurationHostAuthenticationTokenListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [RunnerConfigurationHostAuthenticationTokenListParams]'s
@@ -1062,92 +977,65 @@ func (r RunnerConfigurationHostAuthenticationTokenListParams) URLQuery() (v url.
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationHostAuthenticationTokenListParamsEncoding string
-
-const (
-	RunnerConfigurationHostAuthenticationTokenListParamsEncodingProto RunnerConfigurationHostAuthenticationTokenListParamsEncoding = "proto"
-	RunnerConfigurationHostAuthenticationTokenListParamsEncodingJson  RunnerConfigurationHostAuthenticationTokenListParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenListParamsEncodingProto, RunnerConfigurationHostAuthenticationTokenListParamsEncodingJson:
-		return true
-	}
-	return false
+type RunnerConfigurationHostAuthenticationTokenListParamsFilter struct {
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	UserID   param.Field[string] `json:"userId" format:"uuid"`
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r RunnerConfigurationHostAuthenticationTokenListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type RunnerConfigurationHostAuthenticationTokenListParamsCompression string
-
-const (
-	RunnerConfigurationHostAuthenticationTokenListParamsCompressionIdentity RunnerConfigurationHostAuthenticationTokenListParamsCompression = "identity"
-	RunnerConfigurationHostAuthenticationTokenListParamsCompressionGzip     RunnerConfigurationHostAuthenticationTokenListParamsCompression = "gzip"
-	RunnerConfigurationHostAuthenticationTokenListParamsCompressionBr       RunnerConfigurationHostAuthenticationTokenListParamsCompression = "br"
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenListParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenListParamsCompressionIdentity, RunnerConfigurationHostAuthenticationTokenListParamsCompressionGzip, RunnerConfigurationHostAuthenticationTokenListParamsCompressionBr:
-		return true
-	}
-	return false
+func (r RunnerConfigurationHostAuthenticationTokenListParamsFilter) implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion() {
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenListParamsConnect string
+// Satisfied by
+// [RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID],
+// [RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID],
+// [RunnerConfigurationHostAuthenticationTokenListParamsFilter].
+type RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion interface {
+	implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion()
+}
 
-const (
-	RunnerConfigurationHostAuthenticationTokenListParamsConnectV1 RunnerConfigurationHostAuthenticationTokenListParamsConnect = "v1"
-)
+type RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID struct {
+	RunnerID param.Field[string] `json:"runnerId,required" format:"uuid"`
+}
 
-func (r RunnerConfigurationHostAuthenticationTokenListParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenListParamsConnectV1:
-		return true
-	}
-	return false
+func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID) implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion() {
+}
+
+type RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID struct {
+	UserID param.Field[string] `json:"userId,required" format:"uuid"`
+}
+
+func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+func (r RunnerConfigurationHostAuthenticationTokenListParamsFilterUserID) implementsRunnerConfigurationHostAuthenticationTokenListParamsFilterUnion() {
+}
+
+type RunnerConfigurationHostAuthenticationTokenListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
+}
+
+func (r RunnerConfigurationHostAuthenticationTokenListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerConfigurationHostAuthenticationTokenDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                                       `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion1 RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

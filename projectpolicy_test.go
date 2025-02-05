@@ -26,11 +26,9 @@ func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.New(context.TODO(), gitpod.ProjectPolicyNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyNewParamsConnectProtocolVersion1),
-		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:                   gitpod.F(gitpod.ProjectPolicyNewParamsRoleProjectRoleUnspecified),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:      gitpod.F(gitpod.ProjectPolicyNewParamsRoleProjectRoleUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -54,11 +52,9 @@ func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.Update(context.TODO(), gitpod.ProjectPolicyUpdateParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyUpdateParamsConnectProtocolVersion1),
-		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:                   gitpod.F(gitpod.ProjectPolicyUpdateParamsRoleProjectRoleUnspecified),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:      gitpod.F(gitpod.ProjectPolicyUpdateParamsRoleProjectRoleUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -82,13 +78,13 @@ func TestProjectPolicyListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.List(context.TODO(), gitpod.ProjectPolicyListParams{
-		Encoding:               gitpod.F(gitpod.ProjectPolicyListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.ProjectPolicyListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.ProjectPolicyListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.ProjectPolicyListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -112,10 +108,8 @@ func TestProjectPolicyDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.Delete(context.TODO(), gitpod.ProjectPolicyDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.ProjectPolicyDeleteParamsConnectProtocolVersion1),
-		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ProjectID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

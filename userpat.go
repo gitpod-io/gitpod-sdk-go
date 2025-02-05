@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // UserPatService contains methods and other services that help with interacting
@@ -36,44 +36,41 @@ func NewUserPatService(opts ...option.RequestOption) (r *UserPatService) {
 }
 
 // ListPersonalAccessTokens
-func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *UserPatListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[UserPatListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.UserService/ListPersonalAccessTokens"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListPersonalAccessTokens
+func (r *UserPatService) ListAutoPaging(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[UserPatListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeletePersonalAccessToken
-func (r *UserPatService) Delete(ctx context.Context, params UserPatDeleteParams, opts ...option.RequestOption) (res *UserPatDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, opts ...option.RequestOption) (res *UserPatDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetPersonalAccessToken
-func (r *UserPatService) Get(ctx context.Context, params UserPatGetParams, opts ...option.RequestOption) (res *UserPatGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *UserPatService) Get(ctx context.Context, body UserPatGetParams, opts ...option.RequestOption) (res *UserPatGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/GetPersonalAccessToken"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -101,9 +98,8 @@ func (r userPatListResponseJSON) RawJSON() string {
 }
 
 type UserPatListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                            `json:"nextToken"`
 	JSON      userPatListResponsePaginationJSON `json:"-"`
 }
@@ -127,7 +123,6 @@ func (r userPatListResponsePaginationJSON) RawJSON() string {
 type UserPatListResponsePersonalAccessToken struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -219,7 +214,6 @@ type UserPatListResponsePersonalAccessToken struct {
 	Creator     UserPatListResponsePersonalAccessTokensCreator `json:"creator"`
 	Description string                                         `json:"description"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -309,7 +303,6 @@ type UserPatListResponsePersonalAccessToken struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	ExpiresAt time.Time `json:"expiresAt" format:"date-time"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -495,7 +488,6 @@ func (r userPatGetResponseJSON) RawJSON() string {
 type UserPatGetResponsePat struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -587,7 +579,6 @@ type UserPatGetResponsePat struct {
 	Creator     UserPatGetResponsePatCreator `json:"creator"`
 	Description string                       `json:"description"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -677,7 +668,6 @@ type UserPatGetResponsePat struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	ExpiresAt time.Time `json:"expiresAt" format:"date-time"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -838,20 +828,14 @@ func (r UserPatGetResponsePatCreatorPrincipal) IsKnown() bool {
 }
 
 type UserPatListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[UserPatListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[UserPatListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[UserPatListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[UserPatListParamsConnect] `query:"connect"`
-	Message param.Field[string]                   `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token      param.Field[string]                      `query:"token"`
+	PageSize   param.Field[int64]                       `query:"pageSize"`
+	Filter     param.Field[UserPatListParamsFilter]     `json:"filter"`
+	Pagination param.Field[UserPatListParamsPagination] `json:"pagination"`
+}
+
+func (r UserPatListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [UserPatListParams]'s query parameters as `url.Values`.
@@ -862,119 +846,41 @@ func (r UserPatListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type UserPatListParamsEncoding string
-
-const (
-	UserPatListParamsEncodingProto UserPatListParamsEncoding = "proto"
-	UserPatListParamsEncodingJson  UserPatListParamsEncoding = "json"
-)
-
-func (r UserPatListParamsEncoding) IsKnown() bool {
-	switch r {
-	case UserPatListParamsEncodingProto, UserPatListParamsEncodingJson:
-		return true
-	}
-	return false
+type UserPatListParamsFilter struct {
+	// creator_ids filters the response to only Environments created by specified
+	// members
+	UserIDs param.Field[[]string] `json:"userIds" format:"uuid"`
 }
 
-// Define the version of the Connect protocol
-type UserPatListParamsConnectProtocolVersion float64
-
-const (
-	UserPatListParamsConnectProtocolVersion1 UserPatListParamsConnectProtocolVersion = 1
-)
-
-func (r UserPatListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case UserPatListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r UserPatListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type UserPatListParamsCompression string
-
-const (
-	UserPatListParamsCompressionIdentity UserPatListParamsCompression = "identity"
-	UserPatListParamsCompressionGzip     UserPatListParamsCompression = "gzip"
-	UserPatListParamsCompressionBr       UserPatListParamsCompression = "br"
-)
-
-func (r UserPatListParamsCompression) IsKnown() bool {
-	switch r {
-	case UserPatListParamsCompressionIdentity, UserPatListParamsCompressionGzip, UserPatListParamsCompressionBr:
-		return true
-	}
-	return false
+type UserPatListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type UserPatListParamsConnect string
-
-const (
-	UserPatListParamsConnectV1 UserPatListParamsConnect = "v1"
-)
-
-func (r UserPatListParamsConnect) IsKnown() bool {
-	switch r {
-	case UserPatListParamsConnectV1:
-		return true
-	}
-	return false
+func (r UserPatListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type UserPatDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[UserPatDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	PersonalAccessTokenID  param.Field[string]                                    `json:"personalAccessTokenId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	PersonalAccessTokenID param.Field[string] `json:"personalAccessTokenId" format:"uuid"`
 }
 
 func (r UserPatDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type UserPatDeleteParamsConnectProtocolVersion float64
-
-const (
-	UserPatDeleteParamsConnectProtocolVersion1 UserPatDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r UserPatDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case UserPatDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type UserPatGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[UserPatGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	PersonalAccessTokenID  param.Field[string]                                 `json:"personalAccessTokenId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	PersonalAccessTokenID param.Field[string] `json:"personalAccessTokenId" format:"uuid"`
 }
 
 func (r UserPatGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type UserPatGetParamsConnectProtocolVersion float64
-
-const (
-	UserPatGetParamsConnectProtocolVersion1 UserPatGetParamsConnectProtocolVersion = 1
-)
-
-func (r UserPatGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case UserPatGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

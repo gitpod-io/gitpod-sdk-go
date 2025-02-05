@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -15,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -38,109 +38,78 @@ func NewEnvironmentAutomationServiceService(opts ...option.RequestOption) (r *En
 }
 
 // CreateService
-func (r *EnvironmentAutomationServiceService) New(ctx context.Context, params EnvironmentAutomationServiceNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationServiceService) New(ctx context.Context, body EnvironmentAutomationServiceNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetService
-func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, params EnvironmentAutomationServiceGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, body EnvironmentAutomationServiceGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateService
-func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, params EnvironmentAutomationServiceUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body EnvironmentAutomationServiceUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListServices
-func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentAutomationServiceListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListServices"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListServices
+func (r *EnvironmentAutomationServiceService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentAutomationServiceListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteService deletes a service. This call does not block until the service is
-// deleted.
-//
-// If the service is not stopped it will be stopped before deletion.
-func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, params EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+// deleted. If the service is not stopped it will be stopped before deletion.
+func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // StartService starts a service. This call does not block until the service is
+// started. This call will not error if the service is already running or has been
 // started.
-//
-// This call will not error if the service is already running or has been started.
-func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, params EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StartService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // StopService stops a service. This call does not block until the service is
+// stopped. This call will not error if the service is already stopped or has been
 // stopped.
-//
-// This call will not error if the service is already stopped or has been stopped.
-func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, params EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopService"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -196,7 +165,6 @@ func (r environmentAutomationServiceNewResponseServiceJSON) RawJSON() string {
 
 type EnvironmentAutomationServiceNewResponseServiceMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -291,15 +259,12 @@ type EnvironmentAutomationServiceNewResponseServiceMetadata struct {
 	// provide context and documentation for the service.
 	Description string `json:"description"`
 	// name is a user-facing name for the service. Unlike the reference, this field is
-	// not unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the service.
+	// not unique, and not referenced by the system. This is a short descriptive name
+	// for the service.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the service which must be unique on
-	// the environment.
-	//
-	// It is used to express dependencies between services, and to identify the service
-	// in user interactions (e.g. the CLI).
+	// the environment. It is used to express dependencies between services, and to
+	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy []EnvironmentAutomationServiceNewResponseServiceMetadataTriggeredBy `json:"triggeredBy"`
@@ -540,14 +505,12 @@ type EnvironmentAutomationServiceNewResponseServiceSpec struct {
 	// runs_on specifies the environment the service should run on.
 	RunsOn EnvironmentAutomationServiceNewResponseServiceSpecRunsOn `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
-	// exits it will
-	//
-	// not be restarted until the session is changed.
+	// exits it will not be restarted until the session is changed.
 	Session string `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion string                                                 `json:"specVersion" format:"int64"`
+	SpecVersion string                                                 `json:"specVersion"`
 	JSON        environmentAutomationServiceNewResponseServiceSpecJSON `json:"-"`
 }
 
@@ -575,10 +538,8 @@ func (r environmentAutomationServiceNewResponseServiceSpecJSON) RawJSON() string
 // service
 type EnvironmentAutomationServiceNewResponseServiceSpecCommands struct {
 	// ready is an optional command that is run repeatedly until it exits with a zero
-	// exit code.
-	//
-	// If set, the service will first go into a Starting phase, and then into a Running
-	// phase once the ready command exits with a zero exit code.
+	// exit code. If set, the service will first go into a Starting phase, and then
+	// into a Running phase once the ready command exits with a zero exit code.
 	Ready string `json:"ready"`
 	// start is the command to start and run the service. If start exits, the service
 	// will transition to the following phase:
@@ -588,14 +549,12 @@ type EnvironmentAutomationServiceNewResponseServiceSpecCommands struct {
 	//     command will receive a SIGTERM signal when the service is requested to stop.
 	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
 	Start string `json:"start"`
-	// stop is an optional command that runs when the service is requested to stop.
-	//
-	// If set, instead of sending a SIGTERM signal to the start command, the stop
-	// command will be run. Once the stop command exits, the start command will receive
-	// a SIGKILL signal. If the stop command exits with a non-zero exit code, the
-	// service will transition to the Failed phase. If the stop command does not exit
-	// within 2 minutes, a SIGKILL signal will be sent to both the start and stop
-	// commands.
+	// stop is an optional command that runs when the service is requested to stop. If
+	// set, instead of sending a SIGTERM signal to the start command, the stop command
+	// will be run. Once the stop command exits, the start command will receive a
+	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
+	// will transition to the Failed phase. If the stop command does not exit within 2
+	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
 	Stop string                                                         `json:"stop"`
 	JSON environmentAutomationServiceNewResponseServiceSpecCommandsJSON `json:"-"`
 }
@@ -690,9 +649,8 @@ func (r environmentAutomationServiceNewResponseServiceSpecRunsOnDockerJSON) RawJ
 
 type EnvironmentAutomationServiceNewResponseServiceStatus struct {
 	// failure_message summarises why the service failed to operate. If this is
-	// non-empty
-	//
-	// the service has failed to operate and will likely transition to a failed state.
+	// non-empty the service has failed to operate and will likely transition to a
+	// failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url contains the URL at which the service logs can be accessed.
 	LogURL string `json:"logUrl"`
@@ -705,7 +663,7 @@ type EnvironmentAutomationServiceNewResponseServiceStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion string                                                   `json:"statusVersion" format:"int64"`
+	StatusVersion string                                                   `json:"statusVersion"`
 	JSON          environmentAutomationServiceNewResponseServiceStatusJSON `json:"-"`
 }
 
@@ -802,7 +760,6 @@ func (r environmentAutomationServiceGetResponseServiceJSON) RawJSON() string {
 
 type EnvironmentAutomationServiceGetResponseServiceMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -897,15 +854,12 @@ type EnvironmentAutomationServiceGetResponseServiceMetadata struct {
 	// provide context and documentation for the service.
 	Description string `json:"description"`
 	// name is a user-facing name for the service. Unlike the reference, this field is
-	// not unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the service.
+	// not unique, and not referenced by the system. This is a short descriptive name
+	// for the service.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the service which must be unique on
-	// the environment.
-	//
-	// It is used to express dependencies between services, and to identify the service
-	// in user interactions (e.g. the CLI).
+	// the environment. It is used to express dependencies between services, and to
+	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy []EnvironmentAutomationServiceGetResponseServiceMetadataTriggeredBy `json:"triggeredBy"`
@@ -1146,14 +1100,12 @@ type EnvironmentAutomationServiceGetResponseServiceSpec struct {
 	// runs_on specifies the environment the service should run on.
 	RunsOn EnvironmentAutomationServiceGetResponseServiceSpecRunsOn `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
-	// exits it will
-	//
-	// not be restarted until the session is changed.
+	// exits it will not be restarted until the session is changed.
 	Session string `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion string                                                 `json:"specVersion" format:"int64"`
+	SpecVersion string                                                 `json:"specVersion"`
 	JSON        environmentAutomationServiceGetResponseServiceSpecJSON `json:"-"`
 }
 
@@ -1181,10 +1133,8 @@ func (r environmentAutomationServiceGetResponseServiceSpecJSON) RawJSON() string
 // service
 type EnvironmentAutomationServiceGetResponseServiceSpecCommands struct {
 	// ready is an optional command that is run repeatedly until it exits with a zero
-	// exit code.
-	//
-	// If set, the service will first go into a Starting phase, and then into a Running
-	// phase once the ready command exits with a zero exit code.
+	// exit code. If set, the service will first go into a Starting phase, and then
+	// into a Running phase once the ready command exits with a zero exit code.
 	Ready string `json:"ready"`
 	// start is the command to start and run the service. If start exits, the service
 	// will transition to the following phase:
@@ -1194,14 +1144,12 @@ type EnvironmentAutomationServiceGetResponseServiceSpecCommands struct {
 	//     command will receive a SIGTERM signal when the service is requested to stop.
 	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
 	Start string `json:"start"`
-	// stop is an optional command that runs when the service is requested to stop.
-	//
-	// If set, instead of sending a SIGTERM signal to the start command, the stop
-	// command will be run. Once the stop command exits, the start command will receive
-	// a SIGKILL signal. If the stop command exits with a non-zero exit code, the
-	// service will transition to the Failed phase. If the stop command does not exit
-	// within 2 minutes, a SIGKILL signal will be sent to both the start and stop
-	// commands.
+	// stop is an optional command that runs when the service is requested to stop. If
+	// set, instead of sending a SIGTERM signal to the start command, the stop command
+	// will be run. Once the stop command exits, the start command will receive a
+	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
+	// will transition to the Failed phase. If the stop command does not exit within 2
+	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
 	Stop string                                                         `json:"stop"`
 	JSON environmentAutomationServiceGetResponseServiceSpecCommandsJSON `json:"-"`
 }
@@ -1296,9 +1244,8 @@ func (r environmentAutomationServiceGetResponseServiceSpecRunsOnDockerJSON) RawJ
 
 type EnvironmentAutomationServiceGetResponseServiceStatus struct {
 	// failure_message summarises why the service failed to operate. If this is
-	// non-empty
-	//
-	// the service has failed to operate and will likely transition to a failed state.
+	// non-empty the service has failed to operate and will likely transition to a
+	// failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url contains the URL at which the service logs can be accessed.
 	LogURL string `json:"logUrl"`
@@ -1311,7 +1258,7 @@ type EnvironmentAutomationServiceGetResponseServiceStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion string                                                   `json:"statusVersion" format:"int64"`
+	StatusVersion string                                                   `json:"statusVersion"`
 	JSON          environmentAutomationServiceGetResponseServiceStatusJSON `json:"-"`
 }
 
@@ -1382,9 +1329,8 @@ func (r environmentAutomationServiceListResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationServiceListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                                 `json:"nextToken"`
 	JSON      environmentAutomationServiceListResponsePaginationJSON `json:"-"`
 }
@@ -1436,7 +1382,6 @@ func (r environmentAutomationServiceListResponseServiceJSON) RawJSON() string {
 
 type EnvironmentAutomationServiceListResponseServicesMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1531,15 +1476,12 @@ type EnvironmentAutomationServiceListResponseServicesMetadata struct {
 	// provide context and documentation for the service.
 	Description string `json:"description"`
 	// name is a user-facing name for the service. Unlike the reference, this field is
-	// not unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the service.
+	// not unique, and not referenced by the system. This is a short descriptive name
+	// for the service.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the service which must be unique on
-	// the environment.
-	//
-	// It is used to express dependencies between services, and to identify the service
-	// in user interactions (e.g. the CLI).
+	// the environment. It is used to express dependencies between services, and to
+	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy []EnvironmentAutomationServiceListResponseServicesMetadataTriggeredBy `json:"triggeredBy"`
@@ -1781,14 +1723,12 @@ type EnvironmentAutomationServiceListResponseServicesSpec struct {
 	// runs_on specifies the environment the service should run on.
 	RunsOn EnvironmentAutomationServiceListResponseServicesSpecRunsOn `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
-	// exits it will
-	//
-	// not be restarted until the session is changed.
+	// exits it will not be restarted until the session is changed.
 	Session string `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion string                                                   `json:"specVersion" format:"int64"`
+	SpecVersion string                                                   `json:"specVersion"`
 	JSON        environmentAutomationServiceListResponseServicesSpecJSON `json:"-"`
 }
 
@@ -1816,10 +1756,8 @@ func (r environmentAutomationServiceListResponseServicesSpecJSON) RawJSON() stri
 // service
 type EnvironmentAutomationServiceListResponseServicesSpecCommands struct {
 	// ready is an optional command that is run repeatedly until it exits with a zero
-	// exit code.
-	//
-	// If set, the service will first go into a Starting phase, and then into a Running
-	// phase once the ready command exits with a zero exit code.
+	// exit code. If set, the service will first go into a Starting phase, and then
+	// into a Running phase once the ready command exits with a zero exit code.
 	Ready string `json:"ready"`
 	// start is the command to start and run the service. If start exits, the service
 	// will transition to the following phase:
@@ -1829,14 +1767,12 @@ type EnvironmentAutomationServiceListResponseServicesSpecCommands struct {
 	//     command will receive a SIGTERM signal when the service is requested to stop.
 	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
 	Start string `json:"start"`
-	// stop is an optional command that runs when the service is requested to stop.
-	//
-	// If set, instead of sending a SIGTERM signal to the start command, the stop
-	// command will be run. Once the stop command exits, the start command will receive
-	// a SIGKILL signal. If the stop command exits with a non-zero exit code, the
-	// service will transition to the Failed phase. If the stop command does not exit
-	// within 2 minutes, a SIGKILL signal will be sent to both the start and stop
-	// commands.
+	// stop is an optional command that runs when the service is requested to stop. If
+	// set, instead of sending a SIGTERM signal to the start command, the stop command
+	// will be run. Once the stop command exits, the start command will receive a
+	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
+	// will transition to the Failed phase. If the stop command does not exit within 2
+	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
 	Stop string                                                           `json:"stop"`
 	JSON environmentAutomationServiceListResponseServicesSpecCommandsJSON `json:"-"`
 }
@@ -1931,9 +1867,8 @@ func (r environmentAutomationServiceListResponseServicesSpecRunsOnDockerJSON) Ra
 
 type EnvironmentAutomationServiceListResponseServicesStatus struct {
 	// failure_message summarises why the service failed to operate. If this is
-	// non-empty
-	//
-	// the service has failed to operate and will likely transition to a failed state.
+	// non-empty the service has failed to operate and will likely transition to a
+	// failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url contains the URL at which the service logs can be accessed.
 	LogURL string `json:"logUrl"`
@@ -1946,7 +1881,7 @@ type EnvironmentAutomationServiceListResponseServicesStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion string                                                     `json:"statusVersion" format:"int64"`
+	StatusVersion string                                                     `json:"statusVersion"`
 	JSON          environmentAutomationServiceListResponseServicesStatusJSON `json:"-"`
 }
 
@@ -1998,37 +1933,17 @@ type EnvironmentAutomationServiceStartResponse = interface{}
 type EnvironmentAutomationServiceStopResponse = interface{}
 
 type EnvironmentAutomationServiceNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	EnvironmentID          param.Field[string]                                                      `json:"environmentId" format:"uuid"`
-	Metadata               param.Field[EnvironmentAutomationServiceNewParamsMetadata]               `json:"metadata"`
-	Spec                   param.Field[EnvironmentAutomationServiceNewParamsSpec]                   `json:"spec"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	EnvironmentID param.Field[string]                                        `json:"environmentId" format:"uuid"`
+	Metadata      param.Field[EnvironmentAutomationServiceNewParamsMetadata] `json:"metadata"`
+	Spec          param.Field[EnvironmentAutomationServiceNewParamsSpec]     `json:"spec"`
 }
 
 func (r EnvironmentAutomationServiceNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceNewParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceNewParamsConnectProtocolVersion1 EnvironmentAutomationServiceNewParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationServiceNewParamsMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2123,15 +2038,12 @@ type EnvironmentAutomationServiceNewParamsMetadata struct {
 	// provide context and documentation for the service.
 	Description param.Field[string] `json:"description"`
 	// name is a user-facing name for the service. Unlike the reference, this field is
-	// not unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the service.
+	// not unique, and not referenced by the system. This is a short descriptive name
+	// for the service.
 	Name param.Field[string] `json:"name"`
 	// reference is a user-facing identifier for the service which must be unique on
-	// the environment.
-	//
-	// It is used to express dependencies between services, and to identify the service
-	// in user interactions (e.g. the CLI).
+	// the environment. It is used to express dependencies between services, and to
+	// identify the service in user interactions (e.g. the CLI).
 	Reference param.Field[string] `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy param.Field[[]EnvironmentAutomationServiceNewParamsMetadataTriggeredByUnion] `json:"triggeredBy"`
@@ -2246,14 +2158,12 @@ type EnvironmentAutomationServiceNewParamsSpec struct {
 	// runs_on specifies the environment the service should run on.
 	RunsOn param.Field[EnvironmentAutomationServiceNewParamsSpecRunsOn] `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
-	// exits it will
-	//
-	// not be restarted until the session is changed.
+	// exits it will not be restarted until the session is changed.
 	Session param.Field[string] `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
-	SpecVersion param.Field[string] `json:"specVersion" format:"int64"`
+	SpecVersion param.Field[string] `json:"specVersion"`
 }
 
 func (r EnvironmentAutomationServiceNewParamsSpec) MarshalJSON() (data []byte, err error) {
@@ -2264,10 +2174,8 @@ func (r EnvironmentAutomationServiceNewParamsSpec) MarshalJSON() (data []byte, e
 // service
 type EnvironmentAutomationServiceNewParamsSpecCommands struct {
 	// ready is an optional command that is run repeatedly until it exits with a zero
-	// exit code.
-	//
-	// If set, the service will first go into a Starting phase, and then into a Running
-	// phase once the ready command exits with a zero exit code.
+	// exit code. If set, the service will first go into a Starting phase, and then
+	// into a Running phase once the ready command exits with a zero exit code.
 	Ready param.Field[string] `json:"ready"`
 	// start is the command to start and run the service. If start exits, the service
 	// will transition to the following phase:
@@ -2277,14 +2185,12 @@ type EnvironmentAutomationServiceNewParamsSpecCommands struct {
 	//     command will receive a SIGTERM signal when the service is requested to stop.
 	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
 	Start param.Field[string] `json:"start"`
-	// stop is an optional command that runs when the service is requested to stop.
-	//
-	// If set, instead of sending a SIGTERM signal to the start command, the stop
-	// command will be run. Once the stop command exits, the start command will receive
-	// a SIGKILL signal. If the stop command exits with a non-zero exit code, the
-	// service will transition to the Failed phase. If the stop command does not exit
-	// within 2 minutes, a SIGKILL signal will be sent to both the start and stop
-	// commands.
+	// stop is an optional command that runs when the service is requested to stop. If
+	// set, instead of sending a SIGTERM signal to the start command, the stop command
+	// will be run. Once the stop command exits, the start command will receive a
+	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
+	// will transition to the Failed phase. If the stop command does not exit within 2
+	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
 	Stop param.Field[string] `json:"stop"`
 }
 
@@ -2333,69 +2239,28 @@ func (r EnvironmentAutomationServiceNewParamsSpecRunsOnDocker) MarshalJSON() (da
 }
 
 type EnvironmentAutomationServiceGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                      `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationServiceGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceGetParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceGetParamsConnectProtocolVersion1 EnvironmentAutomationServiceGetParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationServiceUpdateParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                         `json:"id" format:"uuid"`
-	Metadata               param.Field[EnvironmentAutomationServiceUpdateParamsMetadataUnion]          `json:"metadata"`
-	// Changing the spec of a service is a complex operation. The spec of a service
-	//
-	// can only be updated if the service is in a stopped state. If the service is
-	// running, it must be stopped first.
+	ID       param.Field[string]                                                `json:"id" format:"uuid"`
+	Metadata param.Field[EnvironmentAutomationServiceUpdateParamsMetadataUnion] `json:"metadata"`
+	// Changing the spec of a service is a complex operation. The spec of a service can
+	// only be updated if the service is in a stopped state. If the service is running,
+	// it must be stopped first.
 	Spec param.Field[EnvironmentAutomationServiceUpdateParamsSpecUnion] `json:"spec"`
 	// Service status updates are only expected from the executing environment. As a
-	// client
-	//
-	// of this API you are not expected to provide this field. Updating this field
-	// requires the `environmentservice:update_status` permission.
+	// client of this API you are not expected to provide this field. Updating this
+	// field requires the `environmentservice:update_status` permission.
 	Status param.Field[EnvironmentAutomationServiceUpdateParamsStatusUnion] `json:"status"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationServiceUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1 EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type EnvironmentAutomationServiceUpdateParamsMetadata struct {
@@ -2524,10 +2389,9 @@ func (r EnvironmentAutomationServiceUpdateParamsMetadataTriggeredByTriggeredByTr
 func (r EnvironmentAutomationServiceUpdateParamsMetadataTriggeredByTriggeredByTriggerPostEnvironmentStart) implementsEnvironmentAutomationServiceUpdateParamsMetadataTriggeredByTriggeredByTriggerUnion() {
 }
 
-// Changing the spec of a service is a complex operation. The spec of a service
-//
-// can only be updated if the service is in a stopped state. If the service is
-// running, it must be stopped first.
+// Changing the spec of a service is a complex operation. The spec of a service can
+// only be updated if the service is in a stopped state. If the service is running,
+// it must be stopped first.
 type EnvironmentAutomationServiceUpdateParamsSpec struct {
 	Commands param.Field[interface{}] `json:"commands"`
 	RunsOn   param.Field[interface{}] `json:"runsOn"`
@@ -2540,10 +2404,9 @@ func (r EnvironmentAutomationServiceUpdateParamsSpec) MarshalJSON() (data []byte
 func (r EnvironmentAutomationServiceUpdateParamsSpec) implementsEnvironmentAutomationServiceUpdateParamsSpecUnion() {
 }
 
-// Changing the spec of a service is a complex operation. The spec of a service
-//
-// can only be updated if the service is in a stopped state. If the service is
-// running, it must be stopped first.
+// Changing the spec of a service is a complex operation. The spec of a service can
+// only be updated if the service is in a stopped state. If the service is running,
+// it must be stopped first.
 //
 // Satisfied by [EnvironmentAutomationServiceUpdateParamsSpecCommands],
 // [EnvironmentAutomationServiceUpdateParamsSpecRunsOn],
@@ -2647,10 +2510,8 @@ func (r EnvironmentAutomationServiceUpdateParamsSpecRunsOnRunsOnDocker) MarshalJ
 }
 
 // Service status updates are only expected from the executing environment. As a
-// client
-//
-// of this API you are not expected to provide this field. Updating this field
-// requires the `environmentservice:update_status` permission.
+// client of this API you are not expected to provide this field. Updating this
+// field requires the `environmentservice:update_status` permission.
 type EnvironmentAutomationServiceUpdateParamsStatus struct {
 	FailureMessage param.Field[string]                                              `json:"failureMessage"`
 	LogURL         param.Field[string]                                              `json:"logUrl"`
@@ -2666,10 +2527,8 @@ func (r EnvironmentAutomationServiceUpdateParamsStatus) implementsEnvironmentAut
 }
 
 // Service status updates are only expected from the executing environment. As a
-// client
-//
-// of this API you are not expected to provide this field. Updating this field
-// requires the `environmentservice:update_status` permission.
+// client of this API you are not expected to provide this field. Updating this
+// field requires the `environmentservice:update_status` permission.
 //
 // Satisfied by [EnvironmentAutomationServiceUpdateParamsStatusFailureMessage],
 // [EnvironmentAutomationServiceUpdateParamsStatusLogURL],
@@ -2745,20 +2604,16 @@ func (r EnvironmentAutomationServiceUpdateParamsStatusSession) implementsEnviron
 }
 
 type EnvironmentAutomationServiceListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentAutomationServiceListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentAutomationServiceListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentAutomationServiceListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                        `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// filter contains the filter options for listing services
+	Filter param.Field[EnvironmentAutomationServiceListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing services
+	Pagination param.Field[EnvironmentAutomationServiceListParamsPagination] `json:"pagination"`
+}
+
+func (r EnvironmentAutomationServiceListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [EnvironmentAutomationServiceListParams]'s query parameters
@@ -2770,147 +2625,55 @@ func (r EnvironmentAutomationServiceListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentAutomationServiceListParamsEncoding string
-
-const (
-	EnvironmentAutomationServiceListParamsEncodingProto EnvironmentAutomationServiceListParamsEncoding = "proto"
-	EnvironmentAutomationServiceListParamsEncodingJson  EnvironmentAutomationServiceListParamsEncoding = "json"
-)
-
-func (r EnvironmentAutomationServiceListParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceListParamsEncodingProto, EnvironmentAutomationServiceListParamsEncodingJson:
-		return true
-	}
-	return false
+// filter contains the filter options for listing services
+type EnvironmentAutomationServiceListParamsFilter struct {
+	// environment_ids filters the response to only services of these environments
+	EnvironmentIDs param.Field[[]string] `json:"environmentIds" format:"uuid"`
+	// references filters the response to only services with these references
+	References param.Field[[]string] `json:"references"`
+	// service_ids filters the response to only services with these IDs
+	ServiceIDs param.Field[[]string] `json:"serviceIds" format:"uuid"`
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceListParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceListParamsConnectProtocolVersion1 EnvironmentAutomationServiceListParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationServiceListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type EnvironmentAutomationServiceListParamsCompression string
-
-const (
-	EnvironmentAutomationServiceListParamsCompressionIdentity EnvironmentAutomationServiceListParamsCompression = "identity"
-	EnvironmentAutomationServiceListParamsCompressionGzip     EnvironmentAutomationServiceListParamsCompression = "gzip"
-	EnvironmentAutomationServiceListParamsCompressionBr       EnvironmentAutomationServiceListParamsCompression = "br"
-)
-
-func (r EnvironmentAutomationServiceListParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceListParamsCompressionIdentity, EnvironmentAutomationServiceListParamsCompressionGzip, EnvironmentAutomationServiceListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing services
+type EnvironmentAutomationServiceListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceListParamsConnect string
-
-const (
-	EnvironmentAutomationServiceListParamsConnectV1 EnvironmentAutomationServiceListParamsConnect = "v1"
-)
-
-func (r EnvironmentAutomationServiceListParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceListParamsConnectV1:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationServiceListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type EnvironmentAutomationServiceDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                         `json:"id" format:"uuid"`
-	Force                  param.Field[bool]                                                           `json:"force"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID    param.Field[string] `json:"id" format:"uuid"`
+	Force param.Field[bool]   `json:"force"`
 }
 
 func (r EnvironmentAutomationServiceDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1 EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationServiceStartParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceStartParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                        `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationServiceStartParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceStartParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceStartParamsConnectProtocolVersion1 EnvironmentAutomationServiceStartParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceStartParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceStartParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationServiceStopParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationServiceStopParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                       `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationServiceStopParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationServiceStopParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationServiceStopParamsConnectProtocolVersion1 EnvironmentAutomationServiceStopParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationServiceStopParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationServiceStopParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

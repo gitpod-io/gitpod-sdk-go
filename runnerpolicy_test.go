@@ -26,11 +26,9 @@ func TestRunnerPolicyNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Policies.New(context.TODO(), gitpod.RunnerPolicyNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyNewParamsConnectProtocolVersion1),
-		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:                   gitpod.F(gitpod.RunnerPolicyNewParamsRoleRunnerRoleUnspecified),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		GroupID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:     gitpod.F(gitpod.RunnerPolicyNewParamsRoleRunnerRoleUnspecified),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -54,11 +52,9 @@ func TestRunnerPolicyUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Policies.Update(context.TODO(), gitpod.RunnerPolicyUpdateParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyUpdateParamsConnectProtocolVersion1),
-		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:                   gitpod.F(gitpod.RunnerPolicyUpdateParamsRoleRunnerRoleUnspecified),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		GroupID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:     gitpod.F(gitpod.RunnerPolicyUpdateParamsRoleRunnerRoleUnspecified),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -82,13 +78,13 @@ func TestRunnerPolicyListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Policies.List(context.TODO(), gitpod.RunnerPolicyListParams{
-		Encoding:               gitpod.F(gitpod.RunnerPolicyListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerPolicyListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerPolicyListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.RunnerPolicyListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -112,10 +108,8 @@ func TestRunnerPolicyDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Policies.Delete(context.TODO(), gitpod.RunnerPolicyDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerPolicyDeleteParamsConnectProtocolVersion1),
-		GroupID:                gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		GroupID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
