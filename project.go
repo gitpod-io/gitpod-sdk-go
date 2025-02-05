@@ -64,7 +64,7 @@ func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, o
 }
 
 // ListProjects lists all projects the caller has access to.
-func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[ProjectListResponse], err error) {
+func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) (res *pagination.ProjectsPage[ProjectListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -82,8 +82,8 @@ func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opt
 }
 
 // ListProjects lists all projects the caller has access to.
-func (r *ProjectService) ListAutoPaging(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[ProjectListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *ProjectService) ListAutoPaging(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) *pagination.ProjectsPageAutoPager[ProjectListResponse] {
+	return pagination.NewProjectsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteProject deletes the specified project.
@@ -2239,55 +2239,7 @@ func (r ProjectUpdateResponseProjectUsedBySubjectsPrincipal) IsKnown() bool {
 }
 
 type ProjectListResponse struct {
-	// pagination contains the pagination options for listing organizations
-	Pagination ProjectListResponsePagination `json:"pagination"`
-	Projects   []ProjectListResponseProject  `json:"projects"`
-	JSON       projectListResponseJSON       `json:"-"`
-}
-
-// projectListResponseJSON contains the JSON metadata for the struct
-// [ProjectListResponse]
-type projectListResponseJSON struct {
-	Pagination  apijson.Field
-	Projects    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing organizations
-type ProjectListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                            `json:"nextToken"`
-	JSON      projectListResponsePaginationJSON `json:"-"`
-}
-
-// projectListResponsePaginationJSON contains the JSON metadata for the struct
-// [ProjectListResponsePagination]
-type projectListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type ProjectListResponseProject struct {
-	EnvironmentClass ProjectListResponseProjectsEnvironmentClass `json:"environmentClass,required"`
+	EnvironmentClass ProjectListResponseEnvironmentClass `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -2297,15 +2249,15 @@ type ProjectListResponseProject struct {
 	// root
 	DevcontainerFilePath string `json:"devcontainerFilePath"`
 	// EnvironmentInitializer specifies how an environment is to be initialized
-	Initializer ProjectListResponseProjectsInitializer `json:"initializer"`
-	Metadata    ProjectListResponseProjectsMetadata    `json:"metadata"`
-	UsedBy      ProjectListResponseProjectsUsedBy      `json:"usedBy"`
-	JSON        projectListResponseProjectJSON         `json:"-"`
+	Initializer ProjectListResponseInitializer `json:"initializer"`
+	Metadata    ProjectListResponseMetadata    `json:"metadata"`
+	UsedBy      ProjectListResponseUsedBy      `json:"usedBy"`
+	JSON        projectListResponseJSON        `json:"-"`
 }
 
-// projectListResponseProjectJSON contains the JSON metadata for the struct
-// [ProjectListResponseProject]
-type projectListResponseProjectJSON struct {
+// projectListResponseJSON contains the JSON metadata for the struct
+// [ProjectListResponse]
+type projectListResponseJSON struct {
 	EnvironmentClass     apijson.Field
 	ID                   apijson.Field
 	AutomationsFilePath  apijson.Field
@@ -2317,39 +2269,39 @@ type projectListResponseProjectJSON struct {
 	ExtraFields          map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProject) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectJSON) RawJSON() string {
+func (r projectListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectListResponseProjectsEnvironmentClass struct {
+type ProjectListResponseEnvironmentClass struct {
 	// Use a fixed environment class on a given Runner. This cannot be a local runner's
 	// environment class.
 	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
 	// Use a local runner for the user
-	LocalRunner bool                                            `json:"localRunner"`
-	JSON        projectListResponseProjectsEnvironmentClassJSON `json:"-"`
-	union       ProjectListResponseProjectsEnvironmentClassUnion
+	LocalRunner bool                                    `json:"localRunner"`
+	JSON        projectListResponseEnvironmentClassJSON `json:"-"`
+	union       ProjectListResponseEnvironmentClassUnion
 }
 
-// projectListResponseProjectsEnvironmentClassJSON contains the JSON metadata for
-// the struct [ProjectListResponseProjectsEnvironmentClass]
-type projectListResponseProjectsEnvironmentClassJSON struct {
+// projectListResponseEnvironmentClassJSON contains the JSON metadata for the
+// struct [ProjectListResponseEnvironmentClass]
+type projectListResponseEnvironmentClassJSON struct {
 	EnvironmentClassID apijson.Field
 	LocalRunner        apijson.Field
 	raw                string
 	ExtraFields        map[string]apijson.Field
 }
 
-func (r projectListResponseProjectsEnvironmentClassJSON) RawJSON() string {
+func (r projectListResponseEnvironmentClassJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *ProjectListResponseProjectsEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
-	*r = ProjectListResponseProjectsEnvironmentClass{}
+func (r *ProjectListResponseEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectListResponseEnvironmentClass{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -2357,139 +2309,139 @@ func (r *ProjectListResponseProjectsEnvironmentClass) UnmarshalJSON(data []byte)
 	return apijson.Port(r.union, &r)
 }
 
-// AsUnion returns a [ProjectListResponseProjectsEnvironmentClassUnion] interface
-// which you can cast to the specific types for more type safety.
+// AsUnion returns a [ProjectListResponseEnvironmentClassUnion] interface which you
+// can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass],
-// [ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser].
-func (r ProjectListResponseProjectsEnvironmentClass) AsUnion() ProjectListResponseProjectsEnvironmentClassUnion {
+// [ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass],
+// [ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser].
+func (r ProjectListResponseEnvironmentClass) AsUnion() ProjectListResponseEnvironmentClassUnion {
 	return r.union
 }
 
 // Union satisfied by
-// [ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass]
-// or [ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser].
-type ProjectListResponseProjectsEnvironmentClassUnion interface {
-	implementsProjectListResponseProjectsEnvironmentClass()
+// [ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass]
+// or [ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser].
+type ProjectListResponseEnvironmentClassUnion interface {
+	implementsProjectListResponseEnvironmentClass()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*ProjectListResponseProjectsEnvironmentClassUnion)(nil)).Elem(),
+		reflect.TypeOf((*ProjectListResponseEnvironmentClassUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass{}),
+			Type:       reflect.TypeOf(ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser{}),
+			Type:       reflect.TypeOf(ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser{}),
 		},
 	)
 }
 
-type ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass struct {
+type ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass struct {
 	// Use a fixed environment class on a given Runner. This cannot be a local runner's
 	// environment class.
-	EnvironmentClassID string                                                                                                                          `json:"environmentClassId,required" format:"uuid"`
-	JSON               projectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON `json:"-"`
+	EnvironmentClassID string                                                                                                                  `json:"environmentClassId,required" format:"uuid"`
+	JSON               projectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON `json:"-"`
 }
 
-// projectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON
+// projectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON
 // contains the JSON metadata for the struct
-// [ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass]
-type projectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON struct {
+// [ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass]
+type projectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON struct {
 	EnvironmentClassID apijson.Field
 	raw                string
 	ExtraFields        map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON) RawJSON() string {
+func (r projectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClassJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r ProjectListResponseProjectsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass) implementsProjectListResponseProjectsEnvironmentClass() {
+func (r ProjectListResponseEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass) implementsProjectListResponseEnvironmentClass() {
 }
 
-type ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser struct {
+type ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser struct {
 	// Use a local runner for the user
-	LocalRunner bool                                                                     `json:"localRunner,required"`
-	JSON        projectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUserJSON `json:"-"`
+	LocalRunner bool                                                             `json:"localRunner,required"`
+	JSON        projectListResponseEnvironmentClassUseALocalRunnerForTheUserJSON `json:"-"`
 }
 
-// projectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUserJSON
-// contains the JSON metadata for the struct
-// [ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser]
-type projectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUserJSON struct {
+// projectListResponseEnvironmentClassUseALocalRunnerForTheUserJSON contains the
+// JSON metadata for the struct
+// [ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser]
+type projectListResponseEnvironmentClassUseALocalRunnerForTheUserJSON struct {
 	LocalRunner apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUserJSON) RawJSON() string {
+func (r projectListResponseEnvironmentClassUseALocalRunnerForTheUserJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r ProjectListResponseProjectsEnvironmentClassUseALocalRunnerForTheUser) implementsProjectListResponseProjectsEnvironmentClass() {
+func (r ProjectListResponseEnvironmentClassUseALocalRunnerForTheUser) implementsProjectListResponseEnvironmentClass() {
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
-type ProjectListResponseProjectsInitializer struct {
-	Specs []ProjectListResponseProjectsInitializerSpec `json:"specs"`
-	JSON  projectListResponseProjectsInitializerJSON   `json:"-"`
+type ProjectListResponseInitializer struct {
+	Specs []ProjectListResponseInitializerSpec `json:"specs"`
+	JSON  projectListResponseInitializerJSON   `json:"-"`
 }
 
-// projectListResponseProjectsInitializerJSON contains the JSON metadata for the
-// struct [ProjectListResponseProjectsInitializer]
-type projectListResponseProjectsInitializerJSON struct {
+// projectListResponseInitializerJSON contains the JSON metadata for the struct
+// [ProjectListResponseInitializer]
+type projectListResponseInitializerJSON struct {
 	Specs       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsInitializer) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseInitializer) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsInitializerJSON) RawJSON() string {
+func (r projectListResponseInitializerJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectListResponseProjectsInitializerSpec struct {
+type ProjectListResponseInitializerSpec struct {
 	// This field can have the runtime type of
-	// [ProjectListResponseProjectsInitializerSpecsContextURLContextURL].
+	// [ProjectListResponseInitializerSpecsContextURLContextURL].
 	ContextURL interface{} `json:"contextUrl"`
 	// This field can have the runtime type of
-	// [ProjectListResponseProjectsInitializerSpecsGitGit].
-	Git   interface{}                                    `json:"git"`
-	JSON  projectListResponseProjectsInitializerSpecJSON `json:"-"`
-	union ProjectListResponseProjectsInitializerSpecsUnion
+	// [ProjectListResponseInitializerSpecsGitGit].
+	Git   interface{}                            `json:"git"`
+	JSON  projectListResponseInitializerSpecJSON `json:"-"`
+	union ProjectListResponseInitializerSpecsUnion
 }
 
-// projectListResponseProjectsInitializerSpecJSON contains the JSON metadata for
-// the struct [ProjectListResponseProjectsInitializerSpec]
-type projectListResponseProjectsInitializerSpecJSON struct {
+// projectListResponseInitializerSpecJSON contains the JSON metadata for the struct
+// [ProjectListResponseInitializerSpec]
+type projectListResponseInitializerSpecJSON struct {
 	ContextURL  apijson.Field
 	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r projectListResponseProjectsInitializerSpecJSON) RawJSON() string {
+func (r projectListResponseInitializerSpecJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r *ProjectListResponseProjectsInitializerSpec) UnmarshalJSON(data []byte) (err error) {
-	*r = ProjectListResponseProjectsInitializerSpec{}
+func (r *ProjectListResponseInitializerSpec) UnmarshalJSON(data []byte) (err error) {
+	*r = ProjectListResponseInitializerSpec{}
 	err = apijson.UnmarshalRoot(data, &r.union)
 	if err != nil {
 		return err
@@ -2497,109 +2449,108 @@ func (r *ProjectListResponseProjectsInitializerSpec) UnmarshalJSON(data []byte) 
 	return apijson.Port(r.union, &r)
 }
 
-// AsUnion returns a [ProjectListResponseProjectsInitializerSpecsUnion] interface
-// which you can cast to the specific types for more type safety.
+// AsUnion returns a [ProjectListResponseInitializerSpecsUnion] interface which you
+// can cast to the specific types for more type safety.
 //
 // Possible runtime types of the union are
-// [ProjectListResponseProjectsInitializerSpecsContextURL],
-// [ProjectListResponseProjectsInitializerSpecsGit].
-func (r ProjectListResponseProjectsInitializerSpec) AsUnion() ProjectListResponseProjectsInitializerSpecsUnion {
+// [ProjectListResponseInitializerSpecsContextURL],
+// [ProjectListResponseInitializerSpecsGit].
+func (r ProjectListResponseInitializerSpec) AsUnion() ProjectListResponseInitializerSpecsUnion {
 	return r.union
 }
 
-// Union satisfied by [ProjectListResponseProjectsInitializerSpecsContextURL] or
-// [ProjectListResponseProjectsInitializerSpecsGit].
-type ProjectListResponseProjectsInitializerSpecsUnion interface {
-	implementsProjectListResponseProjectsInitializerSpec()
+// Union satisfied by [ProjectListResponseInitializerSpecsContextURL] or
+// [ProjectListResponseInitializerSpecsGit].
+type ProjectListResponseInitializerSpecsUnion interface {
+	implementsProjectListResponseInitializerSpec()
 }
 
 func init() {
 	apijson.RegisterUnion(
-		reflect.TypeOf((*ProjectListResponseProjectsInitializerSpecsUnion)(nil)).Elem(),
+		reflect.TypeOf((*ProjectListResponseInitializerSpecsUnion)(nil)).Elem(),
 		"",
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(ProjectListResponseProjectsInitializerSpecsContextURL{}),
+			Type:       reflect.TypeOf(ProjectListResponseInitializerSpecsContextURL{}),
 		},
 		apijson.UnionVariant{
 			TypeFilter: gjson.JSON,
-			Type:       reflect.TypeOf(ProjectListResponseProjectsInitializerSpecsGit{}),
+			Type:       reflect.TypeOf(ProjectListResponseInitializerSpecsGit{}),
 		},
 	)
 }
 
-type ProjectListResponseProjectsInitializerSpecsContextURL struct {
-	ContextURL ProjectListResponseProjectsInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
-	JSON       projectListResponseProjectsInitializerSpecsContextURLJSON       `json:"-"`
+type ProjectListResponseInitializerSpecsContextURL struct {
+	ContextURL ProjectListResponseInitializerSpecsContextURLContextURL `json:"contextUrl,required"`
+	JSON       projectListResponseInitializerSpecsContextURLJSON       `json:"-"`
 }
 
-// projectListResponseProjectsInitializerSpecsContextURLJSON contains the JSON
-// metadata for the struct [ProjectListResponseProjectsInitializerSpecsContextURL]
-type projectListResponseProjectsInitializerSpecsContextURLJSON struct {
+// projectListResponseInitializerSpecsContextURLJSON contains the JSON metadata for
+// the struct [ProjectListResponseInitializerSpecsContextURL]
+type projectListResponseInitializerSpecsContextURLJSON struct {
 	ContextURL  apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseInitializerSpecsContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsInitializerSpecsContextURLJSON) RawJSON() string {
+func (r projectListResponseInitializerSpecsContextURLJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r ProjectListResponseProjectsInitializerSpecsContextURL) implementsProjectListResponseProjectsInitializerSpec() {
+func (r ProjectListResponseInitializerSpecsContextURL) implementsProjectListResponseInitializerSpec() {
 }
 
-type ProjectListResponseProjectsInitializerSpecsContextURLContextURL struct {
+type ProjectListResponseInitializerSpecsContextURLContextURL struct {
 	// url is the URL from which the environment is created
-	URL  string                                                              `json:"url" format:"uri"`
-	JSON projectListResponseProjectsInitializerSpecsContextURLContextURLJSON `json:"-"`
+	URL  string                                                      `json:"url" format:"uri"`
+	JSON projectListResponseInitializerSpecsContextURLContextURLJSON `json:"-"`
 }
 
-// projectListResponseProjectsInitializerSpecsContextURLContextURLJSON contains the
-// JSON metadata for the struct
-// [ProjectListResponseProjectsInitializerSpecsContextURLContextURL]
-type projectListResponseProjectsInitializerSpecsContextURLContextURLJSON struct {
+// projectListResponseInitializerSpecsContextURLContextURLJSON contains the JSON
+// metadata for the struct
+// [ProjectListResponseInitializerSpecsContextURLContextURL]
+type projectListResponseInitializerSpecsContextURLContextURLJSON struct {
 	URL         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseInitializerSpecsContextURLContextURL) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsInitializerSpecsContextURLContextURLJSON) RawJSON() string {
+func (r projectListResponseInitializerSpecsContextURLContextURLJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectListResponseProjectsInitializerSpecsGit struct {
-	Git  ProjectListResponseProjectsInitializerSpecsGitGit  `json:"git,required"`
-	JSON projectListResponseProjectsInitializerSpecsGitJSON `json:"-"`
+type ProjectListResponseInitializerSpecsGit struct {
+	Git  ProjectListResponseInitializerSpecsGitGit  `json:"git,required"`
+	JSON projectListResponseInitializerSpecsGitJSON `json:"-"`
 }
 
-// projectListResponseProjectsInitializerSpecsGitJSON contains the JSON metadata
-// for the struct [ProjectListResponseProjectsInitializerSpecsGit]
-type projectListResponseProjectsInitializerSpecsGitJSON struct {
+// projectListResponseInitializerSpecsGitJSON contains the JSON metadata for the
+// struct [ProjectListResponseInitializerSpecsGit]
+type projectListResponseInitializerSpecsGitJSON struct {
 	Git         apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseInitializerSpecsGit) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsInitializerSpecsGitJSON) RawJSON() string {
+func (r projectListResponseInitializerSpecsGitJSON) RawJSON() string {
 	return r.raw
 }
 
-func (r ProjectListResponseProjectsInitializerSpecsGit) implementsProjectListResponseProjectsInitializerSpec() {
-}
+func (r ProjectListResponseInitializerSpecsGit) implementsProjectListResponseInitializerSpec() {}
 
-type ProjectListResponseProjectsInitializerSpecsGitGit struct {
+type ProjectListResponseInitializerSpecsGitGit struct {
 	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
@@ -2607,15 +2558,15 @@ type ProjectListResponseProjectsInitializerSpecsGitGit struct {
 	// remote_uri is the Git remote origin
 	RemoteUri string `json:"remoteUri"`
 	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
-	TargetMode ProjectListResponseProjectsInitializerSpecsGitGitTargetMode `json:"targetMode"`
+	TargetMode ProjectListResponseInitializerSpecsGitGitTargetMode `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
-	UpstreamRemoteUri string                                                `json:"upstreamRemoteUri"`
-	JSON              projectListResponseProjectsInitializerSpecsGitGitJSON `json:"-"`
+	UpstreamRemoteUri string                                        `json:"upstreamRemoteUri"`
+	JSON              projectListResponseInitializerSpecsGitGitJSON `json:"-"`
 }
 
-// projectListResponseProjectsInitializerSpecsGitGitJSON contains the JSON metadata
-// for the struct [ProjectListResponseProjectsInitializerSpecsGitGit]
-type projectListResponseProjectsInitializerSpecsGitGitJSON struct {
+// projectListResponseInitializerSpecsGitGitJSON contains the JSON metadata for the
+// struct [ProjectListResponseInitializerSpecsGitGit]
+type projectListResponseInitializerSpecsGitGitJSON struct {
 	CheckoutLocation  apijson.Field
 	CloneTarget       apijson.Field
 	RemoteUri         apijson.Field
@@ -2625,34 +2576,34 @@ type projectListResponseProjectsInitializerSpecsGitGitJSON struct {
 	ExtraFields       map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseInitializerSpecsGitGit) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsInitializerSpecsGitGitJSON) RawJSON() string {
+func (r projectListResponseInitializerSpecsGitGitJSON) RawJSON() string {
 	return r.raw
 }
 
 // CloneTargetMode is the target state in which we want to leave a GitEnvironment
-type ProjectListResponseProjectsInitializerSpecsGitGitTargetMode string
+type ProjectListResponseInitializerSpecsGitGitTargetMode string
 
 const (
-	ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  ProjectListResponseProjectsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
-	ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   ProjectListResponseProjectsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
-	ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit ProjectListResponseProjectsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
-	ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch ProjectListResponseProjectsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
-	ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  ProjectListResponseProjectsInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+	ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  ProjectListResponseInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   ProjectListResponseInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit ProjectListResponseInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch ProjectListResponseInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  ProjectListResponseInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
 )
 
-func (r ProjectListResponseProjectsInitializerSpecsGitGitTargetMode) IsKnown() bool {
+func (r ProjectListResponseInitializerSpecsGitGitTargetMode) IsKnown() bool {
 	switch r {
-	case ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, ProjectListResponseProjectsInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+	case ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, ProjectListResponseInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
 		return true
 	}
 	return false
 }
 
-type ProjectListResponseProjectsMetadata struct {
+type ProjectListResponseMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -2743,7 +2694,7 @@ type ProjectListResponseProjectsMetadata struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the project creator
-	Creator ProjectListResponseProjectsMetadataCreator `json:"creator"`
+	Creator ProjectListResponseMetadataCreator `json:"creator"`
 	// name is the human readable name of the project
 	Name string `json:"name"`
 	// organization_id is the ID of the organization that contains the environment
@@ -2836,13 +2787,13 @@ type ProjectListResponseProjectsMetadata struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                               `json:"updatedAt" format:"date-time"`
-	JSON      projectListResponseProjectsMetadataJSON `json:"-"`
+	UpdatedAt time.Time                       `json:"updatedAt" format:"date-time"`
+	JSON      projectListResponseMetadataJSON `json:"-"`
 }
 
-// projectListResponseProjectsMetadataJSON contains the JSON metadata for the
-// struct [ProjectListResponseProjectsMetadata]
-type projectListResponseProjectsMetadataJSON struct {
+// projectListResponseMetadataJSON contains the JSON metadata for the struct
+// [ProjectListResponseMetadata]
+type projectListResponseMetadataJSON struct {
 	CreatedAt      apijson.Field
 	Creator        apijson.Field
 	Name           apijson.Field
@@ -2852,126 +2803,126 @@ type projectListResponseProjectsMetadataJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsMetadata) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseMetadata) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsMetadataJSON) RawJSON() string {
+func (r projectListResponseMetadataJSON) RawJSON() string {
 	return r.raw
 }
 
 // creator is the identity of the project creator
-type ProjectListResponseProjectsMetadataCreator struct {
+type ProjectListResponseMetadataCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal ProjectListResponseProjectsMetadataCreatorPrincipal `json:"principal"`
-	JSON      projectListResponseProjectsMetadataCreatorJSON      `json:"-"`
+	Principal ProjectListResponseMetadataCreatorPrincipal `json:"principal"`
+	JSON      projectListResponseMetadataCreatorJSON      `json:"-"`
 }
 
-// projectListResponseProjectsMetadataCreatorJSON contains the JSON metadata for
-// the struct [ProjectListResponseProjectsMetadataCreator]
-type projectListResponseProjectsMetadataCreatorJSON struct {
+// projectListResponseMetadataCreatorJSON contains the JSON metadata for the struct
+// [ProjectListResponseMetadataCreator]
+type projectListResponseMetadataCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsMetadataCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseMetadataCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsMetadataCreatorJSON) RawJSON() string {
+func (r projectListResponseMetadataCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type ProjectListResponseProjectsMetadataCreatorPrincipal string
+type ProjectListResponseMetadataCreatorPrincipal string
 
 const (
-	ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalUnspecified    ProjectListResponseProjectsMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalAccount        ProjectListResponseProjectsMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalUser           ProjectListResponseProjectsMetadataCreatorPrincipal = "PRINCIPAL_USER"
-	ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalRunner         ProjectListResponseProjectsMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
-	ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalEnvironment    ProjectListResponseProjectsMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalServiceAccount ProjectListResponseProjectsMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	ProjectListResponseMetadataCreatorPrincipalPrincipalUnspecified    ProjectListResponseMetadataCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	ProjectListResponseMetadataCreatorPrincipalPrincipalAccount        ProjectListResponseMetadataCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	ProjectListResponseMetadataCreatorPrincipalPrincipalUser           ProjectListResponseMetadataCreatorPrincipal = "PRINCIPAL_USER"
+	ProjectListResponseMetadataCreatorPrincipalPrincipalRunner         ProjectListResponseMetadataCreatorPrincipal = "PRINCIPAL_RUNNER"
+	ProjectListResponseMetadataCreatorPrincipalPrincipalEnvironment    ProjectListResponseMetadataCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	ProjectListResponseMetadataCreatorPrincipalPrincipalServiceAccount ProjectListResponseMetadataCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r ProjectListResponseProjectsMetadataCreatorPrincipal) IsKnown() bool {
+func (r ProjectListResponseMetadataCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalUnspecified, ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalAccount, ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalUser, ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalRunner, ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalEnvironment, ProjectListResponseProjectsMetadataCreatorPrincipalPrincipalServiceAccount:
+	case ProjectListResponseMetadataCreatorPrincipalPrincipalUnspecified, ProjectListResponseMetadataCreatorPrincipalPrincipalAccount, ProjectListResponseMetadataCreatorPrincipalPrincipalUser, ProjectListResponseMetadataCreatorPrincipalPrincipalRunner, ProjectListResponseMetadataCreatorPrincipalPrincipalEnvironment, ProjectListResponseMetadataCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
 }
 
-type ProjectListResponseProjectsUsedBy struct {
+type ProjectListResponseUsedBy struct {
 	// Subjects are the 10 most recent subjects who have used the project to create an
 	// environment
-	Subjects []ProjectListResponseProjectsUsedBySubject `json:"subjects"`
+	Subjects []ProjectListResponseUsedBySubject `json:"subjects"`
 	// Total number of unique subjects who have used the project
-	TotalSubjects int64                                 `json:"totalSubjects"`
-	JSON          projectListResponseProjectsUsedByJSON `json:"-"`
+	TotalSubjects int64                         `json:"totalSubjects"`
+	JSON          projectListResponseUsedByJSON `json:"-"`
 }
 
-// projectListResponseProjectsUsedByJSON contains the JSON metadata for the struct
-// [ProjectListResponseProjectsUsedBy]
-type projectListResponseProjectsUsedByJSON struct {
+// projectListResponseUsedByJSON contains the JSON metadata for the struct
+// [ProjectListResponseUsedBy]
+type projectListResponseUsedByJSON struct {
 	Subjects      apijson.Field
 	TotalSubjects apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsUsedBy) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseUsedBy) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsUsedByJSON) RawJSON() string {
+func (r projectListResponseUsedByJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectListResponseProjectsUsedBySubject struct {
+type ProjectListResponseUsedBySubject struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal ProjectListResponseProjectsUsedBySubjectsPrincipal `json:"principal"`
-	JSON      projectListResponseProjectsUsedBySubjectJSON       `json:"-"`
+	Principal ProjectListResponseUsedBySubjectsPrincipal `json:"principal"`
+	JSON      projectListResponseUsedBySubjectJSON       `json:"-"`
 }
 
-// projectListResponseProjectsUsedBySubjectJSON contains the JSON metadata for the
-// struct [ProjectListResponseProjectsUsedBySubject]
-type projectListResponseProjectsUsedBySubjectJSON struct {
+// projectListResponseUsedBySubjectJSON contains the JSON metadata for the struct
+// [ProjectListResponseUsedBySubject]
+type projectListResponseUsedBySubjectJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *ProjectListResponseProjectsUsedBySubject) UnmarshalJSON(data []byte) (err error) {
+func (r *ProjectListResponseUsedBySubject) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r projectListResponseProjectsUsedBySubjectJSON) RawJSON() string {
+func (r projectListResponseUsedBySubjectJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type ProjectListResponseProjectsUsedBySubjectsPrincipal string
+type ProjectListResponseUsedBySubjectsPrincipal string
 
 const (
-	ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalUnspecified    ProjectListResponseProjectsUsedBySubjectsPrincipal = "PRINCIPAL_UNSPECIFIED"
-	ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalAccount        ProjectListResponseProjectsUsedBySubjectsPrincipal = "PRINCIPAL_ACCOUNT"
-	ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalUser           ProjectListResponseProjectsUsedBySubjectsPrincipal = "PRINCIPAL_USER"
-	ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalRunner         ProjectListResponseProjectsUsedBySubjectsPrincipal = "PRINCIPAL_RUNNER"
-	ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalEnvironment    ProjectListResponseProjectsUsedBySubjectsPrincipal = "PRINCIPAL_ENVIRONMENT"
-	ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalServiceAccount ProjectListResponseProjectsUsedBySubjectsPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	ProjectListResponseUsedBySubjectsPrincipalPrincipalUnspecified    ProjectListResponseUsedBySubjectsPrincipal = "PRINCIPAL_UNSPECIFIED"
+	ProjectListResponseUsedBySubjectsPrincipalPrincipalAccount        ProjectListResponseUsedBySubjectsPrincipal = "PRINCIPAL_ACCOUNT"
+	ProjectListResponseUsedBySubjectsPrincipalPrincipalUser           ProjectListResponseUsedBySubjectsPrincipal = "PRINCIPAL_USER"
+	ProjectListResponseUsedBySubjectsPrincipalPrincipalRunner         ProjectListResponseUsedBySubjectsPrincipal = "PRINCIPAL_RUNNER"
+	ProjectListResponseUsedBySubjectsPrincipalPrincipalEnvironment    ProjectListResponseUsedBySubjectsPrincipal = "PRINCIPAL_ENVIRONMENT"
+	ProjectListResponseUsedBySubjectsPrincipalPrincipalServiceAccount ProjectListResponseUsedBySubjectsPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r ProjectListResponseProjectsUsedBySubjectsPrincipal) IsKnown() bool {
+func (r ProjectListResponseUsedBySubjectsPrincipal) IsKnown() bool {
 	switch r {
-	case ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalUnspecified, ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalAccount, ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalUser, ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalRunner, ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalEnvironment, ProjectListResponseProjectsUsedBySubjectsPrincipalPrincipalServiceAccount:
+	case ProjectListResponseUsedBySubjectsPrincipalPrincipalUnspecified, ProjectListResponseUsedBySubjectsPrincipalPrincipalAccount, ProjectListResponseUsedBySubjectsPrincipalPrincipalUser, ProjectListResponseUsedBySubjectsPrincipalPrincipalRunner, ProjectListResponseUsedBySubjectsPrincipalPrincipalEnvironment, ProjectListResponseUsedBySubjectsPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false

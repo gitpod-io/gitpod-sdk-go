@@ -28,8 +28,8 @@ func TestManualPagination(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, service := range page.Pagination.PersonalAccessTokens {
-		t.Logf("%+v\n", service.Pagination)
+	for _, service := range page.Services {
+		t.Logf("%+v\n", service.ID)
 	}
 	// Prism mock isn't going to give us real pagination
 	page, err = page.GetNextPage()
@@ -37,8 +37,8 @@ func TestManualPagination(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 	if page != nil {
-		for _, service := range page.Pagination.PersonalAccessTokens {
-			t.Logf("%+v\n", service.Pagination)
+		for _, service := range page.Services {
+			t.Logf("%+v\n", service.ID)
 		}
 	}
 }

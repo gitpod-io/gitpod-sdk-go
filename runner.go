@@ -66,7 +66,7 @@ func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opt
 }
 
 // ListRunners returns all runners registered in the scope.
-func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerListResponse], err error) {
+func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *pagination.RunnersPage[RunnerListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -84,8 +84,8 @@ func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts 
 }
 
 // ListRunners returns all runners registered in the scope.
-func (r *RunnerService) ListAutoPaging(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *RunnerService) ListAutoPaging(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) *pagination.RunnersPageAutoPager[RunnerListResponse] {
+	return pagination.NewRunnersPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteRunner deletes an environment runner.
@@ -1367,55 +1367,6 @@ func (r RunnerGetResponseRunnerStatusPhase) IsKnown() bool {
 type RunnerUpdateResponse = interface{}
 
 type RunnerListResponse struct {
-	// pagination contains the pagination options for listing runners
-	Pagination RunnerListResponsePagination `json:"pagination"`
-	// The runners registered in the scope
-	Runners []RunnerListResponseRunner `json:"runners"`
-	JSON    runnerListResponseJSON     `json:"-"`
-}
-
-// runnerListResponseJSON contains the JSON metadata for the struct
-// [RunnerListResponse]
-type runnerListResponseJSON struct {
-	Pagination  apijson.Field
-	Runners     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing runners
-type RunnerListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                           `json:"nextToken"`
-	JSON      runnerListResponsePaginationJSON `json:"-"`
-}
-
-// runnerListResponsePaginationJSON contains the JSON metadata for the struct
-// [RunnerListResponsePagination]
-type runnerListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerListResponseRunner struct {
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -1506,20 +1457,20 @@ type RunnerListResponseRunner struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
-	Creator RunnerListResponseRunnersCreator `json:"creator"`
+	Creator RunnerListResponseCreator `json:"creator"`
 	// RunnerKind represents the kind of a runner
-	Kind RunnerListResponseRunnersKind `json:"kind"`
+	Kind RunnerListResponseKind `json:"kind"`
 	// The runner's name which is shown to users
 	Name string `json:"name"`
 	// RunnerProvider identifies the specific implementation type of a runner. Each
 	// provider maps to a specific kind of runner (local or remote), as specified below
 	// for each provider.
-	Provider RunnerListResponseRunnersProvider `json:"provider"`
-	RunnerID string                            `json:"runnerId"`
+	Provider RunnerListResponseProvider `json:"provider"`
+	RunnerID string                     `json:"runnerId"`
 	// The runner's specification
-	Spec RunnerListResponseRunnersSpec `json:"spec"`
+	Spec RunnerListResponseSpec `json:"spec"`
 	// RunnerStatus represents the status of a runner
-	Status RunnerListResponseRunnersStatus `json:"status"`
+	Status RunnerListResponseStatus `json:"status"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -1608,13 +1559,13 @@ type RunnerListResponseRunner struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
-	JSON      runnerListResponseRunnerJSON `json:"-"`
+	UpdatedAt time.Time              `json:"updatedAt" format:"date-time"`
+	JSON      runnerListResponseJSON `json:"-"`
 }
 
-// runnerListResponseRunnerJSON contains the JSON metadata for the struct
-// [RunnerListResponseRunner]
-type runnerListResponseRunnerJSON struct {
+// runnerListResponseJSON contains the JSON metadata for the struct
+// [RunnerListResponse]
+type runnerListResponseJSON struct {
 	CreatedAt   apijson.Field
 	Creator     apijson.Field
 	Kind        apijson.Field
@@ -1628,73 +1579,73 @@ type runnerListResponseRunnerJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerListResponseRunner) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListResponseRunnerJSON) RawJSON() string {
+func (r runnerListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
 // creator is the identity of the creator of the environment
-type RunnerListResponseRunnersCreator struct {
+type RunnerListResponseCreator struct {
 	// id is the UUID of the subject
 	ID string `json:"id"`
 	// Principal is the principal of the subject
-	Principal RunnerListResponseRunnersCreatorPrincipal `json:"principal"`
-	JSON      runnerListResponseRunnersCreatorJSON      `json:"-"`
+	Principal RunnerListResponseCreatorPrincipal `json:"principal"`
+	JSON      runnerListResponseCreatorJSON      `json:"-"`
 }
 
-// runnerListResponseRunnersCreatorJSON contains the JSON metadata for the struct
-// [RunnerListResponseRunnersCreator]
-type runnerListResponseRunnersCreatorJSON struct {
+// runnerListResponseCreatorJSON contains the JSON metadata for the struct
+// [RunnerListResponseCreator]
+type runnerListResponseCreatorJSON struct {
 	ID          apijson.Field
 	Principal   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerListResponseRunnersCreator) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListResponseCreator) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListResponseRunnersCreatorJSON) RawJSON() string {
+func (r runnerListResponseCreatorJSON) RawJSON() string {
 	return r.raw
 }
 
 // Principal is the principal of the subject
-type RunnerListResponseRunnersCreatorPrincipal string
+type RunnerListResponseCreatorPrincipal string
 
 const (
-	RunnerListResponseRunnersCreatorPrincipalPrincipalUnspecified    RunnerListResponseRunnersCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	RunnerListResponseRunnersCreatorPrincipalPrincipalAccount        RunnerListResponseRunnersCreatorPrincipal = "PRINCIPAL_ACCOUNT"
-	RunnerListResponseRunnersCreatorPrincipalPrincipalUser           RunnerListResponseRunnersCreatorPrincipal = "PRINCIPAL_USER"
-	RunnerListResponseRunnersCreatorPrincipalPrincipalRunner         RunnerListResponseRunnersCreatorPrincipal = "PRINCIPAL_RUNNER"
-	RunnerListResponseRunnersCreatorPrincipalPrincipalEnvironment    RunnerListResponseRunnersCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	RunnerListResponseRunnersCreatorPrincipalPrincipalServiceAccount RunnerListResponseRunnersCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	RunnerListResponseCreatorPrincipalPrincipalUnspecified    RunnerListResponseCreatorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	RunnerListResponseCreatorPrincipalPrincipalAccount        RunnerListResponseCreatorPrincipal = "PRINCIPAL_ACCOUNT"
+	RunnerListResponseCreatorPrincipalPrincipalUser           RunnerListResponseCreatorPrincipal = "PRINCIPAL_USER"
+	RunnerListResponseCreatorPrincipalPrincipalRunner         RunnerListResponseCreatorPrincipal = "PRINCIPAL_RUNNER"
+	RunnerListResponseCreatorPrincipalPrincipalEnvironment    RunnerListResponseCreatorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	RunnerListResponseCreatorPrincipalPrincipalServiceAccount RunnerListResponseCreatorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r RunnerListResponseRunnersCreatorPrincipal) IsKnown() bool {
+func (r RunnerListResponseCreatorPrincipal) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersCreatorPrincipalPrincipalUnspecified, RunnerListResponseRunnersCreatorPrincipalPrincipalAccount, RunnerListResponseRunnersCreatorPrincipalPrincipalUser, RunnerListResponseRunnersCreatorPrincipalPrincipalRunner, RunnerListResponseRunnersCreatorPrincipalPrincipalEnvironment, RunnerListResponseRunnersCreatorPrincipalPrincipalServiceAccount:
+	case RunnerListResponseCreatorPrincipalPrincipalUnspecified, RunnerListResponseCreatorPrincipalPrincipalAccount, RunnerListResponseCreatorPrincipalPrincipalUser, RunnerListResponseCreatorPrincipalPrincipalRunner, RunnerListResponseCreatorPrincipalPrincipalEnvironment, RunnerListResponseCreatorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
 }
 
 // RunnerKind represents the kind of a runner
-type RunnerListResponseRunnersKind string
+type RunnerListResponseKind string
 
 const (
-	RunnerListResponseRunnersKindRunnerKindUnspecified        RunnerListResponseRunnersKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerListResponseRunnersKindRunnerKindLocal              RunnerListResponseRunnersKind = "RUNNER_KIND_LOCAL"
-	RunnerListResponseRunnersKindRunnerKindRemote             RunnerListResponseRunnersKind = "RUNNER_KIND_REMOTE"
-	RunnerListResponseRunnersKindRunnerKindLocalConfiguration RunnerListResponseRunnersKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
+	RunnerListResponseKindRunnerKindUnspecified        RunnerListResponseKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerListResponseKindRunnerKindLocal              RunnerListResponseKind = "RUNNER_KIND_LOCAL"
+	RunnerListResponseKindRunnerKindRemote             RunnerListResponseKind = "RUNNER_KIND_REMOTE"
+	RunnerListResponseKindRunnerKindLocalConfiguration RunnerListResponseKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
-func (r RunnerListResponseRunnersKind) IsKnown() bool {
+func (r RunnerListResponseKind) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersKindRunnerKindUnspecified, RunnerListResponseRunnersKindRunnerKindLocal, RunnerListResponseRunnersKindRunnerKindRemote, RunnerListResponseRunnersKindRunnerKindLocalConfiguration:
+	case RunnerListResponseKindRunnerKindUnspecified, RunnerListResponseKindRunnerKindLocal, RunnerListResponseKindRunnerKindRemote, RunnerListResponseKindRunnerKindLocalConfiguration:
 		return true
 	}
 	return false
@@ -1703,51 +1654,51 @@ func (r RunnerListResponseRunnersKind) IsKnown() bool {
 // RunnerProvider identifies the specific implementation type of a runner. Each
 // provider maps to a specific kind of runner (local or remote), as specified below
 // for each provider.
-type RunnerListResponseRunnersProvider string
+type RunnerListResponseProvider string
 
 const (
-	RunnerListResponseRunnersProviderRunnerProviderUnspecified RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_UNSPECIFIED"
-	RunnerListResponseRunnersProviderRunnerProviderAwsEc2      RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_AWS_EC2"
-	RunnerListResponseRunnersProviderRunnerProviderLinuxHost   RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_LINUX_HOST"
-	RunnerListResponseRunnersProviderRunnerProviderDesktopMac  RunnerListResponseRunnersProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+	RunnerListResponseProviderRunnerProviderUnspecified RunnerListResponseProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerListResponseProviderRunnerProviderAwsEc2      RunnerListResponseProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerListResponseProviderRunnerProviderLinuxHost   RunnerListResponseProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerListResponseProviderRunnerProviderDesktopMac  RunnerListResponseProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
 )
 
-func (r RunnerListResponseRunnersProvider) IsKnown() bool {
+func (r RunnerListResponseProvider) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersProviderRunnerProviderUnspecified, RunnerListResponseRunnersProviderRunnerProviderAwsEc2, RunnerListResponseRunnersProviderRunnerProviderLinuxHost, RunnerListResponseRunnersProviderRunnerProviderDesktopMac:
+	case RunnerListResponseProviderRunnerProviderUnspecified, RunnerListResponseProviderRunnerProviderAwsEc2, RunnerListResponseProviderRunnerProviderLinuxHost, RunnerListResponseProviderRunnerProviderDesktopMac:
 		return true
 	}
 	return false
 }
 
 // The runner's specification
-type RunnerListResponseRunnersSpec struct {
+type RunnerListResponseSpec struct {
 	// The runner's configuration
-	Configuration RunnerListResponseRunnersSpecConfiguration `json:"configuration"`
+	Configuration RunnerListResponseSpecConfiguration `json:"configuration"`
 	// RunnerPhase represents the phase a runner is in
-	DesiredPhase RunnerListResponseRunnersSpecDesiredPhase `json:"desiredPhase"`
-	JSON         runnerListResponseRunnersSpecJSON         `json:"-"`
+	DesiredPhase RunnerListResponseSpecDesiredPhase `json:"desiredPhase"`
+	JSON         runnerListResponseSpecJSON         `json:"-"`
 }
 
-// runnerListResponseRunnersSpecJSON contains the JSON metadata for the struct
-// [RunnerListResponseRunnersSpec]
-type runnerListResponseRunnersSpecJSON struct {
+// runnerListResponseSpecJSON contains the JSON metadata for the struct
+// [RunnerListResponseSpec]
+type runnerListResponseSpecJSON struct {
 	Configuration apijson.Field
 	DesiredPhase  apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *RunnerListResponseRunnersSpec) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListResponseSpec) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListResponseRunnersSpecJSON) RawJSON() string {
+func (r runnerListResponseSpecJSON) RawJSON() string {
 	return r.raw
 }
 
 // The runner's configuration
-type RunnerListResponseRunnersSpecConfiguration struct {
+type RunnerListResponseSpecConfiguration struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate bool `json:"autoUpdate"`
 	// Region to deploy the runner in, if applicable. This is mainly used for remote
@@ -1755,13 +1706,13 @@ type RunnerListResponseRunnersSpecConfiguration struct {
 	// See the runner's status for the actual region.
 	Region string `json:"region"`
 	// The release channel the runner is on
-	ReleaseChannel RunnerListResponseRunnersSpecConfigurationReleaseChannel `json:"releaseChannel"`
-	JSON           runnerListResponseRunnersSpecConfigurationJSON           `json:"-"`
+	ReleaseChannel RunnerListResponseSpecConfigurationReleaseChannel `json:"releaseChannel"`
+	JSON           runnerListResponseSpecConfigurationJSON           `json:"-"`
 }
 
-// runnerListResponseRunnersSpecConfigurationJSON contains the JSON metadata for
-// the struct [RunnerListResponseRunnersSpecConfiguration]
-type runnerListResponseRunnersSpecConfigurationJSON struct {
+// runnerListResponseSpecConfigurationJSON contains the JSON metadata for the
+// struct [RunnerListResponseSpecConfiguration]
+type runnerListResponseSpecConfigurationJSON struct {
 	AutoUpdate     apijson.Field
 	Region         apijson.Field
 	ReleaseChannel apijson.Field
@@ -1769,65 +1720,65 @@ type runnerListResponseRunnersSpecConfigurationJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *RunnerListResponseRunnersSpecConfiguration) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListResponseSpecConfiguration) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListResponseRunnersSpecConfigurationJSON) RawJSON() string {
+func (r runnerListResponseSpecConfigurationJSON) RawJSON() string {
 	return r.raw
 }
 
 // The release channel the runner is on
-type RunnerListResponseRunnersSpecConfigurationReleaseChannel string
+type RunnerListResponseSpecConfigurationReleaseChannel string
 
 const (
-	RunnerListResponseRunnersSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified RunnerListResponseRunnersSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerListResponseRunnersSpecConfigurationReleaseChannelRunnerReleaseChannelStable      RunnerListResponseRunnersSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerListResponseRunnersSpecConfigurationReleaseChannelRunnerReleaseChannelLatest      RunnerListResponseRunnersSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
+	RunnerListResponseSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified RunnerListResponseSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
+	RunnerListResponseSpecConfigurationReleaseChannelRunnerReleaseChannelStable      RunnerListResponseSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
+	RunnerListResponseSpecConfigurationReleaseChannelRunnerReleaseChannelLatest      RunnerListResponseSpecConfigurationReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
 )
 
-func (r RunnerListResponseRunnersSpecConfigurationReleaseChannel) IsKnown() bool {
+func (r RunnerListResponseSpecConfigurationReleaseChannel) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified, RunnerListResponseRunnersSpecConfigurationReleaseChannelRunnerReleaseChannelStable, RunnerListResponseRunnersSpecConfigurationReleaseChannelRunnerReleaseChannelLatest:
+	case RunnerListResponseSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified, RunnerListResponseSpecConfigurationReleaseChannelRunnerReleaseChannelStable, RunnerListResponseSpecConfigurationReleaseChannelRunnerReleaseChannelLatest:
 		return true
 	}
 	return false
 }
 
 // RunnerPhase represents the phase a runner is in
-type RunnerListResponseRunnersSpecDesiredPhase string
+type RunnerListResponseSpecDesiredPhase string
 
 const (
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseUnspecified RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseCreated     RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_CREATED"
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseInactive    RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseActive      RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseDeleting    RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_DELETING"
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseDeleted     RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_DELETED"
-	RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseDegraded    RunnerListResponseRunnersSpecDesiredPhase = "RUNNER_PHASE_DEGRADED"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseUnspecified RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_UNSPECIFIED"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseCreated     RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_CREATED"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseInactive    RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_INACTIVE"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseActive      RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_ACTIVE"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseDeleting    RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_DELETING"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseDeleted     RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_DELETED"
+	RunnerListResponseSpecDesiredPhaseRunnerPhaseDegraded    RunnerListResponseSpecDesiredPhase = "RUNNER_PHASE_DEGRADED"
 )
 
-func (r RunnerListResponseRunnersSpecDesiredPhase) IsKnown() bool {
+func (r RunnerListResponseSpecDesiredPhase) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseUnspecified, RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseCreated, RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseInactive, RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseActive, RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseDeleting, RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseDeleted, RunnerListResponseRunnersSpecDesiredPhaseRunnerPhaseDegraded:
+	case RunnerListResponseSpecDesiredPhaseRunnerPhaseUnspecified, RunnerListResponseSpecDesiredPhaseRunnerPhaseCreated, RunnerListResponseSpecDesiredPhaseRunnerPhaseInactive, RunnerListResponseSpecDesiredPhaseRunnerPhaseActive, RunnerListResponseSpecDesiredPhaseRunnerPhaseDeleting, RunnerListResponseSpecDesiredPhaseRunnerPhaseDeleted, RunnerListResponseSpecDesiredPhaseRunnerPhaseDegraded:
 		return true
 	}
 	return false
 }
 
 // RunnerStatus represents the status of a runner
-type RunnerListResponseRunnersStatus struct {
+type RunnerListResponseStatus struct {
 	// additional_info contains additional information about the runner, e.g. a
 	// CloudFormation stack URL.
-	AdditionalInfo []RunnerListResponseRunnersStatusAdditionalInfo `json:"additionalInfo"`
+	AdditionalInfo []RunnerListResponseStatusAdditionalInfo `json:"additionalInfo"`
 	// capabilities is a list of capabilities the runner supports.
-	Capabilities []RunnerListResponseRunnersStatusCapability `json:"capabilities"`
-	LogURL       string                                      `json:"logUrl"`
+	Capabilities []RunnerListResponseStatusCapability `json:"capabilities"`
+	LogURL       string                               `json:"logUrl"`
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
 	// RunnerPhase represents the phase a runner is in
-	Phase RunnerListResponseRunnersStatusPhase `json:"phase"`
+	Phase RunnerListResponseStatusPhase `json:"phase"`
 	// region is the region the runner is running in, if applicable.
 	Region        string `json:"region"`
 	SystemDetails string `json:"systemDetails"`
@@ -1919,14 +1870,14 @@ type RunnerListResponseRunnersStatus struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                           `json:"updatedAt" format:"date-time"`
-	Version   string                              `json:"version"`
-	JSON      runnerListResponseRunnersStatusJSON `json:"-"`
+	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
+	Version   string                       `json:"version"`
+	JSON      runnerListResponseStatusJSON `json:"-"`
 }
 
-// runnerListResponseRunnersStatusJSON contains the JSON metadata for the struct
-// [RunnerListResponseRunnersStatus]
-type runnerListResponseRunnersStatusJSON struct {
+// runnerListResponseStatusJSON contains the JSON metadata for the struct
+// [RunnerListResponseStatus]
+type runnerListResponseStatusJSON struct {
 	AdditionalInfo apijson.Field
 	Capabilities   apijson.Field
 	LogURL         apijson.Field
@@ -1940,68 +1891,68 @@ type runnerListResponseRunnersStatusJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *RunnerListResponseRunnersStatus) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListResponseStatus) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListResponseRunnersStatusJSON) RawJSON() string {
+func (r runnerListResponseStatusJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerListResponseRunnersStatusAdditionalInfo struct {
-	Key   string                                            `json:"key"`
-	Value string                                            `json:"value"`
-	JSON  runnerListResponseRunnersStatusAdditionalInfoJSON `json:"-"`
+type RunnerListResponseStatusAdditionalInfo struct {
+	Key   string                                     `json:"key"`
+	Value string                                     `json:"value"`
+	JSON  runnerListResponseStatusAdditionalInfoJSON `json:"-"`
 }
 
-// runnerListResponseRunnersStatusAdditionalInfoJSON contains the JSON metadata for
-// the struct [RunnerListResponseRunnersStatusAdditionalInfo]
-type runnerListResponseRunnersStatusAdditionalInfoJSON struct {
+// runnerListResponseStatusAdditionalInfoJSON contains the JSON metadata for the
+// struct [RunnerListResponseStatusAdditionalInfo]
+type runnerListResponseStatusAdditionalInfoJSON struct {
 	Key         apijson.Field
 	Value       apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerListResponseRunnersStatusAdditionalInfo) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListResponseStatusAdditionalInfo) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListResponseRunnersStatusAdditionalInfoJSON) RawJSON() string {
+func (r runnerListResponseStatusAdditionalInfoJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerListResponseRunnersStatusCapability string
+type RunnerListResponseStatusCapability string
 
 const (
-	RunnerListResponseRunnersStatusCapabilityRunnerCapabilityUnspecified               RunnerListResponseRunnersStatusCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
-	RunnerListResponseRunnersStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerListResponseRunnersStatusCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+	RunnerListResponseStatusCapabilityRunnerCapabilityUnspecified               RunnerListResponseStatusCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerListResponseStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerListResponseStatusCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
 )
 
-func (r RunnerListResponseRunnersStatusCapability) IsKnown() bool {
+func (r RunnerListResponseStatusCapability) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersStatusCapabilityRunnerCapabilityUnspecified, RunnerListResponseRunnersStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations:
+	case RunnerListResponseStatusCapabilityRunnerCapabilityUnspecified, RunnerListResponseStatusCapabilityRunnerCapabilityFetchLocalScmIntegrations:
 		return true
 	}
 	return false
 }
 
 // RunnerPhase represents the phase a runner is in
-type RunnerListResponseRunnersStatusPhase string
+type RunnerListResponseStatusPhase string
 
 const (
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseUnspecified RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseCreated     RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_CREATED"
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseInactive    RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseActive      RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseDeleting    RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_DELETING"
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseDeleted     RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_DELETED"
-	RunnerListResponseRunnersStatusPhaseRunnerPhaseDegraded    RunnerListResponseRunnersStatusPhase = "RUNNER_PHASE_DEGRADED"
+	RunnerListResponseStatusPhaseRunnerPhaseUnspecified RunnerListResponseStatusPhase = "RUNNER_PHASE_UNSPECIFIED"
+	RunnerListResponseStatusPhaseRunnerPhaseCreated     RunnerListResponseStatusPhase = "RUNNER_PHASE_CREATED"
+	RunnerListResponseStatusPhaseRunnerPhaseInactive    RunnerListResponseStatusPhase = "RUNNER_PHASE_INACTIVE"
+	RunnerListResponseStatusPhaseRunnerPhaseActive      RunnerListResponseStatusPhase = "RUNNER_PHASE_ACTIVE"
+	RunnerListResponseStatusPhaseRunnerPhaseDeleting    RunnerListResponseStatusPhase = "RUNNER_PHASE_DELETING"
+	RunnerListResponseStatusPhaseRunnerPhaseDeleted     RunnerListResponseStatusPhase = "RUNNER_PHASE_DELETED"
+	RunnerListResponseStatusPhaseRunnerPhaseDegraded    RunnerListResponseStatusPhase = "RUNNER_PHASE_DEGRADED"
 )
 
-func (r RunnerListResponseRunnersStatusPhase) IsKnown() bool {
+func (r RunnerListResponseStatusPhase) IsKnown() bool {
 	switch r {
-	case RunnerListResponseRunnersStatusPhaseRunnerPhaseUnspecified, RunnerListResponseRunnersStatusPhaseRunnerPhaseCreated, RunnerListResponseRunnersStatusPhaseRunnerPhaseInactive, RunnerListResponseRunnersStatusPhaseRunnerPhaseActive, RunnerListResponseRunnersStatusPhaseRunnerPhaseDeleting, RunnerListResponseRunnersStatusPhaseRunnerPhaseDeleted, RunnerListResponseRunnersStatusPhaseRunnerPhaseDegraded:
+	case RunnerListResponseStatusPhaseRunnerPhaseUnspecified, RunnerListResponseStatusPhaseRunnerPhaseCreated, RunnerListResponseStatusPhaseRunnerPhaseInactive, RunnerListResponseStatusPhaseRunnerPhaseActive, RunnerListResponseStatusPhaseRunnerPhaseDeleting, RunnerListResponseStatusPhaseRunnerPhaseDeleted, RunnerListResponseStatusPhaseRunnerPhaseDegraded:
 		return true
 	}
 	return false

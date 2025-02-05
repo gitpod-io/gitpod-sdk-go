@@ -51,7 +51,7 @@ func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpd
 }
 
 // ListProjectPolicies lists policies for a project.
-func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[ProjectPolicyListResponse], err error) {
+func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[ProjectPolicyListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -69,8 +69,8 @@ func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyLis
 }
 
 // ListProjectPolicies lists policies for a project.
-func (r *ProjectPolicyService) ListAutoPaging(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[ProjectPolicyListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *ProjectPolicyService) ListAutoPaging(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) *pagination.PoliciesPageAutoPager[ProjectPolicyListResponse] {
+	return pagination.NewPoliciesPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteProjectPolicy deletes a Project Policy.
@@ -206,16 +206,17 @@ func (r ProjectPolicyUpdateResponsePolicyRole) IsKnown() bool {
 }
 
 type ProjectPolicyListResponse struct {
-	Pagination ProjectPolicyListResponsePagination `json:"pagination"`
-	Policies   []ProjectPolicyListResponsePolicy   `json:"policies"`
-	JSON       projectPolicyListResponseJSON       `json:"-"`
+	GroupID string `json:"groupId" format:"uuid"`
+	// role is the role assigned to the group
+	Role ProjectPolicyListResponseRole `json:"role"`
+	JSON projectPolicyListResponseJSON `json:"-"`
 }
 
 // projectPolicyListResponseJSON contains the JSON metadata for the struct
 // [ProjectPolicyListResponse]
 type projectPolicyListResponseJSON struct {
-	Pagination  apijson.Field
-	Policies    apijson.Field
+	GroupID     apijson.Field
+	Role        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -228,65 +229,18 @@ func (r projectPolicyListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectPolicyListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                  `json:"nextToken"`
-	JSON      projectPolicyListResponsePaginationJSON `json:"-"`
-}
-
-// projectPolicyListResponsePaginationJSON contains the JSON metadata for the
-// struct [ProjectPolicyListResponsePagination]
-type projectPolicyListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectPolicyListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectPolicyListResponsePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type ProjectPolicyListResponsePolicy struct {
-	GroupID string `json:"groupId" format:"uuid"`
-	// role is the role assigned to the group
-	Role ProjectPolicyListResponsePoliciesRole `json:"role"`
-	JSON projectPolicyListResponsePolicyJSON   `json:"-"`
-}
-
-// projectPolicyListResponsePolicyJSON contains the JSON metadata for the struct
-// [ProjectPolicyListResponsePolicy]
-type projectPolicyListResponsePolicyJSON struct {
-	GroupID     apijson.Field
-	Role        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectPolicyListResponsePolicy) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectPolicyListResponsePolicyJSON) RawJSON() string {
-	return r.raw
-}
-
 // role is the role assigned to the group
-type ProjectPolicyListResponsePoliciesRole string
+type ProjectPolicyListResponseRole string
 
 const (
-	ProjectPolicyListResponsePoliciesRoleProjectRoleUnspecified ProjectPolicyListResponsePoliciesRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectPolicyListResponsePoliciesRoleProjectRoleAdmin       ProjectPolicyListResponsePoliciesRole = "PROJECT_ROLE_ADMIN"
-	ProjectPolicyListResponsePoliciesRoleProjectRoleUser        ProjectPolicyListResponsePoliciesRole = "PROJECT_ROLE_USER"
+	ProjectPolicyListResponseRoleProjectRoleUnspecified ProjectPolicyListResponseRole = "PROJECT_ROLE_UNSPECIFIED"
+	ProjectPolicyListResponseRoleProjectRoleAdmin       ProjectPolicyListResponseRole = "PROJECT_ROLE_ADMIN"
+	ProjectPolicyListResponseRoleProjectRoleUser        ProjectPolicyListResponseRole = "PROJECT_ROLE_USER"
 )
 
-func (r ProjectPolicyListResponsePoliciesRole) IsKnown() bool {
+func (r ProjectPolicyListResponseRole) IsKnown() bool {
 	switch r {
-	case ProjectPolicyListResponsePoliciesRoleProjectRoleUnspecified, ProjectPolicyListResponsePoliciesRoleProjectRoleAdmin, ProjectPolicyListResponsePoliciesRoleProjectRoleUser:
+	case ProjectPolicyListResponseRoleProjectRoleUnspecified, ProjectPolicyListResponseRoleProjectRoleAdmin, ProjectPolicyListResponseRoleProjectRoleUser:
 		return true
 	}
 	return false

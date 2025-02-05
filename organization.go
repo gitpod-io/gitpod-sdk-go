@@ -64,7 +64,7 @@ func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdat
 }
 
 // ListOrganizations lists all organization the caller has access to.
-func (r *OrganizationService) List(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[OrganizationListResponse], err error) {
+func (r *OrganizationService) List(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) (res *pagination.OrganizationsPage[OrganizationListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -82,8 +82,8 @@ func (r *OrganizationService) List(ctx context.Context, params OrganizationListP
 }
 
 // ListOrganizations lists all organization the caller has access to.
-func (r *OrganizationService) ListAutoPaging(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[OrganizationListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *OrganizationService) ListAutoPaging(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) *pagination.OrganizationsPageAutoPager[OrganizationListResponse] {
+	return pagination.NewOrganizationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteOrganization deletes the specified organization.
@@ -111,7 +111,7 @@ func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveP
 }
 
 // ListMembers lists all members of the specified organization.
-func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[OrganizationListMembersResponse], err error) {
+func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *pagination.MembersPage[OrganizationListMembersResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -129,8 +129,8 @@ func (r *OrganizationService) ListMembers(ctx context.Context, params Organizati
 }
 
 // ListMembers lists all members of the specified organization.
-func (r *OrganizationService) ListMembersAutoPaging(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[OrganizationListMembersResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.ListMembers(ctx, params, opts...))
+func (r *OrganizationService) ListMembersAutoPaging(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) *pagination.MembersPageAutoPager[OrganizationListMembersResponse] {
+	return pagination.NewMembersPageAutoPager(r.ListMembers(ctx, params, opts...))
 }
 
 // SetRole
@@ -1055,31 +1055,6 @@ func (r organizationUpdateResponseOrganizationInviteDomainsJSON) RawJSON() strin
 }
 
 type OrganizationListResponse struct {
-	// organizations are the organizations that matched the query
-	Organizations []OrganizationListResponseOrganization `json:"organizations"`
-	// pagination contains the pagination options for listing organizations
-	Pagination OrganizationListResponsePagination `json:"pagination"`
-	JSON       organizationListResponseJSON       `json:"-"`
-}
-
-// organizationListResponseJSON contains the JSON metadata for the struct
-// [OrganizationListResponse]
-type organizationListResponseJSON struct {
-	Organizations apijson.Field
-	Pagination    apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *OrganizationListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type OrganizationListResponseOrganization struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -1169,9 +1144,9 @@ type OrganizationListResponseOrganization struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt     time.Time                                          `json:"createdAt" format:"date-time"`
-	InviteDomains OrganizationListResponseOrganizationsInviteDomains `json:"inviteDomains"`
-	Name          string                                             `json:"name"`
+	CreatedAt     time.Time                             `json:"createdAt" format:"date-time"`
+	InviteDomains OrganizationListResponseInviteDomains `json:"inviteDomains"`
+	Name          string                                `json:"name"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -1260,13 +1235,13 @@ type OrganizationListResponseOrganization struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time                                `json:"updatedAt" format:"date-time"`
-	JSON      organizationListResponseOrganizationJSON `json:"-"`
+	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
+	JSON      organizationListResponseJSON `json:"-"`
 }
 
-// organizationListResponseOrganizationJSON contains the JSON metadata for the
-// struct [OrganizationListResponseOrganization]
-type organizationListResponseOrganizationJSON struct {
+// organizationListResponseJSON contains the JSON metadata for the struct
+// [OrganizationListResponse]
+type organizationListResponseJSON struct {
 	ID            apijson.Field
 	CreatedAt     apijson.Field
 	InviteDomains apijson.Field
@@ -1276,57 +1251,33 @@ type organizationListResponseOrganizationJSON struct {
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *OrganizationListResponseOrganization) UnmarshalJSON(data []byte) (err error) {
+func (r *OrganizationListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r organizationListResponseOrganizationJSON) RawJSON() string {
+func (r organizationListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type OrganizationListResponseOrganizationsInviteDomains struct {
+type OrganizationListResponseInviteDomains struct {
 	// domains is the list of domains that are allowed to join the organization
-	Domains []string                                               `json:"domains"`
-	JSON    organizationListResponseOrganizationsInviteDomainsJSON `json:"-"`
+	Domains []string                                  `json:"domains"`
+	JSON    organizationListResponseInviteDomainsJSON `json:"-"`
 }
 
-// organizationListResponseOrganizationsInviteDomainsJSON contains the JSON
-// metadata for the struct [OrganizationListResponseOrganizationsInviteDomains]
-type organizationListResponseOrganizationsInviteDomainsJSON struct {
+// organizationListResponseInviteDomainsJSON contains the JSON metadata for the
+// struct [OrganizationListResponseInviteDomains]
+type organizationListResponseInviteDomainsJSON struct {
 	Domains     apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *OrganizationListResponseOrganizationsInviteDomains) UnmarshalJSON(data []byte) (err error) {
+func (r *OrganizationListResponseInviteDomains) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r organizationListResponseOrganizationsInviteDomainsJSON) RawJSON() string {
-	return r.raw
-}
-
-// pagination contains the pagination options for listing organizations
-type OrganizationListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                 `json:"nextToken"`
-	JSON      organizationListResponsePaginationJSON `json:"-"`
-}
-
-// organizationListResponsePaginationJSON contains the JSON metadata for the struct
-// [OrganizationListResponsePagination]
-type organizationListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationListResponsePaginationJSON) RawJSON() string {
+func (r organizationListResponseInviteDomainsJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1515,31 +1466,6 @@ func (r OrganizationJoinResponseMemberStatus) IsKnown() bool {
 type OrganizationLeaveResponse = interface{}
 
 type OrganizationListMembersResponse struct {
-	// members are the members of the organization
-	Members []OrganizationListMembersResponseMember `json:"members"`
-	// pagination contains the pagination options for listing members
-	Pagination OrganizationListMembersResponsePagination `json:"pagination"`
-	JSON       organizationListMembersResponseJSON       `json:"-"`
-}
-
-// organizationListMembersResponseJSON contains the JSON metadata for the struct
-// [OrganizationListMembersResponse]
-type organizationListMembersResponseJSON struct {
-	Members     apijson.Field
-	Pagination  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationListMembersResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationListMembersResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type OrganizationListMembersResponseMember struct {
 	AvatarURL string `json:"avatarUrl"`
 	Email     string `json:"email"`
 	FullName  string `json:"fullName"`
@@ -1633,16 +1559,16 @@ type OrganizationListMembersResponseMember struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	MemberSince time.Time                                    `json:"memberSince" format:"date-time"`
-	Role        OrganizationListMembersResponseMembersRole   `json:"role"`
-	Status      OrganizationListMembersResponseMembersStatus `json:"status"`
-	UserID      string                                       `json:"userId" format:"uuid"`
-	JSON        organizationListMembersResponseMemberJSON    `json:"-"`
+	MemberSince time.Time                             `json:"memberSince" format:"date-time"`
+	Role        OrganizationListMembersResponseRole   `json:"role"`
+	Status      OrganizationListMembersResponseStatus `json:"status"`
+	UserID      string                                `json:"userId" format:"uuid"`
+	JSON        organizationListMembersResponseJSON   `json:"-"`
 }
 
-// organizationListMembersResponseMemberJSON contains the JSON metadata for the
-// struct [OrganizationListMembersResponseMember]
-type organizationListMembersResponseMemberJSON struct {
+// organizationListMembersResponseJSON contains the JSON metadata for the struct
+// [OrganizationListMembersResponse]
+type organizationListMembersResponseJSON struct {
 	AvatarURL     apijson.Field
 	Email         apijson.Field
 	FullName      apijson.Field
@@ -1655,69 +1581,45 @@ type organizationListMembersResponseMemberJSON struct {
 	ExtraFields   map[string]apijson.Field
 }
 
-func (r *OrganizationListMembersResponseMember) UnmarshalJSON(data []byte) (err error) {
+func (r *OrganizationListMembersResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r organizationListMembersResponseMemberJSON) RawJSON() string {
+func (r organizationListMembersResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type OrganizationListMembersResponseMembersRole string
+type OrganizationListMembersResponseRole string
 
 const (
-	OrganizationListMembersResponseMembersRoleOrganizationRoleUnspecified OrganizationListMembersResponseMembersRole = "ORGANIZATION_ROLE_UNSPECIFIED"
-	OrganizationListMembersResponseMembersRoleOrganizationRoleAdmin       OrganizationListMembersResponseMembersRole = "ORGANIZATION_ROLE_ADMIN"
-	OrganizationListMembersResponseMembersRoleOrganizationRoleMember      OrganizationListMembersResponseMembersRole = "ORGANIZATION_ROLE_MEMBER"
+	OrganizationListMembersResponseRoleOrganizationRoleUnspecified OrganizationListMembersResponseRole = "ORGANIZATION_ROLE_UNSPECIFIED"
+	OrganizationListMembersResponseRoleOrganizationRoleAdmin       OrganizationListMembersResponseRole = "ORGANIZATION_ROLE_ADMIN"
+	OrganizationListMembersResponseRoleOrganizationRoleMember      OrganizationListMembersResponseRole = "ORGANIZATION_ROLE_MEMBER"
 )
 
-func (r OrganizationListMembersResponseMembersRole) IsKnown() bool {
+func (r OrganizationListMembersResponseRole) IsKnown() bool {
 	switch r {
-	case OrganizationListMembersResponseMembersRoleOrganizationRoleUnspecified, OrganizationListMembersResponseMembersRoleOrganizationRoleAdmin, OrganizationListMembersResponseMembersRoleOrganizationRoleMember:
+	case OrganizationListMembersResponseRoleOrganizationRoleUnspecified, OrganizationListMembersResponseRoleOrganizationRoleAdmin, OrganizationListMembersResponseRoleOrganizationRoleMember:
 		return true
 	}
 	return false
 }
 
-type OrganizationListMembersResponseMembersStatus string
+type OrganizationListMembersResponseStatus string
 
 const (
-	OrganizationListMembersResponseMembersStatusUserStatusUnspecified OrganizationListMembersResponseMembersStatus = "USER_STATUS_UNSPECIFIED"
-	OrganizationListMembersResponseMembersStatusUserStatusActive      OrganizationListMembersResponseMembersStatus = "USER_STATUS_ACTIVE"
-	OrganizationListMembersResponseMembersStatusUserStatusSuspended   OrganizationListMembersResponseMembersStatus = "USER_STATUS_SUSPENDED"
-	OrganizationListMembersResponseMembersStatusUserStatusLeft        OrganizationListMembersResponseMembersStatus = "USER_STATUS_LEFT"
+	OrganizationListMembersResponseStatusUserStatusUnspecified OrganizationListMembersResponseStatus = "USER_STATUS_UNSPECIFIED"
+	OrganizationListMembersResponseStatusUserStatusActive      OrganizationListMembersResponseStatus = "USER_STATUS_ACTIVE"
+	OrganizationListMembersResponseStatusUserStatusSuspended   OrganizationListMembersResponseStatus = "USER_STATUS_SUSPENDED"
+	OrganizationListMembersResponseStatusUserStatusLeft        OrganizationListMembersResponseStatus = "USER_STATUS_LEFT"
 )
 
-func (r OrganizationListMembersResponseMembersStatus) IsKnown() bool {
+func (r OrganizationListMembersResponseStatus) IsKnown() bool {
 	switch r {
-	case OrganizationListMembersResponseMembersStatusUserStatusUnspecified, OrganizationListMembersResponseMembersStatusUserStatusActive, OrganizationListMembersResponseMembersStatusUserStatusSuspended, OrganizationListMembersResponseMembersStatusUserStatusLeft:
+	case OrganizationListMembersResponseStatusUserStatusUnspecified, OrganizationListMembersResponseStatusUserStatusActive, OrganizationListMembersResponseStatusUserStatusSuspended, OrganizationListMembersResponseStatusUserStatusLeft:
 		return true
 	}
 	return false
-}
-
-// pagination contains the pagination options for listing members
-type OrganizationListMembersResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                                        `json:"nextToken"`
-	JSON      organizationListMembersResponsePaginationJSON `json:"-"`
-}
-
-// organizationListMembersResponsePaginationJSON contains the JSON metadata for the
-// struct [OrganizationListMembersResponsePagination]
-type organizationListMembersResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationListMembersResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationListMembersResponsePaginationJSON) RawJSON() string {
-	return r.raw
 }
 
 type OrganizationSetRoleResponse = interface{}

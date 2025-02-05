@@ -38,7 +38,7 @@ func NewEventService(opts ...option.RequestOption) (r *EventService) {
 
 // ListAuditLogs retrieves a paginated list of audit logs for the specified
 // organization
-func (r *EventService) List(ctx context.Context, params EventListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EventListResponse], err error) {
+func (r *EventService) List(ctx context.Context, params EventListParams, opts ...option.RequestOption) (res *pagination.EntriesPage[EventListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -57,8 +57,8 @@ func (r *EventService) List(ctx context.Context, params EventListParams, opts ..
 
 // ListAuditLogs retrieves a paginated list of audit logs for the specified
 // organization
-func (r *EventService) ListAutoPaging(ctx context.Context, params EventListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EventListResponse] {
-	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
+func (r *EventService) ListAutoPaging(ctx context.Context, params EventListParams, opts ...option.RequestOption) *pagination.EntriesPageAutoPager[EventListResponse] {
+	return pagination.NewEntriesPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // WatchEvents streams all requests events to the client
@@ -75,34 +75,10 @@ func (r *EventService) WatchStreaming(ctx context.Context, body EventWatchParams
 }
 
 type EventListResponse struct {
-	Entries []EventListResponseEntry `json:"entries"`
-	// pagination contains the pagination options for listing environments
-	Pagination EventListResponsePagination `json:"pagination"`
-	JSON       eventListResponseJSON       `json:"-"`
-}
-
-// eventListResponseJSON contains the JSON metadata for the struct
-// [EventListResponse]
-type eventListResponseJSON struct {
-	Entries     apijson.Field
-	Pagination  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EventListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r eventListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type EventListResponseEntry struct {
-	ID             string                                 `json:"id"`
-	Action         string                                 `json:"action"`
-	ActorID        string                                 `json:"actorId"`
-	ActorPrincipal EventListResponseEntriesActorPrincipal `json:"actorPrincipal"`
+	ID             string                          `json:"id"`
+	Action         string                          `json:"action"`
+	ActorID        string                          `json:"actorId"`
+	ActorPrincipal EventListResponseActorPrincipal `json:"actorPrincipal"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -191,15 +167,15 @@ type EventListResponseEntry struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt   time.Time                           `json:"createdAt" format:"date-time"`
-	SubjectID   string                              `json:"subjectId"`
-	SubjectType EventListResponseEntriesSubjectType `json:"subjectType"`
-	JSON        eventListResponseEntryJSON          `json:"-"`
+	CreatedAt   time.Time                    `json:"createdAt" format:"date-time"`
+	SubjectID   string                       `json:"subjectId"`
+	SubjectType EventListResponseSubjectType `json:"subjectType"`
+	JSON        eventListResponseJSON        `json:"-"`
 }
 
-// eventListResponseEntryJSON contains the JSON metadata for the struct
-// [EventListResponseEntry]
-type eventListResponseEntryJSON struct {
+// eventListResponseJSON contains the JSON metadata for the struct
+// [EventListResponse]
+type eventListResponseJSON struct {
 	ID             apijson.Field
 	Action         apijson.Field
 	ActorID        apijson.Field
@@ -211,86 +187,62 @@ type eventListResponseEntryJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *EventListResponseEntry) UnmarshalJSON(data []byte) (err error) {
+func (r *EventListResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r eventListResponseEntryJSON) RawJSON() string {
+func (r eventListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type EventListResponseEntriesActorPrincipal string
+type EventListResponseActorPrincipal string
 
 const (
-	EventListResponseEntriesActorPrincipalPrincipalUnspecified    EventListResponseEntriesActorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EventListResponseEntriesActorPrincipalPrincipalAccount        EventListResponseEntriesActorPrincipal = "PRINCIPAL_ACCOUNT"
-	EventListResponseEntriesActorPrincipalPrincipalUser           EventListResponseEntriesActorPrincipal = "PRINCIPAL_USER"
-	EventListResponseEntriesActorPrincipalPrincipalRunner         EventListResponseEntriesActorPrincipal = "PRINCIPAL_RUNNER"
-	EventListResponseEntriesActorPrincipalPrincipalEnvironment    EventListResponseEntriesActorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EventListResponseEntriesActorPrincipalPrincipalServiceAccount EventListResponseEntriesActorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
+	EventListResponseActorPrincipalPrincipalUnspecified    EventListResponseActorPrincipal = "PRINCIPAL_UNSPECIFIED"
+	EventListResponseActorPrincipalPrincipalAccount        EventListResponseActorPrincipal = "PRINCIPAL_ACCOUNT"
+	EventListResponseActorPrincipalPrincipalUser           EventListResponseActorPrincipal = "PRINCIPAL_USER"
+	EventListResponseActorPrincipalPrincipalRunner         EventListResponseActorPrincipal = "PRINCIPAL_RUNNER"
+	EventListResponseActorPrincipalPrincipalEnvironment    EventListResponseActorPrincipal = "PRINCIPAL_ENVIRONMENT"
+	EventListResponseActorPrincipalPrincipalServiceAccount EventListResponseActorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
-func (r EventListResponseEntriesActorPrincipal) IsKnown() bool {
+func (r EventListResponseActorPrincipal) IsKnown() bool {
 	switch r {
-	case EventListResponseEntriesActorPrincipalPrincipalUnspecified, EventListResponseEntriesActorPrincipalPrincipalAccount, EventListResponseEntriesActorPrincipalPrincipalUser, EventListResponseEntriesActorPrincipalPrincipalRunner, EventListResponseEntriesActorPrincipalPrincipalEnvironment, EventListResponseEntriesActorPrincipalPrincipalServiceAccount:
+	case EventListResponseActorPrincipalPrincipalUnspecified, EventListResponseActorPrincipalPrincipalAccount, EventListResponseActorPrincipalPrincipalUser, EventListResponseActorPrincipalPrincipalRunner, EventListResponseActorPrincipalPrincipalEnvironment, EventListResponseActorPrincipalPrincipalServiceAccount:
 		return true
 	}
 	return false
 }
 
-type EventListResponseEntriesSubjectType string
+type EventListResponseSubjectType string
 
 const (
-	EventListResponseEntriesSubjectTypeResourceTypeUnspecified             EventListResponseEntriesSubjectType = "RESOURCE_TYPE_UNSPECIFIED"
-	EventListResponseEntriesSubjectTypeResourceTypeEnvironment             EventListResponseEntriesSubjectType = "RESOURCE_TYPE_ENVIRONMENT"
-	EventListResponseEntriesSubjectTypeResourceTypeRunner                  EventListResponseEntriesSubjectType = "RESOURCE_TYPE_RUNNER"
-	EventListResponseEntriesSubjectTypeResourceTypeProject                 EventListResponseEntriesSubjectType = "RESOURCE_TYPE_PROJECT"
-	EventListResponseEntriesSubjectTypeResourceTypeTask                    EventListResponseEntriesSubjectType = "RESOURCE_TYPE_TASK"
-	EventListResponseEntriesSubjectTypeResourceTypeTaskExecution           EventListResponseEntriesSubjectType = "RESOURCE_TYPE_TASK_EXECUTION"
-	EventListResponseEntriesSubjectTypeResourceTypeService                 EventListResponseEntriesSubjectType = "RESOURCE_TYPE_SERVICE"
-	EventListResponseEntriesSubjectTypeResourceTypeOrganization            EventListResponseEntriesSubjectType = "RESOURCE_TYPE_ORGANIZATION"
-	EventListResponseEntriesSubjectTypeResourceTypeUser                    EventListResponseEntriesSubjectType = "RESOURCE_TYPE_USER"
-	EventListResponseEntriesSubjectTypeResourceTypeEnvironmentClass        EventListResponseEntriesSubjectType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
-	EventListResponseEntriesSubjectTypeResourceTypeRunnerScmIntegration    EventListResponseEntriesSubjectType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
-	EventListResponseEntriesSubjectTypeResourceTypeHostAuthenticationToken EventListResponseEntriesSubjectType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
-	EventListResponseEntriesSubjectTypeResourceTypeGroup                   EventListResponseEntriesSubjectType = "RESOURCE_TYPE_GROUP"
-	EventListResponseEntriesSubjectTypeResourceTypePersonalAccessToken     EventListResponseEntriesSubjectType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
-	EventListResponseEntriesSubjectTypeResourceTypeUserPreference          EventListResponseEntriesSubjectType = "RESOURCE_TYPE_USER_PREFERENCE"
-	EventListResponseEntriesSubjectTypeResourceTypeServiceAccount          EventListResponseEntriesSubjectType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
-	EventListResponseEntriesSubjectTypeResourceTypeSecret                  EventListResponseEntriesSubjectType = "RESOURCE_TYPE_SECRET"
-	EventListResponseEntriesSubjectTypeResourceTypeSSOConfig               EventListResponseEntriesSubjectType = "RESOURCE_TYPE_SSO_CONFIG"
+	EventListResponseSubjectTypeResourceTypeUnspecified             EventListResponseSubjectType = "RESOURCE_TYPE_UNSPECIFIED"
+	EventListResponseSubjectTypeResourceTypeEnvironment             EventListResponseSubjectType = "RESOURCE_TYPE_ENVIRONMENT"
+	EventListResponseSubjectTypeResourceTypeRunner                  EventListResponseSubjectType = "RESOURCE_TYPE_RUNNER"
+	EventListResponseSubjectTypeResourceTypeProject                 EventListResponseSubjectType = "RESOURCE_TYPE_PROJECT"
+	EventListResponseSubjectTypeResourceTypeTask                    EventListResponseSubjectType = "RESOURCE_TYPE_TASK"
+	EventListResponseSubjectTypeResourceTypeTaskExecution           EventListResponseSubjectType = "RESOURCE_TYPE_TASK_EXECUTION"
+	EventListResponseSubjectTypeResourceTypeService                 EventListResponseSubjectType = "RESOURCE_TYPE_SERVICE"
+	EventListResponseSubjectTypeResourceTypeOrganization            EventListResponseSubjectType = "RESOURCE_TYPE_ORGANIZATION"
+	EventListResponseSubjectTypeResourceTypeUser                    EventListResponseSubjectType = "RESOURCE_TYPE_USER"
+	EventListResponseSubjectTypeResourceTypeEnvironmentClass        EventListResponseSubjectType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
+	EventListResponseSubjectTypeResourceTypeRunnerScmIntegration    EventListResponseSubjectType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
+	EventListResponseSubjectTypeResourceTypeHostAuthenticationToken EventListResponseSubjectType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
+	EventListResponseSubjectTypeResourceTypeGroup                   EventListResponseSubjectType = "RESOURCE_TYPE_GROUP"
+	EventListResponseSubjectTypeResourceTypePersonalAccessToken     EventListResponseSubjectType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
+	EventListResponseSubjectTypeResourceTypeUserPreference          EventListResponseSubjectType = "RESOURCE_TYPE_USER_PREFERENCE"
+	EventListResponseSubjectTypeResourceTypeServiceAccount          EventListResponseSubjectType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
+	EventListResponseSubjectTypeResourceTypeSecret                  EventListResponseSubjectType = "RESOURCE_TYPE_SECRET"
+	EventListResponseSubjectTypeResourceTypeSSOConfig               EventListResponseSubjectType = "RESOURCE_TYPE_SSO_CONFIG"
 )
 
-func (r EventListResponseEntriesSubjectType) IsKnown() bool {
+func (r EventListResponseSubjectType) IsKnown() bool {
 	switch r {
-	case EventListResponseEntriesSubjectTypeResourceTypeUnspecified, EventListResponseEntriesSubjectTypeResourceTypeEnvironment, EventListResponseEntriesSubjectTypeResourceTypeRunner, EventListResponseEntriesSubjectTypeResourceTypeProject, EventListResponseEntriesSubjectTypeResourceTypeTask, EventListResponseEntriesSubjectTypeResourceTypeTaskExecution, EventListResponseEntriesSubjectTypeResourceTypeService, EventListResponseEntriesSubjectTypeResourceTypeOrganization, EventListResponseEntriesSubjectTypeResourceTypeUser, EventListResponseEntriesSubjectTypeResourceTypeEnvironmentClass, EventListResponseEntriesSubjectTypeResourceTypeRunnerScmIntegration, EventListResponseEntriesSubjectTypeResourceTypeHostAuthenticationToken, EventListResponseEntriesSubjectTypeResourceTypeGroup, EventListResponseEntriesSubjectTypeResourceTypePersonalAccessToken, EventListResponseEntriesSubjectTypeResourceTypeUserPreference, EventListResponseEntriesSubjectTypeResourceTypeServiceAccount, EventListResponseEntriesSubjectTypeResourceTypeSecret, EventListResponseEntriesSubjectTypeResourceTypeSSOConfig:
+	case EventListResponseSubjectTypeResourceTypeUnspecified, EventListResponseSubjectTypeResourceTypeEnvironment, EventListResponseSubjectTypeResourceTypeRunner, EventListResponseSubjectTypeResourceTypeProject, EventListResponseSubjectTypeResourceTypeTask, EventListResponseSubjectTypeResourceTypeTaskExecution, EventListResponseSubjectTypeResourceTypeService, EventListResponseSubjectTypeResourceTypeOrganization, EventListResponseSubjectTypeResourceTypeUser, EventListResponseSubjectTypeResourceTypeEnvironmentClass, EventListResponseSubjectTypeResourceTypeRunnerScmIntegration, EventListResponseSubjectTypeResourceTypeHostAuthenticationToken, EventListResponseSubjectTypeResourceTypeGroup, EventListResponseSubjectTypeResourceTypePersonalAccessToken, EventListResponseSubjectTypeResourceTypeUserPreference, EventListResponseSubjectTypeResourceTypeServiceAccount, EventListResponseSubjectTypeResourceTypeSecret, EventListResponseSubjectTypeResourceTypeSSOConfig:
 		return true
 	}
 	return false
-}
-
-// pagination contains the pagination options for listing environments
-type EventListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no more
-	// results
-	NextToken string                          `json:"nextToken"`
-	JSON      eventListResponsePaginationJSON `json:"-"`
-}
-
-// eventListResponsePaginationJSON contains the JSON metadata for the struct
-// [EventListResponsePagination]
-type eventListResponsePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EventListResponsePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r eventListResponsePaginationJSON) RawJSON() string {
-	return r.raw
 }
 
 type EventWatchResponse struct {
