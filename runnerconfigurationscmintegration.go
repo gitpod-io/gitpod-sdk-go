@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // RunnerConfigurationScmIntegrationService contains methods and other services
@@ -35,72 +35,57 @@ func NewRunnerConfigurationScmIntegrationService(opts ...option.RequestOption) (
 }
 
 // CreateSCMIntegration creates a new SCM integration on a runner.
-func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, params RunnerConfigurationScmIntegrationNewParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body RunnerConfigurationScmIntegrationNewParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetSCMIntegration returns a single SCM integration configured for a runner.
-func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, params RunnerConfigurationScmIntegrationGetParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body RunnerConfigurationScmIntegrationGetParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateSCMIntegration updates an existing SCM integration on a runner.
-func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, params RunnerConfigurationScmIntegrationUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, body RunnerConfigurationScmIntegrationUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListSCMIntegrations returns all SCM integrations configured for a runner.
-func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerConfigurationScmIntegrationListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListSCMIntegrations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListSCMIntegrations returns all SCM integrations configured for a runner.
+func (r *RunnerConfigurationScmIntegrationService) ListAutoPaging(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerConfigurationScmIntegrationListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteSCMIntegration deletes an existing SCM integration on a runner.
-func (r *RunnerConfigurationScmIntegrationService) Delete(ctx context.Context, params RunnerConfigurationScmIntegrationDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerConfigurationScmIntegrationService) Delete(ctx context.Context, body RunnerConfigurationScmIntegrationDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -286,9 +271,8 @@ func (r runnerConfigurationScmIntegrationListResponseIntegrationsOAuthJSON) RawJ
 
 // pagination contains the pagination options for listing scm integrations
 type RunnerConfigurationScmIntegrationListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                                      `json:"nextToken"`
 	JSON      runnerConfigurationScmIntegrationListResponsePaginationJSON `json:"-"`
 }
@@ -314,10 +298,6 @@ type RunnerConfigurationScmIntegrationDeleteResponse = interface{}
 
 type RunnerConfigurationScmIntegrationNewParams struct {
 	Body RunnerConfigurationScmIntegrationNewParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationScmIntegrationNewParams) MarshalJSON() (data []byte, err error) {
@@ -325,12 +305,10 @@ func (r RunnerConfigurationScmIntegrationNewParams) MarshalJSON() (data []byte, 
 }
 
 type RunnerConfigurationScmIntegrationNewParamsBody struct {
-	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
-	//
-	// If configured, oauth_plaintext_client_secret must also be set.
+	// oauth_client_id is the OAuth app's client ID, if OAuth is configured. If
+	// configured, oauth_plaintext_client_secret must also be set.
 	OAuthClientID param.Field[string] `json:"oauthClientId"`
 	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text.
-	//
 	// This will first be encrypted with the runner's public key before being stored.
 	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret"`
 }
@@ -351,9 +329,8 @@ type RunnerConfigurationScmIntegrationNewParamsBodyUnion interface {
 }
 
 type RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet struct {
-	// oauth_client_id is the OAuth app's client ID, if OAuth is configured.
-	//
-	// If configured, oauth_plaintext_client_secret must also be set.
+	// oauth_client_id is the OAuth app's client ID, if OAuth is configured. If
+	// configured, oauth_plaintext_client_secret must also be set.
 	OAuthClientID param.Field[string] `json:"oauthClientId,required"`
 }
 
@@ -366,7 +343,6 @@ func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthApp
 
 type RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecretIsTheOAuthAppSClientSecretInClearTextThisWillFirstBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored struct {
 	// oauth_plaintext_client_secret is the OAuth app's client secret in clear text.
-	//
 	// This will first be encrypted with the runner's public key before being stored.
 	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret,required"`
 }
@@ -378,54 +354,16 @@ func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecret
 func (r RunnerConfigurationScmIntegrationNewParamsBodyOAuthPlaintextClientSecretIsTheOAuthAppSClientSecretInClearTextThisWillFirstBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored) implementsRunnerConfigurationScmIntegrationNewParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1 RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationScmIntegrationGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                           `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationScmIntegrationGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion1 RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type RunnerConfigurationScmIntegrationUpdateParams struct {
 	Body RunnerConfigurationScmIntegrationUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationScmIntegrationUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -433,23 +371,19 @@ func (r RunnerConfigurationScmIntegrationUpdateParams) MarshalJSON() (data []byt
 }
 
 type RunnerConfigurationScmIntegrationUpdateParamsBody struct {
-	// oauth_client_id can be set to update the OAuth app's client ID.
-	//
-	// If an empty string is set, the OAuth configuration will be removed (regardless
-	// of whether a client secret is set), and any existing Host Authentication Tokens
-	// for the SCM integration's runner and host that were created using the OAuth app
-	// will be deleted. This might lead to users being unable to access their
-	// repositories until they re-authenticate.
+	// oauth_client_id can be set to update the OAuth app's client ID. If an empty
+	// string is set, the OAuth configuration will be removed (regardless of whether a
+	// client secret is set), and any existing Host Authentication Tokens for the SCM
+	// integration's runner and host that were created using the OAuth app will be
+	// deleted. This might lead to users being unable to access their repositories
+	// until they re-authenticate.
 	OAuthClientID param.Field[string] `json:"oauthClientId"`
 	// oauth_plaintext_client_secret can be set to update the OAuth app's client
-	// secret.
-	//
-	// The cleartext secret will be encrypted with the runner's public key before being
-	// stored.
+	// secret. The cleartext secret will be encrypted with the runner's public key
+	// before being stored.
 	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret"`
-	// pat can be set to enable or disable Personal Access Tokens support.
-	//
-	// When disabling PATs, any existing Host Authentication Tokens for the SCM
+	// pat can be set to enable or disable Personal Access Tokens support. When
+	// disabling PATs, any existing Host Authentication Tokens for the SCM
 	// integration's runner and host that were created using a PAT will be deleted.
 	// This might lead to users being unable to access their repositories until they
 	// re-authenticate.
@@ -473,13 +407,12 @@ type RunnerConfigurationScmIntegrationUpdateParamsBodyUnion interface {
 }
 
 type RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate struct {
-	// oauth_client_id can be set to update the OAuth app's client ID.
-	//
-	// If an empty string is set, the OAuth configuration will be removed (regardless
-	// of whether a client secret is set), and any existing Host Authentication Tokens
-	// for the SCM integration's runner and host that were created using the OAuth app
-	// will be deleted. This might lead to users being unable to access their
-	// repositories until they re-authenticate.
+	// oauth_client_id can be set to update the OAuth app's client ID. If an empty
+	// string is set, the OAuth configuration will be removed (regardless of whether a
+	// client secret is set), and any existing Host Authentication Tokens for the SCM
+	// integration's runner and host that were created using the OAuth app will be
+	// deleted. This might lead to users being unable to access their repositories
+	// until they re-authenticate.
 	OAuthClientID param.Field[string] `json:"oauthClientId,required"`
 }
 
@@ -492,10 +425,8 @@ func (r RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetTo
 
 type RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthPlaintextClientSecretCanBeSetToUpdateTheOAuthAppSClientSecretTheCleartextSecretWillBeEncryptedWithTheRunnerSPublicKeyBeforeBeingStored struct {
 	// oauth_plaintext_client_secret can be set to update the OAuth app's client
-	// secret.
-	//
-	// The cleartext secret will be encrypted with the runner's public key before being
-	// stored.
+	// secret. The cleartext secret will be encrypted with the runner's public key
+	// before being stored.
 	OAuthPlaintextClientSecret param.Field[string] `json:"oauthPlaintextClientSecret,required"`
 }
 
@@ -507,9 +438,8 @@ func (r RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthPlaintextClientSec
 }
 
 type RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDisablePersonalAccessTokensSupportWhenDisablingPaTsAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingAPatWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate struct {
-	// pat can be set to enable or disable Personal Access Tokens support.
-	//
-	// When disabling PATs, any existing Host Authentication Tokens for the SCM
+	// pat can be set to enable or disable Personal Access Tokens support. When
+	// disabling PATs, any existing Host Authentication Tokens for the SCM
 	// integration's runner and host that were created using a PAT will be deleted.
 	// This might lead to users being unable to access their repositories until they
 	// re-authenticate.
@@ -523,36 +453,16 @@ func (r RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDi
 func (r RunnerConfigurationScmIntegrationUpdateParamsBodyPatCanBeSetToEnableOrDisablePersonalAccessTokensSupportWhenDisablingPaTsAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingAPatWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate) implementsRunnerConfigurationScmIntegrationUpdateParamsBodyUnion() {
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion1 RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type RunnerConfigurationScmIntegrationListParams struct {
+	Token    param.Field[string]                                            `query:"token"`
+	PageSize param.Field[int64]                                             `query:"pageSize"`
+	Filter   param.Field[RunnerConfigurationScmIntegrationListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing scm integrations
+	Pagination param.Field[RunnerConfigurationScmIntegrationListParamsPagination] `json:"pagination"`
 }
 
-type RunnerConfigurationScmIntegrationListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerConfigurationScmIntegrationListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerConfigurationScmIntegrationListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerConfigurationScmIntegrationListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                             `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r RunnerConfigurationScmIntegrationListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [RunnerConfigurationScmIntegrationListParams]'s query
@@ -564,92 +474,33 @@ func (r RunnerConfigurationScmIntegrationListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type RunnerConfigurationScmIntegrationListParamsEncoding string
-
-const (
-	RunnerConfigurationScmIntegrationListParamsEncodingProto RunnerConfigurationScmIntegrationListParamsEncoding = "proto"
-	RunnerConfigurationScmIntegrationListParamsEncodingJson  RunnerConfigurationScmIntegrationListParamsEncoding = "json"
-)
-
-func (r RunnerConfigurationScmIntegrationListParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationListParamsEncodingProto, RunnerConfigurationScmIntegrationListParamsEncodingJson:
-		return true
-	}
-	return false
+type RunnerConfigurationScmIntegrationListParamsFilter struct {
+	// runner_ids filters the response to only SCM integrations of these Runner IDs
+	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion1 RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r RunnerConfigurationScmIntegrationListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type RunnerConfigurationScmIntegrationListParamsCompression string
-
-const (
-	RunnerConfigurationScmIntegrationListParamsCompressionIdentity RunnerConfigurationScmIntegrationListParamsCompression = "identity"
-	RunnerConfigurationScmIntegrationListParamsCompressionGzip     RunnerConfigurationScmIntegrationListParamsCompression = "gzip"
-	RunnerConfigurationScmIntegrationListParamsCompressionBr       RunnerConfigurationScmIntegrationListParamsCompression = "br"
-)
-
-func (r RunnerConfigurationScmIntegrationListParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationListParamsCompressionIdentity, RunnerConfigurationScmIntegrationListParamsCompressionGzip, RunnerConfigurationScmIntegrationListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing scm integrations
+type RunnerConfigurationScmIntegrationListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationListParamsConnect string
-
-const (
-	RunnerConfigurationScmIntegrationListParamsConnectV1 RunnerConfigurationScmIntegrationListParamsConnect = "v1"
-)
-
-func (r RunnerConfigurationScmIntegrationListParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationListParamsConnectV1:
-		return true
-	}
-	return false
+func (r RunnerConfigurationScmIntegrationListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerConfigurationScmIntegrationDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                              `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r RunnerConfigurationScmIntegrationDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion1 RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationScmIntegrationDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

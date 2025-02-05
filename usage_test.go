@@ -24,9 +24,7 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerNewParamsConnectProtocolVersion1),
-	})
+	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
 	if err != nil {
 		t.Error(err)
 	}

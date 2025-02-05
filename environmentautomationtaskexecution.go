@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -15,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -39,44 +39,41 @@ func NewEnvironmentAutomationTaskExecutionService(opts ...option.RequestOption) 
 }
 
 // GetTaskExecution
-func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, params EnvironmentAutomationTaskExecutionGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, body EnvironmentAutomationTaskExecutionGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListTaskExecutions
-func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskExecutionService) List(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentAutomationTaskExecutionListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTaskExecutions"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListTaskExecutions
+func (r *EnvironmentAutomationTaskExecutionService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationTaskExecutionListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentAutomationTaskExecutionListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // StopTaskExecution
-func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, params EnvironmentAutomationTaskExecutionStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionStopResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, body EnvironmentAutomationTaskExecutionStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskExecutionStopResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -131,7 +128,6 @@ func (r environmentAutomationTaskExecutionGetResponseTaskExecutionJSON) RawJSON(
 
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -221,7 +217,6 @@ type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionMetadata struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CompletedAt time.Time `json:"completedAt" format:"date-time"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -315,7 +310,6 @@ type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionMetadata struct {
 	// environment_id is the ID of the environment in which the task run is executed.
 	EnvironmentID string `json:"environmentId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -486,9 +480,8 @@ type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpec struct {
 	// running task execution early.
 	DesiredPhase EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecDesiredPhase `json:"desiredPhase"`
 	// plan is a list of groups of steps. The steps in a group are executed
-	// concurrently, while the groups are executed sequentially.
-	//
-	// The order of the groups is the order in which they are executed.
+	// concurrently, while the groups are executed sequentially. The order of the
+	// groups is the order in which they are executed.
 	Plan []EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlan `json:"plan"`
 	JSON environmentAutomationTaskExecutionGetResponseTaskExecutionSpecJSON   `json:"-"`
 }
@@ -662,15 +655,11 @@ func (r EnvironmentAutomationTaskExecutionGetResponseTaskExecutionSpecPlanStepsO
 
 type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatus struct {
 	// failure_message summarises why the task execution failed to operate. If this is
-	// non-empty
-	//
-	// the task execution has failed to operate and will likely transition to a failed
-	// state.
+	// non-empty the task execution has failed to operate and will likely transition to
+	// a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url is the URL to the logs of the task's steps. If this is empty, the task
-	// either has no logs
-	//
-	// or has not yet started.
+	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
 	// the phase of a task execution represents the aggregated phase of all steps.
 	Phase EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusPhase `json:"phase"`
@@ -679,11 +668,9 @@ type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion string `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion"`
 	// steps provides the status for each individual step of the task execution. If a
-	// step is missing it
-	//
-	// has not yet started.
+	// step is missing it has not yet started.
 	Steps []EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStep `json:"steps"`
 	JSON  environmentAutomationTaskExecutionGetResponseTaskExecutionStatusJSON   `json:"-"`
 }
@@ -733,7 +720,6 @@ type EnvironmentAutomationTaskExecutionGetResponseTaskExecutionStatusStep struct
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
 	// failure_message summarises why the step failed to operate. If this is non-empty
-	//
 	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the execution step
@@ -804,9 +790,8 @@ func (r environmentAutomationTaskExecutionListResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationTaskExecutionListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                                       `json:"nextToken"`
 	JSON      environmentAutomationTaskExecutionListResponsePaginationJSON `json:"-"`
 }
@@ -858,7 +843,6 @@ func (r environmentAutomationTaskExecutionListResponseTaskExecutionJSON) RawJSON
 
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -948,7 +932,6 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata struct
 	// to obtain a formatter capable of generating timestamps in this format.
 	CompletedAt time.Time `json:"completedAt" format:"date-time"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1042,7 +1025,6 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsMetadata struct
 	// environment_id is the ID of the environment in which the task run is executed.
 	EnvironmentID string `json:"environmentId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1213,9 +1195,8 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpec struct {
 	// running task execution early.
 	DesiredPhase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecDesiredPhase `json:"desiredPhase"`
 	// plan is a list of groups of steps. The steps in a group are executed
-	// concurrently, while the groups are executed sequentially.
-	//
-	// The order of the groups is the order in which they are executed.
+	// concurrently, while the groups are executed sequentially. The order of the
+	// groups is the order in which they are executed.
 	Plan []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlan `json:"plan"`
 	JSON environmentAutomationTaskExecutionListResponseTaskExecutionsSpecJSON   `json:"-"`
 }
@@ -1389,15 +1370,11 @@ func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsSpecPlanStep
 
 type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
 	// failure_message summarises why the task execution failed to operate. If this is
-	// non-empty
-	//
-	// the task execution has failed to operate and will likely transition to a failed
-	// state.
+	// non-empty the task execution has failed to operate and will likely transition to
+	// a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url is the URL to the logs of the task's steps. If this is empty, the task
-	// either has no logs
-	//
-	// or has not yet started.
+	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
 	// the phase of a task execution represents the aggregated phase of all steps.
 	Phase EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusPhase `json:"phase"`
@@ -1406,11 +1383,9 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion string `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion"`
 	// steps provides the status for each individual step of the task execution. If a
-	// step is missing it
-	//
-	// has not yet started.
+	// step is missing it has not yet started.
 	Steps []EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep `json:"steps"`
 	JSON  environmentAutomationTaskExecutionListResponseTaskExecutionsStatusJSON   `json:"-"`
 }
@@ -1460,7 +1435,6 @@ type EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStep stru
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
 	// failure_message summarises why the step failed to operate. If this is non-empty
-	//
 	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the execution step
@@ -1510,47 +1484,24 @@ func (r EnvironmentAutomationTaskExecutionListResponseTaskExecutionsStatusStepsP
 type EnvironmentAutomationTaskExecutionStopResponse = interface{}
 
 type EnvironmentAutomationTaskExecutionGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                            `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationTaskExecutionGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type EnvironmentAutomationTaskExecutionListParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// filter contains the filter options for listing task runs
+	Filter param.Field[EnvironmentAutomationTaskExecutionListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing task runs
+	Pagination param.Field[EnvironmentAutomationTaskExecutionListParamsPagination] `json:"pagination"`
 }
 
-type EnvironmentAutomationTaskExecutionListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentAutomationTaskExecutionListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentAutomationTaskExecutionListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentAutomationTaskExecutionListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                              `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r EnvironmentAutomationTaskExecutionListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [EnvironmentAutomationTaskExecutionListParams]'s query
@@ -1562,92 +1513,59 @@ func (r EnvironmentAutomationTaskExecutionListParams) URLQuery() (v url.Values) 
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentAutomationTaskExecutionListParamsEncoding string
+// filter contains the filter options for listing task runs
+type EnvironmentAutomationTaskExecutionListParamsFilter struct {
+	// environment_ids filters the response to only task runs of these environments
+	EnvironmentIDs param.Field[[]string] `json:"environmentIds" format:"uuid"`
+	// phases filters the response to only task runs in these phases
+	Phases param.Field[[]EnvironmentAutomationTaskExecutionListParamsFilterPhase] `json:"phases"`
+	// task_ids filters the response to only task runs of these tasks
+	TaskIDs param.Field[[]string] `json:"taskIds" format:"uuid"`
+	// task_references filters the response to only task runs with this reference
+	TaskReferences param.Field[[]string] `json:"taskReferences"`
+}
+
+func (r EnvironmentAutomationTaskExecutionListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentAutomationTaskExecutionListParamsFilterPhase string
 
 const (
-	EnvironmentAutomationTaskExecutionListParamsEncodingProto EnvironmentAutomationTaskExecutionListParamsEncoding = "proto"
-	EnvironmentAutomationTaskExecutionListParamsEncodingJson  EnvironmentAutomationTaskExecutionListParamsEncoding = "json"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhasePending     EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_PENDING"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseRunning     EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_RUNNING"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseSucceeded   EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseFailed      EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_FAILED"
+	EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseStopped     EnvironmentAutomationTaskExecutionListParamsFilterPhase = "TASK_EXECUTION_PHASE_STOPPED"
 )
 
-func (r EnvironmentAutomationTaskExecutionListParamsEncoding) IsKnown() bool {
+func (r EnvironmentAutomationTaskExecutionListParamsFilterPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentAutomationTaskExecutionListParamsEncodingProto, EnvironmentAutomationTaskExecutionListParamsEncodingJson:
+	case EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhasePending, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseRunning, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseSucceeded, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseFailed, EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseStopped:
 		return true
 	}
 	return false
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing task runs
+type EnvironmentAutomationTaskExecutionListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Which compression algorithm to use for this request
-type EnvironmentAutomationTaskExecutionListParamsCompression string
-
-const (
-	EnvironmentAutomationTaskExecutionListParamsCompressionIdentity EnvironmentAutomationTaskExecutionListParamsCompression = "identity"
-	EnvironmentAutomationTaskExecutionListParamsCompressionGzip     EnvironmentAutomationTaskExecutionListParamsCompression = "gzip"
-	EnvironmentAutomationTaskExecutionListParamsCompressionBr       EnvironmentAutomationTaskExecutionListParamsCompression = "br"
-)
-
-func (r EnvironmentAutomationTaskExecutionListParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionListParamsCompressionIdentity, EnvironmentAutomationTaskExecutionListParamsCompressionGzip, EnvironmentAutomationTaskExecutionListParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskExecutionListParamsConnect string
-
-const (
-	EnvironmentAutomationTaskExecutionListParamsConnectV1 EnvironmentAutomationTaskExecutionListParamsConnect = "v1"
-)
-
-func (r EnvironmentAutomationTaskExecutionListParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionListParamsConnectV1:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationTaskExecutionListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type EnvironmentAutomationTaskExecutionStopParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                             `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationTaskExecutionStopParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1 EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskExecutionStopParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

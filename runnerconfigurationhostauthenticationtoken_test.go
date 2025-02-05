@@ -27,15 +27,13 @@ func TestRunnerConfigurationHostAuthenticationTokenNewWithOptionalParams(t *test
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.New(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenNewParamsConnectProtocolVersion1),
-		Token:                  gitpod.F("x"),
-		ExpiresAt:              gitpod.F(time.Now()),
-		Host:                   gitpod.F("x"),
-		RefreshToken:           gitpod.F("refreshToken"),
-		RunnerID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Source:                 gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceUnspecified),
-		UserID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:        gitpod.F("x"),
+		ExpiresAt:    gitpod.F(time.Now()),
+		Host:         gitpod.F("x"),
+		RefreshToken: gitpod.F("refreshToken"),
+		RunnerID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Source:       gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceUnspecified),
+		UserID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -59,9 +57,7 @@ func TestRunnerConfigurationHostAuthenticationTokenGetWithOptionalParams(t *test
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.Get(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenGetParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -72,7 +68,7 @@ func TestRunnerConfigurationHostAuthenticationTokenGetWithOptionalParams(t *test
 	}
 }
 
-func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationHostAuthenticationTokenUpdate(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -88,8 +84,6 @@ func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *t
 		Body: gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyExpiresAt{
 			ExpiresAt: gitpod.F(time.Now()),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -113,13 +107,15 @@ func TestRunnerConfigurationHostAuthenticationTokenListWithOptionalParams(t *tes
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.List(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenListParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F[gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion](gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID{
+			RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		}),
+		Pagination: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -143,9 +139,7 @@ func TestRunnerConfigurationHostAuthenticationTokenDeleteWithOptionalParams(t *t
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.Delete(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenDeleteParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

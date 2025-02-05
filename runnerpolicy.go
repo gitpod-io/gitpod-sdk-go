@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // RunnerPolicyService contains methods and other services that help with
@@ -35,58 +35,49 @@ func NewRunnerPolicyService(opts ...option.RequestOption) (r *RunnerPolicyServic
 }
 
 // CreateRunnerPolicy creates a new runner policy.
-func (r *RunnerPolicyService) New(ctx context.Context, params RunnerPolicyNewParams, opts ...option.RequestOption) (res *RunnerPolicyNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerPolicyService) New(ctx context.Context, body RunnerPolicyNewParams, opts ...option.RequestOption) (res *RunnerPolicyNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunnerPolicy"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateRunnerPolicy an existing runner policy.
-func (r *RunnerPolicyService) Update(ctx context.Context, params RunnerPolicyUpdateParams, opts ...option.RequestOption) (res *RunnerPolicyUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerPolicyService) Update(ctx context.Context, body RunnerPolicyUpdateParams, opts ...option.RequestOption) (res *RunnerPolicyUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/UpdateRunnerPolicy"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListRunnerPolicies lists runner policies.
-func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) (res *RunnerPolicyListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[RunnerPolicyListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerService/ListRunnerPolicies"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListRunnerPolicies lists runner policies.
+func (r *RunnerPolicyService) ListAutoPaging(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[RunnerPolicyListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteRunnerPolicy deletes a runner policy.
-func (r *RunnerPolicyService) Delete(ctx context.Context, params RunnerPolicyDeleteParams, opts ...option.RequestOption) (res *RunnerPolicyDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *RunnerPolicyService) Delete(ctx context.Context, body RunnerPolicyDeleteParams, opts ...option.RequestOption) (res *RunnerPolicyDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/DeleteRunnerPolicy"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -238,9 +229,8 @@ func (r runnerPolicyListResponseJSON) RawJSON() string {
 }
 
 type RunnerPolicyListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                 `json:"nextToken"`
 	JSON      runnerPolicyListResponsePaginationJSON `json:"-"`
 }
@@ -305,34 +295,15 @@ func (r RunnerPolicyListResponsePoliciesRole) IsKnown() bool {
 type RunnerPolicyDeleteResponse = interface{}
 
 type RunnerPolicyNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerPolicyNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// group_id specifies the group_id identifier
 	GroupID param.Field[string]                    `json:"groupId" format:"uuid"`
 	Role    param.Field[RunnerPolicyNewParamsRole] `json:"role"`
 	// runner_id specifies the project identifier
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerPolicyNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerPolicyNewParamsConnectProtocolVersion float64
-
-const (
-	RunnerPolicyNewParamsConnectProtocolVersion1 RunnerPolicyNewParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerPolicyNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerPolicyNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type RunnerPolicyNewParamsRole string
@@ -352,34 +323,15 @@ func (r RunnerPolicyNewParamsRole) IsKnown() bool {
 }
 
 type RunnerPolicyUpdateParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerPolicyUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// group_id specifies the group_id identifier
 	GroupID param.Field[string]                       `json:"groupId" format:"uuid"`
 	Role    param.Field[RunnerPolicyUpdateParamsRole] `json:"role"`
 	// runner_id specifies the project identifier
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerPolicyUpdateParamsConnectProtocolVersion float64
-
-const (
-	RunnerPolicyUpdateParamsConnectProtocolVersion1 RunnerPolicyUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerPolicyUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerPolicyUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type RunnerPolicyUpdateParamsRole string
@@ -399,20 +351,16 @@ func (r RunnerPolicyUpdateParamsRole) IsKnown() bool {
 }
 
 type RunnerPolicyListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[RunnerPolicyListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerPolicyListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[RunnerPolicyListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[RunnerPolicyListParamsConnect] `query:"connect"`
-	Message param.Field[string]                        `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// pagination contains the pagination options for listing project policies
+	Pagination param.Field[RunnerPolicyListParamsPagination] `json:"pagination"`
+	// runner_id specifies the project identifier
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+}
+
+func (r RunnerPolicyListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [RunnerPolicyListParams]'s query parameters as `url.Values`.
@@ -423,95 +371,27 @@ func (r RunnerPolicyListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type RunnerPolicyListParamsEncoding string
-
-const (
-	RunnerPolicyListParamsEncodingProto RunnerPolicyListParamsEncoding = "proto"
-	RunnerPolicyListParamsEncodingJson  RunnerPolicyListParamsEncoding = "json"
-)
-
-func (r RunnerPolicyListParamsEncoding) IsKnown() bool {
-	switch r {
-	case RunnerPolicyListParamsEncodingProto, RunnerPolicyListParamsEncodingJson:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing project policies
+type RunnerPolicyListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type RunnerPolicyListParamsConnectProtocolVersion float64
-
-const (
-	RunnerPolicyListParamsConnectProtocolVersion1 RunnerPolicyListParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerPolicyListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerPolicyListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type RunnerPolicyListParamsCompression string
-
-const (
-	RunnerPolicyListParamsCompressionIdentity RunnerPolicyListParamsCompression = "identity"
-	RunnerPolicyListParamsCompressionGzip     RunnerPolicyListParamsCompression = "gzip"
-	RunnerPolicyListParamsCompressionBr       RunnerPolicyListParamsCompression = "br"
-)
-
-func (r RunnerPolicyListParamsCompression) IsKnown() bool {
-	switch r {
-	case RunnerPolicyListParamsCompressionIdentity, RunnerPolicyListParamsCompressionGzip, RunnerPolicyListParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type RunnerPolicyListParamsConnect string
-
-const (
-	RunnerPolicyListParamsConnectV1 RunnerPolicyListParamsConnect = "v1"
-)
-
-func (r RunnerPolicyListParamsConnect) IsKnown() bool {
-	switch r {
-	case RunnerPolicyListParamsConnectV1:
-		return true
-	}
-	return false
+func (r RunnerPolicyListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerPolicyDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerPolicyDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// group_id specifies the group_id identifier
 	GroupID param.Field[string] `json:"groupId" format:"uuid"`
 	// runner_id specifies the project identifier
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerPolicyDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerPolicyDeleteParamsConnectProtocolVersion float64
-
-const (
-	RunnerPolicyDeleteParamsConnectProtocolVersion1 RunnerPolicyDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerPolicyDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerPolicyDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

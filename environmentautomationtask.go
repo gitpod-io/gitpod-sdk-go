@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -15,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -40,87 +40,66 @@ func NewEnvironmentAutomationTaskService(opts ...option.RequestOption) (r *Envir
 }
 
 // CreateTask
-func (r *EnvironmentAutomationTaskService) New(ctx context.Context, params EnvironmentAutomationTaskNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskService) New(ctx context.Context, body EnvironmentAutomationTaskNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateTask"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetTask
-func (r *EnvironmentAutomationTaskService) Get(ctx context.Context, params EnvironmentAutomationTaskGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskService) Get(ctx context.Context, body EnvironmentAutomationTaskGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTask"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateTask
-func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, params EnvironmentAutomationTaskUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, body EnvironmentAutomationTaskUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateTask"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListTasks
-func (r *EnvironmentAutomationTaskService) List(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskService) List(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[EnvironmentAutomationTaskListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTasks"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListTasks
+func (r *EnvironmentAutomationTaskService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[EnvironmentAutomationTaskListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteTask
-func (r *EnvironmentAutomationTaskService) Delete(ctx context.Context, params EnvironmentAutomationTaskDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskService) Delete(ctx context.Context, body EnvironmentAutomationTaskDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteTask"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // StartTask starts a task, i.e. creates a task execution. This call does not block
 // until the task is started; the task will be started asynchronously.
-func (r *EnvironmentAutomationTaskService) Start(ctx context.Context, params EnvironmentAutomationTaskStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskStartResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *EnvironmentAutomationTaskService) Start(ctx context.Context, body EnvironmentAutomationTaskStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskStartResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StartTask"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -177,7 +156,6 @@ func (r environmentAutomationTaskNewResponseTaskJSON) RawJSON() string {
 
 type EnvironmentAutomationTaskNewResponseTaskMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -272,15 +250,12 @@ type EnvironmentAutomationTaskNewResponseTaskMetadata struct {
 	// context and documentation for the task.
 	Description string `json:"description"`
 	// name is a user-facing name for the task. Unlike the reference, this field is not
-	// unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the task.
+	// unique, and not referenced by the system. This is a short descriptive name for
+	// the task.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the task which must be unique on the
-	// environment.
-	//
-	// It is used to express dependencies between tasks, and to identify the task in
-	// user interactions (e.g. the CLI).
+	// environment. It is used to express dependencies between tasks, and to identify
+	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
 	TriggeredBy []EnvironmentAutomationTaskNewResponseTaskMetadataTriggeredBy `json:"triggeredBy"`
@@ -635,7 +610,6 @@ func (r environmentAutomationTaskGetResponseTaskJSON) RawJSON() string {
 
 type EnvironmentAutomationTaskGetResponseTaskMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -730,15 +704,12 @@ type EnvironmentAutomationTaskGetResponseTaskMetadata struct {
 	// context and documentation for the task.
 	Description string `json:"description"`
 	// name is a user-facing name for the task. Unlike the reference, this field is not
-	// unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the task.
+	// unique, and not referenced by the system. This is a short descriptive name for
+	// the task.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the task which must be unique on the
-	// environment.
-	//
-	// It is used to express dependencies between tasks, and to identify the task in
-	// user interactions (e.g. the CLI).
+	// environment. It is used to express dependencies between tasks, and to identify
+	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
 	TriggeredBy []EnvironmentAutomationTaskGetResponseTaskMetadataTriggeredBy `json:"triggeredBy"`
@@ -1066,9 +1037,8 @@ func (r environmentAutomationTaskListResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationTaskListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                              `json:"nextToken"`
 	JSON      environmentAutomationTaskListResponsePaginationJSON `json:"-"`
 }
@@ -1121,7 +1091,6 @@ func (r environmentAutomationTaskListResponseTaskJSON) RawJSON() string {
 
 type EnvironmentAutomationTaskListResponseTasksMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1216,15 +1185,12 @@ type EnvironmentAutomationTaskListResponseTasksMetadata struct {
 	// context and documentation for the task.
 	Description string `json:"description"`
 	// name is a user-facing name for the task. Unlike the reference, this field is not
-	// unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the task.
+	// unique, and not referenced by the system. This is a short descriptive name for
+	// the task.
 	Name string `json:"name"`
 	// reference is a user-facing identifier for the task which must be unique on the
-	// environment.
-	//
-	// It is used to express dependencies between tasks, and to identify the task in
-	// user interactions (e.g. the CLI).
+	// environment. It is used to express dependencies between tasks, and to identify
+	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
 	TriggeredBy []EnvironmentAutomationTaskListResponseTasksMetadataTriggeredBy `json:"triggeredBy"`
@@ -1578,7 +1544,6 @@ func (r environmentAutomationTaskStartResponseTaskExecutionJSON) RawJSON() strin
 
 type EnvironmentAutomationTaskStartResponseTaskExecutionMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1668,7 +1633,6 @@ type EnvironmentAutomationTaskStartResponseTaskExecutionMetadata struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CompletedAt time.Time `json:"completedAt" format:"date-time"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1762,7 +1726,6 @@ type EnvironmentAutomationTaskStartResponseTaskExecutionMetadata struct {
 	// environment_id is the ID of the environment in which the task run is executed.
 	EnvironmentID string `json:"environmentId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1933,9 +1896,8 @@ type EnvironmentAutomationTaskStartResponseTaskExecutionSpec struct {
 	// running task execution early.
 	DesiredPhase EnvironmentAutomationTaskStartResponseTaskExecutionSpecDesiredPhase `json:"desiredPhase"`
 	// plan is a list of groups of steps. The steps in a group are executed
-	// concurrently, while the groups are executed sequentially.
-	//
-	// The order of the groups is the order in which they are executed.
+	// concurrently, while the groups are executed sequentially. The order of the
+	// groups is the order in which they are executed.
 	Plan []EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlan `json:"plan"`
 	JSON environmentAutomationTaskStartResponseTaskExecutionSpecJSON   `json:"-"`
 }
@@ -2108,15 +2070,11 @@ func (r EnvironmentAutomationTaskStartResponseTaskExecutionSpecPlanStepsObject) 
 
 type EnvironmentAutomationTaskStartResponseTaskExecutionStatus struct {
 	// failure_message summarises why the task execution failed to operate. If this is
-	// non-empty
-	//
-	// the task execution has failed to operate and will likely transition to a failed
-	// state.
+	// non-empty the task execution has failed to operate and will likely transition to
+	// a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// log_url is the URL to the logs of the task's steps. If this is empty, the task
-	// either has no logs
-	//
-	// or has not yet started.
+	// either has no logs or has not yet started.
 	LogURL string `json:"logUrl"`
 	// the phase of a task execution represents the aggregated phase of all steps.
 	Phase EnvironmentAutomationTaskStartResponseTaskExecutionStatusPhase `json:"phase"`
@@ -2125,11 +2083,9 @@ type EnvironmentAutomationTaskStartResponseTaskExecutionStatus struct {
 	// meaning (e.g. don't interpret it as as a timestamp), but it can be used to
 	// impose a partial order. If a.status_version < b.status_version then a was the
 	// status before b.
-	StatusVersion string `json:"statusVersion" format:"int64"`
+	StatusVersion string `json:"statusVersion"`
 	// steps provides the status for each individual step of the task execution. If a
-	// step is missing it
-	//
-	// has not yet started.
+	// step is missing it has not yet started.
 	Steps []EnvironmentAutomationTaskStartResponseTaskExecutionStatusStep `json:"steps"`
 	JSON  environmentAutomationTaskStartResponseTaskExecutionStatusJSON   `json:"-"`
 }
@@ -2179,7 +2135,6 @@ type EnvironmentAutomationTaskStartResponseTaskExecutionStatusStep struct {
 	// ID is the ID of the execution step
 	ID string `json:"id" format:"uuid"`
 	// failure_message summarises why the step failed to operate. If this is non-empty
-	//
 	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
 	// phase is the current phase of the execution step
@@ -2227,38 +2182,18 @@ func (r EnvironmentAutomationTaskStartResponseTaskExecutionStatusStepsPhase) IsK
 }
 
 type EnvironmentAutomationTaskNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	DependsOn              param.Field[[]string]                                                 `json:"dependsOn" format:"uuid"`
-	EnvironmentID          param.Field[string]                                                   `json:"environmentId" format:"uuid"`
-	Metadata               param.Field[EnvironmentAutomationTaskNewParamsMetadata]               `json:"metadata"`
-	Spec                   param.Field[EnvironmentAutomationTaskNewParamsSpec]                   `json:"spec"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	DependsOn     param.Field[[]string]                                   `json:"dependsOn" format:"uuid"`
+	EnvironmentID param.Field[string]                                     `json:"environmentId" format:"uuid"`
+	Metadata      param.Field[EnvironmentAutomationTaskNewParamsMetadata] `json:"metadata"`
+	Spec          param.Field[EnvironmentAutomationTaskNewParamsSpec]     `json:"spec"`
 }
 
 func (r EnvironmentAutomationTaskNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskNewParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskNewParamsConnectProtocolVersion1 EnvironmentAutomationTaskNewParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationTaskNewParamsMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2353,15 +2288,12 @@ type EnvironmentAutomationTaskNewParamsMetadata struct {
 	// context and documentation for the task.
 	Description param.Field[string] `json:"description"`
 	// name is a user-facing name for the task. Unlike the reference, this field is not
-	// unique, and not referenced by the system.
-	//
-	// This is a short descriptive name for the task.
+	// unique, and not referenced by the system. This is a short descriptive name for
+	// the task.
 	Name param.Field[string] `json:"name"`
 	// reference is a user-facing identifier for the task which must be unique on the
-	// environment.
-	//
-	// It is used to express dependencies between tasks, and to identify the task in
-	// user interactions (e.g. the CLI).
+	// environment. It is used to express dependencies between tasks, and to identify
+	// the task in user interactions (e.g. the CLI).
 	Reference param.Field[string] `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
 	TriggeredBy param.Field[[]EnvironmentAutomationTaskNewParamsMetadataTriggeredByUnion] `json:"triggeredBy"`
@@ -2496,61 +2428,23 @@ func (r EnvironmentAutomationTaskNewParamsSpecRunsOnDocker) MarshalJSON() (data 
 }
 
 type EnvironmentAutomationTaskGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                   `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationTaskGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskGetParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskGetParamsConnectProtocolVersion1 EnvironmentAutomationTaskGetParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationTaskUpdateParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                      `json:"id" format:"uuid"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 	// dependencies specifies the IDs of the automations this task depends on.
 	DependsOn param.Field[[]string]                                           `json:"dependsOn" format:"uuid"`
 	Metadata  param.Field[EnvironmentAutomationTaskUpdateParamsMetadataUnion] `json:"metadata"`
 	Spec      param.Field[EnvironmentAutomationTaskUpdateParamsSpecUnion]     `json:"spec"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r EnvironmentAutomationTaskUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion1 EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }
 
 type EnvironmentAutomationTaskUpdateParamsMetadata struct {
@@ -2738,20 +2632,16 @@ func (r EnvironmentAutomationTaskUpdateParamsSpecRunsOnRunsOnDocker) MarshalJSON
 }
 
 type EnvironmentAutomationTaskListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[EnvironmentAutomationTaskListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[EnvironmentAutomationTaskListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[EnvironmentAutomationTaskListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                     `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// filter contains the filter options for listing tasks
+	Filter param.Field[EnvironmentAutomationTaskListParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing tasks
+	Pagination param.Field[EnvironmentAutomationTaskListParamsPagination] `json:"pagination"`
+}
+
+func (r EnvironmentAutomationTaskListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [EnvironmentAutomationTaskListParams]'s query parameters as
@@ -2763,119 +2653,46 @@ func (r EnvironmentAutomationTaskListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type EnvironmentAutomationTaskListParamsEncoding string
-
-const (
-	EnvironmentAutomationTaskListParamsEncodingProto EnvironmentAutomationTaskListParamsEncoding = "proto"
-	EnvironmentAutomationTaskListParamsEncodingJson  EnvironmentAutomationTaskListParamsEncoding = "json"
-)
-
-func (r EnvironmentAutomationTaskListParamsEncoding) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskListParamsEncodingProto, EnvironmentAutomationTaskListParamsEncodingJson:
-		return true
-	}
-	return false
+// filter contains the filter options for listing tasks
+type EnvironmentAutomationTaskListParamsFilter struct {
+	// environment_ids filters the response to only tasks of these environments
+	EnvironmentIDs param.Field[[]string] `json:"environmentIds" format:"uuid"`
+	// references filters the response to only services with these references
+	References param.Field[[]string] `json:"references"`
+	// task_ids filters the response to only tasks with these IDs
+	TaskIDs param.Field[[]string] `json:"taskIds" format:"uuid"`
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskListParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskListParamsConnectProtocolVersion1 EnvironmentAutomationTaskListParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationTaskListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
-// Which compression algorithm to use for this request
-type EnvironmentAutomationTaskListParamsCompression string
-
-const (
-	EnvironmentAutomationTaskListParamsCompressionIdentity EnvironmentAutomationTaskListParamsCompression = "identity"
-	EnvironmentAutomationTaskListParamsCompressionGzip     EnvironmentAutomationTaskListParamsCompression = "gzip"
-	EnvironmentAutomationTaskListParamsCompressionBr       EnvironmentAutomationTaskListParamsCompression = "br"
-)
-
-func (r EnvironmentAutomationTaskListParamsCompression) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskListParamsCompressionIdentity, EnvironmentAutomationTaskListParamsCompressionGzip, EnvironmentAutomationTaskListParamsCompressionBr:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing tasks
+type EnvironmentAutomationTaskListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskListParamsConnect string
-
-const (
-	EnvironmentAutomationTaskListParamsConnectV1 EnvironmentAutomationTaskListParamsConnect = "v1"
-)
-
-func (r EnvironmentAutomationTaskListParamsConnect) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskListParamsConnectV1:
-		return true
-	}
-	return false
+func (r EnvironmentAutomationTaskListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type EnvironmentAutomationTaskDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                      `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationTaskDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion1 EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type EnvironmentAutomationTaskStartParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[EnvironmentAutomationTaskStartParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	ID                     param.Field[string]                                                     `json:"id" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 }
 
 func (r EnvironmentAutomationTaskStartParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type EnvironmentAutomationTaskStartParamsConnectProtocolVersion float64
-
-const (
-	EnvironmentAutomationTaskStartParamsConnectProtocolVersion1 EnvironmentAutomationTaskStartParamsConnectProtocolVersion = 1
-)
-
-func (r EnvironmentAutomationTaskStartParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationTaskStartParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

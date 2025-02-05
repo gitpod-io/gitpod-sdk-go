@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -15,6 +14,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 	"github.com/tidwall/gjson"
 )
 
@@ -40,86 +40,65 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 }
 
 // CreateProject creates a new Project.
-func (r *ProjectService) New(ctx context.Context, params ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetProject retrieves a single Project.
-func (r *ProjectService) Get(ctx context.Context, params ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/GetProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateProject updates the properties of a Project.
-func (r *ProjectService) Update(ctx context.Context, params ProjectUpdateParams, opts ...option.RequestOption) (res *ProjectUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, opts ...option.RequestOption) (res *ProjectUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/UpdateProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListProjects lists all projects the caller has access to.
-func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) (res *ProjectListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[ProjectListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.ProjectService/ListProjects"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListProjects lists all projects the caller has access to.
+func (r *ProjectService) ListAutoPaging(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[ProjectListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteProject deletes the specified project.
-func (r *ProjectService) Delete(ctx context.Context, params ProjectDeleteParams, opts ...option.RequestOption) (res *ProjectDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, opts ...option.RequestOption) (res *ProjectDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/DeleteProject"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // CreateProject creates a new Project using an environment as template.
-func (r *ProjectService) NewFromEnvironment(ctx context.Context, params ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *ProjectService) NewFromEnvironment(ctx context.Context, body ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -458,9 +437,7 @@ func (r ProjectNewResponseProjectInitializerSpecsGit) implementsProjectNewRespon
 }
 
 type ProjectNewResponseProjectInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget string `json:"cloneTarget"`
@@ -514,7 +491,6 @@ func (r ProjectNewResponseProjectInitializerSpecsGitGitTargetMode) IsKnown() boo
 
 type ProjectNewResponseProjectMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -610,7 +586,6 @@ type ProjectNewResponseProjectMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1174,9 +1149,7 @@ func (r ProjectGetResponseProjectInitializerSpecsGit) implementsProjectGetRespon
 }
 
 type ProjectGetResponseProjectInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget string `json:"cloneTarget"`
@@ -1230,7 +1203,6 @@ func (r ProjectGetResponseProjectInitializerSpecsGitGitTargetMode) IsKnown() boo
 
 type ProjectGetResponseProjectMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1326,7 +1298,6 @@ type ProjectGetResponseProjectMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -1890,9 +1861,7 @@ func (r ProjectUpdateResponseProjectInitializerSpecsGit) implementsProjectUpdate
 }
 
 type ProjectUpdateResponseProjectInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget string `json:"cloneTarget"`
@@ -1946,7 +1915,6 @@ func (r ProjectUpdateResponseProjectInitializerSpecsGitGitTargetMode) IsKnown() 
 
 type ProjectUpdateResponseProjectMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2042,7 +2010,6 @@ type ProjectUpdateResponseProjectMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2297,9 +2264,8 @@ func (r projectListResponseJSON) RawJSON() string {
 
 // pagination contains the pagination options for listing organizations
 type ProjectListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                            `json:"nextToken"`
 	JSON      projectListResponsePaginationJSON `json:"-"`
 }
@@ -2634,9 +2600,7 @@ func (r ProjectListResponseProjectsInitializerSpecsGit) implementsProjectListRes
 }
 
 type ProjectListResponseProjectsInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget string `json:"cloneTarget"`
@@ -2690,7 +2654,6 @@ func (r ProjectListResponseProjectsInitializerSpecsGitGitTargetMode) IsKnown() b
 
 type ProjectListResponseProjectsMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -2786,7 +2749,6 @@ type ProjectListResponseProjectsMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -3360,9 +3322,7 @@ func (r ProjectNewFromEnvironmentResponseProjectInitializerSpecsGit) implementsP
 }
 
 type ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation string `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget string `json:"cloneTarget"`
@@ -3417,7 +3377,6 @@ func (r ProjectNewFromEnvironmentResponseProjectInitializerSpecsGitGitTargetMode
 
 type ProjectNewFromEnvironmentResponseProjectMetadata struct {
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -3513,7 +3472,6 @@ type ProjectNewFromEnvironmentResponseProjectMetadata struct {
 	// organization_id is the ID of the organization that contains the environment
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
-	//
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
 	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
@@ -3747,8 +3705,6 @@ type ProjectNewParams struct {
 	EnvironmentClass param.Field[ProjectNewParamsEnvironmentClassUnion] `json:"environmentClass,required"`
 	// EnvironmentInitializer specifies how an environment is to be initialized
 	Initializer param.Field[ProjectNewParamsInitializer] `json:"initializer,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -3764,8 +3720,6 @@ type ProjectNewParams struct {
 	// ```
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
 	Name                 param.Field[string] `json:"name"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectNewParams) MarshalJSON() (data []byte, err error) {
@@ -3876,9 +3830,7 @@ func (r ProjectNewParamsInitializerSpecsGit) MarshalJSON() (data []byte, err err
 func (r ProjectNewParamsInitializerSpecsGit) implementsProjectNewParamsInitializerSpecUnion() {}
 
 type ProjectNewParamsInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation param.Field[string] `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget param.Field[string] `json:"cloneTarget"`
@@ -3913,55 +3865,17 @@ func (r ProjectNewParamsInitializerSpecsGitGitTargetMode) IsKnown() bool {
 	return false
 }
 
-// Define the version of the Connect protocol
-type ProjectNewParamsConnectProtocolVersion float64
-
-const (
-	ProjectNewParamsConnectProtocolVersion1 ProjectNewParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type ProjectGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// project_id specifies the project identifier
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type ProjectGetParamsConnectProtocolVersion float64
-
-const (
-	ProjectGetParamsConnectProtocolVersion1 ProjectGetParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type ProjectUpdateParams struct {
 	Body ProjectUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -4169,9 +4083,7 @@ func (r ProjectUpdateParamsBodyInitializerIsTheContentInitializerInitializerSpec
 }
 
 type ProjectUpdateParamsBodyInitializerIsTheContentInitializerInitializerSpecsGitGit struct {
-	// a path relative to the environment root in which the code will be checked out
-	//
-	// to
+	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation param.Field[string] `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
 	CloneTarget param.Field[string] `json:"cloneTarget"`
@@ -4216,36 +4128,15 @@ func (r ProjectUpdateParamsBodyName) MarshalJSON() (data []byte, err error) {
 
 func (r ProjectUpdateParamsBodyName) implementsProjectUpdateParamsBodyUnion() {}
 
-// Define the version of the Connect protocol
-type ProjectUpdateParamsConnectProtocolVersion float64
-
-const (
-	ProjectUpdateParamsConnectProtocolVersion1 ProjectUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type ProjectListParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// pagination contains the pagination options for listing organizations
+	Pagination param.Field[ProjectListParamsPagination] `json:"pagination"`
 }
 
-type ProjectListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[ProjectListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[ProjectListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[ProjectListParamsConnect] `query:"connect"`
-	Message param.Field[string]                   `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r ProjectListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [ProjectListParams]'s query parameters as `url.Values`.
@@ -4256,122 +4147,35 @@ func (r ProjectListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type ProjectListParamsEncoding string
-
-const (
-	ProjectListParamsEncodingProto ProjectListParamsEncoding = "proto"
-	ProjectListParamsEncodingJson  ProjectListParamsEncoding = "json"
-)
-
-func (r ProjectListParamsEncoding) IsKnown() bool {
-	switch r {
-	case ProjectListParamsEncodingProto, ProjectListParamsEncodingJson:
-		return true
-	}
-	return false
+// pagination contains the pagination options for listing organizations
+type ProjectListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type ProjectListParamsConnectProtocolVersion float64
-
-const (
-	ProjectListParamsConnectProtocolVersion1 ProjectListParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type ProjectListParamsCompression string
-
-const (
-	ProjectListParamsCompressionIdentity ProjectListParamsCompression = "identity"
-	ProjectListParamsCompressionGzip     ProjectListParamsCompression = "gzip"
-	ProjectListParamsCompressionBr       ProjectListParamsCompression = "br"
-)
-
-func (r ProjectListParamsCompression) IsKnown() bool {
-	switch r {
-	case ProjectListParamsCompressionIdentity, ProjectListParamsCompressionGzip, ProjectListParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type ProjectListParamsConnect string
-
-const (
-	ProjectListParamsConnectV1 ProjectListParamsConnect = "v1"
-)
-
-func (r ProjectListParamsConnect) IsKnown() bool {
-	switch r {
-	case ProjectListParamsConnectV1:
-		return true
-	}
-	return false
+func (r ProjectListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type ProjectDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// project_id specifies the project identifier
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type ProjectDeleteParamsConnectProtocolVersion float64
-
-const (
-	ProjectDeleteParamsConnectProtocolVersion1 ProjectDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type ProjectNewFromEnvironmentParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[ProjectNewFromEnvironmentParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// environment_id specifies the environment identifier
 	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
 	Name          param.Field[string] `json:"name"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r ProjectNewFromEnvironmentParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type ProjectNewFromEnvironmentParamsConnectProtocolVersion float64
-
-const (
-	ProjectNewFromEnvironmentParamsConnectProtocolVersion1 ProjectNewFromEnvironmentParamsConnectProtocolVersion = 1
-)
-
-func (r ProjectNewFromEnvironmentParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case ProjectNewFromEnvironmentParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

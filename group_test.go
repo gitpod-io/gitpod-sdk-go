@@ -26,13 +26,12 @@ func TestGroupListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Groups.List(context.TODO(), gitpod.GroupListParams{
-		Encoding:               gitpod.F(gitpod.GroupListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.GroupListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.GroupListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.GroupListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.GroupListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

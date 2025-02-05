@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"reflect"
 
@@ -43,19 +42,11 @@ func NewRunnerConfigurationService(opts ...option.RequestOption) (r *RunnerConfi
 }
 
 // ValidateRunnerConfiguration validates a runner configuration (e.g. environment
-// class, SCM integration)
-//
-// with the runner.
-func (r *RunnerConfigurationService) Validate(ctx context.Context, params RunnerConfigurationValidateParams, opts ...option.RequestOption) (res *RunnerConfigurationValidateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+// class, SCM integration) with the runner.
+func (r *RunnerConfigurationService) Validate(ctx context.Context, body RunnerConfigurationValidateParams, opts ...option.RequestOption) (res *RunnerConfigurationValidateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -466,10 +457,6 @@ func (r RunnerConfigurationValidateResponseScmIntegrationScmIntegrationScmIDErro
 
 type RunnerConfigurationValidateParams struct {
 	Body RunnerConfigurationValidateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[RunnerConfigurationValidateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r RunnerConfigurationValidateParams) MarshalJSON() (data []byte, err error) {
@@ -517,9 +504,8 @@ type RunnerConfigurationValidateParamsBodyObjectEnvironmentClass struct {
 	Description param.Field[string] `json:"description"`
 	// display_name is the human readable name of the environment class
 	DisplayName param.Field[string] `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create
-	//
-	// new environments.
+	// enabled indicates whether the environment class can be used to create new
+	// environments.
 	Enabled param.Field[bool] `json:"enabled"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
@@ -537,19 +523,4 @@ type RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration st
 
 func (r RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type RunnerConfigurationValidateParamsConnectProtocolVersion float64
-
-const (
-	RunnerConfigurationValidateParamsConnectProtocolVersion1 RunnerConfigurationValidateParamsConnectProtocolVersion = 1
-)
-
-func (r RunnerConfigurationValidateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case RunnerConfigurationValidateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

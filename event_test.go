@@ -26,13 +26,18 @@ func TestEventListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Events.List(context.TODO(), gitpod.EventListParams{
-		Encoding:               gitpod.F(gitpod.EventListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EventListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EventListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EventListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.EventListParamsFilter{
+			ActorIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ActorPrincipals: gitpod.F([]gitpod.EventListParamsFilterActorPrincipal{gitpod.EventListParamsFilterActorPrincipalPrincipalUnspecified}),
+			SubjectIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			SubjectTypes:    gitpod.F([]gitpod.EventListParamsFilterSubjectType{gitpod.EventListParamsFilterSubjectTypeResourceTypeUnspecified}),
+		}),
+		Pagination: gitpod.F(gitpod.EventListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

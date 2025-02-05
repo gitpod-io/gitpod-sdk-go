@@ -26,15 +26,13 @@ func TestRunnerConfigurationEnvironmentClassNewWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.New(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassNewParamsConnectProtocolVersion1),
 		Configuration: gitpod.F([]gitpod.RunnerConfigurationEnvironmentClassNewParamsConfiguration{{
 			Key:   gitpod.F("key"),
 			Value: gitpod.F("value"),
 		}}),
-		Description:      gitpod.F("xxx"),
-		DisplayName:      gitpod.F("xxx"),
-		RunnerID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs: gitpod.F(0.000000),
+		Description: gitpod.F("xxx"),
+		DisplayName: gitpod.F("xxx"),
+		RunnerID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -58,9 +56,7 @@ func TestRunnerConfigurationEnvironmentClassGetWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.Get(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassGetParamsConnectProtocolVersion1),
-		EnvironmentClassID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -71,7 +67,7 @@ func TestRunnerConfigurationEnvironmentClassGetWithOptionalParams(t *testing.T) 
 	}
 }
 
-func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.T) {
+func TestRunnerConfigurationEnvironmentClassUpdate(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -87,8 +83,6 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 		Body: gitpod.RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription{
 			Description: gitpod.F("xxx"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassUpdateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -112,13 +106,15 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.List(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassListParams{
-		Encoding:               gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsFilter{
+			Enabled: gitpod.F(true),
+		}),
+		Pagination: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

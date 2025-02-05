@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestAccountGetWithOptionalParams(t *testing.T) {
+func TestAccountGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,9 +26,7 @@ func TestAccountGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.Get(context.TODO(), gitpod.AccountGetParams{
-		Body:                   map[string]interface{}{},
-		ConnectProtocolVersion: gitpod.F(gitpod.AccountGetParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Body: map[string]interface{}{},
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -52,9 +50,7 @@ func TestAccountDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.Delete(context.TODO(), gitpod.AccountDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.AccountDeleteParamsConnectProtocolVersion1),
-		AccountID:              gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		AccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -78,10 +74,8 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.GetSSOLoginURL(context.TODO(), gitpod.AccountGetSSOLoginURLParams{
-		ReturnTo:               gitpod.F("https://example.com"),
-		ConnectProtocolVersion: gitpod.F(gitpod.AccountGetSSOLoginURLParamsConnectProtocolVersion1),
-		Email:                  gitpod.F("dev@stainlessapi.com"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ReturnTo: gitpod.F("https://example.com"),
+		Email:    gitpod.F("dev@stainlessapi.com"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -105,13 +99,15 @@ func TestAccountListLoginProvidersWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.ListLoginProviders(context.TODO(), gitpod.AccountListLoginProvidersParams{
-		Encoding:               gitpod.F(gitpod.AccountListLoginProvidersParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.AccountListLoginProvidersParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.AccountListLoginProvidersParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.AccountListLoginProvidersParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.AccountListLoginProvidersParamsFilter{
+			InviteID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		}),
+		Pagination: gitpod.F(gitpod.AccountListLoginProvidersParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

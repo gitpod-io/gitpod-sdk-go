@@ -26,9 +26,7 @@ func TestEditorGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EditorGetParamsConnectProtocolVersion1),
-		ID:                     gitpod.F("id"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ID: gitpod.F("id"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -52,13 +50,12 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Editors.List(context.TODO(), gitpod.EditorListParams{
-		Encoding:               gitpod.F(gitpod.EditorListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.EditorListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.EditorListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.EditorListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.EditorListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -82,11 +79,9 @@ func TestEditorResolveURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Editors.ResolveURL(context.TODO(), gitpod.EditorResolveURLParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.EditorResolveURLParamsConnectProtocolVersion1),
-		EditorID:               gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		EnvironmentID:          gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		EditorID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

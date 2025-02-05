@@ -4,7 +4,6 @@ package gitpod
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"net/url"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/param"
 	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
 	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/stainless-sdks/gitpod-go/packages/pagination"
 )
 
 // OrganizationSSOConfigurationService contains methods and other services that
@@ -35,72 +35,57 @@ func NewOrganizationSSOConfigurationService(opts ...option.RequestOption) (r *Or
 }
 
 // CreateSSOConfiguration creates a new SSO configuration for the organization.
-func (r *OrganizationSSOConfigurationService) New(ctx context.Context, params OrganizationSSOConfigurationNewParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationNewResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body OrganizationSSOConfigurationNewParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateSSOConfiguration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // GetSSOConfiguration returns an SSO configuration.
-func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, params OrganizationSSOConfigurationGetParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationGetResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body OrganizationSSOConfigurationGetParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetSSOConfiguration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // UpdateSSOConfiguration updates the SSO configuration for the organization.
-func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, params OrganizationSSOConfigurationUpdateParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationUpdateResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body OrganizationSSOConfigurationUpdateParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/UpdateSSOConfiguration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // ListSSOConfigurations lists all SSO configurations matching provided filters.
-func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationListResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[OrganizationSSOConfigurationListResponse], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListSSOConfigurations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListSSOConfigurations lists all SSO configurations matching provided filters.
+func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[OrganizationSSOConfigurationListResponse] {
+	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // DeleteSSOConfiguration deletes an SSO configuration.
-func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, params OrganizationSSOConfigurationDeleteParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationDeleteResponse, err error) {
-	if params.ConnectProtocolVersion.Present {
-		opts = append(opts, option.WithHeader("Connect-Protocol-Version", fmt.Sprintf("%s", params.ConnectProtocolVersion)))
-	}
-	if params.ConnectTimeoutMs.Present {
-		opts = append(opts, option.WithHeader("Connect-Timeout-Ms", fmt.Sprintf("%s", params.ConnectTimeoutMs)))
-	}
+func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body OrganizationSSOConfigurationDeleteParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/DeleteSSOConfiguration"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -329,9 +314,8 @@ func (r organizationSSOConfigurationListResponseJSON) RawJSON() string {
 }
 
 type OrganizationSSOConfigurationListResponsePagination struct {
-	// Token passed for retreiving the next set of results. Empty if there are no
-	//
-	// more results
+	// Token passed for retreiving the next set of results. Empty if there are no more
+	// results
 	NextToken string                                                 `json:"nextToken"`
 	JSON      organizationSSOConfigurationListResponsePaginationJSON `json:"-"`
 }
@@ -431,8 +415,6 @@ func (r OrganizationSSOConfigurationListResponseSSOConfigurationsState) IsKnown(
 type OrganizationSSOConfigurationDeleteResponse = interface{}
 
 type OrganizationSSOConfigurationNewParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationNewParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// client_id is the client ID of the OIDC application set on the IdP
 	ClientID param.Field[string] `json:"clientId"`
 	// client_secret is the client secret of the OIDC application set on the IdP
@@ -442,63 +424,23 @@ type OrganizationSSOConfigurationNewParams struct {
 	// issuer_url is the URL of the IdP issuer
 	IssuerURL      param.Field[string] `json:"issuerUrl" format:"uri"`
 	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationSSOConfigurationNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationNewParamsConnectProtocolVersion float64
-
-const (
-	OrganizationSSOConfigurationNewParamsConnectProtocolVersion1 OrganizationSSOConfigurationNewParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationSSOConfigurationNewParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationNewParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationSSOConfigurationGetParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationGetParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
 	// sso_configuration_id is the ID of the SSO configuration to get
 	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationGetParamsConnectProtocolVersion float64
-
-const (
-	OrganizationSSOConfigurationGetParamsConnectProtocolVersion1 OrganizationSSOConfigurationGetParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationSSOConfigurationGetParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationGetParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
 type OrganizationSSOConfigurationUpdateParams struct {
 	Body OrganizationSSOConfigurationUpdateParamsBodyUnion `json:"body,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
 }
 
 func (r OrganizationSSOConfigurationUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -628,36 +570,16 @@ func (r OrganizationSSOConfigurationUpdateParamsBodyState) IsKnown() bool {
 	return false
 }
 
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion float64
-
-const (
-	OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion1 OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
+type OrganizationSSOConfigurationListParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// organization_id is the ID of the organization to list SSO configurations for.
+	OrganizationID param.Field[string]                                           `json:"organizationId" format:"uuid"`
+	Pagination     param.Field[OrganizationSSOConfigurationListParamsPagination] `json:"pagination"`
 }
 
-type OrganizationSSOConfigurationListParams struct {
-	// Define which encoding or 'Message-Codec' to use
-	Encoding param.Field[OrganizationSSOConfigurationListParamsEncoding] `query:"encoding,required"`
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationListParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	// Specifies if the message query param is base64 encoded, which may be required
-	// for binary data
-	Base64 param.Field[bool] `query:"base64"`
-	// Which compression algorithm to use for this request
-	Compression param.Field[OrganizationSSOConfigurationListParamsCompression] `query:"compression"`
-	// Define the version of the Connect protocol
-	Connect param.Field[OrganizationSSOConfigurationListParamsConnect] `query:"connect"`
-	Message param.Field[string]                                        `query:"message"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+func (r OrganizationSSOConfigurationListParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // URLQuery serializes [OrganizationSSOConfigurationListParams]'s query parameters
@@ -669,92 +591,23 @@ func (r OrganizationSSOConfigurationListParams) URLQuery() (v url.Values) {
 	})
 }
 
-// Define which encoding or 'Message-Codec' to use
-type OrganizationSSOConfigurationListParamsEncoding string
-
-const (
-	OrganizationSSOConfigurationListParamsEncodingProto OrganizationSSOConfigurationListParamsEncoding = "proto"
-	OrganizationSSOConfigurationListParamsEncodingJson  OrganizationSSOConfigurationListParamsEncoding = "json"
-)
-
-func (r OrganizationSSOConfigurationListParamsEncoding) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationListParamsEncodingProto, OrganizationSSOConfigurationListParamsEncodingJson:
-		return true
-	}
-	return false
+type OrganizationSSOConfigurationListParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationListParamsConnectProtocolVersion float64
-
-const (
-	OrganizationSSOConfigurationListParamsConnectProtocolVersion1 OrganizationSSOConfigurationListParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationSSOConfigurationListParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationListParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
-}
-
-// Which compression algorithm to use for this request
-type OrganizationSSOConfigurationListParamsCompression string
-
-const (
-	OrganizationSSOConfigurationListParamsCompressionIdentity OrganizationSSOConfigurationListParamsCompression = "identity"
-	OrganizationSSOConfigurationListParamsCompressionGzip     OrganizationSSOConfigurationListParamsCompression = "gzip"
-	OrganizationSSOConfigurationListParamsCompressionBr       OrganizationSSOConfigurationListParamsCompression = "br"
-)
-
-func (r OrganizationSSOConfigurationListParamsCompression) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationListParamsCompressionIdentity, OrganizationSSOConfigurationListParamsCompressionGzip, OrganizationSSOConfigurationListParamsCompressionBr:
-		return true
-	}
-	return false
-}
-
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationListParamsConnect string
-
-const (
-	OrganizationSSOConfigurationListParamsConnectV1 OrganizationSSOConfigurationListParamsConnect = "v1"
-)
-
-func (r OrganizationSSOConfigurationListParamsConnect) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationListParamsConnectV1:
-		return true
-	}
-	return false
+func (r OrganizationSSOConfigurationListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type OrganizationSSOConfigurationDeleteParams struct {
-	// Define the version of the Connect protocol
-	ConnectProtocolVersion param.Field[OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion] `header:"Connect-Protocol-Version,required"`
-	SSOConfigurationID     param.Field[string]                                                         `json:"ssoConfigurationId" format:"uuid"`
-	// Define the timeout, in ms
-	ConnectTimeoutMs param.Field[float64] `header:"Connect-Timeout-Ms"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" format:"uuid"`
 }
 
 func (r OrganizationSSOConfigurationDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// Define the version of the Connect protocol
-type OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion float64
-
-const (
-	OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion1 OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion = 1
-)
-
-func (r OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion1:
-		return true
-	}
-	return false
 }

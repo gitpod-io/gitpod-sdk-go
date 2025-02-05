@@ -13,7 +13,7 @@ import (
 	"github.com/stainless-sdks/gitpod-go/option"
 )
 
-func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
+func TestUserGetAuthenticatedUser(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,9 +26,7 @@ func TestUserGetAuthenticatedUserWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.GetAuthenticatedUser(context.TODO(), gitpod.UserGetAuthenticatedUserParams{
-		Body:                   map[string]interface{}{},
-		ConnectProtocolVersion: gitpod.F(gitpod.UserGetAuthenticatedUserParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Body: map[string]interface{}{},
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -52,10 +50,8 @@ func TestUserSetSuspendedWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.SetSuspended(context.TODO(), gitpod.UserSetSuspendedParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.UserSetSuspendedParamsConnectProtocolVersion1),
-		Suspended:              gitpod.F(true),
-		UserID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Suspended: gitpod.F(true),
+		UserID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

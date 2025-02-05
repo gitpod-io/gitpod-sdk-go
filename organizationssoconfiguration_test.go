@@ -26,13 +26,11 @@ func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.New(context.TODO(), gitpod.OrganizationSSOConfigurationNewParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSSOConfigurationNewParamsConnectProtocolVersion1),
-		ClientID:               gitpod.F("x"),
-		ClientSecret:           gitpod.F("x"),
-		EmailDomain:            gitpod.F("xxxx"),
-		IssuerURL:              gitpod.F("https://example.com"),
-		OrganizationID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		ClientID:       gitpod.F("x"),
+		ClientSecret:   gitpod.F("x"),
+		EmailDomain:    gitpod.F("xxxx"),
+		IssuerURL:      gitpod.F("https://example.com"),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -56,9 +54,7 @@ func TestOrganizationSSOConfigurationGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Get(context.TODO(), gitpod.OrganizationSSOConfigurationGetParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSSOConfigurationGetParamsConnectProtocolVersion1),
-		SSOConfigurationID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -69,7 +65,7 @@ func TestOrganizationSSOConfigurationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
+func TestOrganizationSSOConfigurationUpdate(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -85,8 +81,6 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 		Body: gitpod.OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider{
 			ClientID: gitpod.F("x"),
 		},
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSSOConfigurationUpdateParamsConnectProtocolVersion1),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -110,13 +104,13 @@ func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.List(context.TODO(), gitpod.OrganizationSSOConfigurationListParams{
-		Encoding:               gitpod.F(gitpod.OrganizationSSOConfigurationListParamsEncodingProto),
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSSOConfigurationListParamsConnectProtocolVersion1),
-		Base64:                 gitpod.F(true),
-		Compression:            gitpod.F(gitpod.OrganizationSSOConfigurationListParamsCompressionIdentity),
-		Connect:                gitpod.F(gitpod.OrganizationSSOConfigurationListParamsConnectV1),
-		Message:                gitpod.F("message"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		Token:          gitpod.F("token"),
+		PageSize:       gitpod.F(int64(0)),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Pagination: gitpod.F(gitpod.OrganizationSSOConfigurationListParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -140,9 +134,7 @@ func TestOrganizationSSOConfigurationDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Delete(context.TODO(), gitpod.OrganizationSSOConfigurationDeleteParams{
-		ConnectProtocolVersion: gitpod.F(gitpod.OrganizationSSOConfigurationDeleteParamsConnectProtocolVersion1),
-		SSOConfigurationID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ConnectTimeoutMs:       gitpod.F(0.000000),
+		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
