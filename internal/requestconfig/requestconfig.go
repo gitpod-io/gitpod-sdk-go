@@ -17,10 +17,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go/internal"
-	"github.com/stainless-sdks/gitpod-go/internal/apierror"
-	"github.com/stainless-sdks/gitpod-go/internal/apiform"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
+	"github.com/gitpod-io/flex-sdk-go/internal"
+	"github.com/gitpod-io/flex-sdk-go/internal/apierror"
+	"github.com/gitpod-io/flex-sdk-go/internal/apiform"
+	"github.com/gitpod-io/flex-sdk-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {
