@@ -1,4 +1,4 @@
-package sandbox
+package lib
 
 import (
 	"context"
@@ -10,58 +10,30 @@ import (
 	"github.com/stainless-sdks/gitpod-go/internal/apierror"
 )
 
-type CreateEnvironmentOptions struct {
+type CreateOptions struct {
 	ProjectID        string
 	ContextURL       string
 	EnvironmentClass string
 }
 
-type StartEnvironmentOptions struct {
-	EnvironmentID string
+type EnvironmentService interface {
+	Create(ctx context.Context, options *CreateOptions) (*gitpod.EnvironmentGetResponseEnvironment, error)
+	Start(ctx context.Context, environmentID string) (*gitpod.EnvironmentGetResponseEnvironment, error)
+	Stop(ctx context.Context, environmentID string) (*gitpod.EnvironmentGetResponseEnvironment, error)
+	Delete(ctx context.Context, environmentID string) error
 }
 
-type StopEnvironmentOptions struct {
-	EnvironmentID string
-}
-
-type DeleteEnvironmentOptions struct {
-	EnvironmentID string
-}
-
-type EnvironmentSandbox interface {
-	// Get fetches an existing environment.
-	Get(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error)
-	// Create creates a new environment and waits for it to be running.
-	Create(ctx context.Context, options *CreateEnvironmentOptions) (*gitpod.EnvironmentGetResponseEnvironment, error)
-	// Start starts an existing environment and waits for it to be running.
-	Start(ctx context.Context, options *StartEnvironmentOptions) (*gitpod.EnvironmentGetResponseEnvironment, error)
-	// Stop stops an existing environment and waits for it to be stopped.
-	Stop(ctx context.Context, options *StopEnvironmentOptions) (*gitpod.EnvironmentGetResponseEnvironment, error)
-	// Delete deletes an existing environment and waits for it to be deleted.
-	Delete(ctx context.Context, options *DeleteEnvironmentOptions) error
-}
-
-type environmentSandbox struct {
-	Client *gitpod.Client
-}
-
-func NewEnvironmentSandbox(client *gitpod.Client) EnvironmentSandbox {
-	return &environmentSandbox{
+func NewEnvironmentService(client *gitpod.Client) EnvironmentService {
+	return &environmentService{
 		Client: client,
 	}
 }
 
-func (s *environmentSandbox) Get(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
-		EnvironmentID: gitpod.String(envID),
-	})
-	if err != nil {
-		return nil, err
-	}
-	return &resp.Environment, nil
+type environmentService struct {
+	Client *gitpod.Client
 }
 
-func (s *environmentSandbox) Create(ctx context.Context, options *CreateEnvironmentOptions) (res *gitpod.EnvironmentGetResponseEnvironment, err error) {
+func (s *environmentService) Create(ctx context.Context, options *CreateOptions) (*gitpod.EnvironmentGetResponseEnvironment, error) {
 	envID, err := s.create(ctx, options)
 	if err != nil {
 		return nil, err
@@ -69,28 +41,29 @@ func (s *environmentSandbox) Create(ctx context.Context, options *CreateEnvironm
 	return s.waitForRunning(ctx, envID)
 }
 
-func (s *environmentSandbox) Start(ctx context.Context, options *StartEnvironmentOptions) (res *gitpod.EnvironmentGetResponseEnvironment, err error) {
-	_, err = s.Client.Environments.Start(ctx, gitpod.EnvironmentStartParams{
-		EnvironmentID: gitpod.String(options.EnvironmentID),
+func (s *environmentService) Start(ctx context.Context, environmentID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	_, err := s.Client.Environments.Start(ctx, gitpod.EnvironmentStartParams{
+		EnvironmentID: gitpod.String(environmentID),
 	})
 	if err != nil {
 		return nil, err
 	}
-	return s.waitForRunning(ctx, options.EnvironmentID)
+	return s.waitForRunning(ctx, environmentID)
 }
 
-func (s *environmentSandbox) Stop(ctx context.Context, options *StopEnvironmentOptions) (res *gitpod.EnvironmentGetResponseEnvironment, err error) {
-	_, err = s.Client.Environments.Stop(ctx, gitpod.EnvironmentStopParams{
-		EnvironmentID: gitpod.String(options.EnvironmentID),
+func (s *environmentService) Stop(ctx context.Context, environmentID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	_, err := s.Client.Environments.Stop(ctx, gitpod.EnvironmentStopParams{
+		EnvironmentID: gitpod.String(environmentID),
 	})
 	if err != nil {
 		return nil, err
 	}
-	return s.waitForStopped(ctx, options.EnvironmentID)
+	return s.waitForStopped(ctx, environmentID)
 }
-func (s *environmentSandbox) Delete(ctx context.Context, options *DeleteEnvironmentOptions) error {
+
+func (s *environmentService) Delete(ctx context.Context, environmentID string) error {
 	_, err := s.Client.Environments.Delete(ctx, gitpod.EnvironmentDeleteParams{
-		EnvironmentID: gitpod.String(options.EnvironmentID),
+		EnvironmentID: gitpod.String(environmentID),
 	})
 	if err != nil {
 		apierr, ok := err.(*apierror.Error)
@@ -99,11 +72,11 @@ func (s *environmentSandbox) Delete(ctx context.Context, options *DeleteEnvironm
 		}
 		return err
 	}
-	return s.waitForDeleted(ctx, options.EnvironmentID)
+	return s.waitForDeleted(ctx, environmentID)
 }
 
-func (s *environmentSandbox) waitForDeleted(ctx context.Context, envID string) error {
-	_, err := s.waitFor(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
+func (s *environmentService) waitForDeleted(ctx context.Context, envID string) error {
+	_, err := s.waitForEnvironment(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
 		resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
 			EnvironmentID: gitpod.String(envID),
 		})
@@ -119,8 +92,8 @@ func (s *environmentSandbox) waitForDeleted(ctx context.Context, envID string) e
 	return err
 }
 
-func (s *environmentSandbox) waitForStopped(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	return s.waitFor(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
+func (s *environmentService) waitForStopped(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	return s.waitForEnvironment(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
 		resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
 			EnvironmentID: gitpod.String(envID),
 		})
@@ -136,8 +109,8 @@ func (s *environmentSandbox) waitForStopped(ctx context.Context, envID string) (
 	})
 }
 
-func (s *environmentSandbox) waitForRunning(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	return s.waitFor(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
+func (s *environmentService) waitForRunning(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	return s.waitForEnvironment(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
 		resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
 			EnvironmentID: gitpod.String(envID),
 		})
@@ -167,8 +140,12 @@ func (s *environmentSandbox) waitForRunning(ctx context.Context, envID string) (
 	})
 }
 
-func (s *environmentSandbox) waitFor(ctx context.Context, envID string, fetch func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error)) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	env, ok, err := fetch()
+func (s *environmentService) waitForEnvironment(ctx context.Context, envID string, check func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error)) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	return waitFor(ctx, s.Client, envID, gitpod.EventWatchResponseResourceTypeResourceTypeEnvironment, envID, check)
+}
+
+func waitFor[T any](ctx context.Context, client *gitpod.Client, envID string, resourceType gitpod.EventWatchResponseResourceType, resourceID string, check func() (*T, bool, error)) (*T, error) {
+	env, ok, err := check()
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +153,7 @@ func (s *environmentSandbox) waitFor(ctx context.Context, envID string, fetch fu
 		return env, nil
 	}
 
-	stream := s.Client.Events.WatchStreaming(ctx, gitpod.EventWatchParams{
+	stream := client.Events.WatchStreaming(ctx, gitpod.EventWatchParams{
 		Body: gitpod.EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment{
 			EnvironmentID: gitpod.String(envID),
 		},
@@ -185,8 +162,8 @@ func (s *environmentSandbox) waitFor(ctx context.Context, envID string, fetch fu
 
 	for stream.Next() {
 		resp := stream.Current()
-		if resp.ResourceType == gitpod.EventWatchResponseResourceTypeResourceTypeEnvironment && resp.ResourceID == envID {
-			env, ok, err := fetch()
+		if resp.ResourceType == resourceType && resp.ResourceID == resourceID {
+			env, ok, err := check()
 			if err != nil {
 				// TODO: if transient we should retry?
 				return nil, err
@@ -200,7 +177,7 @@ func (s *environmentSandbox) waitFor(ctx context.Context, envID string, fetch fu
 	return nil, stream.Err()
 }
 
-func (s *environmentSandbox) create(ctx context.Context, options *CreateEnvironmentOptions) (string, error) {
+func (s *environmentService) create(ctx context.Context, options *CreateOptions) (string, error) {
 	if options.ProjectID != "" {
 		resp, err := s.Client.Environments.NewFromProject(ctx, gitpod.EnvironmentNewFromProjectParams{
 			ProjectID: gitpod.String(options.ProjectID),
