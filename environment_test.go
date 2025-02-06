@@ -111,7 +111,7 @@ func TestEnvironmentGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEnvironmentUpdate(t *testing.T) {
+func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -125,9 +125,13 @@ func TestEnvironmentUpdate(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Update(context.TODO(), gitpod.EnvironmentUpdateParams{
-		Body: gitpod.EnvironmentUpdateParamsBodyMetadata{
-			Metadata: gitpod.F[any](map[string]interface{}{}),
-		},
+		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Metadata:      gitpod.F[any](map[string]interface{}{}),
+		Spec: gitpod.F[gitpod.EnvironmentUpdateParamsSpecUnion](gitpod.EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment{
+			AutomationsFile: gitpod.F[gitpod.EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion](gitpod.EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot{
+				AutomationsFilePath: gitpod.F("automationsFilePath"),
+			}),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
