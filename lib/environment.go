@@ -38,7 +38,9 @@ func (s *environmentService) Create(ctx context.Context, options *CreateOptions)
 	if err != nil {
 		return nil, err
 	}
-	return s.waitForRunning(ctx, envID)
+	return waitForRunning(ctx, s.Client, envID, func(env *gitpod.EnvironmentGetResponseEnvironment) (bool, error) {
+		return true, nil
+	})
 }
 
 func (s *environmentService) Start(ctx context.Context, environmentID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
@@ -48,7 +50,9 @@ func (s *environmentService) Start(ctx context.Context, environmentID string) (*
 	if err != nil {
 		return nil, err
 	}
-	return s.waitForRunning(ctx, environmentID)
+	return waitForRunning(ctx, s.Client, environmentID, func(env *gitpod.EnvironmentGetResponseEnvironment) (bool, error) {
+		return true, nil
+	})
 }
 
 func (s *environmentService) Stop(ctx context.Context, environmentID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
@@ -58,7 +62,7 @@ func (s *environmentService) Stop(ctx context.Context, environmentID string) (*g
 	if err != nil {
 		return nil, err
 	}
-	return s.waitForStopped(ctx, environmentID)
+	return waitForStopped(ctx, s.Client, environmentID)
 }
 
 func (s *environmentService) Delete(ctx context.Context, environmentID string) error {
@@ -72,12 +76,12 @@ func (s *environmentService) Delete(ctx context.Context, environmentID string) e
 		}
 		return err
 	}
-	return s.waitForDeleted(ctx, environmentID)
+	return waitForDeleted(ctx, s.Client, environmentID)
 }
 
-func (s *environmentService) waitForDeleted(ctx context.Context, envID string) error {
-	_, err := s.waitForEnvironment(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
-		resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
+func waitForDeleted(ctx context.Context, client *gitpod.Client, envID string) error {
+	_, err := waitForEnvironment(ctx, client, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
+		resp, err := client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
 			EnvironmentID: gitpod.String(envID),
 		})
 		if err != nil {
@@ -92,9 +96,9 @@ func (s *environmentService) waitForDeleted(ctx context.Context, envID string) e
 	return err
 }
 
-func (s *environmentService) waitForStopped(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	return s.waitForEnvironment(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
-		resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
+func waitForStopped(ctx context.Context, client *gitpod.Client, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	return waitForEnvironment(ctx, client, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
+		resp, err := client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
 			EnvironmentID: gitpod.String(envID),
 		})
 		if err != nil {
@@ -109,9 +113,9 @@ func (s *environmentService) waitForStopped(ctx context.Context, envID string) (
 	})
 }
 
-func (s *environmentService) waitForRunning(ctx context.Context, envID string) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	return s.waitForEnvironment(ctx, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
-		resp, err := s.Client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
+func waitForRunning(ctx context.Context, client *gitpod.Client, envID string, check func(*gitpod.EnvironmentGetResponseEnvironment) (bool, error)) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	return waitForEnvironment(ctx, client, envID, func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error) {
+		resp, err := client.Environments.Get(ctx, gitpod.EnvironmentGetParams{
 			EnvironmentID: gitpod.String(envID),
 		})
 		if err != nil {
@@ -122,7 +126,11 @@ func (s *environmentService) waitForRunning(ctx context.Context, envID string) (
 			return nil, false, fmt.Errorf("environment creation failed: %s", fm)
 		}
 		if resp.Environment.Status.Phase == gitpod.EnvironmentGetResponseEnvironmentStatusPhaseEnvironmentPhaseRunning {
-			return &resp.Environment, true, nil
+			ok, err := check(&resp.Environment)
+			if err != nil {
+				return nil, false, err
+			}
+			return &resp.Environment, ok, nil
 		}
 		if resp.Environment.Status.Phase == gitpod.EnvironmentGetResponseEnvironmentStatusPhaseEnvironmentPhaseStopping {
 			return nil, false, errors.New("environment creation failed: environment is stopping")
@@ -140,11 +148,11 @@ func (s *environmentService) waitForRunning(ctx context.Context, envID string) (
 	})
 }
 
-func (s *environmentService) waitForEnvironment(ctx context.Context, envID string, check func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error)) (*gitpod.EnvironmentGetResponseEnvironment, error) {
-	return waitFor(ctx, s.Client, envID, gitpod.EventWatchResponseResourceTypeResourceTypeEnvironment, envID, check)
+func waitForEnvironment(ctx context.Context, client *gitpod.Client, envID string, check func() (*gitpod.EnvironmentGetResponseEnvironment, bool, error)) (*gitpod.EnvironmentGetResponseEnvironment, error) {
+	return WaitFor(ctx, client, envID, gitpod.EventWatchResponseResourceTypeResourceTypeEnvironment, envID, check)
 }
 
-func waitFor[T any](ctx context.Context, client *gitpod.Client, envID string, resourceType gitpod.EventWatchResponseResourceType, resourceID string, check func() (*T, bool, error)) (*T, error) {
+func WaitFor[T any](ctx context.Context, client *gitpod.Client, envID string, resourceType gitpod.EventWatchResponseResourceType, resourceID string, check func() (*T, bool, error)) (*T, error) {
 	env, ok, err := check()
 	if err != nil {
 		return nil, err

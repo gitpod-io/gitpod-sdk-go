@@ -123,6 +123,7 @@ func TestEnvironmentUpdate(t *testing.T) {
 	)
 	_, err := client.Environments.Update(context.TODO(), gitpod.EnvironmentUpdateParams{
 		Body: gitpod.EnvironmentUpdateParamsBodyMetadata{
+
 			Metadata: gitpod.F[any](map[string]interface{}{}),
 		},
 	})
