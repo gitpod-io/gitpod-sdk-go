@@ -20,6 +20,7 @@ import (
 type Sandbox interface {
 	io.Closer
 	Exec(ctx context.Context, command string) (io.ReadCloser, error)
+	FS(ctx context.Context) (*FS, error)
 }
 
 func NewSandbox(ctx context.Context, client *gitpod.Client, environmentID string) (Sandbox, error) {
