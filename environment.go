@@ -8232,87 +8232,54 @@ func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentUpdateParams struct {
-	Body EnvironmentUpdateParamsBodyUnion `json:"body,required"`
+	// environment_id specifies which environment should be updated.
+	//
+	// +required
+	EnvironmentID param.Field[string]                           `json:"environmentId" format:"uuid"`
+	Metadata      param.Field[interface{}]                      `json:"metadata"`
+	Spec          param.Field[EnvironmentUpdateParamsSpecUnion] `json:"spec"`
 }
 
 func (r EnvironmentUpdateParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
-}
-
-type EnvironmentUpdateParamsBody struct {
-	Metadata param.Field[interface{}] `json:"metadata"`
-	Spec     param.Field[interface{}] `json:"spec"`
-}
-
-func (r EnvironmentUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBody) implementsEnvironmentUpdateParamsBodyUnion() {}
-
-// Satisfied by [EnvironmentUpdateParamsBodyMetadata],
-// [EnvironmentUpdateParamsBodySpec], [EnvironmentUpdateParamsBody].
-type EnvironmentUpdateParamsBodyUnion interface {
-	implementsEnvironmentUpdateParamsBodyUnion()
-}
-
-type EnvironmentUpdateParamsBodyMetadata struct {
-	Metadata param.Field[interface{}] `json:"metadata,required"`
-}
-
-func (r EnvironmentUpdateParamsBodyMetadata) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EnvironmentUpdateParamsBodyMetadata) implementsEnvironmentUpdateParamsBodyUnion() {}
-
-type EnvironmentUpdateParamsBodySpec struct {
-	Spec param.Field[EnvironmentUpdateParamsBodySpecSpecUnion] `json:"spec,required"`
-}
-
-func (r EnvironmentUpdateParamsBodySpec) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EnvironmentUpdateParamsBodySpec) implementsEnvironmentUpdateParamsBodyUnion() {}
-
-type EnvironmentUpdateParamsBodySpecSpec struct {
+type EnvironmentUpdateParamsSpec struct {
 	AutomationsFile param.Field[interface{}] `json:"automationsFile"`
 	Content         param.Field[interface{}] `json:"content"`
 	Devcontainer    param.Field[interface{}] `json:"devcontainer"`
 	Timeout         param.Field[interface{}] `json:"timeout"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpec) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpec) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpec) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {}
+func (r EnvironmentUpdateParamsSpec) implementsEnvironmentUpdateParamsSpecUnion() {}
 
 // Satisfied by
-// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment],
-// [EnvironmentUpdateParamsBodySpecSpecContent],
-// [EnvironmentUpdateParamsBodySpecSpecDevcontainer],
-// [EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout],
-// [EnvironmentUpdateParamsBodySpecSpec].
-type EnvironmentUpdateParamsBodySpecSpecUnion interface {
-	implementsEnvironmentUpdateParamsBodySpecSpecUnion()
+// [EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment],
+// [EnvironmentUpdateParamsSpecContent], [EnvironmentUpdateParamsSpecDevcontainer],
+// [EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeout],
+// [EnvironmentUpdateParamsSpec].
+type EnvironmentUpdateParamsSpecUnion interface {
+	implementsEnvironmentUpdateParamsSpecUnion()
 }
 
-type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment struct {
+type EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment struct {
 	// automations_file is the automations file spec of the environment
-	AutomationsFile param.Field[EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion] `json:"automationsFile,required"`
+	AutomationsFile param.Field[EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion] `json:"automationsFile,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironment) implementsEnvironmentUpdateParamsSpecUnion() {
 }
 
 // automations_file is the automations file spec of the environment
-type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile struct {
+type EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile struct {
 	// automations_file_path is the path to the automations file that is applied in the
 	// environment, relative to the repo root. path must not be absolute (start with a
 	// /):
@@ -8324,24 +8291,24 @@ type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecO
 	Session             param.Field[string] `json:"session"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile) implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile) implementsEnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
 }
 
 // automations_file is the automations file spec of the environment
 //
 // Satisfied by
-// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot],
-// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession],
-// [EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile].
-type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion interface {
-	implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion()
+// [EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot],
+// [EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession],
+// [EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFile].
+type EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion interface {
+	implementsEnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion()
 }
 
-type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot struct {
+type EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot struct {
 	// automations_file_path is the path to the automations file that is applied in the
 	// environment, relative to the repo root. path must not be absolute (start with a
 	// /):
@@ -8352,36 +8319,35 @@ type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecO
 	AutomationsFilePath param.Field[string] `json:"automationsFilePath,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot) implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileAutomationsFilePathIsThePathToTheAutomationsFileThatIsAppliedInTheEnvironmentRelativeToTheRepoRoot) implementsEnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession struct {
+type EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession struct {
 	Session param.Field[string] `json:"session,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession) implementsEnvironmentUpdateParamsBodySpecSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
+func (r EnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileSession) implementsEnvironmentUpdateParamsSpecAutomationsFileIsTheAutomationsFileSpecOfTheEnvironmentAutomationsFileUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContent struct {
-	Content param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentUnion] `json:"content,required"`
+type EnvironmentUpdateParamsSpecContent struct {
+	Content param.Field[EnvironmentUpdateParamsSpecContentContentUnion] `json:"content,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContent) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContent) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContent) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
-}
+func (r EnvironmentUpdateParamsSpecContent) implementsEnvironmentUpdateParamsSpecUnion() {}
 
-type EnvironmentUpdateParamsBodySpecSpecContentContent struct {
+type EnvironmentUpdateParamsSpecContentContent struct {
 	// The Git email address
 	GitEmail param.Field[string] `json:"gitEmail"`
 	// The Git username
@@ -8391,120 +8357,119 @@ type EnvironmentUpdateParamsBodySpecSpecContentContent struct {
 	Session param.Field[string] `json:"session"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContent) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContent) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContent) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+func (r EnvironmentUpdateParamsSpecContentContent) implementsEnvironmentUpdateParamsSpecContentContentUnion() {
 }
 
-// Satisfied by
-// [EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress],
-// [EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername],
-// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized],
-// [EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization],
-// [EnvironmentUpdateParamsBodySpecSpecContentContent].
-type EnvironmentUpdateParamsBodySpecSpecContentContentUnion interface {
-	implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion()
+// Satisfied by [EnvironmentUpdateParamsSpecContentContentTheGitEmailAddress],
+// [EnvironmentUpdateParamsSpecContentContentTheGitUsername],
+// [EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized],
+// [EnvironmentUpdateParamsSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization],
+// [EnvironmentUpdateParamsSpecContentContent].
+type EnvironmentUpdateParamsSpecContentContentUnion interface {
+	implementsEnvironmentUpdateParamsSpecContentContentUnion()
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress struct {
+type EnvironmentUpdateParamsSpecContentContentTheGitEmailAddress struct {
 	// The Git email address
 	GitEmail param.Field[string] `json:"gitEmail,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentTheGitEmailAddress) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitEmailAddress) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentTheGitEmailAddress) implementsEnvironmentUpdateParamsSpecContentContentUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername struct {
+type EnvironmentUpdateParamsSpecContentContentTheGitUsername struct {
 	// The Git username
 	GitUsername param.Field[string] `json:"gitUsername,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentTheGitUsername) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentTheGitUsername) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentTheGitUsername) implementsEnvironmentUpdateParamsSpecContentContentUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized struct {
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized struct {
 	// EnvironmentInitializer specifies how an environment is to be initialized
-	Initializer param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer] `json:"initializer,required"`
+	Initializer param.Field[EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer] `json:"initializer,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitialized) implementsEnvironmentUpdateParamsSpecContentContentUnion() {
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer struct {
-	Specs param.Field[[]EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion] `json:"specs"`
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer struct {
+	Specs param.Field[[]EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion] `json:"specs"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializer) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec struct {
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec struct {
 	ContextURL param.Field[interface{}] `json:"contextUrl"`
 	Git        param.Field[interface{}] `json:"git"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec) implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec) implementsEnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
 }
 
 // Satisfied by
-// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL],
-// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit],
-// [EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec].
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion interface {
-	implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion()
+// [EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL],
+// [EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit],
+// [EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpec].
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion interface {
+	implementsEnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion()
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL struct {
-	ContextURL param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL] `json:"contextUrl,required"`
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL struct {
+	ContextURL param.Field[EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL] `json:"contextUrl,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL) implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURL) implementsEnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL struct {
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL struct {
 	// url is the URL from which the environment is created
 	URL param.Field[string] `json:"url" format:"uri"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsContextURLContextURL) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit struct {
-	Git param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit] `json:"git,required"`
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit struct {
+	Git param.Field[EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit] `json:"git,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit) implementsEnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGit) implementsEnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit struct {
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit struct {
 	// a path relative to the environment root in which the code will be checked out to
 	CheckoutLocation param.Field[string] `json:"checkoutLocation"`
 	// the value for the clone target mode - use depends on the target mode
@@ -8512,58 +8477,57 @@ type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTh
 	// remote_uri is the Git remote origin
 	RemoteUri param.Field[string] `json:"remoteUri"`
 	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
-	TargetMode param.Field[EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode] `json:"targetMode"`
+	TargetMode param.Field[EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode] `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
 	UpstreamRemoteUri param.Field[string] `json:"upstreamRemoteUri"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGit) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
 // CloneTargetMode is the target state in which we want to leave a GitEnvironment
-type EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode string
+type EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode string
 
 const (
-	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
-	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
-	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
-	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
-	EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+	EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified  EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_UNSPECIFIED"
+	EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead   EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_HEAD"
+	EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
+	EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
+	EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch  EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
 )
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode) IsKnown() bool {
+func (r EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetMode) IsKnown() bool {
 	switch r {
-	case EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, EnvironmentUpdateParamsBodySpecSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
+	case EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeUnspecified, EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteHead, EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteCommit, EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeRemoteBranch, EnvironmentUpdateParamsSpecContentContentInitializerConfiguresHowTheEnvironmentIsToBeInitializedInitializerSpecsGitGitTargetModeCloneTargetModeLocalBranch:
 		return true
 	}
 	return false
 }
 
-type EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization struct {
+type EnvironmentUpdateParamsSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization struct {
 	// session should be changed to trigger a content reinitialization
 	Session param.Field[string] `json:"session,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization) implementsEnvironmentUpdateParamsBodySpecSpecContentContentUnion() {
+func (r EnvironmentUpdateParamsSpecContentContentSessionShouldBeChangedToTriggerAContentReinitialization) implementsEnvironmentUpdateParamsSpecContentContentUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecDevcontainer struct {
-	Devcontainer param.Field[EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion] `json:"devcontainer,required"`
+type EnvironmentUpdateParamsSpecDevcontainer struct {
+	Devcontainer param.Field[EnvironmentUpdateParamsSpecDevcontainerDevcontainerUnion] `json:"devcontainer,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainer) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecDevcontainer) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainer) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
-}
+func (r EnvironmentUpdateParamsSpecDevcontainer) implementsEnvironmentUpdateParamsSpecUnion() {}
 
-type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer struct {
+type EnvironmentUpdateParamsSpecDevcontainerDevcontainer struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -8575,22 +8539,22 @@ type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer struct {
 	Session param.Field[string] `json:"session"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecDevcontainerDevcontainer) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer) implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion() {
+func (r EnvironmentUpdateParamsSpecDevcontainerDevcontainer) implementsEnvironmentUpdateParamsSpecDevcontainerDevcontainerUnion() {
 }
 
 // Satisfied by
-// [EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot],
-// [EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild],
-// [EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainer].
-type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion interface {
-	implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion()
+// [EnvironmentUpdateParamsSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot],
+// [EnvironmentUpdateParamsSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild],
+// [EnvironmentUpdateParamsSpecDevcontainerDevcontainer].
+type EnvironmentUpdateParamsSpecDevcontainerDevcontainerUnion interface {
+	implementsEnvironmentUpdateParamsSpecDevcontainerDevcontainerUnion()
 }
 
-type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot struct {
+type EnvironmentUpdateParamsSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -8600,39 +8564,39 @@ type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFile
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot) implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion() {
+func (r EnvironmentUpdateParamsSpecDevcontainerDevcontainerDevcontainerFilePathIsThePathToTheDevcontainerFileRelativeToTheRepoRoot) implementsEnvironmentUpdateParamsSpecDevcontainerDevcontainerUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild struct {
+type EnvironmentUpdateParamsSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild struct {
 	// session should be changed to trigger a devcontainer rebuild
 	Session param.Field[string] `json:"session,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild) implementsEnvironmentUpdateParamsBodySpecSpecDevcontainerDevcontainerUnion() {
+func (r EnvironmentUpdateParamsSpecDevcontainerDevcontainerSessionShouldBeChangedToTriggerADevcontainerRebuild) implementsEnvironmentUpdateParamsSpecDevcontainerDevcontainerUnion() {
 }
 
-type EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout struct {
+type EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeout struct {
 	// Timeout configures the environment timeout
-	Timeout param.Field[EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout] `json:"timeout,required"`
+	Timeout param.Field[EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout] `json:"timeout,required"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeout) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeout) implementsEnvironmentUpdateParamsBodySpecSpecUnion() {
+func (r EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeout) implementsEnvironmentUpdateParamsSpecUnion() {
 }
 
 // Timeout configures the environment timeout
-type EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout struct {
+type EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout struct {
 	// A Duration represents a signed, fixed-length span of time represented as a count
 	// of seconds and fractions of seconds at nanosecond resolution. It is independent
 	// of any calendar and concepts like "day" or "month". It is related to Timestamp
@@ -8693,7 +8657,7 @@ type EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTi
 	Disconnected param.Field[string] `json:"disconnected,required" format:"regex"`
 }
 
-func (r EnvironmentUpdateParamsBodySpecSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout) MarshalJSON() (data []byte, err error) {
+func (r EnvironmentUpdateParamsSpecTimeoutConfiguresTheEnvironmentTimeoutTimeout) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
