@@ -51,7 +51,7 @@ func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpd
 }
 
 // ListProjectPolicies lists policies for a project.
-func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[ProjectPolicyListResponse], err error) {
+func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[ProjectPolicy], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -69,7 +69,7 @@ func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyLis
 }
 
 // ListProjectPolicies lists policies for a project.
-func (r *ProjectPolicyService) ListAutoPaging(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) *pagination.PoliciesPageAutoPager[ProjectPolicyListResponse] {
+func (r *ProjectPolicyService) ListAutoPaging(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) *pagination.PoliciesPageAutoPager[ProjectPolicy] {
 	return pagination.NewPoliciesPageAutoPager(r.List(ctx, params, opts...))
 }
 
@@ -81,9 +81,48 @@ func (r *ProjectPolicyService) Delete(ctx context.Context, body ProjectPolicyDel
 	return
 }
 
+type ProjectPolicy struct {
+	GroupID string `json:"groupId" format:"uuid"`
+	// role is the role assigned to the group
+	Role ProjectRole       `json:"role"`
+	JSON projectPolicyJSON `json:"-"`
+}
+
+// projectPolicyJSON contains the JSON metadata for the struct [ProjectPolicy]
+type projectPolicyJSON struct {
+	GroupID     apijson.Field
+	Role        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectPolicy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectPolicyJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectRole string
+
+const (
+	ProjectRoleProjectRoleUnspecified ProjectRole = "PROJECT_ROLE_UNSPECIFIED"
+	ProjectRoleProjectRoleAdmin       ProjectRole = "PROJECT_ROLE_ADMIN"
+	ProjectRoleProjectRoleUser        ProjectRole = "PROJECT_ROLE_USER"
+)
+
+func (r ProjectRole) IsKnown() bool {
+	switch r {
+	case ProjectRoleProjectRoleUnspecified, ProjectRoleProjectRoleAdmin, ProjectRoleProjectRoleUser:
+		return true
+	}
+	return false
+}
+
 type ProjectPolicyNewResponse struct {
-	Policy ProjectPolicyNewResponsePolicy `json:"policy"`
-	JSON   projectPolicyNewResponseJSON   `json:"-"`
+	Policy ProjectPolicy                `json:"policy"`
+	JSON   projectPolicyNewResponseJSON `json:"-"`
 }
 
 // projectPolicyNewResponseJSON contains the JSON metadata for the struct
@@ -102,50 +141,9 @@ func (r projectPolicyNewResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectPolicyNewResponsePolicy struct {
-	GroupID string `json:"groupId" format:"uuid"`
-	// role is the role assigned to the group
-	Role ProjectPolicyNewResponsePolicyRole `json:"role"`
-	JSON projectPolicyNewResponsePolicyJSON `json:"-"`
-}
-
-// projectPolicyNewResponsePolicyJSON contains the JSON metadata for the struct
-// [ProjectPolicyNewResponsePolicy]
-type projectPolicyNewResponsePolicyJSON struct {
-	GroupID     apijson.Field
-	Role        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectPolicyNewResponsePolicy) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectPolicyNewResponsePolicyJSON) RawJSON() string {
-	return r.raw
-}
-
-// role is the role assigned to the group
-type ProjectPolicyNewResponsePolicyRole string
-
-const (
-	ProjectPolicyNewResponsePolicyRoleProjectRoleUnspecified ProjectPolicyNewResponsePolicyRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectPolicyNewResponsePolicyRoleProjectRoleAdmin       ProjectPolicyNewResponsePolicyRole = "PROJECT_ROLE_ADMIN"
-	ProjectPolicyNewResponsePolicyRoleProjectRoleUser        ProjectPolicyNewResponsePolicyRole = "PROJECT_ROLE_USER"
-)
-
-func (r ProjectPolicyNewResponsePolicyRole) IsKnown() bool {
-	switch r {
-	case ProjectPolicyNewResponsePolicyRoleProjectRoleUnspecified, ProjectPolicyNewResponsePolicyRoleProjectRoleAdmin, ProjectPolicyNewResponsePolicyRoleProjectRoleUser:
-		return true
-	}
-	return false
-}
-
 type ProjectPolicyUpdateResponse struct {
-	Policy ProjectPolicyUpdateResponsePolicy `json:"policy"`
-	JSON   projectPolicyUpdateResponseJSON   `json:"-"`
+	Policy ProjectPolicy                   `json:"policy"`
+	JSON   projectPolicyUpdateResponseJSON `json:"-"`
 }
 
 // projectPolicyUpdateResponseJSON contains the JSON metadata for the struct
@@ -164,144 +162,30 @@ func (r projectPolicyUpdateResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type ProjectPolicyUpdateResponsePolicy struct {
-	GroupID string `json:"groupId" format:"uuid"`
-	// role is the role assigned to the group
-	Role ProjectPolicyUpdateResponsePolicyRole `json:"role"`
-	JSON projectPolicyUpdateResponsePolicyJSON `json:"-"`
-}
-
-// projectPolicyUpdateResponsePolicyJSON contains the JSON metadata for the struct
-// [ProjectPolicyUpdateResponsePolicy]
-type projectPolicyUpdateResponsePolicyJSON struct {
-	GroupID     apijson.Field
-	Role        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectPolicyUpdateResponsePolicy) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectPolicyUpdateResponsePolicyJSON) RawJSON() string {
-	return r.raw
-}
-
-// role is the role assigned to the group
-type ProjectPolicyUpdateResponsePolicyRole string
-
-const (
-	ProjectPolicyUpdateResponsePolicyRoleProjectRoleUnspecified ProjectPolicyUpdateResponsePolicyRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectPolicyUpdateResponsePolicyRoleProjectRoleAdmin       ProjectPolicyUpdateResponsePolicyRole = "PROJECT_ROLE_ADMIN"
-	ProjectPolicyUpdateResponsePolicyRoleProjectRoleUser        ProjectPolicyUpdateResponsePolicyRole = "PROJECT_ROLE_USER"
-)
-
-func (r ProjectPolicyUpdateResponsePolicyRole) IsKnown() bool {
-	switch r {
-	case ProjectPolicyUpdateResponsePolicyRoleProjectRoleUnspecified, ProjectPolicyUpdateResponsePolicyRoleProjectRoleAdmin, ProjectPolicyUpdateResponsePolicyRoleProjectRoleUser:
-		return true
-	}
-	return false
-}
-
-type ProjectPolicyListResponse struct {
-	GroupID string `json:"groupId" format:"uuid"`
-	// role is the role assigned to the group
-	Role ProjectPolicyListResponseRole `json:"role"`
-	JSON projectPolicyListResponseJSON `json:"-"`
-}
-
-// projectPolicyListResponseJSON contains the JSON metadata for the struct
-// [ProjectPolicyListResponse]
-type projectPolicyListResponseJSON struct {
-	GroupID     apijson.Field
-	Role        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ProjectPolicyListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectPolicyListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// role is the role assigned to the group
-type ProjectPolicyListResponseRole string
-
-const (
-	ProjectPolicyListResponseRoleProjectRoleUnspecified ProjectPolicyListResponseRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectPolicyListResponseRoleProjectRoleAdmin       ProjectPolicyListResponseRole = "PROJECT_ROLE_ADMIN"
-	ProjectPolicyListResponseRoleProjectRoleUser        ProjectPolicyListResponseRole = "PROJECT_ROLE_USER"
-)
-
-func (r ProjectPolicyListResponseRole) IsKnown() bool {
-	switch r {
-	case ProjectPolicyListResponseRoleProjectRoleUnspecified, ProjectPolicyListResponseRoleProjectRoleAdmin, ProjectPolicyListResponseRoleProjectRoleUser:
-		return true
-	}
-	return false
-}
-
 type ProjectPolicyDeleteResponse = interface{}
 
 type ProjectPolicyNewParams struct {
 	// group_id specifies the group_id identifier
 	GroupID param.Field[string] `json:"groupId" format:"uuid"`
 	// project_id specifies the project identifier
-	ProjectID param.Field[string]                     `json:"projectId" format:"uuid"`
-	Role      param.Field[ProjectPolicyNewParamsRole] `json:"role"`
+	ProjectID param.Field[string]      `json:"projectId" format:"uuid"`
+	Role      param.Field[ProjectRole] `json:"role"`
 }
 
 func (r ProjectPolicyNewParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type ProjectPolicyNewParamsRole string
-
-const (
-	ProjectPolicyNewParamsRoleProjectRoleUnspecified ProjectPolicyNewParamsRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectPolicyNewParamsRoleProjectRoleAdmin       ProjectPolicyNewParamsRole = "PROJECT_ROLE_ADMIN"
-	ProjectPolicyNewParamsRoleProjectRoleUser        ProjectPolicyNewParamsRole = "PROJECT_ROLE_USER"
-)
-
-func (r ProjectPolicyNewParamsRole) IsKnown() bool {
-	switch r {
-	case ProjectPolicyNewParamsRoleProjectRoleUnspecified, ProjectPolicyNewParamsRoleProjectRoleAdmin, ProjectPolicyNewParamsRoleProjectRoleUser:
-		return true
-	}
-	return false
-}
-
 type ProjectPolicyUpdateParams struct {
 	// group_id specifies the group_id identifier
 	GroupID param.Field[string] `json:"groupId" format:"uuid"`
 	// project_id specifies the project identifier
-	ProjectID param.Field[string]                        `json:"projectId" format:"uuid"`
-	Role      param.Field[ProjectPolicyUpdateParamsRole] `json:"role"`
+	ProjectID param.Field[string]      `json:"projectId" format:"uuid"`
+	Role      param.Field[ProjectRole] `json:"role"`
 }
 
 func (r ProjectPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-type ProjectPolicyUpdateParamsRole string
-
-const (
-	ProjectPolicyUpdateParamsRoleProjectRoleUnspecified ProjectPolicyUpdateParamsRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectPolicyUpdateParamsRoleProjectRoleAdmin       ProjectPolicyUpdateParamsRole = "PROJECT_ROLE_ADMIN"
-	ProjectPolicyUpdateParamsRoleProjectRoleUser        ProjectPolicyUpdateParamsRole = "PROJECT_ROLE_USER"
-)
-
-func (r ProjectPolicyUpdateParamsRole) IsKnown() bool {
-	switch r {
-	case ProjectPolicyUpdateParamsRoleProjectRoleUnspecified, ProjectPolicyUpdateParamsRoleProjectRoleAdmin, ProjectPolicyUpdateParamsRoleProjectRoleUser:
-		return true
-	}
-	return false
 }
 
 type ProjectPolicyListParams struct {

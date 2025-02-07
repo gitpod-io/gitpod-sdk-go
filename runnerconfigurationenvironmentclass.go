@@ -13,6 +13,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/flex-sdk-go/option"
 	"github.com/gitpod-io/flex-sdk-go/packages/pagination"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 // RunnerConfigurationEnvironmentClassService contains methods and other services
@@ -61,7 +62,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 
 // ListEnvironmentClasses returns all environment classes configured for a runner.
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[RunnerConfigurationEnvironmentClassListResponse], err error) {
+func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -80,7 +81,7 @@ func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, p
 
 // ListEnvironmentClasses returns all environment classes configured for a runner.
 // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
-func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[RunnerConfigurationEnvironmentClassListResponse] {
+func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }
 
@@ -106,8 +107,8 @@ func (r runnerConfigurationEnvironmentClassNewResponseJSON) RawJSON() string {
 }
 
 type RunnerConfigurationEnvironmentClassGetResponse struct {
-	EnvironmentClass RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass `json:"environmentClass"`
-	JSON             runnerConfigurationEnvironmentClassGetResponseJSON             `json:"-"`
+	EnvironmentClass shared.EnvironmentClass                            `json:"environmentClass"`
+	JSON             runnerConfigurationEnvironmentClassGetResponseJSON `json:"-"`
 }
 
 // runnerConfigurationEnvironmentClassGetResponseJSON contains the JSON metadata
@@ -126,152 +127,16 @@ func (r runnerConfigurationEnvironmentClassGetResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass struct {
-	// id is the unique identifier of the environment class
-	ID string `json:"id"`
-	// configuration describes the configuration of the environment class
-	Configuration []RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration `json:"configuration"`
-	// description is a human readable description of the environment class
-	Description string `json:"description"`
-	// display_name is the human readable name of the environment class
-	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create new
-	// environments.
-	Enabled bool `json:"enabled"`
-	// runner_id is the unique identifier of the runner the environment class belongs
-	// to
-	RunnerID string                                                             `json:"runnerId"`
-	JSON     runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON `json:"-"`
-}
-
-// runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON contains the
-// JSON metadata for the struct
-// [RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass]
-type runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON struct {
-	ID            apijson.Field
-	Configuration apijson.Field
-	Description   apijson.Field
-	DisplayName   apijson.Field
-	Enabled       apijson.Field
-	RunnerID      apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationEnvironmentClassGetResponseEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationEnvironmentClassGetResponseEnvironmentClassJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration struct {
-	Key   string                                                                          `json:"key"`
-	Value string                                                                          `json:"value"`
-	JSON  runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON `json:"-"`
-}
-
-// runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON
-// contains the JSON metadata for the struct
-// [RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration]
-type runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON struct {
-	Key         apijson.Field
-	Value       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationEnvironmentClassGetResponseEnvironmentClassConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
 type RunnerConfigurationEnvironmentClassUpdateResponse = interface{}
 
-type RunnerConfigurationEnvironmentClassListResponse struct {
-	// id is the unique identifier of the environment class
-	ID string `json:"id"`
-	// configuration describes the configuration of the environment class
-	Configuration []RunnerConfigurationEnvironmentClassListResponseConfiguration `json:"configuration"`
-	// description is a human readable description of the environment class
-	Description string `json:"description"`
-	// display_name is the human readable name of the environment class
-	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create new
-	// environments.
-	Enabled bool `json:"enabled"`
-	// runner_id is the unique identifier of the runner the environment class belongs
-	// to
-	RunnerID string                                              `json:"runnerId"`
-	JSON     runnerConfigurationEnvironmentClassListResponseJSON `json:"-"`
-}
-
-// runnerConfigurationEnvironmentClassListResponseJSON contains the JSON metadata
-// for the struct [RunnerConfigurationEnvironmentClassListResponse]
-type runnerConfigurationEnvironmentClassListResponseJSON struct {
-	ID            apijson.Field
-	Configuration apijson.Field
-	Description   apijson.Field
-	DisplayName   apijson.Field
-	Enabled       apijson.Field
-	RunnerID      apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationEnvironmentClassListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationEnvironmentClassListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerConfigurationEnvironmentClassListResponseConfiguration struct {
-	Key   string                                                           `json:"key"`
-	Value string                                                           `json:"value"`
-	JSON  runnerConfigurationEnvironmentClassListResponseConfigurationJSON `json:"-"`
-}
-
-// runnerConfigurationEnvironmentClassListResponseConfigurationJSON contains the
-// JSON metadata for the struct
-// [RunnerConfigurationEnvironmentClassListResponseConfiguration]
-type runnerConfigurationEnvironmentClassListResponseConfigurationJSON struct {
-	Key         apijson.Field
-	Value       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunnerConfigurationEnvironmentClassListResponseConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerConfigurationEnvironmentClassListResponseConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
 type RunnerConfigurationEnvironmentClassNewParams struct {
-	Configuration param.Field[[]RunnerConfigurationEnvironmentClassNewParamsConfiguration] `json:"configuration"`
-	Description   param.Field[string]                                                      `json:"description"`
-	DisplayName   param.Field[string]                                                      `json:"displayName"`
-	RunnerID      param.Field[string]                                                      `json:"runnerId" format:"uuid"`
+	Configuration param.Field[[]shared.FieldValueParam] `json:"configuration"`
+	Description   param.Field[string]                   `json:"description"`
+	DisplayName   param.Field[string]                   `json:"displayName"`
+	RunnerID      param.Field[string]                   `json:"runnerId" format:"uuid"`
 }
 
 func (r RunnerConfigurationEnvironmentClassNewParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type RunnerConfigurationEnvironmentClassNewParamsConfiguration struct {
-	Key   param.Field[string] `json:"key"`
-	Value param.Field[string] `json:"value"`
-}
-
-func (r RunnerConfigurationEnvironmentClassNewParamsConfiguration) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -284,65 +149,14 @@ func (r RunnerConfigurationEnvironmentClassGetParams) MarshalJSON() (data []byte
 }
 
 type RunnerConfigurationEnvironmentClassUpdateParams struct {
-	Body RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion `json:"body,required"`
+	Description        param.Field[string] `json:"description"`
+	DisplayName        param.Field[string] `json:"displayName"`
+	Enabled            param.Field[bool]   `json:"enabled"`
+	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
 }
 
 func (r RunnerConfigurationEnvironmentClassUpdateParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
-}
-
-type RunnerConfigurationEnvironmentClassUpdateParamsBody struct {
-	Description param.Field[string] `json:"description"`
-	DisplayName param.Field[string] `json:"displayName"`
-	Enabled     param.Field[bool]   `json:"enabled"`
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBody) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBody) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
-}
-
-// Satisfied by [RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription],
-// [RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName],
-// [RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled],
-// [RunnerConfigurationEnvironmentClassUpdateParamsBody].
-type RunnerConfigurationEnvironmentClassUpdateParamsBodyUnion interface {
-	implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion()
-}
-
-type RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription struct {
-	Description param.Field[string] `json:"description,required"`
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDescription) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
-}
-
-type RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName struct {
-	DisplayName param.Field[string] `json:"displayName,required"`
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyDisplayName) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
-}
-
-type RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled struct {
-	Enabled param.Field[bool] `json:"enabled,required"`
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r RunnerConfigurationEnvironmentClassUpdateParamsBodyEnabled) implementsRunnerConfigurationEnvironmentClassUpdateParamsBodyUnion() {
 }
 
 type RunnerConfigurationEnvironmentClassListParams struct {
@@ -369,7 +183,9 @@ func (r RunnerConfigurationEnvironmentClassListParams) URLQuery() (v url.Values)
 type RunnerConfigurationEnvironmentClassListParamsFilter struct {
 	// enabled filters the response to only enabled or disabled environment classes. If
 	// not set, all environment classes are returned.
-	Enabled param.Field[bool] `json:"enabled,required"`
+	Enabled param.Field[bool] `json:"enabled"`
+	// runner_ids filters the response to only EnvironmentClasses of these Runner IDs
+	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
 }
 
 func (r RunnerConfigurationEnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {

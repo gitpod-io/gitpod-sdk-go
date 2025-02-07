@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go"
 	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
 	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
@@ -27,38 +28,38 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Upsert(context.TODO(), gitpod.EnvironmentAutomationUpsertParams{
-		AutomationsFile: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFile{
-			Services: gitpod.F(map[string]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServices{
+		AutomationsFile: gitpod.F(gitpod.AutomationsFileParam{
+			Services: gitpod.F(map[string]gitpod.AutomationsFileServiceParam{
 				"foo": {
-					Commands: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands{
+					Commands: gitpod.F(gitpod.AutomationsFileServicesCommandsParam{
 						Ready: gitpod.F("ready"),
 						Start: gitpod.F("x"),
 						Stop:  gitpod.F("stop"),
 					}),
 					Description: gitpod.F("description"),
 					Name:        gitpod.F("x"),
-					RunsOn: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn{
-						Docker: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker{
+					RunsOn: gitpod.F(shared.RunsOnParam{
+						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
 					}),
-					TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy{gitpod.EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByManual}),
+					TriggeredBy: gitpod.F([]gitpod.AutomationsFileServicesTriggeredBy{gitpod.AutomationsFileServicesTriggeredByManual}),
 				},
 			}),
-			Tasks: gitpod.F(map[string]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasks{
+			Tasks: gitpod.F(map[string]gitpod.AutomationsFileTaskParam{
 				"foo": {
 					Command:     gitpod.F("x"),
 					DependsOn:   gitpod.F([]string{"string"}),
 					Description: gitpod.F("description"),
 					Name:        gitpod.F("x"),
-					RunsOn: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn{
-						Docker: gitpod.F(gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker{
+					RunsOn: gitpod.F(shared.RunsOnParam{
+						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
 					}),
-					TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy{gitpod.EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByManual}),
+					TriggeredBy: gitpod.F([]gitpod.AutomationsFileTasksTriggeredBy{gitpod.AutomationsFileTasksTriggeredByManual}),
 				},
 			}),
 		}),

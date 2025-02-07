@@ -36,7 +36,7 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 }
 
 // ListGroups lists groups
-func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.GroupsPage[GroupListResponse], err error) {
+func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.GroupsPage[Group], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -54,11 +54,11 @@ func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ..
 }
 
 // ListGroups lists groups
-func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.GroupsPageAutoPager[GroupListResponse] {
+func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.GroupsPageAutoPager[Group] {
 	return pagination.NewGroupsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-type GroupListResponse struct {
+type Group struct {
 	ID string `json:"id" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -241,13 +241,12 @@ type GroupListResponse struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time             `json:"updatedAt" format:"date-time"`
-	JSON      groupListResponseJSON `json:"-"`
+	UpdatedAt time.Time `json:"updatedAt" format:"date-time"`
+	JSON      groupJSON `json:"-"`
 }
 
-// groupListResponseJSON contains the JSON metadata for the struct
-// [GroupListResponse]
-type groupListResponseJSON struct {
+// groupJSON contains the JSON metadata for the struct [Group]
+type groupJSON struct {
 	ID             apijson.Field
 	CreatedAt      apijson.Field
 	Name           apijson.Field
@@ -258,11 +257,11 @@ type groupListResponseJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *GroupListResponse) UnmarshalJSON(data []byte) (err error) {
+func (r *Group) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r groupListResponseJSON) RawJSON() string {
+func (r groupJSON) RawJSON() string {
 	return r.raw
 }
 

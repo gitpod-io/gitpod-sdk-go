@@ -13,6 +13,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/flex-sdk-go/option"
 	"github.com/gitpod-io/flex-sdk-go/packages/pagination"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 // EnvironmentClassService contains methods and other services that help with
@@ -37,7 +38,7 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 // ListEnvironmentClasses returns the list of environment classes with runner
 // details a user is able to use based on the query buf:lint:ignore
 // RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[EnvironmentClassListResponse], err error) {
+func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -57,70 +58,8 @@ func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentCl
 // ListEnvironmentClasses returns the list of environment classes with runner
 // details a user is able to use based on the query buf:lint:ignore
 // RPC_REQUEST_RESPONSE_UNIQUE
-func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[EnvironmentClassListResponse] {
+func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
-}
-
-type EnvironmentClassListResponse struct {
-	// id is the unique identifier of the environment class
-	ID string `json:"id"`
-	// configuration describes the configuration of the environment class
-	Configuration []EnvironmentClassListResponseConfiguration `json:"configuration"`
-	// description is a human readable description of the environment class
-	Description string `json:"description"`
-	// display_name is the human readable name of the environment class
-	DisplayName string `json:"displayName"`
-	// enabled indicates whether the environment class can be used to create new
-	// environments.
-	Enabled bool `json:"enabled"`
-	// runner_id is the unique identifier of the runner the environment class belongs
-	// to
-	RunnerID string                           `json:"runnerId"`
-	JSON     environmentClassListResponseJSON `json:"-"`
-}
-
-// environmentClassListResponseJSON contains the JSON metadata for the struct
-// [EnvironmentClassListResponse]
-type environmentClassListResponseJSON struct {
-	ID            apijson.Field
-	Configuration apijson.Field
-	Description   apijson.Field
-	DisplayName   apijson.Field
-	Enabled       apijson.Field
-	RunnerID      apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *EnvironmentClassListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentClassListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type EnvironmentClassListResponseConfiguration struct {
-	Key   string                                        `json:"key"`
-	Value string                                        `json:"value"`
-	JSON  environmentClassListResponseConfigurationJSON `json:"-"`
-}
-
-// environmentClassListResponseConfigurationJSON contains the JSON metadata for the
-// struct [EnvironmentClassListResponseConfiguration]
-type environmentClassListResponseConfigurationJSON struct {
-	Key         apijson.Field
-	Value       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *EnvironmentClassListResponseConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r environmentClassListResponseConfigurationJSON) RawJSON() string {
-	return r.raw
 }
 
 type EnvironmentClassListParams struct {
@@ -147,7 +86,9 @@ func (r EnvironmentClassListParams) URLQuery() (v url.Values) {
 type EnvironmentClassListParamsFilter struct {
 	// enabled filters the response to only enabled or disabled environment classes. If
 	// not set, all environment classes are returned.
-	Enabled param.Field[bool] `json:"enabled,required"`
+	Enabled param.Field[bool] `json:"enabled"`
+	// runner_ids filters the response to only EnvironmentClasses of these Runner IDs
+	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
 }
 
 func (r EnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {
