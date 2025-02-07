@@ -33,7 +33,7 @@ func TestRunnerConfigurationHostAuthenticationTokenNewWithOptionalParams(t *test
 		Host:         gitpod.F("x"),
 		RefreshToken: gitpod.F("refreshToken"),
 		RunnerID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Source:       gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenNewParamsSourceHostAuthenticationTokenSourceUnspecified),
+		Source:       gitpod.F(gitpod.HostAuthenticationTokenSourceHostAuthenticationTokenSourceUnspecified),
 		UserID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -70,7 +70,7 @@ func TestRunnerConfigurationHostAuthenticationTokenGetWithOptionalParams(t *test
 	}
 }
 
-func TestRunnerConfigurationHostAuthenticationTokenUpdate(t *testing.T) {
+func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -84,9 +84,10 @@ func TestRunnerConfigurationHostAuthenticationTokenUpdate(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.Update(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParams{
-		Body: gitpod.RunnerConfigurationHostAuthenticationTokenUpdateParamsBodyExpiresAt{
-			ExpiresAt: gitpod.F(time.Now()),
-		},
+		ID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Token:        gitpod.F("x"),
+		ExpiresAt:    gitpod.F(time.Now()),
+		RefreshToken: gitpod.F("refreshToken"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -113,8 +114,9 @@ func TestRunnerConfigurationHostAuthenticationTokenListWithOptionalParams(t *tes
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.List(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Filter: gitpod.F[gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilterUnion](gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilterRunnerID{
+		Filter: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilter{
 			RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			UserID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsPagination{
 			Token:    gitpod.F("token"),
