@@ -503,14 +503,14 @@ func (r organizationMemberJSON) RawJSON() string {
 type Scope string
 
 const (
-	ScopeScopeUnspecified Scope = "SCOPE_UNSPECIFIED"
-	ScopeScopeMember      Scope = "SCOPE_MEMBER"
-	ScopeScopeAll         Scope = "SCOPE_ALL"
+	ScopeUnspecified Scope = "SCOPE_UNSPECIFIED"
+	ScopeMember      Scope = "SCOPE_MEMBER"
+	ScopeAll         Scope = "SCOPE_ALL"
 )
 
 func (r Scope) IsKnown() bool {
 	switch r {
-	case ScopeScopeUnspecified, ScopeScopeMember, ScopeScopeAll:
+	case ScopeUnspecified, ScopeMember, ScopeAll:
 		return true
 	}
 	return false

@@ -147,14 +147,14 @@ func (r FieldValueParam) MarshalJSON() (data []byte, err error) {
 type OrganizationRole string
 
 const (
-	OrganizationRoleOrganizationRoleUnspecified OrganizationRole = "ORGANIZATION_ROLE_UNSPECIFIED"
-	OrganizationRoleOrganizationRoleAdmin       OrganizationRole = "ORGANIZATION_ROLE_ADMIN"
-	OrganizationRoleOrganizationRoleMember      OrganizationRole = "ORGANIZATION_ROLE_MEMBER"
+	OrganizationRoleUnspecified OrganizationRole = "ORGANIZATION_ROLE_UNSPECIFIED"
+	OrganizationRoleAdmin       OrganizationRole = "ORGANIZATION_ROLE_ADMIN"
+	OrganizationRoleMember      OrganizationRole = "ORGANIZATION_ROLE_MEMBER"
 )
 
 func (r OrganizationRole) IsKnown() bool {
 	switch r {
-	case OrganizationRoleOrganizationRoleUnspecified, OrganizationRoleOrganizationRoleAdmin, OrganizationRoleOrganizationRoleMember:
+	case OrganizationRoleUnspecified, OrganizationRoleAdmin, OrganizationRoleMember:
 		return true
 	}
 	return false
@@ -163,17 +163,17 @@ func (r OrganizationRole) IsKnown() bool {
 type Principal string
 
 const (
-	PrincipalPrincipalUnspecified    Principal = "PRINCIPAL_UNSPECIFIED"
-	PrincipalPrincipalAccount        Principal = "PRINCIPAL_ACCOUNT"
-	PrincipalPrincipalUser           Principal = "PRINCIPAL_USER"
-	PrincipalPrincipalRunner         Principal = "PRINCIPAL_RUNNER"
-	PrincipalPrincipalEnvironment    Principal = "PRINCIPAL_ENVIRONMENT"
-	PrincipalPrincipalServiceAccount Principal = "PRINCIPAL_SERVICE_ACCOUNT"
+	PrincipalUnspecified    Principal = "PRINCIPAL_UNSPECIFIED"
+	PrincipalAccount        Principal = "PRINCIPAL_ACCOUNT"
+	PrincipalUser           Principal = "PRINCIPAL_USER"
+	PrincipalRunner         Principal = "PRINCIPAL_RUNNER"
+	PrincipalEnvironment    Principal = "PRINCIPAL_ENVIRONMENT"
+	PrincipalServiceAccount Principal = "PRINCIPAL_SERVICE_ACCOUNT"
 )
 
 func (r Principal) IsKnown() bool {
 	switch r {
-	case PrincipalPrincipalUnspecified, PrincipalPrincipalAccount, PrincipalPrincipalUser, PrincipalPrincipalRunner, PrincipalPrincipalEnvironment, PrincipalPrincipalServiceAccount:
+	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount:
 		return true
 	}
 	return false
@@ -603,17 +603,17 @@ func (r taskExecutionMetadataJSON) RawJSON() string {
 type TaskExecutionPhase string
 
 const (
-	TaskExecutionPhaseTaskExecutionPhaseUnspecified TaskExecutionPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
-	TaskExecutionPhaseTaskExecutionPhasePending     TaskExecutionPhase = "TASK_EXECUTION_PHASE_PENDING"
-	TaskExecutionPhaseTaskExecutionPhaseRunning     TaskExecutionPhase = "TASK_EXECUTION_PHASE_RUNNING"
-	TaskExecutionPhaseTaskExecutionPhaseSucceeded   TaskExecutionPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
-	TaskExecutionPhaseTaskExecutionPhaseFailed      TaskExecutionPhase = "TASK_EXECUTION_PHASE_FAILED"
-	TaskExecutionPhaseTaskExecutionPhaseStopped     TaskExecutionPhase = "TASK_EXECUTION_PHASE_STOPPED"
+	TaskExecutionPhaseUnspecified TaskExecutionPhase = "TASK_EXECUTION_PHASE_UNSPECIFIED"
+	TaskExecutionPhasePending     TaskExecutionPhase = "TASK_EXECUTION_PHASE_PENDING"
+	TaskExecutionPhaseRunning     TaskExecutionPhase = "TASK_EXECUTION_PHASE_RUNNING"
+	TaskExecutionPhaseSucceeded   TaskExecutionPhase = "TASK_EXECUTION_PHASE_SUCCEEDED"
+	TaskExecutionPhaseFailed      TaskExecutionPhase = "TASK_EXECUTION_PHASE_FAILED"
+	TaskExecutionPhaseStopped     TaskExecutionPhase = "TASK_EXECUTION_PHASE_STOPPED"
 )
 
 func (r TaskExecutionPhase) IsKnown() bool {
 	switch r {
-	case TaskExecutionPhaseTaskExecutionPhaseUnspecified, TaskExecutionPhaseTaskExecutionPhasePending, TaskExecutionPhaseTaskExecutionPhaseRunning, TaskExecutionPhaseTaskExecutionPhaseSucceeded, TaskExecutionPhaseTaskExecutionPhaseFailed, TaskExecutionPhaseTaskExecutionPhaseStopped:
+	case TaskExecutionPhaseUnspecified, TaskExecutionPhasePending, TaskExecutionPhaseRunning, TaskExecutionPhaseSucceeded, TaskExecutionPhaseFailed, TaskExecutionPhaseStopped:
 		return true
 	}
 	return false
@@ -795,15 +795,15 @@ func (r taskExecutionStatusStepJSON) RawJSON() string {
 type UserStatus string
 
 const (
-	UserStatusUserStatusUnspecified UserStatus = "USER_STATUS_UNSPECIFIED"
-	UserStatusUserStatusActive      UserStatus = "USER_STATUS_ACTIVE"
-	UserStatusUserStatusSuspended   UserStatus = "USER_STATUS_SUSPENDED"
-	UserStatusUserStatusLeft        UserStatus = "USER_STATUS_LEFT"
+	UserStatusUnspecified UserStatus = "USER_STATUS_UNSPECIFIED"
+	UserStatusActive      UserStatus = "USER_STATUS_ACTIVE"
+	UserStatusSuspended   UserStatus = "USER_STATUS_SUSPENDED"
+	UserStatusLeft        UserStatus = "USER_STATUS_LEFT"
 )
 
 func (r UserStatus) IsKnown() bool {
 	switch r {
-	case UserStatusUserStatusUnspecified, UserStatusUserStatusActive, UserStatusUserStatusSuspended, UserStatusUserStatusLeft:
+	case UserStatusUnspecified, UserStatusActive, UserStatusSuspended, UserStatusLeft:
 		return true
 	}
 	return false

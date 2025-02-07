@@ -27,16 +27,16 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-		Kind:     gitpod.F(gitpod.RunnerKindRunnerKindUnspecified),
+		Kind:     gitpod.F(gitpod.RunnerKindUnspecified),
 		Name:     gitpod.F("xxx"),
-		Provider: gitpod.F(gitpod.RunnerProviderRunnerProviderUnspecified),
+		Provider: gitpod.F(gitpod.RunnerProviderUnspecified),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
 				AutoUpdate:     gitpod.F(true),
 				Region:         gitpod.F("region"),
-				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelRunnerReleaseChannelUnspecified),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
 			}),
-			DesiredPhase: gitpod.F(gitpod.RunnerPhaseRunnerPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
 	})
 	if err != nil {
@@ -92,9 +92,9 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 		Spec: gitpod.F(gitpod.RunnerUpdateParamsSpec{
 			Configuration: gitpod.F(gitpod.RunnerUpdateParamsSpecConfiguration{
 				AutoUpdate:     gitpod.F(true),
-				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelRunnerReleaseChannelUnspecified),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
 			}),
-			DesiredPhase: gitpod.F(gitpod.RunnerPhaseRunnerPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
 	})
 	if err != nil {
@@ -124,8 +124,8 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.RunnerListParamsFilter{
 			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Kinds:      gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindRunnerKindUnspecified}),
-			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderRunnerProviderUnspecified}),
+			Kinds:      gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
 			Token:    gitpod.F("token"),

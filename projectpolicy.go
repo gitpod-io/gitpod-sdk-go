@@ -107,14 +107,14 @@ func (r projectPolicyJSON) RawJSON() string {
 type ProjectRole string
 
 const (
-	ProjectRoleProjectRoleUnspecified ProjectRole = "PROJECT_ROLE_UNSPECIFIED"
-	ProjectRoleProjectRoleAdmin       ProjectRole = "PROJECT_ROLE_ADMIN"
-	ProjectRoleProjectRoleUser        ProjectRole = "PROJECT_ROLE_USER"
+	ProjectRoleUnspecified ProjectRole = "PROJECT_ROLE_UNSPECIFIED"
+	ProjectRoleAdmin       ProjectRole = "PROJECT_ROLE_ADMIN"
+	ProjectRoleUser        ProjectRole = "PROJECT_ROLE_USER"
 )
 
 func (r ProjectRole) IsKnown() bool {
 	switch r {
-	case ProjectRoleProjectRoleUnspecified, ProjectRoleProjectRoleAdmin, ProjectRoleProjectRoleUser:
+	case ProjectRoleUnspecified, ProjectRoleAdmin, ProjectRoleUser:
 		return true
 	}
 	return false
