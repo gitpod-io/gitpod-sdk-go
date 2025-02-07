@@ -58,9 +58,32 @@ func (r *OrganizationInviteService) GetSummary(ctx context.Context, body Organiz
 	return
 }
 
+type OrganizationInvite struct {
+	// invite_id is the unique identifier of the invite to join the organization. Use
+	// JoinOrganization with this ID to join the organization.
+	InviteID string                 `json:"inviteId" format:"uuid"`
+	JSON     organizationInviteJSON `json:"-"`
+}
+
+// organizationInviteJSON contains the JSON metadata for the struct
+// [OrganizationInvite]
+type organizationInviteJSON struct {
+	InviteID    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OrganizationInvite) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r organizationInviteJSON) RawJSON() string {
+	return r.raw
+}
+
 type OrganizationInviteNewResponse struct {
-	Invite OrganizationInviteNewResponseInvite `json:"invite"`
-	JSON   organizationInviteNewResponseJSON   `json:"-"`
+	Invite OrganizationInvite                `json:"invite"`
+	JSON   organizationInviteNewResponseJSON `json:"-"`
 }
 
 // organizationInviteNewResponseJSON contains the JSON metadata for the struct
@@ -79,32 +102,9 @@ func (r organizationInviteNewResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type OrganizationInviteNewResponseInvite struct {
-	// invite_id is the unique identifier of the invite to join the organization. Use
-	// JoinOrganization with this ID to join the organization.
-	InviteID string                                  `json:"inviteId" format:"uuid"`
-	JSON     organizationInviteNewResponseInviteJSON `json:"-"`
-}
-
-// organizationInviteNewResponseInviteJSON contains the JSON metadata for the
-// struct [OrganizationInviteNewResponseInvite]
-type organizationInviteNewResponseInviteJSON struct {
-	InviteID    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationInviteNewResponseInvite) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationInviteNewResponseInviteJSON) RawJSON() string {
-	return r.raw
-}
-
 type OrganizationInviteGetResponse struct {
-	Invite OrganizationInviteGetResponseInvite `json:"invite"`
-	JSON   organizationInviteGetResponseJSON   `json:"-"`
+	Invite OrganizationInvite                `json:"invite"`
+	JSON   organizationInviteGetResponseJSON `json:"-"`
 }
 
 // organizationInviteGetResponseJSON contains the JSON metadata for the struct
@@ -120,29 +120,6 @@ func (r *OrganizationInviteGetResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r organizationInviteGetResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type OrganizationInviteGetResponseInvite struct {
-	// invite_id is the unique identifier of the invite to join the organization. Use
-	// JoinOrganization with this ID to join the organization.
-	InviteID string                                  `json:"inviteId" format:"uuid"`
-	JSON     organizationInviteGetResponseInviteJSON `json:"-"`
-}
-
-// organizationInviteGetResponseInviteJSON contains the JSON metadata for the
-// struct [OrganizationInviteGetResponseInvite]
-type organizationInviteGetResponseInviteJSON struct {
-	InviteID    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationInviteGetResponseInvite) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationInviteGetResponseInviteJSON) RawJSON() string {
 	return r.raw
 }
 

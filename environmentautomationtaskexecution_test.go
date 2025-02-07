@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go"
 	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
 	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
@@ -56,7 +57,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified}),
+			Phases:         gitpod.F([]shared.TaskExecutionPhase{shared.TaskExecutionPhaseTaskExecutionPhaseUnspecified}),
 			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			TaskReferences: gitpod.F([]string{"string"}),
 		}),

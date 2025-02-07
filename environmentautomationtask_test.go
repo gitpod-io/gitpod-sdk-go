@@ -12,6 +12,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go"
 	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
 	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
@@ -30,23 +31,25 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Tasks.New(context.TODO(), gitpod.EnvironmentAutomationTaskNewParams{
 		DependsOn:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Metadata: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsMetadata{
+		Metadata: gitpod.F(gitpod.TaskMetadataParam{
 			CreatedAt: gitpod.F(time.Now()),
-			Creator: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsMetadataCreator{
+			Creator: gitpod.F(shared.SubjectParam{
 				ID:        gitpod.F("id"),
-				Principal: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalUnspecified),
+				Principal: gitpod.F(shared.PrincipalPrincipalUnspecified),
 			}),
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByManual{
-				Manual: gitpod.F(true),
+			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
+				Manual:                gitpod.F(true),
+				PostDevcontainerStart: gitpod.F(true),
+				PostEnvironmentStart:  gitpod.F(true),
 			}}),
 		}),
-		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpec{
+		Spec: gitpod.F(gitpod.TaskSpecParam{
 			Command: gitpod.F("command"),
-			RunsOn: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOn{
-				Docker: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnDocker{
+			RunsOn: gitpod.F(shared.RunsOnParam{
+				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
@@ -103,11 +106,25 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Tasks.Update(context.TODO(), gitpod.EnvironmentAutomationTaskUpdateParams{
 		ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		DependsOn: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		Metadata: gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsMetadataUnion](gitpod.EnvironmentAutomationTaskUpdateParamsMetadataDescription{
+		Metadata: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadata{
 			Description: gitpod.F("description"),
+			Name:        gitpod.F("x"),
+			TriggeredBy: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy{
+				Trigger: gitpod.F([]shared.AutomationTriggerParam{{
+					Manual:                gitpod.F(true),
+					PostDevcontainerStart: gitpod.F(true),
+					PostEnvironmentStart:  gitpod.F(true),
+				}}),
+			}),
 		}),
-		Spec: gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnion](gitpod.EnvironmentAutomationTaskUpdateParamsSpecCommand{
+		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsSpec{
 			Command: gitpod.F("command"),
+			RunsOn: gitpod.F(shared.RunsOnParam{
+				Docker: gitpod.F(shared.RunsOnDockerParam{
+					Environment: gitpod.F([]string{"string"}),
+					Image:       gitpod.F("x"),
+				}),
+			}),
 		}),
 	})
 	if err != nil {

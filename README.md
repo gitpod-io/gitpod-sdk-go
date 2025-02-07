@@ -165,8 +165,8 @@ You can use `.ListAutoPaging()` methods to iterate through items across all page
 iter := client.Environments.Automations.Services.ListAutoPaging(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{})
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	environmentAutomationServiceListResponse := iter.Current()
-	fmt.Printf("%+v\n", environmentAutomationServiceListResponse)
+	service := iter.Current()
+	fmt.Printf("%+v\n", service)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())

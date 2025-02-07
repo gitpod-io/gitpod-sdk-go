@@ -59,7 +59,7 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 }
 
 // ListSSOConfigurations lists all SSO configurations matching provided filters.
-func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.SSOConfigurationsPage[OrganizationSSOConfigurationListResponse], err error) {
+func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.SSOConfigurationsPage[SSOConfiguration], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -77,7 +77,7 @@ func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params O
 }
 
 // ListSSOConfigurations lists all SSO configurations matching provided filters.
-func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) *pagination.SSOConfigurationsPageAutoPager[OrganizationSSOConfigurationListResponse] {
+func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) *pagination.SSOConfigurationsPageAutoPager[SSOConfiguration] {
 	return pagination.NewSSOConfigurationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
@@ -89,10 +89,83 @@ func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body O
 	return
 }
 
+type ProviderType string
+
+const (
+	ProviderTypeProviderTypeUnspecified ProviderType = "PROVIDER_TYPE_UNSPECIFIED"
+	ProviderTypeProviderTypeBuiltin     ProviderType = "PROVIDER_TYPE_BUILTIN"
+	ProviderTypeProviderTypeCustom      ProviderType = "PROVIDER_TYPE_CUSTOM"
+)
+
+func (r ProviderType) IsKnown() bool {
+	switch r {
+	case ProviderTypeProviderTypeUnspecified, ProviderTypeProviderTypeBuiltin, ProviderTypeProviderTypeCustom:
+		return true
+	}
+	return false
+}
+
+type SSOConfiguration struct {
+	// id is the unique identifier of the SSO configuration
+	ID string `json:"id" format:"uuid"`
+	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
+	Claims map[string]string `json:"claims"`
+	// client_id is the client ID of the OIDC application set on the IdP
+	ClientID    string `json:"clientId"`
+	EmailDomain string `json:"emailDomain"`
+	// issuer_url is the URL of the IdP issuer
+	IssuerURL      string `json:"issuerUrl"`
+	OrganizationID string `json:"organizationId" format:"uuid"`
+	// provider_type defines the type of the SSO configuration
+	ProviderType ProviderType `json:"providerType"`
+	// state is the state of the SSO configuration
+	State SSOConfigurationState `json:"state"`
+	JSON  ssoConfigurationJSON  `json:"-"`
+}
+
+// ssoConfigurationJSON contains the JSON metadata for the struct
+// [SSOConfiguration]
+type ssoConfigurationJSON struct {
+	ID             apijson.Field
+	Claims         apijson.Field
+	ClientID       apijson.Field
+	EmailDomain    apijson.Field
+	IssuerURL      apijson.Field
+	OrganizationID apijson.Field
+	ProviderType   apijson.Field
+	State          apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *SSOConfiguration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r ssoConfigurationJSON) RawJSON() string {
+	return r.raw
+}
+
+type SSOConfigurationState string
+
+const (
+	SSOConfigurationStateSSOConfigurationStateUnspecified SSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
+	SSOConfigurationStateSSOConfigurationStateInactive    SSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
+	SSOConfigurationStateSSOConfigurationStateActive      SSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
+)
+
+func (r SSOConfigurationState) IsKnown() bool {
+	switch r {
+	case SSOConfigurationStateSSOConfigurationStateUnspecified, SSOConfigurationStateSSOConfigurationStateInactive, SSOConfigurationStateSSOConfigurationStateActive:
+		return true
+	}
+	return false
+}
+
 type OrganizationSSOConfigurationNewResponse struct {
 	// sso_configuration is the created SSO configuration
-	SSOConfiguration OrganizationSSOConfigurationNewResponseSSOConfiguration `json:"ssoConfiguration"`
-	JSON             organizationSSOConfigurationNewResponseJSON             `json:"-"`
+	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration"`
+	JSON             organizationSSOConfigurationNewResponseJSON `json:"-"`
 }
 
 // organizationSSOConfigurationNewResponseJSON contains the JSON metadata for the
@@ -111,87 +184,10 @@ func (r organizationSSOConfigurationNewResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// sso_configuration is the created SSO configuration
-type OrganizationSSOConfigurationNewResponseSSOConfiguration struct {
-	// id is the unique identifier of the SSO configuration
-	ID string `json:"id" format:"uuid"`
-	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
-	Claims map[string]string `json:"claims"`
-	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID    string `json:"clientId"`
-	EmailDomain string `json:"emailDomain"`
-	// issuer_url is the URL of the IdP issuer
-	IssuerURL      string `json:"issuerUrl"`
-	OrganizationID string `json:"organizationId" format:"uuid"`
-	// provider_type defines the type of the SSO configuration
-	ProviderType OrganizationSSOConfigurationNewResponseSSOConfigurationProviderType `json:"providerType"`
-	// state is the state of the SSO configuration
-	State OrganizationSSOConfigurationNewResponseSSOConfigurationState `json:"state"`
-	JSON  organizationSSOConfigurationNewResponseSSOConfigurationJSON  `json:"-"`
-}
-
-// organizationSSOConfigurationNewResponseSSOConfigurationJSON contains the JSON
-// metadata for the struct
-// [OrganizationSSOConfigurationNewResponseSSOConfiguration]
-type organizationSSOConfigurationNewResponseSSOConfigurationJSON struct {
-	ID             apijson.Field
-	Claims         apijson.Field
-	ClientID       apijson.Field
-	EmailDomain    apijson.Field
-	IssuerURL      apijson.Field
-	OrganizationID apijson.Field
-	ProviderType   apijson.Field
-	State          apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *OrganizationSSOConfigurationNewResponseSSOConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationSSOConfigurationNewResponseSSOConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
-// provider_type defines the type of the SSO configuration
-type OrganizationSSOConfigurationNewResponseSSOConfigurationProviderType string
-
-const (
-	OrganizationSSOConfigurationNewResponseSSOConfigurationProviderTypeProviderTypeUnspecified OrganizationSSOConfigurationNewResponseSSOConfigurationProviderType = "PROVIDER_TYPE_UNSPECIFIED"
-	OrganizationSSOConfigurationNewResponseSSOConfigurationProviderTypeProviderTypeBuiltin     OrganizationSSOConfigurationNewResponseSSOConfigurationProviderType = "PROVIDER_TYPE_BUILTIN"
-	OrganizationSSOConfigurationNewResponseSSOConfigurationProviderTypeProviderTypeCustom      OrganizationSSOConfigurationNewResponseSSOConfigurationProviderType = "PROVIDER_TYPE_CUSTOM"
-)
-
-func (r OrganizationSSOConfigurationNewResponseSSOConfigurationProviderType) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationNewResponseSSOConfigurationProviderTypeProviderTypeUnspecified, OrganizationSSOConfigurationNewResponseSSOConfigurationProviderTypeProviderTypeBuiltin, OrganizationSSOConfigurationNewResponseSSOConfigurationProviderTypeProviderTypeCustom:
-		return true
-	}
-	return false
-}
-
-// state is the state of the SSO configuration
-type OrganizationSSOConfigurationNewResponseSSOConfigurationState string
-
-const (
-	OrganizationSSOConfigurationNewResponseSSOConfigurationStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationNewResponseSSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	OrganizationSSOConfigurationNewResponseSSOConfigurationStateSSOConfigurationStateInactive    OrganizationSSOConfigurationNewResponseSSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	OrganizationSSOConfigurationNewResponseSSOConfigurationStateSSOConfigurationStateActive      OrganizationSSOConfigurationNewResponseSSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
-)
-
-func (r OrganizationSSOConfigurationNewResponseSSOConfigurationState) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationNewResponseSSOConfigurationStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationNewResponseSSOConfigurationStateSSOConfigurationStateInactive, OrganizationSSOConfigurationNewResponseSSOConfigurationStateSSOConfigurationStateActive:
-		return true
-	}
-	return false
-}
-
 type OrganizationSSOConfigurationGetResponse struct {
 	// sso_configuration is the SSO configuration identified by the ID
-	SSOConfiguration OrganizationSSOConfigurationGetResponseSSOConfiguration `json:"ssoConfiguration"`
-	JSON             organizationSSOConfigurationGetResponseJSON             `json:"-"`
+	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration"`
+	JSON             organizationSSOConfigurationGetResponseJSON `json:"-"`
 }
 
 // organizationSSOConfigurationGetResponseJSON contains the JSON metadata for the
@@ -210,159 +206,7 @@ func (r organizationSSOConfigurationGetResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// sso_configuration is the SSO configuration identified by the ID
-type OrganizationSSOConfigurationGetResponseSSOConfiguration struct {
-	// id is the unique identifier of the SSO configuration
-	ID string `json:"id" format:"uuid"`
-	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
-	Claims map[string]string `json:"claims"`
-	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID    string `json:"clientId"`
-	EmailDomain string `json:"emailDomain"`
-	// issuer_url is the URL of the IdP issuer
-	IssuerURL      string `json:"issuerUrl"`
-	OrganizationID string `json:"organizationId" format:"uuid"`
-	// provider_type defines the type of the SSO configuration
-	ProviderType OrganizationSSOConfigurationGetResponseSSOConfigurationProviderType `json:"providerType"`
-	// state is the state of the SSO configuration
-	State OrganizationSSOConfigurationGetResponseSSOConfigurationState `json:"state"`
-	JSON  organizationSSOConfigurationGetResponseSSOConfigurationJSON  `json:"-"`
-}
-
-// organizationSSOConfigurationGetResponseSSOConfigurationJSON contains the JSON
-// metadata for the struct
-// [OrganizationSSOConfigurationGetResponseSSOConfiguration]
-type organizationSSOConfigurationGetResponseSSOConfigurationJSON struct {
-	ID             apijson.Field
-	Claims         apijson.Field
-	ClientID       apijson.Field
-	EmailDomain    apijson.Field
-	IssuerURL      apijson.Field
-	OrganizationID apijson.Field
-	ProviderType   apijson.Field
-	State          apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *OrganizationSSOConfigurationGetResponseSSOConfiguration) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationSSOConfigurationGetResponseSSOConfigurationJSON) RawJSON() string {
-	return r.raw
-}
-
-// provider_type defines the type of the SSO configuration
-type OrganizationSSOConfigurationGetResponseSSOConfigurationProviderType string
-
-const (
-	OrganizationSSOConfigurationGetResponseSSOConfigurationProviderTypeProviderTypeUnspecified OrganizationSSOConfigurationGetResponseSSOConfigurationProviderType = "PROVIDER_TYPE_UNSPECIFIED"
-	OrganizationSSOConfigurationGetResponseSSOConfigurationProviderTypeProviderTypeBuiltin     OrganizationSSOConfigurationGetResponseSSOConfigurationProviderType = "PROVIDER_TYPE_BUILTIN"
-	OrganizationSSOConfigurationGetResponseSSOConfigurationProviderTypeProviderTypeCustom      OrganizationSSOConfigurationGetResponseSSOConfigurationProviderType = "PROVIDER_TYPE_CUSTOM"
-)
-
-func (r OrganizationSSOConfigurationGetResponseSSOConfigurationProviderType) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationGetResponseSSOConfigurationProviderTypeProviderTypeUnspecified, OrganizationSSOConfigurationGetResponseSSOConfigurationProviderTypeProviderTypeBuiltin, OrganizationSSOConfigurationGetResponseSSOConfigurationProviderTypeProviderTypeCustom:
-		return true
-	}
-	return false
-}
-
-// state is the state of the SSO configuration
-type OrganizationSSOConfigurationGetResponseSSOConfigurationState string
-
-const (
-	OrganizationSSOConfigurationGetResponseSSOConfigurationStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationGetResponseSSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	OrganizationSSOConfigurationGetResponseSSOConfigurationStateSSOConfigurationStateInactive    OrganizationSSOConfigurationGetResponseSSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	OrganizationSSOConfigurationGetResponseSSOConfigurationStateSSOConfigurationStateActive      OrganizationSSOConfigurationGetResponseSSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
-)
-
-func (r OrganizationSSOConfigurationGetResponseSSOConfigurationState) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationGetResponseSSOConfigurationStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationGetResponseSSOConfigurationStateSSOConfigurationStateInactive, OrganizationSSOConfigurationGetResponseSSOConfigurationStateSSOConfigurationStateActive:
-		return true
-	}
-	return false
-}
-
 type OrganizationSSOConfigurationUpdateResponse = interface{}
-
-type OrganizationSSOConfigurationListResponse struct {
-	// id is the unique identifier of the SSO configuration
-	ID string `json:"id" format:"uuid"`
-	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
-	Claims map[string]string `json:"claims"`
-	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID    string `json:"clientId"`
-	EmailDomain string `json:"emailDomain"`
-	// issuer_url is the URL of the IdP issuer
-	IssuerURL      string `json:"issuerUrl"`
-	OrganizationID string `json:"organizationId" format:"uuid"`
-	// provider_type defines the type of the SSO configuration
-	ProviderType OrganizationSSOConfigurationListResponseProviderType `json:"providerType"`
-	// state is the state of the SSO configuration
-	State OrganizationSSOConfigurationListResponseState `json:"state"`
-	JSON  organizationSSOConfigurationListResponseJSON  `json:"-"`
-}
-
-// organizationSSOConfigurationListResponseJSON contains the JSON metadata for the
-// struct [OrganizationSSOConfigurationListResponse]
-type organizationSSOConfigurationListResponseJSON struct {
-	ID             apijson.Field
-	Claims         apijson.Field
-	ClientID       apijson.Field
-	EmailDomain    apijson.Field
-	IssuerURL      apijson.Field
-	OrganizationID apijson.Field
-	ProviderType   apijson.Field
-	State          apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
-}
-
-func (r *OrganizationSSOConfigurationListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationSSOConfigurationListResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// provider_type defines the type of the SSO configuration
-type OrganizationSSOConfigurationListResponseProviderType string
-
-const (
-	OrganizationSSOConfigurationListResponseProviderTypeProviderTypeUnspecified OrganizationSSOConfigurationListResponseProviderType = "PROVIDER_TYPE_UNSPECIFIED"
-	OrganizationSSOConfigurationListResponseProviderTypeProviderTypeBuiltin     OrganizationSSOConfigurationListResponseProviderType = "PROVIDER_TYPE_BUILTIN"
-	OrganizationSSOConfigurationListResponseProviderTypeProviderTypeCustom      OrganizationSSOConfigurationListResponseProviderType = "PROVIDER_TYPE_CUSTOM"
-)
-
-func (r OrganizationSSOConfigurationListResponseProviderType) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationListResponseProviderTypeProviderTypeUnspecified, OrganizationSSOConfigurationListResponseProviderTypeProviderTypeBuiltin, OrganizationSSOConfigurationListResponseProviderTypeProviderTypeCustom:
-		return true
-	}
-	return false
-}
-
-// state is the state of the SSO configuration
-type OrganizationSSOConfigurationListResponseState string
-
-const (
-	OrganizationSSOConfigurationListResponseStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationListResponseState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	OrganizationSSOConfigurationListResponseStateSSOConfigurationStateInactive    OrganizationSSOConfigurationListResponseState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	OrganizationSSOConfigurationListResponseStateSSOConfigurationStateActive      OrganizationSSOConfigurationListResponseState = "SSO_CONFIGURATION_STATE_ACTIVE"
-)
-
-func (r OrganizationSSOConfigurationListResponseState) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationListResponseStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationListResponseStateSSOConfigurationStateInactive, OrganizationSSOConfigurationListResponseStateSSOConfigurationStateActive:
-		return true
-	}
-	return false
-}
 
 type OrganizationSSOConfigurationDeleteResponse = interface{}
 
@@ -392,14 +236,8 @@ func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err e
 }
 
 type OrganizationSSOConfigurationUpdateParams struct {
-	Body OrganizationSSOConfigurationUpdateParamsBodyUnion `json:"body,required"`
-}
-
-func (r OrganizationSSOConfigurationUpdateParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
-}
-
-type OrganizationSSOConfigurationUpdateParamsBody struct {
+	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
+	Claims param.Field[map[string]string] `json:"claims"`
 	// client_id is the client ID of the SSO provider
 	ClientID param.Field[string] `json:"clientId"`
 	// client_secret is the client secret of the SSO provider
@@ -407,119 +245,14 @@ type OrganizationSSOConfigurationUpdateParamsBody struct {
 	EmailDomain  param.Field[string] `json:"emailDomain"`
 	// issuer_url is the URL of the IdP issuer
 	IssuerURL param.Field[string] `json:"issuerUrl" format:"uri"`
+	// sso_configuration_id is the ID of the SSO configuration to update
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" format:"uuid"`
 	// state is the state of the SSO configuration
-	State param.Field[OrganizationSSOConfigurationUpdateParamsBodyState] `json:"state"`
+	State param.Field[SSOConfigurationState] `json:"state"`
 }
 
-func (r OrganizationSSOConfigurationUpdateParamsBody) MarshalJSON() (data []byte, err error) {
+func (r OrganizationSSOConfigurationUpdateParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBody) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
-}
-
-// Satisfied by
-// [OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider],
-// [OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider],
-// [OrganizationSSOConfigurationUpdateParamsBodyEmailDomain],
-// [OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer],
-// [OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration],
-// [OrganizationSSOConfigurationUpdateParamsBody].
-type OrganizationSSOConfigurationUpdateParamsBodyUnion interface {
-	implementsOrganizationSSOConfigurationUpdateParamsBodyUnion()
-}
-
-type OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider struct {
-	// client_id is the client ID of the SSO provider
-	ClientID param.Field[string] `json:"clientId,required"`
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
-}
-
-type OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider struct {
-	// client_secret is the client secret of the SSO provider
-	ClientSecret param.Field[string] `json:"clientSecret,required"`
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyClientSecretIsTheClientSecretOfTheSSOProvider) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
-}
-
-type OrganizationSSOConfigurationUpdateParamsBodyEmailDomain struct {
-	EmailDomain param.Field[string] `json:"emailDomain,required"`
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyEmailDomain) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyEmailDomain) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
-}
-
-type OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer struct {
-	// issuer_url is the URL of the IdP issuer
-	IssuerURL param.Field[string] `json:"issuerUrl,required" format:"uri"`
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyIssuerURLIsTheURLOfTheIDPIssuer) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
-}
-
-type OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration struct {
-	// state is the state of the SSO configuration
-	State param.Field[OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState] `json:"state,required"`
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfiguration) implementsOrganizationSSOConfigurationUpdateParamsBodyUnion() {
-}
-
-// state is the state of the SSO configuration
-type OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState string
-
-const (
-	OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateInactive    OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateActive      OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
-)
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationState) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateInactive, OrganizationSSOConfigurationUpdateParamsBodyStateIsTheStateOfTheSSOConfigurationStateSSOConfigurationStateActive:
-		return true
-	}
-	return false
-}
-
-// state is the state of the SSO configuration
-type OrganizationSSOConfigurationUpdateParamsBodyState string
-
-const (
-	OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateUnspecified OrganizationSSOConfigurationUpdateParamsBodyState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateInactive    OrganizationSSOConfigurationUpdateParamsBodyState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateActive      OrganizationSSOConfigurationUpdateParamsBodyState = "SSO_CONFIGURATION_STATE_ACTIVE"
-)
-
-func (r OrganizationSSOConfigurationUpdateParamsBodyState) IsKnown() bool {
-	switch r {
-	case OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateUnspecified, OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateInactive, OrganizationSSOConfigurationUpdateParamsBodyStateSSOConfigurationStateActive:
-		return true
-	}
-	return false
 }
 
 type OrganizationSSOConfigurationListParams struct {

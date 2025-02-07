@@ -77,8 +77,8 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.GetSSOLoginURL(context.TODO(), gitpod.AccountGetSSOLoginURLParams{
-		ReturnTo: gitpod.F("https://example.com"),
 		Email:    gitpod.F("dev@stainlessapi.com"),
+		ReturnTo: gitpod.F("https://example.com"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

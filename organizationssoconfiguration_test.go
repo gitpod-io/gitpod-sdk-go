@@ -67,7 +67,7 @@ func TestOrganizationSSOConfigurationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationSSOConfigurationUpdate(t *testing.T) {
+func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -81,9 +81,15 @@ func TestOrganizationSSOConfigurationUpdate(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Update(context.TODO(), gitpod.OrganizationSSOConfigurationUpdateParams{
-		Body: gitpod.OrganizationSSOConfigurationUpdateParamsBodyClientIDIsTheClientIDOfTheSSOProvider{
-			ClientID: gitpod.F("x"),
-		},
+		Claims: gitpod.F(map[string]string{
+			"foo": "string",
+		}),
+		ClientID:           gitpod.F("x"),
+		ClientSecret:       gitpod.F("x"),
+		EmailDomain:        gitpod.F("xxxx"),
+		IssuerURL:          gitpod.F("https://example.com"),
+		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		State:              gitpod.F(gitpod.SSOConfigurationStateSSOConfigurationStateUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

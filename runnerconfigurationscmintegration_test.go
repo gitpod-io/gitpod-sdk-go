@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
-func TestRunnerConfigurationScmIntegrationNew(t *testing.T) {
+func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,9 +27,12 @@ func TestRunnerConfigurationScmIntegrationNew(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
-		Body: gitpod.RunnerConfigurationScmIntegrationNewParamsBodyOAuthClientIDIsTheOAuthAppSClientIDIfOAuthIsConfiguredIfConfiguredOAuthPlaintextClientSecretMustAlsoBeSet{
-			OAuthClientID: gitpod.F("oauthClientId"),
-		},
+		Host:                       gitpod.F("host"),
+		OAuthClientID:              gitpod.F("oauthClientId"),
+		OAuthPlaintextClientSecret: gitpod.F("oauthPlaintextClientSecret"),
+		Pat:                        gitpod.F(true),
+		RunnerID:                   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ScmID:                      gitpod.F("scmId"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -65,7 +68,7 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerConfigurationScmIntegrationUpdate(t *testing.T) {
+func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -79,9 +82,10 @@ func TestRunnerConfigurationScmIntegrationUpdate(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Update(context.TODO(), gitpod.RunnerConfigurationScmIntegrationUpdateParams{
-		Body: gitpod.RunnerConfigurationScmIntegrationUpdateParamsBodyOAuthClientIDCanBeSetToUpdateTheOAuthAppSClientIDIfAnEmptyStringIsSetTheOAuthConfigurationWillBeRemovedRegardlessOfWhetherAClientSecretIsSetAndAnyExistingHostAuthenticationTokensForTheScmIntegrationSRunnerAndHostThatWereCreatedUsingTheOAuthAppWillBeDeletedThisMightLeadToUsersBeingUnableToAccessTheirRepositoriesUntilTheyReAuthenticate{
-			OAuthClientID: gitpod.F("oauthClientId"),
-		},
+		ID:                         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OAuthClientID:              gitpod.F("oauthClientId"),
+		OAuthPlaintextClientSecret: gitpod.F("oauthPlaintextClientSecret"),
+		Pat:                        gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

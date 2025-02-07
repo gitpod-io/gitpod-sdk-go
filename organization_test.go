@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/flex-sdk-go"
 	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
 	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestOrganizationNewWithOptionalParams(t *testing.T) {
@@ -79,11 +80,11 @@ func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Update(context.TODO(), gitpod.OrganizationUpdateParams{
-		Body: gitpod.OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganization{
-			InviteDomains: gitpod.F(gitpod.OrganizationUpdateParamsBodyInviteDomainsIsTheDomainAllowlistOfTheOrganizationInviteDomains{
-				Domains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
-			}),
-		},
+		InviteDomains: gitpod.F(gitpod.InviteDomainsParam{
+			Domains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
+		}),
+		Name:           gitpod.F("name"),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -114,7 +115,7 @@ func TestOrganizationListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
-		Scope: gitpod.F(gitpod.OrganizationListParamsScopeScopeUnspecified),
+		Scope: gitpod.F(gitpod.ScopeScopeUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -150,7 +151,7 @@ func TestOrganizationDeleteWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationJoin(t *testing.T) {
+func TestOrganizationJoinWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -164,9 +165,8 @@ func TestOrganizationJoin(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Join(context.TODO(), gitpod.OrganizationJoinParams{
-		Body: gitpod.OrganizationJoinParamsBodyInviteIDIsTheUniqueIdentifierOfTheInviteToJoinTheOrganization{
-			InviteID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		},
+		InviteID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -248,7 +248,7 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:           gitpod.F(gitpod.OrganizationSetRoleParamsRoleOrganizationRoleUnspecified),
+		Role:           gitpod.F(shared.OrganizationRoleOrganizationRoleUnspecified),
 		UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
