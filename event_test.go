@@ -32,9 +32,9 @@ func TestEventListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EventListParamsFilter{
 			ActorIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			ActorPrincipals: gitpod.F([]shared.Principal{shared.PrincipalPrincipalUnspecified}),
+			ActorPrincipals: gitpod.F([]shared.Principal{shared.PrincipalUnspecified}),
 			SubjectIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			SubjectTypes:    gitpod.F([]gitpod.ResourceType{gitpod.ResourceTypeResourceTypeUnspecified}),
+			SubjectTypes:    gitpod.F([]gitpod.ResourceType{gitpod.ResourceTypeUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.EventListParamsPagination{
 			Token:    gitpod.F("token"),

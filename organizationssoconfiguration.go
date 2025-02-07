@@ -92,14 +92,14 @@ func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body O
 type ProviderType string
 
 const (
-	ProviderTypeProviderTypeUnspecified ProviderType = "PROVIDER_TYPE_UNSPECIFIED"
-	ProviderTypeProviderTypeBuiltin     ProviderType = "PROVIDER_TYPE_BUILTIN"
-	ProviderTypeProviderTypeCustom      ProviderType = "PROVIDER_TYPE_CUSTOM"
+	ProviderTypeUnspecified ProviderType = "PROVIDER_TYPE_UNSPECIFIED"
+	ProviderTypeBuiltin     ProviderType = "PROVIDER_TYPE_BUILTIN"
+	ProviderTypeCustom      ProviderType = "PROVIDER_TYPE_CUSTOM"
 )
 
 func (r ProviderType) IsKnown() bool {
 	switch r {
-	case ProviderTypeProviderTypeUnspecified, ProviderTypeProviderTypeBuiltin, ProviderTypeProviderTypeCustom:
+	case ProviderTypeUnspecified, ProviderTypeBuiltin, ProviderTypeCustom:
 		return true
 	}
 	return false
@@ -149,14 +149,14 @@ func (r ssoConfigurationJSON) RawJSON() string {
 type SSOConfigurationState string
 
 const (
-	SSOConfigurationStateSSOConfigurationStateUnspecified SSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
-	SSOConfigurationStateSSOConfigurationStateInactive    SSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
-	SSOConfigurationStateSSOConfigurationStateActive      SSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
+	SSOConfigurationStateUnspecified SSOConfigurationState = "SSO_CONFIGURATION_STATE_UNSPECIFIED"
+	SSOConfigurationStateInactive    SSOConfigurationState = "SSO_CONFIGURATION_STATE_INACTIVE"
+	SSOConfigurationStateActive      SSOConfigurationState = "SSO_CONFIGURATION_STATE_ACTIVE"
 )
 
 func (r SSOConfigurationState) IsKnown() bool {
 	switch r {
-	case SSOConfigurationStateSSOConfigurationStateUnspecified, SSOConfigurationStateSSOConfigurationStateInactive, SSOConfigurationStateSSOConfigurationStateActive:
+	case SSOConfigurationStateUnspecified, SSOConfigurationStateInactive, SSOConfigurationStateActive:
 		return true
 	}
 	return false

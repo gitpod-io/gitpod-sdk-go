@@ -360,13 +360,13 @@ func (r runnerJSON) RawJSON() string {
 type RunnerCapability string
 
 const (
-	RunnerCapabilityRunnerCapabilityUnspecified               RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
-	RunnerCapabilityRunnerCapabilityFetchLocalScmIntegrations RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+	RunnerCapabilityUnspecified               RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerCapabilityFetchLocalScmIntegrations RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityRunnerCapabilityUnspecified, RunnerCapabilityRunnerCapabilityFetchLocalScmIntegrations:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations:
 		return true
 	}
 	return false
@@ -421,15 +421,15 @@ func (r RunnerConfigurationParam) MarshalJSON() (data []byte, err error) {
 type RunnerKind string
 
 const (
-	RunnerKindRunnerKindUnspecified        RunnerKind = "RUNNER_KIND_UNSPECIFIED"
-	RunnerKindRunnerKindLocal              RunnerKind = "RUNNER_KIND_LOCAL"
-	RunnerKindRunnerKindRemote             RunnerKind = "RUNNER_KIND_REMOTE"
-	RunnerKindRunnerKindLocalConfiguration RunnerKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
+	RunnerKindUnspecified        RunnerKind = "RUNNER_KIND_UNSPECIFIED"
+	RunnerKindLocal              RunnerKind = "RUNNER_KIND_LOCAL"
+	RunnerKindRemote             RunnerKind = "RUNNER_KIND_REMOTE"
+	RunnerKindLocalConfiguration RunnerKind = "RUNNER_KIND_LOCAL_CONFIGURATION"
 )
 
 func (r RunnerKind) IsKnown() bool {
 	switch r {
-	case RunnerKindRunnerKindUnspecified, RunnerKindRunnerKindLocal, RunnerKindRunnerKindRemote, RunnerKindRunnerKindLocalConfiguration:
+	case RunnerKindUnspecified, RunnerKindLocal, RunnerKindRemote, RunnerKindLocalConfiguration:
 		return true
 	}
 	return false
@@ -439,18 +439,18 @@ func (r RunnerKind) IsKnown() bool {
 type RunnerPhase string
 
 const (
-	RunnerPhaseRunnerPhaseUnspecified RunnerPhase = "RUNNER_PHASE_UNSPECIFIED"
-	RunnerPhaseRunnerPhaseCreated     RunnerPhase = "RUNNER_PHASE_CREATED"
-	RunnerPhaseRunnerPhaseInactive    RunnerPhase = "RUNNER_PHASE_INACTIVE"
-	RunnerPhaseRunnerPhaseActive      RunnerPhase = "RUNNER_PHASE_ACTIVE"
-	RunnerPhaseRunnerPhaseDeleting    RunnerPhase = "RUNNER_PHASE_DELETING"
-	RunnerPhaseRunnerPhaseDeleted     RunnerPhase = "RUNNER_PHASE_DELETED"
-	RunnerPhaseRunnerPhaseDegraded    RunnerPhase = "RUNNER_PHASE_DEGRADED"
+	RunnerPhaseUnspecified RunnerPhase = "RUNNER_PHASE_UNSPECIFIED"
+	RunnerPhaseCreated     RunnerPhase = "RUNNER_PHASE_CREATED"
+	RunnerPhaseInactive    RunnerPhase = "RUNNER_PHASE_INACTIVE"
+	RunnerPhaseActive      RunnerPhase = "RUNNER_PHASE_ACTIVE"
+	RunnerPhaseDeleting    RunnerPhase = "RUNNER_PHASE_DELETING"
+	RunnerPhaseDeleted     RunnerPhase = "RUNNER_PHASE_DELETED"
+	RunnerPhaseDegraded    RunnerPhase = "RUNNER_PHASE_DEGRADED"
 )
 
 func (r RunnerPhase) IsKnown() bool {
 	switch r {
-	case RunnerPhaseRunnerPhaseUnspecified, RunnerPhaseRunnerPhaseCreated, RunnerPhaseRunnerPhaseInactive, RunnerPhaseRunnerPhaseActive, RunnerPhaseRunnerPhaseDeleting, RunnerPhaseRunnerPhaseDeleted, RunnerPhaseRunnerPhaseDegraded:
+	case RunnerPhaseUnspecified, RunnerPhaseCreated, RunnerPhaseInactive, RunnerPhaseActive, RunnerPhaseDeleting, RunnerPhaseDeleted, RunnerPhaseDegraded:
 		return true
 	}
 	return false
@@ -462,15 +462,15 @@ func (r RunnerPhase) IsKnown() bool {
 type RunnerProvider string
 
 const (
-	RunnerProviderRunnerProviderUnspecified RunnerProvider = "RUNNER_PROVIDER_UNSPECIFIED"
-	RunnerProviderRunnerProviderAwsEc2      RunnerProvider = "RUNNER_PROVIDER_AWS_EC2"
-	RunnerProviderRunnerProviderLinuxHost   RunnerProvider = "RUNNER_PROVIDER_LINUX_HOST"
-	RunnerProviderRunnerProviderDesktopMac  RunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+	RunnerProviderUnspecified RunnerProvider = "RUNNER_PROVIDER_UNSPECIFIED"
+	RunnerProviderAwsEc2      RunnerProvider = "RUNNER_PROVIDER_AWS_EC2"
+	RunnerProviderLinuxHost   RunnerProvider = "RUNNER_PROVIDER_LINUX_HOST"
+	RunnerProviderDesktopMac  RunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
 )
 
 func (r RunnerProvider) IsKnown() bool {
 	switch r {
-	case RunnerProviderRunnerProviderUnspecified, RunnerProviderRunnerProviderAwsEc2, RunnerProviderRunnerProviderLinuxHost, RunnerProviderRunnerProviderDesktopMac:
+	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac:
 		return true
 	}
 	return false
@@ -479,14 +479,14 @@ func (r RunnerProvider) IsKnown() bool {
 type RunnerReleaseChannel string
 
 const (
-	RunnerReleaseChannelRunnerReleaseChannelUnspecified RunnerReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
-	RunnerReleaseChannelRunnerReleaseChannelStable      RunnerReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
-	RunnerReleaseChannelRunnerReleaseChannelLatest      RunnerReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
+	RunnerReleaseChannelUnspecified RunnerReleaseChannel = "RUNNER_RELEASE_CHANNEL_UNSPECIFIED"
+	RunnerReleaseChannelStable      RunnerReleaseChannel = "RUNNER_RELEASE_CHANNEL_STABLE"
+	RunnerReleaseChannelLatest      RunnerReleaseChannel = "RUNNER_RELEASE_CHANNEL_LATEST"
 )
 
 func (r RunnerReleaseChannel) IsKnown() bool {
 	switch r {
-	case RunnerReleaseChannelRunnerReleaseChannelUnspecified, RunnerReleaseChannelRunnerReleaseChannelStable, RunnerReleaseChannelRunnerReleaseChannelLatest:
+	case RunnerReleaseChannelUnspecified, RunnerReleaseChannelStable, RunnerReleaseChannelLatest:
 		return true
 	}
 	return false

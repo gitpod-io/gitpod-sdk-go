@@ -41,34 +41,34 @@ type FieldValueParam = shared.FieldValueParam
 type OrganizationRole = shared.OrganizationRole
 
 // This is an alias to an internal value.
-const OrganizationRoleOrganizationRoleUnspecified = shared.OrganizationRoleOrganizationRoleUnspecified
+const OrganizationRoleUnspecified = shared.OrganizationRoleUnspecified
 
 // This is an alias to an internal value.
-const OrganizationRoleOrganizationRoleAdmin = shared.OrganizationRoleOrganizationRoleAdmin
+const OrganizationRoleAdmin = shared.OrganizationRoleAdmin
 
 // This is an alias to an internal value.
-const OrganizationRoleOrganizationRoleMember = shared.OrganizationRoleOrganizationRoleMember
+const OrganizationRoleMember = shared.OrganizationRoleMember
 
 // This is an alias to an internal type.
 type Principal = shared.Principal
 
 // This is an alias to an internal value.
-const PrincipalPrincipalUnspecified = shared.PrincipalPrincipalUnspecified
+const PrincipalUnspecified = shared.PrincipalUnspecified
 
 // This is an alias to an internal value.
-const PrincipalPrincipalAccount = shared.PrincipalPrincipalAccount
+const PrincipalAccount = shared.PrincipalAccount
 
 // This is an alias to an internal value.
-const PrincipalPrincipalUser = shared.PrincipalPrincipalUser
+const PrincipalUser = shared.PrincipalUser
 
 // This is an alias to an internal value.
-const PrincipalPrincipalRunner = shared.PrincipalPrincipalRunner
+const PrincipalRunner = shared.PrincipalRunner
 
 // This is an alias to an internal value.
-const PrincipalPrincipalEnvironment = shared.PrincipalPrincipalEnvironment
+const PrincipalEnvironment = shared.PrincipalEnvironment
 
 // This is an alias to an internal value.
-const PrincipalPrincipalServiceAccount = shared.PrincipalPrincipalServiceAccount
+const PrincipalServiceAccount = shared.PrincipalServiceAccount
 
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
@@ -98,22 +98,22 @@ type TaskExecutionMetadata = shared.TaskExecutionMetadata
 type TaskExecutionPhase = shared.TaskExecutionPhase
 
 // This is an alias to an internal value.
-const TaskExecutionPhaseTaskExecutionPhaseUnspecified = shared.TaskExecutionPhaseTaskExecutionPhaseUnspecified
+const TaskExecutionPhaseUnspecified = shared.TaskExecutionPhaseUnspecified
 
 // This is an alias to an internal value.
-const TaskExecutionPhaseTaskExecutionPhasePending = shared.TaskExecutionPhaseTaskExecutionPhasePending
+const TaskExecutionPhasePending = shared.TaskExecutionPhasePending
 
 // This is an alias to an internal value.
-const TaskExecutionPhaseTaskExecutionPhaseRunning = shared.TaskExecutionPhaseTaskExecutionPhaseRunning
+const TaskExecutionPhaseRunning = shared.TaskExecutionPhaseRunning
 
 // This is an alias to an internal value.
-const TaskExecutionPhaseTaskExecutionPhaseSucceeded = shared.TaskExecutionPhaseTaskExecutionPhaseSucceeded
+const TaskExecutionPhaseSucceeded = shared.TaskExecutionPhaseSucceeded
 
 // This is an alias to an internal value.
-const TaskExecutionPhaseTaskExecutionPhaseFailed = shared.TaskExecutionPhaseTaskExecutionPhaseFailed
+const TaskExecutionPhaseFailed = shared.TaskExecutionPhaseFailed
 
 // This is an alias to an internal value.
-const TaskExecutionPhaseTaskExecutionPhaseStopped = shared.TaskExecutionPhaseTaskExecutionPhaseStopped
+const TaskExecutionPhaseStopped = shared.TaskExecutionPhaseStopped
 
 // This is an alias to an internal type.
 type TaskExecutionSpec = shared.TaskExecutionSpec
@@ -137,13 +137,13 @@ type TaskExecutionStatusStep = shared.TaskExecutionStatusStep
 type UserStatus = shared.UserStatus
 
 // This is an alias to an internal value.
-const UserStatusUserStatusUnspecified = shared.UserStatusUserStatusUnspecified
+const UserStatusUnspecified = shared.UserStatusUnspecified
 
 // This is an alias to an internal value.
-const UserStatusUserStatusActive = shared.UserStatusUserStatusActive
+const UserStatusActive = shared.UserStatusActive
 
 // This is an alias to an internal value.
-const UserStatusUserStatusSuspended = shared.UserStatusUserStatusSuspended
+const UserStatusSuspended = shared.UserStatusSuspended
 
 // This is an alias to an internal value.
-const UserStatusUserStatusLeft = shared.UserStatusUserStatusLeft
+const UserStatusLeft = shared.UserStatusLeft

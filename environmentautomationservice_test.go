@@ -34,7 +34,7 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(shared.SubjectParam{
 				ID:        gitpod.F("id"),
-				Principal: gitpod.F(shared.PrincipalPrincipalUnspecified),
+				Principal: gitpod.F(shared.PrincipalUnspecified),
 			}),
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
@@ -51,7 +51,7 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 				Start: gitpod.F("x"),
 				Stop:  gitpod.F("stop"),
 			}),
-			DesiredPhase: gitpod.F(gitpod.ServicePhaseServicePhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.ServicePhaseUnspecified),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
@@ -138,7 +138,7 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 		Status: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsStatus{
 			FailureMessage: gitpod.F("failureMessage"),
 			LogURL:         gitpod.F("logUrl"),
-			Phase:          gitpod.F(gitpod.ServicePhaseServicePhaseUnspecified),
+			Phase:          gitpod.F(gitpod.ServicePhaseUnspecified),
 			Session:        gitpod.F("session"),
 		}),
 	})

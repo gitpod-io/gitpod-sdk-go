@@ -382,18 +382,18 @@ func (r ServiceMetadataParam) MarshalJSON() (data []byte, err error) {
 type ServicePhase string
 
 const (
-	ServicePhaseServicePhaseUnspecified ServicePhase = "SERVICE_PHASE_UNSPECIFIED"
-	ServicePhaseServicePhaseStarting    ServicePhase = "SERVICE_PHASE_STARTING"
-	ServicePhaseServicePhaseRunning     ServicePhase = "SERVICE_PHASE_RUNNING"
-	ServicePhaseServicePhaseStopping    ServicePhase = "SERVICE_PHASE_STOPPING"
-	ServicePhaseServicePhaseStopped     ServicePhase = "SERVICE_PHASE_STOPPED"
-	ServicePhaseServicePhaseFailed      ServicePhase = "SERVICE_PHASE_FAILED"
-	ServicePhaseServicePhaseDeleted     ServicePhase = "SERVICE_PHASE_DELETED"
+	ServicePhaseUnspecified ServicePhase = "SERVICE_PHASE_UNSPECIFIED"
+	ServicePhaseStarting    ServicePhase = "SERVICE_PHASE_STARTING"
+	ServicePhaseRunning     ServicePhase = "SERVICE_PHASE_RUNNING"
+	ServicePhaseStopping    ServicePhase = "SERVICE_PHASE_STOPPING"
+	ServicePhaseStopped     ServicePhase = "SERVICE_PHASE_STOPPED"
+	ServicePhaseFailed      ServicePhase = "SERVICE_PHASE_FAILED"
+	ServicePhaseDeleted     ServicePhase = "SERVICE_PHASE_DELETED"
 )
 
 func (r ServicePhase) IsKnown() bool {
 	switch r {
-	case ServicePhaseServicePhaseUnspecified, ServicePhaseServicePhaseStarting, ServicePhaseServicePhaseRunning, ServicePhaseServicePhaseStopping, ServicePhaseServicePhaseStopped, ServicePhaseServicePhaseFailed, ServicePhaseServicePhaseDeleted:
+	case ServicePhaseUnspecified, ServicePhaseStarting, ServicePhaseRunning, ServicePhaseStopping, ServicePhaseStopped, ServicePhaseFailed, ServicePhaseDeleted:
 		return true
 	}
 	return false
