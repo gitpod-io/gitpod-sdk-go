@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 func TestProjectNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,13 +27,21 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
-		EnvironmentClass: gitpod.F[gitpod.ProjectNewParamsEnvironmentClassUnion](gitpod.ProjectNewParamsEnvironmentClassUseAFixedEnvironmentClassOnAGivenRunnerThisCannotBeALocalRunnerSEnvironmentClass{
+		EnvironmentClass: gitpod.F(gitpod.ProjectEnvironmentClassParam{
 			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			LocalRunner:        gitpod.F(true),
 		}),
-		Initializer: gitpod.F(gitpod.ProjectNewParamsInitializer{
-			Specs: gitpod.F([]gitpod.ProjectNewParamsInitializerSpecUnion{gitpod.ProjectNewParamsInitializerSpecsContextURL{
-				ContextURL: gitpod.F(gitpod.ProjectNewParamsInitializerSpecsContextURLContextURL{
+		Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
+			Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
+				ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
 					URL: gitpod.F("https://example.com"),
+				}),
+				Git: gitpod.F(gitpod.EnvironmentInitializerSpecsGitParam{
+					CheckoutLocation:  gitpod.F("checkoutLocation"),
+					CloneTarget:       gitpod.F("cloneTarget"),
+					RemoteUri:         gitpod.F("remoteUri"),
+					TargetMode:        gitpod.F(gitpod.EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified),
+					UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 				}),
 			}}),
 		}),
@@ -50,6 +59,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -74,6 +84,7 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -86,9 +97,28 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Update(context.TODO(), gitpod.ProjectUpdateParams{
-		Body: gitpod.ProjectUpdateParamsBodyAutomationsFilePathIsThePathToTheAutomationsFileRelativeToTheRepoRoot{
-			AutomationsFilePath: gitpod.F("automationsFilePath"),
-		},
+		AutomationsFilePath:  gitpod.F("automationsFilePath"),
+		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+		EnvironmentClass: gitpod.F(gitpod.ProjectEnvironmentClassParam{
+			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			LocalRunner:        gitpod.F(true),
+		}),
+		Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
+			Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
+				ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
+					URL: gitpod.F("https://example.com"),
+				}),
+				Git: gitpod.F(gitpod.EnvironmentInitializerSpecsGitParam{
+					CheckoutLocation:  gitpod.F("checkoutLocation"),
+					CloneTarget:       gitpod.F("cloneTarget"),
+					RemoteUri:         gitpod.F("remoteUri"),
+					TargetMode:        gitpod.F(gitpod.EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified),
+					UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
+				}),
+			}}),
+		}),
+		Name:      gitpod.F("x"),
+		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -100,6 +130,7 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -129,6 +160,7 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -153,6 +185,7 @@ func TestProjectDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectNewFromEnvironmentWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

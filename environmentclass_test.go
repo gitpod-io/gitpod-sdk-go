@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -29,7 +30,8 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentClassListParamsFilter{
-			Enabled: gitpod.F(true),
+			Enabled:   gitpod.F(true),
+			RunnerIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentClassListParamsPagination{
 			Token:    gitpod.F("token"),

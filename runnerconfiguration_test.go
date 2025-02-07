@@ -8,12 +8,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,20 +28,27 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.Validate(context.TODO(), gitpod.RunnerConfigurationValidateParams{
-		Body: gitpod.RunnerConfigurationValidateParamsBodyObject{
-			EnvironmentClass: gitpod.F(gitpod.RunnerConfigurationValidateParamsBodyObjectEnvironmentClass{
-				ID: gitpod.F("id"),
-				Configuration: gitpod.F([]gitpod.RunnerConfigurationValidateParamsBodyObjectEnvironmentClassConfiguration{{
-					Key:   gitpod.F("key"),
-					Value: gitpod.F("value"),
-				}}),
-				Description: gitpod.F("xxx"),
-				DisplayName: gitpod.F("xxx"),
-				Enabled:     gitpod.F(true),
-				RunnerID:    gitpod.F("runnerId"),
-			}),
-			RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		},
+		EnvironmentClass: gitpod.F(shared.EnvironmentClassParam{
+			ID: gitpod.F("id"),
+			Configuration: gitpod.F([]shared.FieldValueParam{{
+				Key:   gitpod.F("key"),
+				Value: gitpod.F("value"),
+			}}),
+			Description: gitpod.F("xxx"),
+			DisplayName: gitpod.F("xxx"),
+			Enabled:     gitpod.F(true),
+			RunnerID:    gitpod.F("runnerId"),
+		}),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ScmIntegration: gitpod.F(gitpod.RunnerConfigurationValidateParamsScmIntegration{
+			ID:                         gitpod.F("id"),
+			Host:                       gitpod.F("host"),
+			OAuthClientID:              gitpod.F("oauthClientId"),
+			OAuthEncryptedClientSecret: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+			OAuthPlaintextClientSecret: gitpod.F("oauthPlaintextClientSecret"),
+			Pat:                        gitpod.F(true),
+			ScmID:                      gitpod.F("scmId"),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

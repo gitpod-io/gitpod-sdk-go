@@ -7,10 +7,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/param"
-	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
+	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 // UserService contains methods and other services that help with interacting with
@@ -50,28 +51,7 @@ func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedPar
 	return
 }
 
-type UserGetAuthenticatedUserResponse struct {
-	User UserGetAuthenticatedUserResponseUser `json:"user"`
-	JSON userGetAuthenticatedUserResponseJSON `json:"-"`
-}
-
-// userGetAuthenticatedUserResponseJSON contains the JSON metadata for the struct
-// [UserGetAuthenticatedUserResponse]
-type userGetAuthenticatedUserResponseJSON struct {
-	User        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *UserGetAuthenticatedUserResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r userGetAuthenticatedUserResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type UserGetAuthenticatedUserResponseUser struct {
+type User struct {
 	// id is a UUID of the user
 	ID string `json:"id" format:"uuid"`
 	// avatar_url is a link to the user avatar
@@ -172,13 +152,12 @@ type UserGetAuthenticatedUserResponseUser struct {
 	// +optional if not set, this account is owned by the installation.
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// status is the status the user is in
-	Status UserGetAuthenticatedUserResponseUserStatus `json:"status"`
-	JSON   userGetAuthenticatedUserResponseUserJSON   `json:"-"`
+	Status shared.UserStatus `json:"status"`
+	JSON   userJSON          `json:"-"`
 }
 
-// userGetAuthenticatedUserResponseUserJSON contains the JSON metadata for the
-// struct [UserGetAuthenticatedUserResponseUser]
-type userGetAuthenticatedUserResponseUserJSON struct {
+// userJSON contains the JSON metadata for the struct [User]
+type userJSON struct {
 	ID             apijson.Field
 	AvatarURL      apijson.Field
 	CreatedAt      apijson.Field
@@ -189,40 +168,43 @@ type userGetAuthenticatedUserResponseUserJSON struct {
 	ExtraFields    map[string]apijson.Field
 }
 
-func (r *UserGetAuthenticatedUserResponseUser) UnmarshalJSON(data []byte) (err error) {
+func (r *User) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r userGetAuthenticatedUserResponseUserJSON) RawJSON() string {
+func (r userJSON) RawJSON() string {
 	return r.raw
 }
 
-// status is the status the user is in
-type UserGetAuthenticatedUserResponseUserStatus string
+type UserGetAuthenticatedUserResponse struct {
+	User User                                 `json:"user"`
+	JSON userGetAuthenticatedUserResponseJSON `json:"-"`
+}
 
-const (
-	UserGetAuthenticatedUserResponseUserStatusUserStatusUnspecified UserGetAuthenticatedUserResponseUserStatus = "USER_STATUS_UNSPECIFIED"
-	UserGetAuthenticatedUserResponseUserStatusUserStatusActive      UserGetAuthenticatedUserResponseUserStatus = "USER_STATUS_ACTIVE"
-	UserGetAuthenticatedUserResponseUserStatusUserStatusSuspended   UserGetAuthenticatedUserResponseUserStatus = "USER_STATUS_SUSPENDED"
-	UserGetAuthenticatedUserResponseUserStatusUserStatusLeft        UserGetAuthenticatedUserResponseUserStatus = "USER_STATUS_LEFT"
-)
+// userGetAuthenticatedUserResponseJSON contains the JSON metadata for the struct
+// [UserGetAuthenticatedUserResponse]
+type userGetAuthenticatedUserResponseJSON struct {
+	User        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
 
-func (r UserGetAuthenticatedUserResponseUserStatus) IsKnown() bool {
-	switch r {
-	case UserGetAuthenticatedUserResponseUserStatusUserStatusUnspecified, UserGetAuthenticatedUserResponseUserStatusUserStatusActive, UserGetAuthenticatedUserResponseUserStatusUserStatusSuspended, UserGetAuthenticatedUserResponseUserStatusUserStatusLeft:
-		return true
-	}
-	return false
+func (r *UserGetAuthenticatedUserResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r userGetAuthenticatedUserResponseJSON) RawJSON() string {
+	return r.raw
 }
 
 type UserSetSuspendedResponse = interface{}
 
 type UserGetAuthenticatedUserParams struct {
-	Body interface{} `json:"body,required"`
+	Empty param.Field[bool] `json:"empty"`
 }
 
 func (r UserGetAuthenticatedUserParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
+	return apijson.MarshalRoot(r)
 }
 
 type UserSetSuspendedParams struct {

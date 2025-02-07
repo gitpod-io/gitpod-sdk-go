@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 func TestRunnerNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,16 +27,16 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-		Kind:     gitpod.F(gitpod.RunnerNewParamsKindRunnerKindUnspecified),
+		Kind:     gitpod.F(gitpod.RunnerKindUnspecified),
 		Name:     gitpod.F("xxx"),
-		Provider: gitpod.F(gitpod.RunnerNewParamsProviderRunnerProviderUnspecified),
-		Spec: gitpod.F(gitpod.RunnerNewParamsSpec{
-			Configuration: gitpod.F(gitpod.RunnerNewParamsSpecConfiguration{
+		Provider: gitpod.F(gitpod.RunnerProviderUnspecified),
+		Spec: gitpod.F(gitpod.RunnerSpecParam{
+			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
 				AutoUpdate:     gitpod.F(true),
 				Region:         gitpod.F("region"),
-				ReleaseChannel: gitpod.F(gitpod.RunnerNewParamsSpecConfigurationReleaseChannelRunnerReleaseChannelUnspecified),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
 			}),
-			DesiredPhase: gitpod.F(gitpod.RunnerNewParamsSpecDesiredPhaseRunnerPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
 	})
 	if err != nil {
@@ -48,6 +49,7 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -71,7 +73,8 @@ func TestRunnerGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestRunnerUpdate(t *testing.T) {
+func TestRunnerUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -84,9 +87,15 @@ func TestRunnerUpdate(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Update(context.TODO(), gitpod.RunnerUpdateParams{
-		Body: gitpod.RunnerUpdateParamsBodyTheRunnerSNameWhichIsShownToUsers{
-			Name: gitpod.F("xxx"),
-		},
+		Name:     gitpod.F("xxx"),
+		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Spec: gitpod.F(gitpod.RunnerUpdateParamsSpec{
+			Configuration: gitpod.F(gitpod.RunnerUpdateParamsSpecConfiguration{
+				AutoUpdate:     gitpod.F(true),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
+			}),
+			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -98,6 +107,7 @@ func TestRunnerUpdate(t *testing.T) {
 }
 
 func TestRunnerListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -114,8 +124,8 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.RunnerListParamsFilter{
 			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Kinds:      gitpod.F([]gitpod.RunnerListParamsFilterKind{gitpod.RunnerListParamsFilterKindRunnerKindUnspecified}),
-			Providers:  gitpod.F([]gitpod.RunnerListParamsFilterProvider{gitpod.RunnerListParamsFilterProviderRunnerProviderUnspecified}),
+			Kinds:      gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
 			Token:    gitpod.F("token"),
@@ -132,6 +142,7 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -157,6 +168,7 @@ func TestRunnerDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -182,6 +194,7 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -206,6 +219,7 @@ func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

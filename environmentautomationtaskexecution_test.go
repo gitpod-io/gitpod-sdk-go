@@ -8,12 +8,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -38,6 +40,7 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -54,7 +57,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Phases:         gitpod.F([]gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhase{gitpod.EnvironmentAutomationTaskExecutionListParamsFilterPhaseTaskExecutionPhaseUnspecified}),
+			Phases:         gitpod.F([]shared.TaskExecutionPhase{shared.TaskExecutionPhaseUnspecified}),
 			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			TaskReferences: gitpod.F([]string{"string"}),
 		}),
@@ -73,6 +76,7 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 }
 
 func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

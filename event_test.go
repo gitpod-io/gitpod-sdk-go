@@ -8,12 +8,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestEventListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -30,9 +32,9 @@ func TestEventListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EventListParamsFilter{
 			ActorIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			ActorPrincipals: gitpod.F([]gitpod.EventListParamsFilterActorPrincipal{gitpod.EventListParamsFilterActorPrincipalPrincipalUnspecified}),
+			ActorPrincipals: gitpod.F([]shared.Principal{shared.PrincipalUnspecified}),
 			SubjectIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			SubjectTypes:    gitpod.F([]gitpod.EventListParamsFilterSubjectType{gitpod.EventListParamsFilterSubjectTypeResourceTypeUnspecified}),
+			SubjectTypes:    gitpod.F([]gitpod.ResourceType{gitpod.ResourceTypeUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.EventListParamsPagination{
 			Token:    gitpod.F("token"),

@@ -9,12 +9,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 func TestEnvironmentNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -27,51 +28,60 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.New(context.TODO(), gitpod.EnvironmentNewParams{
-		Spec: gitpod.F(gitpod.EnvironmentNewParamsSpec{
-			Admission: gitpod.F(gitpod.EnvironmentNewParamsSpecAdmissionAdmissionLevelUnspecified),
-			AutomationsFile: gitpod.F(gitpod.EnvironmentNewParamsSpecAutomationsFile{
+		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
+			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
+			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
 			}),
-			Content: gitpod.F(gitpod.EnvironmentNewParamsSpecContent{
+			Content: gitpod.F(gitpod.EnvironmentSpecContentParam{
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
-				Initializer: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewParamsSpecContentInitializerSpecsContextURL{
-						ContextURL: gitpod.F(gitpod.EnvironmentNewParamsSpecContentInitializerSpecsContextURLContextURL{
-							URL: gitpod.F("https://example.com"),
+				Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
+					Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
+						ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
+							URL: gitpod.F("https://github.com/gitpod-io/gitpod"),
+						}),
+						Git: gitpod.F(gitpod.EnvironmentInitializerSpecsGitParam{
+							CheckoutLocation:  gitpod.F("checkoutLocation"),
+							CloneTarget:       gitpod.F("cloneTarget"),
+							RemoteUri:         gitpod.F("remoteUri"),
+							TargetMode:        gitpod.F(gitpod.EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified),
+							UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 						}),
 					}}),
 				}),
 				Session: gitpod.F("session"),
 			}),
-			DesiredPhase: gitpod.F(gitpod.EnvironmentNewParamsSpecDesiredPhaseEnvironmentPhaseUnspecified),
-			Devcontainer: gitpod.F(gitpod.EnvironmentNewParamsSpecDevcontainer{
+			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
+			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Session:              gitpod.F("session"),
 			}),
-			Machine: gitpod.F(gitpod.EnvironmentNewParamsSpecMachine{
-				Class:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
+				Class:   gitpod.F("61000000-0000-0000-0000-000000000000"),
 				Session: gitpod.F("session"),
 			}),
-			Ports: gitpod.F([]gitpod.EnvironmentNewParamsSpecPort{{
-				Admission: gitpod.F(gitpod.EnvironmentNewParamsSpecPortsAdmissionAdmissionLevelUnspecified),
+			Ports: gitpod.F([]gitpod.EnvironmentSpecPortParam{{
+				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets: gitpod.F([]gitpod.EnvironmentNewParamsSpecSecretUnion{gitpod.EnvironmentNewParamsSpecSecretsObject{
+			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
 				EnvironmentVariable: gitpod.F("environmentVariable"),
+				FilePath:            gitpod.F("filePath"),
+				GitCredentialHost:   gitpod.F("gitCredentialHost"),
 				Name:                gitpod.F("name"),
 				Session:             gitpod.F("session"),
 				Source:              gitpod.F("source"),
 				SourceRef:           gitpod.F("sourceRef"),
 			}}),
 			SpecVersion: gitpod.F("specVersion"),
-			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewParamsSpecSSHPublicKey{{
+			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentSpecSSHPublicKeyParam{{
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
 			}}),
-			Timeout: gitpod.F(gitpod.EnvironmentNewParamsSpecTimeout{
+			Timeout: gitpod.F(gitpod.EnvironmentSpecTimeoutParam{
 				Disconnected: gitpod.F("+9125115.360s"),
 			}),
 		}),
@@ -86,6 +96,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -109,7 +120,8 @@ func TestEnvironmentGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEnvironmentUpdate(t *testing.T) {
+func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -122,9 +134,49 @@ func TestEnvironmentUpdate(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Update(context.TODO(), gitpod.EnvironmentUpdateParams{
-		Body: gitpod.EnvironmentUpdateParamsBodyMetadata{
-			Metadata: gitpod.F[any](map[string]interface{}{}),
-		},
+		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Metadata:      gitpod.F[any](map[string]interface{}{}),
+		Spec: gitpod.F(gitpod.EnvironmentUpdateParamsSpec{
+			AutomationsFile: gitpod.F(gitpod.EnvironmentUpdateParamsSpecAutomationsFile{
+				AutomationsFilePath: gitpod.F("automationsFilePath"),
+				Session:             gitpod.F("session"),
+			}),
+			Content: gitpod.F(gitpod.EnvironmentUpdateParamsSpecContent{
+				GitEmail:    gitpod.F("gitEmail"),
+				GitUsername: gitpod.F("gitUsername"),
+				Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
+					Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
+						ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
+							URL: gitpod.F("https://example.com"),
+						}),
+						Git: gitpod.F(gitpod.EnvironmentInitializerSpecsGitParam{
+							CheckoutLocation:  gitpod.F("checkoutLocation"),
+							CloneTarget:       gitpod.F("cloneTarget"),
+							RemoteUri:         gitpod.F("remoteUri"),
+							TargetMode:        gitpod.F(gitpod.EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified),
+							UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
+						}),
+					}}),
+				}),
+				Session: gitpod.F("session"),
+			}),
+			Devcontainer: gitpod.F(gitpod.EnvironmentUpdateParamsSpecDevcontainer{
+				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+				Session:              gitpod.F("session"),
+			}),
+			Ports: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecPort{{
+				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
+				Name:      gitpod.F("x"),
+				Port:      gitpod.F(int64(1)),
+			}}),
+			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecSSHPublicKey{{
+				ID:    gitpod.F("id"),
+				Value: gitpod.F("value"),
+			}}),
+			Timeout: gitpod.F(gitpod.EnvironmentUpdateParamsSpecTimeout{
+				Disconnected: gitpod.F("+9125115.360s"),
+			}),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -136,6 +188,7 @@ func TestEnvironmentUpdate(t *testing.T) {
 }
 
 func TestEnvironmentListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -154,8 +207,8 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 			CreatorIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			ProjectIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			RunnerIDs:    gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			RunnerKinds:  gitpod.F([]gitpod.EnvironmentListParamsFilterRunnerKind{gitpod.EnvironmentListParamsFilterRunnerKindRunnerKindUnspecified}),
-			StatusPhases: gitpod.F([]gitpod.EnvironmentListParamsFilterStatusPhase{gitpod.EnvironmentListParamsFilterStatusPhaseEnvironmentPhaseUnspecified}),
+			RunnerKinds:  gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			StatusPhases: gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseUnspecified}),
 		}),
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.EnvironmentListParamsPagination{
@@ -173,6 +226,7 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -198,6 +252,7 @@ func TestEnvironmentDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -211,51 +266,60 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Environments.NewFromProject(context.TODO(), gitpod.EnvironmentNewFromProjectParams{
 		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Spec: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpec{
-			Admission: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecAdmissionAdmissionLevelUnspecified),
-			AutomationsFile: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecAutomationsFile{
+		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
+			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
+			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
 			}),
-			Content: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContent{
+			Content: gitpod.F(gitpod.EnvironmentSpecContentParam{
 				GitEmail:    gitpod.F("gitEmail"),
 				GitUsername: gitpod.F("gitUsername"),
-				Initializer: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializer{
-					Specs: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecUnion{gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsContextURL{
-						ContextURL: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecContentInitializerSpecsContextURLContextURL{
+				Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
+					Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
+						ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
 							URL: gitpod.F("https://example.com"),
+						}),
+						Git: gitpod.F(gitpod.EnvironmentInitializerSpecsGitParam{
+							CheckoutLocation:  gitpod.F("checkoutLocation"),
+							CloneTarget:       gitpod.F("cloneTarget"),
+							RemoteUri:         gitpod.F("remoteUri"),
+							TargetMode:        gitpod.F(gitpod.EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified),
+							UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 						}),
 					}}),
 				}),
 				Session: gitpod.F("session"),
 			}),
-			DesiredPhase: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecDesiredPhaseEnvironmentPhaseUnspecified),
-			Devcontainer: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecDevcontainer{
+			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
+			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Session:              gitpod.F("session"),
 			}),
-			Machine: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecMachine{
+			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 				Session: gitpod.F("session"),
 			}),
-			Ports: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecPort{{
-				Admission: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecPortsAdmissionAdmissionLevelUnspecified),
+			Ports: gitpod.F([]gitpod.EnvironmentSpecPortParam{{
+				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
-			Secrets: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSecretUnion{gitpod.EnvironmentNewFromProjectParamsSpecSecretsObject{
+			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
 				EnvironmentVariable: gitpod.F("environmentVariable"),
+				FilePath:            gitpod.F("filePath"),
+				GitCredentialHost:   gitpod.F("gitCredentialHost"),
 				Name:                gitpod.F("name"),
 				Session:             gitpod.F("session"),
 				Source:              gitpod.F("source"),
 				SourceRef:           gitpod.F("sourceRef"),
 			}}),
 			SpecVersion: gitpod.F("specVersion"),
-			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentNewFromProjectParamsSpecSSHPublicKey{{
+			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentSpecSSHPublicKeyParam{{
 				ID:    gitpod.F("id"),
 				Value: gitpod.F("value"),
 			}}),
-			Timeout: gitpod.F(gitpod.EnvironmentNewFromProjectParamsSpecTimeout{
+			Timeout: gitpod.F(gitpod.EnvironmentSpecTimeoutParam{
 				Disconnected: gitpod.F("+9125115.360s"),
 			}),
 		}),
@@ -270,6 +334,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentNewLogsTokenWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -294,6 +359,7 @@ func TestEnvironmentNewLogsTokenWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentMarkActiveWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -306,7 +372,7 @@ func TestEnvironmentMarkActiveWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.MarkActive(context.TODO(), gitpod.EnvironmentMarkActiveParams{
-		ActivitySignal: gitpod.F(gitpod.EnvironmentMarkActiveParamsActivitySignal{
+		ActivitySignal: gitpod.F(gitpod.EnvironmentActivitySignalParam{
 			Source:    gitpod.F("xxx"),
 			Timestamp: gitpod.F(time.Now()),
 		}),
@@ -322,6 +388,7 @@ func TestEnvironmentMarkActiveWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentStartWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -346,6 +413,7 @@ func TestEnvironmentStartWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentStopWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

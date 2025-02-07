@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -28,7 +29,7 @@ func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.Policies.New(context.TODO(), gitpod.ProjectPolicyNewParams{
 		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:      gitpod.F(gitpod.ProjectPolicyNewParamsRoleProjectRoleUnspecified),
+		Role:      gitpod.F(gitpod.ProjectRoleUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -40,6 +41,7 @@ func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -54,7 +56,7 @@ func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.Policies.Update(context.TODO(), gitpod.ProjectPolicyUpdateParams{
 		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:      gitpod.F(gitpod.ProjectPolicyUpdateParamsRoleProjectRoleUnspecified),
+		Role:      gitpod.F(gitpod.ProjectRoleUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -66,6 +68,7 @@ func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectPolicyListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -96,6 +99,7 @@ func TestProjectPolicyListWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectPolicyDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

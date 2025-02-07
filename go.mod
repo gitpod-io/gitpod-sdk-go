@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/gitpod-go
+module github.com/gitpod-io/flex-sdk-go
 
 go 1.21
 

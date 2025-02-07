@@ -6,10 +6,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/param"
-	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
+	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 // EnvironmentAutomationService contains methods and other services that help with
@@ -43,6 +44,102 @@ func (r *EnvironmentAutomationService) Upsert(ctx context.Context, body Environm
 	return
 }
 
+// WARN: Do not remove any field here, as it will break reading automation yaml
+// files. We error if there are any unknown fields in the yaml (to ensure the yaml
+// is correct), but would break if we removed any fields. This includes marking a
+// field as "reserved" in the proto file, this will also break reading the yaml.
+type AutomationsFileParam struct {
+	Services param.Field[map[string]AutomationsFileServiceParam] `json:"services"`
+	Tasks    param.Field[map[string]AutomationsFileTaskParam]    `json:"tasks"`
+}
+
+func (r AutomationsFileParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AutomationsFileServiceParam struct {
+	Commands    param.Field[AutomationsFileServicesCommandsParam] `json:"commands"`
+	Description param.Field[string]                               `json:"description"`
+	Name        param.Field[string]                               `json:"name"`
+	RunsOn      param.Field[shared.RunsOnParam]                   `json:"runsOn"`
+	TriggeredBy param.Field[[]AutomationsFileServicesTriggeredBy] `json:"triggeredBy"`
+}
+
+func (r AutomationsFileServiceParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AutomationsFileServicesCommandsParam struct {
+	// ready is an optional command that is run repeatedly until it exits with a zero
+	// exit code. If set, the service will first go into a Starting phase, and then
+	// into a Running phase once the ready command exits with a zero exit code.
+	Ready param.Field[string] `json:"ready"`
+	// start is the command to start and run the service. If start exits, the service
+	// will transition to the following phase:
+	//
+	//   - Stopped: if the exit code is 0
+	//   - Failed: if the exit code is not 0 If the stop command is not set, the start
+	//     command will receive a SIGTERM signal when the service is requested to stop.
+	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
+	Start param.Field[string] `json:"start"`
+	// stop is an optional command that runs when the service is requested to stop. If
+	// set, instead of sending a SIGTERM signal to the start command, the stop command
+	// will be run. Once the stop command exits, the start command will receive a
+	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
+	// will transition to the Failed phase. If the stop command does not exit within 2
+	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
+	Stop param.Field[string] `json:"stop"`
+}
+
+func (r AutomationsFileServicesCommandsParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AutomationsFileServicesTriggeredBy string
+
+const (
+	AutomationsFileServicesTriggeredByManual                AutomationsFileServicesTriggeredBy = "manual"
+	AutomationsFileServicesTriggeredByPostEnvironmentStart  AutomationsFileServicesTriggeredBy = "postEnvironmentStart"
+	AutomationsFileServicesTriggeredByPostDevcontainerStart AutomationsFileServicesTriggeredBy = "postDevcontainerStart"
+)
+
+func (r AutomationsFileServicesTriggeredBy) IsKnown() bool {
+	switch r {
+	case AutomationsFileServicesTriggeredByManual, AutomationsFileServicesTriggeredByPostEnvironmentStart, AutomationsFileServicesTriggeredByPostDevcontainerStart:
+		return true
+	}
+	return false
+}
+
+type AutomationsFileTaskParam struct {
+	Command     param.Field[string]                            `json:"command"`
+	DependsOn   param.Field[[]string]                          `json:"dependsOn"`
+	Description param.Field[string]                            `json:"description"`
+	Name        param.Field[string]                            `json:"name"`
+	RunsOn      param.Field[shared.RunsOnParam]                `json:"runsOn"`
+	TriggeredBy param.Field[[]AutomationsFileTasksTriggeredBy] `json:"triggeredBy"`
+}
+
+func (r AutomationsFileTaskParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AutomationsFileTasksTriggeredBy string
+
+const (
+	AutomationsFileTasksTriggeredByManual                AutomationsFileTasksTriggeredBy = "manual"
+	AutomationsFileTasksTriggeredByPostEnvironmentStart  AutomationsFileTasksTriggeredBy = "postEnvironmentStart"
+	AutomationsFileTasksTriggeredByPostDevcontainerStart AutomationsFileTasksTriggeredBy = "postDevcontainerStart"
+)
+
+func (r AutomationsFileTasksTriggeredBy) IsKnown() bool {
+	switch r {
+	case AutomationsFileTasksTriggeredByManual, AutomationsFileTasksTriggeredByPostEnvironmentStart, AutomationsFileTasksTriggeredByPostDevcontainerStart:
+		return true
+	}
+	return false
+}
+
 type EnvironmentAutomationUpsertResponse struct {
 	UpdatedServiceIDs []string                                `json:"updatedServiceIds"`
 	UpdatedTaskIDs    []string                                `json:"updatedTaskIds"`
@@ -71,140 +168,10 @@ type EnvironmentAutomationUpsertParams struct {
 	// files. We error if there are any unknown fields in the yaml (to ensure the yaml
 	// is correct), but would break if we removed any fields. This includes marking a
 	// field as "reserved" in the proto file, this will also break reading the yaml.
-	AutomationsFile param.Field[EnvironmentAutomationUpsertParamsAutomationsFile] `json:"automationsFile"`
-	EnvironmentID   param.Field[string]                                           `json:"environmentId" format:"uuid"`
+	AutomationsFile param.Field[AutomationsFileParam] `json:"automationsFile"`
+	EnvironmentID   param.Field[string]               `json:"environmentId" format:"uuid"`
 }
 
 func (r EnvironmentAutomationUpsertParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-// WARN: Do not remove any field here, as it will break reading automation yaml
-// files. We error if there are any unknown fields in the yaml (to ensure the yaml
-// is correct), but would break if we removed any fields. This includes marking a
-// field as "reserved" in the proto file, this will also break reading the yaml.
-type EnvironmentAutomationUpsertParamsAutomationsFile struct {
-	Services param.Field[map[string]EnvironmentAutomationUpsertParamsAutomationsFileServices] `json:"services"`
-	Tasks    param.Field[map[string]EnvironmentAutomationUpsertParamsAutomationsFileTasks]    `json:"tasks"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFile) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileServices struct {
-	Commands    param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands]      `json:"commands"`
-	Description param.Field[string]                                                                `json:"description"`
-	Name        param.Field[string]                                                                `json:"name"`
-	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn]        `json:"runsOn"`
-	TriggeredBy param.Field[[]EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy] `json:"triggeredBy"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileServices) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands struct {
-	// ready is an optional command that is run repeatedly until it exits with a zero
-	// exit code. If set, the service will first go into a Starting phase, and then
-	// into a Running phase once the ready command exits with a zero exit code.
-	Ready param.Field[string] `json:"ready"`
-	// start is the command to start and run the service. If start exits, the service
-	// will transition to the following phase:
-	//
-	//   - Stopped: if the exit code is 0
-	//   - Failed: if the exit code is not 0 If the stop command is not set, the start
-	//     command will receive a SIGTERM signal when the service is requested to stop.
-	//     If it does not exit within 2 minutes, it will receive a SIGKILL signal.
-	Start param.Field[string] `json:"start"`
-	// stop is an optional command that runs when the service is requested to stop. If
-	// set, instead of sending a SIGTERM signal to the start command, the stop command
-	// will be run. Once the stop command exits, the start command will receive a
-	// SIGKILL signal. If the stop command exits with a non-zero exit code, the service
-	// will transition to the Failed phase. If the stop command does not exit within 2
-	// minutes, a SIGKILL signal will be sent to both the start and stop commands.
-	Stop param.Field[string] `json:"stop"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesCommands) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn struct {
-	Docker param.Field[EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker] `json:"docker,required"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOn) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker struct {
-	Environment param.Field[[]string] `json:"environment"`
-	Image       param.Field[string]   `json:"image"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesRunsOnDocker) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy string
-
-const (
-	EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByManual                EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy = "manual"
-	EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByPostEnvironmentStart  EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy = "postEnvironmentStart"
-	EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByPostDevcontainerStart EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy = "postDevcontainerStart"
-)
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredBy) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByManual, EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByPostEnvironmentStart, EnvironmentAutomationUpsertParamsAutomationsFileServicesTriggeredByPostDevcontainerStart:
-		return true
-	}
-	return false
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileTasks struct {
-	Command     param.Field[string]                                                             `json:"command"`
-	DependsOn   param.Field[[]string]                                                           `json:"dependsOn"`
-	Description param.Field[string]                                                             `json:"description"`
-	Name        param.Field[string]                                                             `json:"name"`
-	RunsOn      param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn]        `json:"runsOn"`
-	TriggeredBy param.Field[[]EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy] `json:"triggeredBy"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileTasks) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn struct {
-	Docker param.Field[EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker] `json:"docker,required"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOn) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker struct {
-	Environment param.Field[[]string] `json:"environment"`
-	Image       param.Field[string]   `json:"image"`
-}
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksRunsOnDocker) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy string
-
-const (
-	EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByManual                EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy = "manual"
-	EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByPostEnvironmentStart  EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy = "postEnvironmentStart"
-	EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByPostDevcontainerStart EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy = "postDevcontainerStart"
-)
-
-func (r EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredBy) IsKnown() bool {
-	switch r {
-	case EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByManual, EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByPostEnvironmentStart, EnvironmentAutomationUpsertParamsAutomationsFileTasksTriggeredByPostDevcontainerStart:
-		return true
-	}
-	return false
 }

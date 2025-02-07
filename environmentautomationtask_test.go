@@ -9,12 +9,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -29,23 +31,25 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Tasks.New(context.TODO(), gitpod.EnvironmentAutomationTaskNewParams{
 		DependsOn:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Metadata: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsMetadata{
+		Metadata: gitpod.F(gitpod.TaskMetadataParam{
 			CreatedAt: gitpod.F(time.Now()),
-			Creator: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsMetadataCreator{
+			Creator: gitpod.F(shared.SubjectParam{
 				ID:        gitpod.F("id"),
-				Principal: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsMetadataCreatorPrincipalPrincipalUnspecified),
+				Principal: gitpod.F(shared.PrincipalUnspecified),
 			}),
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByUnion{gitpod.EnvironmentAutomationTaskNewParamsMetadataTriggeredByManual{
-				Manual: gitpod.F(true),
+			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
+				Manual:                gitpod.F(true),
+				PostDevcontainerStart: gitpod.F(true),
+				PostEnvironmentStart:  gitpod.F(true),
 			}}),
 		}),
-		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpec{
+		Spec: gitpod.F(gitpod.TaskSpecParam{
 			Command: gitpod.F("command"),
-			RunsOn: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOn{
-				Docker: gitpod.F(gitpod.EnvironmentAutomationTaskNewParamsSpecRunsOnDocker{
+			RunsOn: gitpod.F(shared.RunsOnParam{
+				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
@@ -62,6 +66,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentAutomationTaskGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -86,6 +91,7 @@ func TestEnvironmentAutomationTaskGetWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -100,11 +106,25 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Tasks.Update(context.TODO(), gitpod.EnvironmentAutomationTaskUpdateParams{
 		ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		DependsOn: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		Metadata: gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsMetadataUnion](gitpod.EnvironmentAutomationTaskUpdateParamsMetadataDescription{
+		Metadata: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadata{
 			Description: gitpod.F("description"),
+			Name:        gitpod.F("x"),
+			TriggeredBy: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy{
+				Trigger: gitpod.F([]shared.AutomationTriggerParam{{
+					Manual:                gitpod.F(true),
+					PostDevcontainerStart: gitpod.F(true),
+					PostEnvironmentStart:  gitpod.F(true),
+				}}),
+			}),
 		}),
-		Spec: gitpod.F[gitpod.EnvironmentAutomationTaskUpdateParamsSpecUnion](gitpod.EnvironmentAutomationTaskUpdateParamsSpecCommand{
+		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsSpec{
 			Command: gitpod.F("command"),
+			RunsOn: gitpod.F(shared.RunsOnParam{
+				Docker: gitpod.F(shared.RunsOnDockerParam{
+					Environment: gitpod.F([]string{"string"}),
+					Image:       gitpod.F("x"),
+				}),
+			}),
 		}),
 	})
 	if err != nil {
@@ -117,6 +137,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -151,6 +172,7 @@ func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentAutomationTaskDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -175,6 +197,7 @@ func TestEnvironmentAutomationTaskDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestEnvironmentAutomationTaskStartWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

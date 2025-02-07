@@ -7,12 +7,12 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
-	"github.com/stainless-sdks/gitpod-go/internal/param"
-	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
-	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
+	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
+	"github.com/gitpod-io/flex-sdk-go/internal/apiquery"
+	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/packages/pagination"
 )
 
 // EditorService contains methods and other services that help with interacting
@@ -43,7 +43,7 @@ func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...o
 }
 
 // ListEditors lists all editors available to the caller
-func (r *EditorService) List(ctx context.Context, params EditorListParams, opts ...option.RequestOption) (res *pagination.EditorsPage[EditorListResponse], err error) {
+func (r *EditorService) List(ctx context.Context, params EditorListParams, opts ...option.RequestOption) (res *pagination.EditorsPage[Editor], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -61,7 +61,7 @@ func (r *EditorService) List(ctx context.Context, params EditorListParams, opts 
 }
 
 // ListEditors lists all editors available to the caller
-func (r *EditorService) ListAutoPaging(ctx context.Context, params EditorListParams, opts ...option.RequestOption) *pagination.EditorsPageAutoPager[EditorListResponse] {
+func (r *EditorService) ListAutoPaging(ctx context.Context, params EditorListParams, opts ...option.RequestOption) *pagination.EditorsPageAutoPager[Editor] {
 	return pagination.NewEditorsPageAutoPager(r.List(ctx, params, opts...))
 }
 
@@ -73,10 +73,42 @@ func (r *EditorService) ResolveURL(ctx context.Context, body EditorResolveURLPar
 	return
 }
 
+type Editor struct {
+	ID                       string     `json:"id"`
+	Alias                    string     `json:"alias"`
+	IconURL                  string     `json:"iconUrl"`
+	InstallationInstructions string     `json:"installationInstructions"`
+	Name                     string     `json:"name"`
+	ShortDescription         string     `json:"shortDescription"`
+	URLTemplate              string     `json:"urlTemplate"`
+	JSON                     editorJSON `json:"-"`
+}
+
+// editorJSON contains the JSON metadata for the struct [Editor]
+type editorJSON struct {
+	ID                       apijson.Field
+	Alias                    apijson.Field
+	IconURL                  apijson.Field
+	InstallationInstructions apijson.Field
+	Name                     apijson.Field
+	ShortDescription         apijson.Field
+	URLTemplate              apijson.Field
+	raw                      string
+	ExtraFields              map[string]apijson.Field
+}
+
+func (r *Editor) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r editorJSON) RawJSON() string {
+	return r.raw
+}
+
 type EditorGetResponse struct {
 	// editor contains the editor
-	Editor EditorGetResponseEditor `json:"editor"`
-	JSON   editorGetResponseJSON   `json:"-"`
+	Editor Editor                `json:"editor"`
+	JSON   editorGetResponseJSON `json:"-"`
 }
 
 // editorGetResponseJSON contains the JSON metadata for the struct
@@ -92,73 +124,6 @@ func (r *EditorGetResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r editorGetResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-// editor contains the editor
-type EditorGetResponseEditor struct {
-	ID                       string                      `json:"id"`
-	Alias                    string                      `json:"alias"`
-	IconURL                  string                      `json:"iconUrl"`
-	InstallationInstructions string                      `json:"installationInstructions"`
-	Name                     string                      `json:"name"`
-	ShortDescription         string                      `json:"shortDescription"`
-	URLTemplate              string                      `json:"urlTemplate"`
-	JSON                     editorGetResponseEditorJSON `json:"-"`
-}
-
-// editorGetResponseEditorJSON contains the JSON metadata for the struct
-// [EditorGetResponseEditor]
-type editorGetResponseEditorJSON struct {
-	ID                       apijson.Field
-	Alias                    apijson.Field
-	IconURL                  apijson.Field
-	InstallationInstructions apijson.Field
-	Name                     apijson.Field
-	ShortDescription         apijson.Field
-	URLTemplate              apijson.Field
-	raw                      string
-	ExtraFields              map[string]apijson.Field
-}
-
-func (r *EditorGetResponseEditor) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r editorGetResponseEditorJSON) RawJSON() string {
-	return r.raw
-}
-
-type EditorListResponse struct {
-	ID                       string                 `json:"id"`
-	Alias                    string                 `json:"alias"`
-	IconURL                  string                 `json:"iconUrl"`
-	InstallationInstructions string                 `json:"installationInstructions"`
-	Name                     string                 `json:"name"`
-	ShortDescription         string                 `json:"shortDescription"`
-	URLTemplate              string                 `json:"urlTemplate"`
-	JSON                     editorListResponseJSON `json:"-"`
-}
-
-// editorListResponseJSON contains the JSON metadata for the struct
-// [EditorListResponse]
-type editorListResponseJSON struct {
-	ID                       apijson.Field
-	Alias                    apijson.Field
-	IconURL                  apijson.Field
-	InstallationInstructions apijson.Field
-	Name                     apijson.Field
-	ShortDescription         apijson.Field
-	URLTemplate              apijson.Field
-	raw                      string
-	ExtraFields              map[string]apijson.Field
-}
-
-func (r *EditorListResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r editorListResponseJSON) RawJSON() string {
 	return r.raw
 }
 

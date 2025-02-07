@@ -8,13 +8,14 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/stainless-sdks/gitpod-go/internal/apijson"
-	"github.com/stainless-sdks/gitpod-go/internal/apiquery"
-	"github.com/stainless-sdks/gitpod-go/internal/param"
-	"github.com/stainless-sdks/gitpod-go/internal/requestconfig"
-	"github.com/stainless-sdks/gitpod-go/option"
-	"github.com/stainless-sdks/gitpod-go/packages/jsonl"
-	"github.com/stainless-sdks/gitpod-go/packages/pagination"
+	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
+	"github.com/gitpod-io/flex-sdk-go/internal/apiquery"
+	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/flex-sdk-go/packages/jsonl"
+	"github.com/gitpod-io/flex-sdk-go/packages/pagination"
+	"github.com/gitpod-io/flex-sdk-go/shared"
 )
 
 // EventService contains methods and other services that help with interacting with
@@ -74,11 +75,60 @@ func (r *EventService) WatchStreaming(ctx context.Context, body EventWatchParams
 	return jsonl.NewStream[EventWatchResponse](raw, err)
 }
 
+type ResourceOperation string
+
+const (
+	ResourceOperationUnspecified  ResourceOperation = "RESOURCE_OPERATION_UNSPECIFIED"
+	ResourceOperationCreate       ResourceOperation = "RESOURCE_OPERATION_CREATE"
+	ResourceOperationUpdate       ResourceOperation = "RESOURCE_OPERATION_UPDATE"
+	ResourceOperationDelete       ResourceOperation = "RESOURCE_OPERATION_DELETE"
+	ResourceOperationUpdateStatus ResourceOperation = "RESOURCE_OPERATION_UPDATE_STATUS"
+)
+
+func (r ResourceOperation) IsKnown() bool {
+	switch r {
+	case ResourceOperationUnspecified, ResourceOperationCreate, ResourceOperationUpdate, ResourceOperationDelete, ResourceOperationUpdateStatus:
+		return true
+	}
+	return false
+}
+
+type ResourceType string
+
+const (
+	ResourceTypeUnspecified             ResourceType = "RESOURCE_TYPE_UNSPECIFIED"
+	ResourceTypeEnvironment             ResourceType = "RESOURCE_TYPE_ENVIRONMENT"
+	ResourceTypeRunner                  ResourceType = "RESOURCE_TYPE_RUNNER"
+	ResourceTypeProject                 ResourceType = "RESOURCE_TYPE_PROJECT"
+	ResourceTypeTask                    ResourceType = "RESOURCE_TYPE_TASK"
+	ResourceTypeTaskExecution           ResourceType = "RESOURCE_TYPE_TASK_EXECUTION"
+	ResourceTypeService                 ResourceType = "RESOURCE_TYPE_SERVICE"
+	ResourceTypeOrganization            ResourceType = "RESOURCE_TYPE_ORGANIZATION"
+	ResourceTypeUser                    ResourceType = "RESOURCE_TYPE_USER"
+	ResourceTypeEnvironmentClass        ResourceType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
+	ResourceTypeRunnerScmIntegration    ResourceType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
+	ResourceTypeHostAuthenticationToken ResourceType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
+	ResourceTypeGroup                   ResourceType = "RESOURCE_TYPE_GROUP"
+	ResourceTypePersonalAccessToken     ResourceType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
+	ResourceTypeUserPreference          ResourceType = "RESOURCE_TYPE_USER_PREFERENCE"
+	ResourceTypeServiceAccount          ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
+	ResourceTypeSecret                  ResourceType = "RESOURCE_TYPE_SECRET"
+	ResourceTypeSSOConfig               ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
+)
+
+func (r ResourceType) IsKnown() bool {
+	switch r {
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig:
+		return true
+	}
+	return false
+}
+
 type EventListResponse struct {
-	ID             string                          `json:"id"`
-	Action         string                          `json:"action"`
-	ActorID        string                          `json:"actorId"`
-	ActorPrincipal EventListResponseActorPrincipal `json:"actorPrincipal"`
+	ID             string           `json:"id"`
+	Action         string           `json:"action"`
+	ActorID        string           `json:"actorId"`
+	ActorPrincipal shared.Principal `json:"actorPrincipal"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -167,10 +217,10 @@ type EventListResponse struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt   time.Time                    `json:"createdAt" format:"date-time"`
-	SubjectID   string                       `json:"subjectId"`
-	SubjectType EventListResponseSubjectType `json:"subjectType"`
-	JSON        eventListResponseJSON        `json:"-"`
+	CreatedAt   time.Time             `json:"createdAt" format:"date-time"`
+	SubjectID   string                `json:"subjectId"`
+	SubjectType ResourceType          `json:"subjectType"`
+	JSON        eventListResponseJSON `json:"-"`
 }
 
 // eventListResponseJSON contains the JSON metadata for the struct
@@ -195,61 +245,11 @@ func (r eventListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type EventListResponseActorPrincipal string
-
-const (
-	EventListResponseActorPrincipalPrincipalUnspecified    EventListResponseActorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EventListResponseActorPrincipalPrincipalAccount        EventListResponseActorPrincipal = "PRINCIPAL_ACCOUNT"
-	EventListResponseActorPrincipalPrincipalUser           EventListResponseActorPrincipal = "PRINCIPAL_USER"
-	EventListResponseActorPrincipalPrincipalRunner         EventListResponseActorPrincipal = "PRINCIPAL_RUNNER"
-	EventListResponseActorPrincipalPrincipalEnvironment    EventListResponseActorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EventListResponseActorPrincipalPrincipalServiceAccount EventListResponseActorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
-)
-
-func (r EventListResponseActorPrincipal) IsKnown() bool {
-	switch r {
-	case EventListResponseActorPrincipalPrincipalUnspecified, EventListResponseActorPrincipalPrincipalAccount, EventListResponseActorPrincipalPrincipalUser, EventListResponseActorPrincipalPrincipalRunner, EventListResponseActorPrincipalPrincipalEnvironment, EventListResponseActorPrincipalPrincipalServiceAccount:
-		return true
-	}
-	return false
-}
-
-type EventListResponseSubjectType string
-
-const (
-	EventListResponseSubjectTypeResourceTypeUnspecified             EventListResponseSubjectType = "RESOURCE_TYPE_UNSPECIFIED"
-	EventListResponseSubjectTypeResourceTypeEnvironment             EventListResponseSubjectType = "RESOURCE_TYPE_ENVIRONMENT"
-	EventListResponseSubjectTypeResourceTypeRunner                  EventListResponseSubjectType = "RESOURCE_TYPE_RUNNER"
-	EventListResponseSubjectTypeResourceTypeProject                 EventListResponseSubjectType = "RESOURCE_TYPE_PROJECT"
-	EventListResponseSubjectTypeResourceTypeTask                    EventListResponseSubjectType = "RESOURCE_TYPE_TASK"
-	EventListResponseSubjectTypeResourceTypeTaskExecution           EventListResponseSubjectType = "RESOURCE_TYPE_TASK_EXECUTION"
-	EventListResponseSubjectTypeResourceTypeService                 EventListResponseSubjectType = "RESOURCE_TYPE_SERVICE"
-	EventListResponseSubjectTypeResourceTypeOrganization            EventListResponseSubjectType = "RESOURCE_TYPE_ORGANIZATION"
-	EventListResponseSubjectTypeResourceTypeUser                    EventListResponseSubjectType = "RESOURCE_TYPE_USER"
-	EventListResponseSubjectTypeResourceTypeEnvironmentClass        EventListResponseSubjectType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
-	EventListResponseSubjectTypeResourceTypeRunnerScmIntegration    EventListResponseSubjectType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
-	EventListResponseSubjectTypeResourceTypeHostAuthenticationToken EventListResponseSubjectType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
-	EventListResponseSubjectTypeResourceTypeGroup                   EventListResponseSubjectType = "RESOURCE_TYPE_GROUP"
-	EventListResponseSubjectTypeResourceTypePersonalAccessToken     EventListResponseSubjectType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
-	EventListResponseSubjectTypeResourceTypeUserPreference          EventListResponseSubjectType = "RESOURCE_TYPE_USER_PREFERENCE"
-	EventListResponseSubjectTypeResourceTypeServiceAccount          EventListResponseSubjectType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
-	EventListResponseSubjectTypeResourceTypeSecret                  EventListResponseSubjectType = "RESOURCE_TYPE_SECRET"
-	EventListResponseSubjectTypeResourceTypeSSOConfig               EventListResponseSubjectType = "RESOURCE_TYPE_SSO_CONFIG"
-)
-
-func (r EventListResponseSubjectType) IsKnown() bool {
-	switch r {
-	case EventListResponseSubjectTypeResourceTypeUnspecified, EventListResponseSubjectTypeResourceTypeEnvironment, EventListResponseSubjectTypeResourceTypeRunner, EventListResponseSubjectTypeResourceTypeProject, EventListResponseSubjectTypeResourceTypeTask, EventListResponseSubjectTypeResourceTypeTaskExecution, EventListResponseSubjectTypeResourceTypeService, EventListResponseSubjectTypeResourceTypeOrganization, EventListResponseSubjectTypeResourceTypeUser, EventListResponseSubjectTypeResourceTypeEnvironmentClass, EventListResponseSubjectTypeResourceTypeRunnerScmIntegration, EventListResponseSubjectTypeResourceTypeHostAuthenticationToken, EventListResponseSubjectTypeResourceTypeGroup, EventListResponseSubjectTypeResourceTypePersonalAccessToken, EventListResponseSubjectTypeResourceTypeUserPreference, EventListResponseSubjectTypeResourceTypeServiceAccount, EventListResponseSubjectTypeResourceTypeSecret, EventListResponseSubjectTypeResourceTypeSSOConfig:
-		return true
-	}
-	return false
-}
-
 type EventWatchResponse struct {
-	Operation    EventWatchResponseOperation    `json:"operation"`
-	ResourceID   string                         `json:"resourceId" format:"uuid"`
-	ResourceType EventWatchResponseResourceType `json:"resourceType"`
-	JSON         eventWatchResponseJSON         `json:"-"`
+	Operation    ResourceOperation      `json:"operation"`
+	ResourceID   string                 `json:"resourceId" format:"uuid"`
+	ResourceType ResourceType           `json:"resourceType"`
+	JSON         eventWatchResponseJSON `json:"-"`
 }
 
 // eventWatchResponseJSON contains the JSON metadata for the struct
@@ -268,55 +268,6 @@ func (r *EventWatchResponse) UnmarshalJSON(data []byte) (err error) {
 
 func (r eventWatchResponseJSON) RawJSON() string {
 	return r.raw
-}
-
-type EventWatchResponseOperation string
-
-const (
-	EventWatchResponseOperationResourceOperationUnspecified  EventWatchResponseOperation = "RESOURCE_OPERATION_UNSPECIFIED"
-	EventWatchResponseOperationResourceOperationCreate       EventWatchResponseOperation = "RESOURCE_OPERATION_CREATE"
-	EventWatchResponseOperationResourceOperationUpdate       EventWatchResponseOperation = "RESOURCE_OPERATION_UPDATE"
-	EventWatchResponseOperationResourceOperationDelete       EventWatchResponseOperation = "RESOURCE_OPERATION_DELETE"
-	EventWatchResponseOperationResourceOperationUpdateStatus EventWatchResponseOperation = "RESOURCE_OPERATION_UPDATE_STATUS"
-)
-
-func (r EventWatchResponseOperation) IsKnown() bool {
-	switch r {
-	case EventWatchResponseOperationResourceOperationUnspecified, EventWatchResponseOperationResourceOperationCreate, EventWatchResponseOperationResourceOperationUpdate, EventWatchResponseOperationResourceOperationDelete, EventWatchResponseOperationResourceOperationUpdateStatus:
-		return true
-	}
-	return false
-}
-
-type EventWatchResponseResourceType string
-
-const (
-	EventWatchResponseResourceTypeResourceTypeUnspecified             EventWatchResponseResourceType = "RESOURCE_TYPE_UNSPECIFIED"
-	EventWatchResponseResourceTypeResourceTypeEnvironment             EventWatchResponseResourceType = "RESOURCE_TYPE_ENVIRONMENT"
-	EventWatchResponseResourceTypeResourceTypeRunner                  EventWatchResponseResourceType = "RESOURCE_TYPE_RUNNER"
-	EventWatchResponseResourceTypeResourceTypeProject                 EventWatchResponseResourceType = "RESOURCE_TYPE_PROJECT"
-	EventWatchResponseResourceTypeResourceTypeTask                    EventWatchResponseResourceType = "RESOURCE_TYPE_TASK"
-	EventWatchResponseResourceTypeResourceTypeTaskExecution           EventWatchResponseResourceType = "RESOURCE_TYPE_TASK_EXECUTION"
-	EventWatchResponseResourceTypeResourceTypeService                 EventWatchResponseResourceType = "RESOURCE_TYPE_SERVICE"
-	EventWatchResponseResourceTypeResourceTypeOrganization            EventWatchResponseResourceType = "RESOURCE_TYPE_ORGANIZATION"
-	EventWatchResponseResourceTypeResourceTypeUser                    EventWatchResponseResourceType = "RESOURCE_TYPE_USER"
-	EventWatchResponseResourceTypeResourceTypeEnvironmentClass        EventWatchResponseResourceType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
-	EventWatchResponseResourceTypeResourceTypeRunnerScmIntegration    EventWatchResponseResourceType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
-	EventWatchResponseResourceTypeResourceTypeHostAuthenticationToken EventWatchResponseResourceType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
-	EventWatchResponseResourceTypeResourceTypeGroup                   EventWatchResponseResourceType = "RESOURCE_TYPE_GROUP"
-	EventWatchResponseResourceTypeResourceTypePersonalAccessToken     EventWatchResponseResourceType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
-	EventWatchResponseResourceTypeResourceTypeUserPreference          EventWatchResponseResourceType = "RESOURCE_TYPE_USER_PREFERENCE"
-	EventWatchResponseResourceTypeResourceTypeServiceAccount          EventWatchResponseResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
-	EventWatchResponseResourceTypeResourceTypeSecret                  EventWatchResponseResourceType = "RESOURCE_TYPE_SECRET"
-	EventWatchResponseResourceTypeResourceTypeSSOConfig               EventWatchResponseResourceType = "RESOURCE_TYPE_SSO_CONFIG"
-)
-
-func (r EventWatchResponseResourceType) IsKnown() bool {
-	switch r {
-	case EventWatchResponseResourceTypeResourceTypeUnspecified, EventWatchResponseResourceTypeResourceTypeEnvironment, EventWatchResponseResourceTypeResourceTypeRunner, EventWatchResponseResourceTypeResourceTypeProject, EventWatchResponseResourceTypeResourceTypeTask, EventWatchResponseResourceTypeResourceTypeTaskExecution, EventWatchResponseResourceTypeResourceTypeService, EventWatchResponseResourceTypeResourceTypeOrganization, EventWatchResponseResourceTypeResourceTypeUser, EventWatchResponseResourceTypeResourceTypeEnvironmentClass, EventWatchResponseResourceTypeResourceTypeRunnerScmIntegration, EventWatchResponseResourceTypeResourceTypeHostAuthenticationToken, EventWatchResponseResourceTypeResourceTypeGroup, EventWatchResponseResourceTypeResourceTypePersonalAccessToken, EventWatchResponseResourceTypeResourceTypeUserPreference, EventWatchResponseResourceTypeResourceTypeServiceAccount, EventWatchResponseResourceTypeResourceTypeSecret, EventWatchResponseResourceTypeResourceTypeSSOConfig:
-		return true
-	}
-	return false
 }
 
 type EventListParams struct {
@@ -340,64 +291,14 @@ func (r EventListParams) URLQuery() (v url.Values) {
 }
 
 type EventListParamsFilter struct {
-	ActorIDs        param.Field[[]string]                              `json:"actorIds" format:"uuid"`
-	ActorPrincipals param.Field[[]EventListParamsFilterActorPrincipal] `json:"actorPrincipals"`
-	SubjectIDs      param.Field[[]string]                              `json:"subjectIds" format:"uuid"`
-	SubjectTypes    param.Field[[]EventListParamsFilterSubjectType]    `json:"subjectTypes"`
+	ActorIDs        param.Field[[]string]           `json:"actorIds" format:"uuid"`
+	ActorPrincipals param.Field[[]shared.Principal] `json:"actorPrincipals"`
+	SubjectIDs      param.Field[[]string]           `json:"subjectIds" format:"uuid"`
+	SubjectTypes    param.Field[[]ResourceType]     `json:"subjectTypes"`
 }
 
 func (r EventListParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-type EventListParamsFilterActorPrincipal string
-
-const (
-	EventListParamsFilterActorPrincipalPrincipalUnspecified    EventListParamsFilterActorPrincipal = "PRINCIPAL_UNSPECIFIED"
-	EventListParamsFilterActorPrincipalPrincipalAccount        EventListParamsFilterActorPrincipal = "PRINCIPAL_ACCOUNT"
-	EventListParamsFilterActorPrincipalPrincipalUser           EventListParamsFilterActorPrincipal = "PRINCIPAL_USER"
-	EventListParamsFilterActorPrincipalPrincipalRunner         EventListParamsFilterActorPrincipal = "PRINCIPAL_RUNNER"
-	EventListParamsFilterActorPrincipalPrincipalEnvironment    EventListParamsFilterActorPrincipal = "PRINCIPAL_ENVIRONMENT"
-	EventListParamsFilterActorPrincipalPrincipalServiceAccount EventListParamsFilterActorPrincipal = "PRINCIPAL_SERVICE_ACCOUNT"
-)
-
-func (r EventListParamsFilterActorPrincipal) IsKnown() bool {
-	switch r {
-	case EventListParamsFilterActorPrincipalPrincipalUnspecified, EventListParamsFilterActorPrincipalPrincipalAccount, EventListParamsFilterActorPrincipalPrincipalUser, EventListParamsFilterActorPrincipalPrincipalRunner, EventListParamsFilterActorPrincipalPrincipalEnvironment, EventListParamsFilterActorPrincipalPrincipalServiceAccount:
-		return true
-	}
-	return false
-}
-
-type EventListParamsFilterSubjectType string
-
-const (
-	EventListParamsFilterSubjectTypeResourceTypeUnspecified             EventListParamsFilterSubjectType = "RESOURCE_TYPE_UNSPECIFIED"
-	EventListParamsFilterSubjectTypeResourceTypeEnvironment             EventListParamsFilterSubjectType = "RESOURCE_TYPE_ENVIRONMENT"
-	EventListParamsFilterSubjectTypeResourceTypeRunner                  EventListParamsFilterSubjectType = "RESOURCE_TYPE_RUNNER"
-	EventListParamsFilterSubjectTypeResourceTypeProject                 EventListParamsFilterSubjectType = "RESOURCE_TYPE_PROJECT"
-	EventListParamsFilterSubjectTypeResourceTypeTask                    EventListParamsFilterSubjectType = "RESOURCE_TYPE_TASK"
-	EventListParamsFilterSubjectTypeResourceTypeTaskExecution           EventListParamsFilterSubjectType = "RESOURCE_TYPE_TASK_EXECUTION"
-	EventListParamsFilterSubjectTypeResourceTypeService                 EventListParamsFilterSubjectType = "RESOURCE_TYPE_SERVICE"
-	EventListParamsFilterSubjectTypeResourceTypeOrganization            EventListParamsFilterSubjectType = "RESOURCE_TYPE_ORGANIZATION"
-	EventListParamsFilterSubjectTypeResourceTypeUser                    EventListParamsFilterSubjectType = "RESOURCE_TYPE_USER"
-	EventListParamsFilterSubjectTypeResourceTypeEnvironmentClass        EventListParamsFilterSubjectType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
-	EventListParamsFilterSubjectTypeResourceTypeRunnerScmIntegration    EventListParamsFilterSubjectType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
-	EventListParamsFilterSubjectTypeResourceTypeHostAuthenticationToken EventListParamsFilterSubjectType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
-	EventListParamsFilterSubjectTypeResourceTypeGroup                   EventListParamsFilterSubjectType = "RESOURCE_TYPE_GROUP"
-	EventListParamsFilterSubjectTypeResourceTypePersonalAccessToken     EventListParamsFilterSubjectType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
-	EventListParamsFilterSubjectTypeResourceTypeUserPreference          EventListParamsFilterSubjectType = "RESOURCE_TYPE_USER_PREFERENCE"
-	EventListParamsFilterSubjectTypeResourceTypeServiceAccount          EventListParamsFilterSubjectType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
-	EventListParamsFilterSubjectTypeResourceTypeSecret                  EventListParamsFilterSubjectType = "RESOURCE_TYPE_SECRET"
-	EventListParamsFilterSubjectTypeResourceTypeSSOConfig               EventListParamsFilterSubjectType = "RESOURCE_TYPE_SSO_CONFIG"
-)
-
-func (r EventListParamsFilterSubjectType) IsKnown() bool {
-	switch r {
-	case EventListParamsFilterSubjectTypeResourceTypeUnspecified, EventListParamsFilterSubjectTypeResourceTypeEnvironment, EventListParamsFilterSubjectTypeResourceTypeRunner, EventListParamsFilterSubjectTypeResourceTypeProject, EventListParamsFilterSubjectTypeResourceTypeTask, EventListParamsFilterSubjectTypeResourceTypeTaskExecution, EventListParamsFilterSubjectTypeResourceTypeService, EventListParamsFilterSubjectTypeResourceTypeOrganization, EventListParamsFilterSubjectTypeResourceTypeUser, EventListParamsFilterSubjectTypeResourceTypeEnvironmentClass, EventListParamsFilterSubjectTypeResourceTypeRunnerScmIntegration, EventListParamsFilterSubjectTypeResourceTypeHostAuthenticationToken, EventListParamsFilterSubjectTypeResourceTypeGroup, EventListParamsFilterSubjectTypeResourceTypePersonalAccessToken, EventListParamsFilterSubjectTypeResourceTypeUserPreference, EventListParamsFilterSubjectTypeResourceTypeServiceAccount, EventListParamsFilterSubjectTypeResourceTypeSecret, EventListParamsFilterSubjectTypeResourceTypeSSOConfig:
-		return true
-	}
-	return false
 }
 
 // pagination contains the pagination options for listing environments
@@ -415,14 +316,6 @@ func (r EventListParamsPagination) MarshalJSON() (data []byte, err error) {
 }
 
 type EventWatchParams struct {
-	Body EventWatchParamsBodyUnion `json:"body,required"`
-}
-
-func (r EventWatchParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r.Body)
-}
-
-type EventWatchParamsBody struct {
 	// Environment scope produces events for the environment itself, all tasks, task
 	// executions, and services associated with that environment.
 	EnvironmentID param.Field[string] `json:"environmentId"`
@@ -432,43 +325,6 @@ type EventWatchParamsBody struct {
 	Organization param.Field[bool] `json:"organization"`
 }
 
-func (r EventWatchParamsBody) MarshalJSON() (data []byte, err error) {
+func (r EventWatchParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
-}
-
-func (r EventWatchParamsBody) implementsEventWatchParamsBodyUnion() {}
-
-// Satisfied by
-// [EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment],
-// [EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued],
-// [EventWatchParamsBody].
-type EventWatchParamsBodyUnion interface {
-	implementsEventWatchParamsBodyUnion()
-}
-
-type EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment struct {
-	// Environment scope produces events for the environment itself, all tasks, task
-	// executions, and services associated with that environment.
-	EnvironmentID param.Field[string] `json:"environmentId,required"`
-}
-
-func (r EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EventWatchParamsBodyEnvironmentScopeProducesEventsForTheEnvironmentItselfAllTasksTaskExecutionsAndServicesAssociatedWithThatEnvironment) implementsEventWatchParamsBodyUnion() {
-}
-
-type EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued struct {
-	// Organization scope produces events for all projects, runners and environments
-	// the caller can see within their organization. No task, task execution or service
-	// events are produed.
-	Organization param.Field[bool] `json:"organization,required"`
-}
-
-func (r EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r EventWatchParamsBodyOrganizationScopeProducesEventsForAllProjectsRunnersAndEnvironmentsTheCallerCanSeeWithinTheirOrganizationNoTaskTaskExecutionOrServiceEventsAreProdued) implementsEventWatchParamsBodyUnion() {
 }

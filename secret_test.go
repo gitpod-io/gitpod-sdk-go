@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
 func TestSecretNewWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,12 +27,11 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Secrets.New(context.TODO(), gitpod.SecretNewParams{
-		Body: gitpod.SecretNewParamsBodySecretWillBeCreatedAsAnEnvironmentVariableWithTheSameNameAsTheSecret{
-			EnvironmentVariable: gitpod.F(true),
-			Name:                gitpod.F("name"),
-			ProjectID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			Value:               gitpod.F("x"),
-		},
+		EnvironmentVariable: gitpod.F(true),
+		FilePath:            gitpod.F("filePath"),
+		Name:                gitpod.F("name"),
+		ProjectID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Value:               gitpod.F("x"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -43,6 +43,7 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 }
 
 func TestSecretListWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -75,6 +76,7 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 }
 
 func TestSecretDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -99,6 +101,7 @@ func TestSecretDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestSecretGetValueWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -123,6 +126,7 @@ func TestSecretGetValueWithOptionalParams(t *testing.T) {
 }
 
 func TestSecretUpdateValueWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

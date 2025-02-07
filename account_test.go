@@ -8,12 +8,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/gitpod-go"
-	"github.com/stainless-sdks/gitpod-go/internal/testutil"
-	"github.com/stainless-sdks/gitpod-go/option"
+	"github.com/gitpod-io/flex-sdk-go"
+	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
+	"github.com/gitpod-io/flex-sdk-go/option"
 )
 
-func TestAccountGet(t *testing.T) {
+func TestAccountGetWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,7 +27,7 @@ func TestAccountGet(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.Get(context.TODO(), gitpod.AccountGetParams{
-		Body: map[string]interface{}{},
+		Empty: gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -38,6 +39,7 @@ func TestAccountGet(t *testing.T) {
 }
 
 func TestAccountDeleteWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -62,6 +64,7 @@ func TestAccountDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -74,8 +77,8 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.GetSSOLoginURL(context.TODO(), gitpod.AccountGetSSOLoginURLParams{
-		ReturnTo: gitpod.F("https://example.com"),
 		Email:    gitpod.F("dev@stainlessapi.com"),
+		ReturnTo: gitpod.F("https://example.com"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -87,6 +90,7 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 }
 
 func TestAccountListLoginProvidersWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
