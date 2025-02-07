@@ -213,14 +213,14 @@ func (r hostAuthenticationTokenJSON) RawJSON() string {
 type HostAuthenticationTokenSource string
 
 const (
-	HostAuthenticationTokenSourceHostAuthenticationTokenSourceUnspecified HostAuthenticationTokenSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_UNSPECIFIED"
-	HostAuthenticationTokenSourceHostAuthenticationTokenSourceOAuth       HostAuthenticationTokenSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_OAUTH"
-	HostAuthenticationTokenSourceHostAuthenticationTokenSourcePat         HostAuthenticationTokenSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_PAT"
+	HostAuthenticationTokenSourceUnspecified HostAuthenticationTokenSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_UNSPECIFIED"
+	HostAuthenticationTokenSourceOAuth       HostAuthenticationTokenSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_OAUTH"
+	HostAuthenticationTokenSourcePat         HostAuthenticationTokenSource = "HOST_AUTHENTICATION_TOKEN_SOURCE_PAT"
 )
 
 func (r HostAuthenticationTokenSource) IsKnown() bool {
 	switch r {
-	case HostAuthenticationTokenSourceHostAuthenticationTokenSourceUnspecified, HostAuthenticationTokenSourceHostAuthenticationTokenSourceOAuth, HostAuthenticationTokenSourceHostAuthenticationTokenSourcePat:
+	case HostAuthenticationTokenSourceUnspecified, HostAuthenticationTokenSourceOAuth, HostAuthenticationTokenSourcePat:
 		return true
 	}
 	return false

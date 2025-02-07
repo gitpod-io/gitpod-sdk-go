@@ -35,7 +35,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(shared.SubjectParam{
 				ID:        gitpod.F("id"),
-				Principal: gitpod.F(shared.PrincipalPrincipalUnspecified),
+				Principal: gitpod.F(shared.PrincipalUnspecified),
 			}),
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),

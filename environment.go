@@ -181,14 +181,14 @@ func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParam
 type AdmissionLevel string
 
 const (
-	AdmissionLevelAdmissionLevelUnspecified AdmissionLevel = "ADMISSION_LEVEL_UNSPECIFIED"
-	AdmissionLevelAdmissionLevelOwnerOnly   AdmissionLevel = "ADMISSION_LEVEL_OWNER_ONLY"
-	AdmissionLevelAdmissionLevelEveryone    AdmissionLevel = "ADMISSION_LEVEL_EVERYONE"
+	AdmissionLevelUnspecified AdmissionLevel = "ADMISSION_LEVEL_UNSPECIFIED"
+	AdmissionLevelOwnerOnly   AdmissionLevel = "ADMISSION_LEVEL_OWNER_ONLY"
+	AdmissionLevelEveryone    AdmissionLevel = "ADMISSION_LEVEL_EVERYONE"
 )
 
 func (r AdmissionLevel) IsKnown() bool {
 	switch r {
-	case AdmissionLevelAdmissionLevelUnspecified, AdmissionLevelAdmissionLevelOwnerOnly, AdmissionLevelAdmissionLevelEveryone:
+	case AdmissionLevelUnspecified, AdmissionLevelOwnerOnly, AdmissionLevelEveryone:
 		return true
 	}
 	return false
@@ -672,20 +672,20 @@ func (r environmentMetadataJSON) RawJSON() string {
 type EnvironmentPhase string
 
 const (
-	EnvironmentPhaseEnvironmentPhaseUnspecified EnvironmentPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
-	EnvironmentPhaseEnvironmentPhaseCreating    EnvironmentPhase = "ENVIRONMENT_PHASE_CREATING"
-	EnvironmentPhaseEnvironmentPhaseStarting    EnvironmentPhase = "ENVIRONMENT_PHASE_STARTING"
-	EnvironmentPhaseEnvironmentPhaseRunning     EnvironmentPhase = "ENVIRONMENT_PHASE_RUNNING"
-	EnvironmentPhaseEnvironmentPhaseUpdating    EnvironmentPhase = "ENVIRONMENT_PHASE_UPDATING"
-	EnvironmentPhaseEnvironmentPhaseStopping    EnvironmentPhase = "ENVIRONMENT_PHASE_STOPPING"
-	EnvironmentPhaseEnvironmentPhaseStopped     EnvironmentPhase = "ENVIRONMENT_PHASE_STOPPED"
-	EnvironmentPhaseEnvironmentPhaseDeleting    EnvironmentPhase = "ENVIRONMENT_PHASE_DELETING"
-	EnvironmentPhaseEnvironmentPhaseDeleted     EnvironmentPhase = "ENVIRONMENT_PHASE_DELETED"
+	EnvironmentPhaseUnspecified EnvironmentPhase = "ENVIRONMENT_PHASE_UNSPECIFIED"
+	EnvironmentPhaseCreating    EnvironmentPhase = "ENVIRONMENT_PHASE_CREATING"
+	EnvironmentPhaseStarting    EnvironmentPhase = "ENVIRONMENT_PHASE_STARTING"
+	EnvironmentPhaseRunning     EnvironmentPhase = "ENVIRONMENT_PHASE_RUNNING"
+	EnvironmentPhaseUpdating    EnvironmentPhase = "ENVIRONMENT_PHASE_UPDATING"
+	EnvironmentPhaseStopping    EnvironmentPhase = "ENVIRONMENT_PHASE_STOPPING"
+	EnvironmentPhaseStopped     EnvironmentPhase = "ENVIRONMENT_PHASE_STOPPED"
+	EnvironmentPhaseDeleting    EnvironmentPhase = "ENVIRONMENT_PHASE_DELETING"
+	EnvironmentPhaseDeleted     EnvironmentPhase = "ENVIRONMENT_PHASE_DELETED"
 )
 
 func (r EnvironmentPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentPhaseEnvironmentPhaseUnspecified, EnvironmentPhaseEnvironmentPhaseCreating, EnvironmentPhaseEnvironmentPhaseStarting, EnvironmentPhaseEnvironmentPhaseRunning, EnvironmentPhaseEnvironmentPhaseUpdating, EnvironmentPhaseEnvironmentPhaseStopping, EnvironmentPhaseEnvironmentPhaseStopped, EnvironmentPhaseEnvironmentPhaseDeleting, EnvironmentPhaseEnvironmentPhaseDeleted:
+	case EnvironmentPhaseUnspecified, EnvironmentPhaseCreating, EnvironmentPhaseStarting, EnvironmentPhaseRunning, EnvironmentPhaseUpdating, EnvironmentPhaseStopping, EnvironmentPhaseStopped, EnvironmentPhaseDeleting, EnvironmentPhaseDeleted:
 		return true
 	}
 	return false

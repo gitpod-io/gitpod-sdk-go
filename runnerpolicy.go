@@ -107,14 +107,14 @@ func (r runnerPolicyJSON) RawJSON() string {
 type RunnerRole string
 
 const (
-	RunnerRoleRunnerRoleUnspecified RunnerRole = "RUNNER_ROLE_UNSPECIFIED"
-	RunnerRoleRunnerRoleAdmin       RunnerRole = "RUNNER_ROLE_ADMIN"
-	RunnerRoleRunnerRoleUser        RunnerRole = "RUNNER_ROLE_USER"
+	RunnerRoleUnspecified RunnerRole = "RUNNER_ROLE_UNSPECIFIED"
+	RunnerRoleAdmin       RunnerRole = "RUNNER_ROLE_ADMIN"
+	RunnerRoleUser        RunnerRole = "RUNNER_ROLE_USER"
 )
 
 func (r RunnerRole) IsKnown() bool {
 	switch r {
-	case RunnerRoleRunnerRoleUnspecified, RunnerRoleRunnerRoleAdmin, RunnerRoleRunnerRoleUser:
+	case RunnerRoleUnspecified, RunnerRoleAdmin, RunnerRoleUser:
 		return true
 	}
 	return false

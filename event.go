@@ -78,16 +78,16 @@ func (r *EventService) WatchStreaming(ctx context.Context, body EventWatchParams
 type ResourceOperation string
 
 const (
-	ResourceOperationResourceOperationUnspecified  ResourceOperation = "RESOURCE_OPERATION_UNSPECIFIED"
-	ResourceOperationResourceOperationCreate       ResourceOperation = "RESOURCE_OPERATION_CREATE"
-	ResourceOperationResourceOperationUpdate       ResourceOperation = "RESOURCE_OPERATION_UPDATE"
-	ResourceOperationResourceOperationDelete       ResourceOperation = "RESOURCE_OPERATION_DELETE"
-	ResourceOperationResourceOperationUpdateStatus ResourceOperation = "RESOURCE_OPERATION_UPDATE_STATUS"
+	ResourceOperationUnspecified  ResourceOperation = "RESOURCE_OPERATION_UNSPECIFIED"
+	ResourceOperationCreate       ResourceOperation = "RESOURCE_OPERATION_CREATE"
+	ResourceOperationUpdate       ResourceOperation = "RESOURCE_OPERATION_UPDATE"
+	ResourceOperationDelete       ResourceOperation = "RESOURCE_OPERATION_DELETE"
+	ResourceOperationUpdateStatus ResourceOperation = "RESOURCE_OPERATION_UPDATE_STATUS"
 )
 
 func (r ResourceOperation) IsKnown() bool {
 	switch r {
-	case ResourceOperationResourceOperationUnspecified, ResourceOperationResourceOperationCreate, ResourceOperationResourceOperationUpdate, ResourceOperationResourceOperationDelete, ResourceOperationResourceOperationUpdateStatus:
+	case ResourceOperationUnspecified, ResourceOperationCreate, ResourceOperationUpdate, ResourceOperationDelete, ResourceOperationUpdateStatus:
 		return true
 	}
 	return false
@@ -96,29 +96,29 @@ func (r ResourceOperation) IsKnown() bool {
 type ResourceType string
 
 const (
-	ResourceTypeResourceTypeUnspecified             ResourceType = "RESOURCE_TYPE_UNSPECIFIED"
-	ResourceTypeResourceTypeEnvironment             ResourceType = "RESOURCE_TYPE_ENVIRONMENT"
-	ResourceTypeResourceTypeRunner                  ResourceType = "RESOURCE_TYPE_RUNNER"
-	ResourceTypeResourceTypeProject                 ResourceType = "RESOURCE_TYPE_PROJECT"
-	ResourceTypeResourceTypeTask                    ResourceType = "RESOURCE_TYPE_TASK"
-	ResourceTypeResourceTypeTaskExecution           ResourceType = "RESOURCE_TYPE_TASK_EXECUTION"
-	ResourceTypeResourceTypeService                 ResourceType = "RESOURCE_TYPE_SERVICE"
-	ResourceTypeResourceTypeOrganization            ResourceType = "RESOURCE_TYPE_ORGANIZATION"
-	ResourceTypeResourceTypeUser                    ResourceType = "RESOURCE_TYPE_USER"
-	ResourceTypeResourceTypeEnvironmentClass        ResourceType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
-	ResourceTypeResourceTypeRunnerScmIntegration    ResourceType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
-	ResourceTypeResourceTypeHostAuthenticationToken ResourceType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
-	ResourceTypeResourceTypeGroup                   ResourceType = "RESOURCE_TYPE_GROUP"
-	ResourceTypeResourceTypePersonalAccessToken     ResourceType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
-	ResourceTypeResourceTypeUserPreference          ResourceType = "RESOURCE_TYPE_USER_PREFERENCE"
-	ResourceTypeResourceTypeServiceAccount          ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
-	ResourceTypeResourceTypeSecret                  ResourceType = "RESOURCE_TYPE_SECRET"
-	ResourceTypeResourceTypeSSOConfig               ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
+	ResourceTypeUnspecified             ResourceType = "RESOURCE_TYPE_UNSPECIFIED"
+	ResourceTypeEnvironment             ResourceType = "RESOURCE_TYPE_ENVIRONMENT"
+	ResourceTypeRunner                  ResourceType = "RESOURCE_TYPE_RUNNER"
+	ResourceTypeProject                 ResourceType = "RESOURCE_TYPE_PROJECT"
+	ResourceTypeTask                    ResourceType = "RESOURCE_TYPE_TASK"
+	ResourceTypeTaskExecution           ResourceType = "RESOURCE_TYPE_TASK_EXECUTION"
+	ResourceTypeService                 ResourceType = "RESOURCE_TYPE_SERVICE"
+	ResourceTypeOrganization            ResourceType = "RESOURCE_TYPE_ORGANIZATION"
+	ResourceTypeUser                    ResourceType = "RESOURCE_TYPE_USER"
+	ResourceTypeEnvironmentClass        ResourceType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
+	ResourceTypeRunnerScmIntegration    ResourceType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
+	ResourceTypeHostAuthenticationToken ResourceType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
+	ResourceTypeGroup                   ResourceType = "RESOURCE_TYPE_GROUP"
+	ResourceTypePersonalAccessToken     ResourceType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
+	ResourceTypeUserPreference          ResourceType = "RESOURCE_TYPE_USER_PREFERENCE"
+	ResourceTypeServiceAccount          ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
+	ResourceTypeSecret                  ResourceType = "RESOURCE_TYPE_SECRET"
+	ResourceTypeSSOConfig               ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeResourceTypeUnspecified, ResourceTypeResourceTypeEnvironment, ResourceTypeResourceTypeRunner, ResourceTypeResourceTypeProject, ResourceTypeResourceTypeTask, ResourceTypeResourceTypeTaskExecution, ResourceTypeResourceTypeService, ResourceTypeResourceTypeOrganization, ResourceTypeResourceTypeUser, ResourceTypeResourceTypeEnvironmentClass, ResourceTypeResourceTypeRunnerScmIntegration, ResourceTypeResourceTypeHostAuthenticationToken, ResourceTypeResourceTypeGroup, ResourceTypeResourceTypePersonalAccessToken, ResourceTypeResourceTypeUserPreference, ResourceTypeResourceTypeServiceAccount, ResourceTypeResourceTypeSecret, ResourceTypeResourceTypeSSOConfig:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig:
 		return true
 	}
 	return false

@@ -29,7 +29,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Environments.New(context.TODO(), gitpod.EnvironmentNewParams{
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
-			Admission: gitpod.F(gitpod.AdmissionLevelAdmissionLevelUnspecified),
+			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
@@ -53,7 +53,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				}),
 				Session: gitpod.F("session"),
 			}),
-			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseEnvironmentPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Session:              gitpod.F("session"),
@@ -63,7 +63,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Session: gitpod.F("session"),
 			}),
 			Ports: gitpod.F([]gitpod.EnvironmentSpecPortParam{{
-				Admission: gitpod.F(gitpod.AdmissionLevelAdmissionLevelUnspecified),
+				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
@@ -165,7 +165,7 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 				Session:              gitpod.F("session"),
 			}),
 			Ports: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecPort{{
-				Admission: gitpod.F(gitpod.AdmissionLevelAdmissionLevelUnspecified),
+				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
@@ -207,8 +207,8 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 			CreatorIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			ProjectIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			RunnerIDs:    gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			RunnerKinds:  gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindRunnerKindUnspecified}),
-			StatusPhases: gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseEnvironmentPhaseUnspecified}),
+			RunnerKinds:  gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			StatusPhases: gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseUnspecified}),
 		}),
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.EnvironmentListParamsPagination{
@@ -267,7 +267,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.NewFromProject(context.TODO(), gitpod.EnvironmentNewFromProjectParams{
 		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
-			Admission: gitpod.F(gitpod.AdmissionLevelAdmissionLevelUnspecified),
+			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
@@ -291,7 +291,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				}),
 				Session: gitpod.F("session"),
 			}),
-			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseEnvironmentPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Session:              gitpod.F("session"),
@@ -301,7 +301,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Session: gitpod.F("session"),
 			}),
 			Ports: gitpod.F([]gitpod.EnvironmentSpecPortParam{{
-				Admission: gitpod.F(gitpod.AdmissionLevelAdmissionLevelUnspecified),
+				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
 				Port:      gitpod.F(int64(1)),
 			}}),
