@@ -24,9 +24,10 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewOrganizationService] method instead.
 type OrganizationService struct {
-	Options           []option.RequestOption
-	Invites           *OrganizationInviteService
-	SSOConfigurations *OrganizationSSOConfigurationService
+	Options             []option.RequestOption
+	DomainVerifications *OrganizationDomainVerificationService
+	Invites             *OrganizationInviteService
+	SSOConfigurations   *OrganizationSSOConfigurationService
 }
 
 // NewOrganizationService generates a new service that applies the given options to
@@ -35,6 +36,7 @@ type OrganizationService struct {
 func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationService) {
 	r = &OrganizationService{}
 	r.Options = opts
+	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
 	r.SSOConfigurations = NewOrganizationSSOConfigurationService(opts...)
 	return

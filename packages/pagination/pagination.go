@@ -10,6 +10,125 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
+type DomainVerificationsPagePagination struct {
+	NextToken string                                `json:"nextToken"`
+	JSON      domainVerificationsPagePaginationJSON `json:"-"`
+}
+
+// domainVerificationsPagePaginationJSON contains the JSON metadata for the struct
+// [DomainVerificationsPagePagination]
+type domainVerificationsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *DomainVerificationsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r domainVerificationsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type DomainVerificationsPage[T any] struct {
+	DomainVerifications []T                               `json:"domainVerifications"`
+	Pagination          DomainVerificationsPagePagination `json:"pagination"`
+	JSON                domainVerificationsPageJSON       `json:"-"`
+	cfg                 *requestconfig.RequestConfig
+	res                 *http.Response
+}
+
+// domainVerificationsPageJSON contains the JSON metadata for the struct
+// [DomainVerificationsPage[T]]
+type domainVerificationsPageJSON struct {
+	DomainVerifications apijson.Field
+	Pagination          apijson.Field
+	raw                 string
+	ExtraFields         map[string]apijson.Field
+}
+
+func (r *DomainVerificationsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r domainVerificationsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *DomainVerificationsPage[T]) GetNextPage() (res *DomainVerificationsPage[T], err error) {
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	cfg.Apply(option.WithQuery("token", next))
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *DomainVerificationsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &DomainVerificationsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type DomainVerificationsPageAutoPager[T any] struct {
+	page *DomainVerificationsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewDomainVerificationsPageAutoPager[T any](page *DomainVerificationsPage[T], err error) *DomainVerificationsPageAutoPager[T] {
+	return &DomainVerificationsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *DomainVerificationsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.DomainVerifications) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.DomainVerifications) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.DomainVerifications) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.DomainVerifications[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *DomainVerificationsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *DomainVerificationsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *DomainVerificationsPageAutoPager[T]) Index() int {
+	return r.run
+}
+
 type EditorsPagePagination struct {
 	NextToken string                    `json:"nextToken"`
 	JSON      editorsPagePaginationJSON `json:"-"`
