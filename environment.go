@@ -892,7 +892,10 @@ func (r environmentSpecPortJSON) RawJSON() string {
 }
 
 type EnvironmentSpecSecret struct {
-	EnvironmentVariable string `json:"environmentVariable"`
+	// container_registry_basic_auth_host is the hostname of the container registry
+	// that supports basic auth
+	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
+	EnvironmentVariable            string `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          string `json:"filePath"`
 	GitCredentialHost string `json:"gitCredentialHost"`
@@ -911,15 +914,16 @@ type EnvironmentSpecSecret struct {
 // environmentSpecSecretJSON contains the JSON metadata for the struct
 // [EnvironmentSpecSecret]
 type environmentSpecSecretJSON struct {
-	EnvironmentVariable apijson.Field
-	FilePath            apijson.Field
-	GitCredentialHost   apijson.Field
-	Name                apijson.Field
-	Session             apijson.Field
-	Source              apijson.Field
-	SourceRef           apijson.Field
-	raw                 string
-	ExtraFields         map[string]apijson.Field
+	ContainerRegistryBasicAuthHost apijson.Field
+	EnvironmentVariable            apijson.Field
+	FilePath                       apijson.Field
+	GitCredentialHost              apijson.Field
+	Name                           apijson.Field
+	Session                        apijson.Field
+	Source                         apijson.Field
+	SourceRef                      apijson.Field
+	raw                            string
+	ExtraFields                    map[string]apijson.Field
 }
 
 func (r *EnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
@@ -1140,7 +1144,10 @@ func (r EnvironmentSpecPortParam) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentSpecSecretParam struct {
-	EnvironmentVariable param.Field[string] `json:"environmentVariable"`
+	// container_registry_basic_auth_host is the hostname of the container registry
+	// that supports basic auth
+	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
+	EnvironmentVariable            param.Field[string] `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          param.Field[string] `json:"filePath"`
 	GitCredentialHost param.Field[string] `json:"gitCredentialHost"`
@@ -2231,8 +2238,6 @@ type EnvironmentListParams struct {
 	Token    param.Field[string]                      `query:"token"`
 	PageSize param.Field[int64]                       `query:"pageSize"`
 	Filter   param.Field[EnvironmentListParamsFilter] `json:"filter"`
-	// organization_id is the ID of the organization that contains the environments
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// pagination contains the pagination options for listing environments
 	Pagination param.Field[EnvironmentListParamsPagination] `json:"pagination"`
 }

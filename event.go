@@ -114,11 +114,12 @@ const (
 	ResourceTypeServiceAccount          ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
 	ResourceTypeSecret                  ResourceType = "RESOURCE_TYPE_SECRET"
 	ResourceTypeSSOConfig               ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
+	ResourceTypeDomainVerification      ResourceType = "RESOURCE_TYPE_DOMAIN_VERIFICATION"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification:
 		return true
 	}
 	return false

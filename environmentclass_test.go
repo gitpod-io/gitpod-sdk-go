@@ -30,8 +30,11 @@ func TestEnvironmentClassListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentClassListParamsFilter{
-			Enabled:   gitpod.F(true),
-			RunnerIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			CanCreateEnvironments: gitpod.F(true),
+			Enabled:               gitpod.F(true),
+			RunnerIDs:             gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerKinds:           gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			RunnerProviders:       gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentClassListParamsPagination{
 			Token:    gitpod.F("token"),
