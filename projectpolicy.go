@@ -110,11 +110,12 @@ const (
 	ProjectRoleUnspecified ProjectRole = "PROJECT_ROLE_UNSPECIFIED"
 	ProjectRoleAdmin       ProjectRole = "PROJECT_ROLE_ADMIN"
 	ProjectRoleUser        ProjectRole = "PROJECT_ROLE_USER"
+	ProjectRoleEditor      ProjectRole = "PROJECT_ROLE_EDITOR"
 )
 
 func (r ProjectRole) IsKnown() bool {
 	switch r {
-	case ProjectRoleUnspecified, ProjectRoleAdmin, ProjectRoleUser:
+	case ProjectRoleUnspecified, ProjectRoleAdmin, ProjectRoleUser, ProjectRoleEditor:
 		return true
 	}
 	return false
