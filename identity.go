@@ -6,11 +6,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
-	"github.com/gitpod-io/flex-sdk-go/internal/param"
-	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
-	"github.com/gitpod-io/flex-sdk-go/option"
-	"github.com/gitpod-io/flex-sdk-go/shared"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 // IdentityService contains methods and other services that help with interacting

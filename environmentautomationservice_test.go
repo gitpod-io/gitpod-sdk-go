@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gitpod-io/flex-sdk-go"
-	"github.com/gitpod-io/flex-sdk-go/internal/testutil"
-	"github.com/gitpod-io/flex-sdk-go/option"
-	"github.com/gitpod-io/flex-sdk-go/shared"
+	"github.com/gitpod-io/gitpod-sdk-go"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {

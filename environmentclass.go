@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
-	"github.com/gitpod-io/flex-sdk-go/internal/apiquery"
-	"github.com/gitpod-io/flex-sdk-go/internal/param"
-	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
-	"github.com/gitpod-io/flex-sdk-go/option"
-	"github.com/gitpod-io/flex-sdk-go/packages/pagination"
-	"github.com/gitpod-io/flex-sdk-go/shared"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/packages/pagination"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 // EnvironmentClassService contains methods and other services that help with

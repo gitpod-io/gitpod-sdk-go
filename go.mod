@@ -1,4 +1,4 @@
-module github.com/gitpod-io/flex-sdk-go
+module github.com/gitpod-io/gitpod-sdk-go
 
 go 1.21
 
