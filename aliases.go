@@ -3,8 +3,8 @@
 package gitpod
 
 import (
-	"github.com/gitpod-io/flex-sdk-go/internal/apierror"
-	"github.com/gitpod-io/flex-sdk-go/shared"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/apierror"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 type Error = apierror.Error

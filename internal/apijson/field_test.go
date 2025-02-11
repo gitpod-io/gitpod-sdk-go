@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 )
 
 type Struct struct {

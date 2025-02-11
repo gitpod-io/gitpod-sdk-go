@@ -5,9 +5,9 @@ package pagination
 import (
 	"net/http"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
-	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
-	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
 type EditorsPagePagination struct {

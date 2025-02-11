@@ -13,7 +13,7 @@ import (
 
 	"github.com/tidwall/sjson"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc
