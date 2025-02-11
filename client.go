@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/requestconfig"
-	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with

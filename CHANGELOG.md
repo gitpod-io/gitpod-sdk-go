@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.0-alpha.2 (2025-02-11)
+
+Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
+
+### Bug Fixes
+
+* do not call path.Base on ContentType ([#13](https://github.com/gitpod-io/gitpod-sdk-go/issues/13)) ([8901c2e](https://github.com/gitpod-io/gitpod-sdk-go/commit/8901c2e2c7b1e01a388713b7c87a8bae642b4826))
+
+
+### Chores
+
+* go live ([#15](https://github.com/gitpod-io/gitpod-sdk-go/issues/15)) ([090fe43](https://github.com/gitpod-io/gitpod-sdk-go/commit/090fe43b7c871c25fcb2c4fd33eb21843cc8e646))
+
 ## 0.1.0-alpha.1 (2025-02-07)
 
 Full Changelog: [v0.0.1-alpha.0...v0.1.0-alpha.1](https://github.com/gitpod-io/flex-sdk-go/compare/v0.0.1-alpha.0...v0.1.0-alpha.1)

@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 )
 
 var encoders sync.Map // map[encoderEntry]encoderFunc
@@ -319,7 +319,7 @@ func (e *encoder) newReaderTypeEncoder() encoderFunc {
 			filename = path.Base(named.Name())
 		}
 		if typed, ok := reader.(interface{ ContentType() string }); ok {
-			contentType = path.Base(typed.ContentType())
+			contentType = typed.ContentType()
 		}
 
 		// Below is taken almost 1-for-1 from [multipart.CreateFormFile]

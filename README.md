@@ -1,6 +1,6 @@
 # Gitpod Go API Library
 
-<a href="https://pkg.go.dev/github.com/gitpod-io/flex-sdk-go"><img src="https://pkg.go.dev/badge/github.com/gitpod-io/flex-sdk-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go"><img src="https://pkg.go.dev/badge/github.com/gitpod-io/gitpod-sdk-go.svg" alt="Go Reference"></a>
 
 The Gitpod Go library provides convenient access to [the Gitpod REST
 API](https://docs.gitpod.com) from applications written in Go. The full API of this library can be found in [api.md](api.md).
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainlessapi.com/).
 
 ```go
 import (
-	"github.com/gitpod-io/flex-sdk-go" // imported as gitpod
+	"github.com/gitpod-io/gitpod-sdk-go" // imported as gitpod
 )
 ```
 
@@ -24,7 +24,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/gitpod-io/flex-sdk-go@v0.1.0-alpha.1'
+go get -u 'github.com/gitpod-io/gitpod-sdk-go@v0.1.0-alpha.2'
 ```
 
 <!-- x-release-please-end -->
@@ -44,8 +44,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gitpod-io/flex-sdk-go"
-	"github.com/gitpod-io/flex-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go"
+	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
 func main() {
@@ -153,7 +153,7 @@ client.Runners.New(context.TODO(), ...,
 )
 ```
 
-See the [full list of request options](https://pkg.go.dev/github.com/gitpod-io/flex-sdk-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/option).
 
 ### Pagination
 
@@ -384,7 +384,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/gitpod-io/flex-sdk-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/gitpod-io/gitpod-sdk-go/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

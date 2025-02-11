@@ -5,9 +5,9 @@ package shared
 import (
 	"time"
 
-	"github.com/gitpod-io/flex-sdk-go"
-	"github.com/gitpod-io/flex-sdk-go/internal/apijson"
-	"github.com/gitpod-io/flex-sdk-go/internal/param"
+	"github.com/gitpod-io/gitpod-sdk-go"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
+	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 )
 
 // An AutomationTrigger represents a trigger for an automation action. The
