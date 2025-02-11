@@ -181,11 +181,22 @@ func (r RunnerConfigurationEnvironmentClassListParams) URLQuery() (v url.Values)
 }
 
 type RunnerConfigurationEnvironmentClassListParamsFilter struct {
+	// can_create_environments filters the response to only environment classes that
+	// can be used to create new environments by the caller. Unlike enabled, which
+	// indicates general availability, this ensures the caller only sees environment
+	// classes they are allowed to use.
+	CanCreateEnvironments param.Field[bool] `json:"canCreateEnvironments"`
 	// enabled filters the response to only enabled or disabled environment classes. If
 	// not set, all environment classes are returned.
 	Enabled param.Field[bool] `json:"enabled"`
 	// runner_ids filters the response to only EnvironmentClasses of these Runner IDs
 	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
+	// runner_kind filters the response to only environment classes from runners of
+	// these kinds.
+	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
+	// runner_providers filters the response to only environment classes from runners
+	// of these providers.
+	RunnerProviders param.Field[[]RunnerProvider] `json:"runnerProviders"`
 }
 
 func (r RunnerConfigurationEnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {

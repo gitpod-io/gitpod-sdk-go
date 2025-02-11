@@ -94,6 +94,8 @@ func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueP
 
 type Secret struct {
 	ID string `json:"id" format:"uuid"`
+	// secret will be mounted as a registry secret
+	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -288,16 +290,17 @@ type Secret struct {
 
 // secretJSON contains the JSON metadata for the struct [Secret]
 type secretJSON struct {
-	ID                  apijson.Field
-	CreatedAt           apijson.Field
-	Creator             apijson.Field
-	EnvironmentVariable apijson.Field
-	FilePath            apijson.Field
-	Name                apijson.Field
-	ProjectID           apijson.Field
-	UpdatedAt           apijson.Field
-	raw                 string
-	ExtraFields         map[string]apijson.Field
+	ID                             apijson.Field
+	ContainerRegistryBasicAuthHost apijson.Field
+	CreatedAt                      apijson.Field
+	Creator                        apijson.Field
+	EnvironmentVariable            apijson.Field
+	FilePath                       apijson.Field
+	Name                           apijson.Field
+	ProjectID                      apijson.Field
+	UpdatedAt                      apijson.Field
+	raw                            string
+	ExtraFields                    map[string]apijson.Field
 }
 
 func (r *Secret) UnmarshalJSON(data []byte) (err error) {
@@ -355,6 +358,13 @@ func (r secretGetValueResponseJSON) RawJSON() string {
 type SecretUpdateValueResponse = interface{}
 
 type SecretNewParams struct {
+	// secret will be mounted as a docker config in the environment VM, mount will have
+	// the docker host value must be a valid registry hostname with optional port:
+	//
+	// ```
+	// this.matches('^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9](:[0-9]+)?$')
+	// ```
+	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable param.Field[bool] `json:"environmentVariable"`
