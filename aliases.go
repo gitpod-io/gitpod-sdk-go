@@ -15,7 +15,7 @@ type Error = apierror.Error
 // that the automation should be triggered after the dev container has started.
 //
 // This is an alias to an internal type.
-type AutomationTrigge = shared.AutomationTrigge
+type AutomationTrigger = shared.AutomationTrigger
 
 // An AutomationTrigger represents a trigger for an automation action. The
 // `post_environment_start` field indicates that the automation should be triggered
@@ -23,7 +23,7 @@ type AutomationTrigge = shared.AutomationTrigge
 // that the automation should be triggered after the dev container has started.
 //
 // This is an alias to an internal type.
-type AutomationTriggeParam = shared.AutomationTriggeParam
+type AutomationTriggerParam = shared.AutomationTriggerParam
 
 // This is an alias to an internal type.
 type EnvironmentClass = shared.EnvironmentClass

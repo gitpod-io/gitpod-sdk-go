@@ -210,7 +210,7 @@ func (r EnvironmentAutomationTaskUpdateParamsMetadata) MarshalJSON() (data []byt
 }
 
 type EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy struct {
-	Trigger param.Field[[]shared.AutomationTriggeParam] `json:"trigger"`
+	Trigger param.Field[[]shared.AutomationTriggerParam] `json:"trigger"`
 }
 
 func (r EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy) MarshalJSON() (data []byte, err error) {
