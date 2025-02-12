@@ -89,6 +89,9 @@ type Subject = shared.Subject
 type SubjectParam = shared.SubjectParam
 
 // This is an alias to an internal type.
+type Task = shared.Task
+
+// This is an alias to an internal type.
 type TaskExecution = shared.TaskExecution
 
 // This is an alias to an internal type.
@@ -132,6 +135,18 @@ type TaskExecutionStatus = shared.TaskExecutionStatus
 
 // This is an alias to an internal type.
 type TaskExecutionStatusStep = shared.TaskExecutionStatusStep
+
+// This is an alias to an internal type.
+type TaskMetadata = shared.TaskMetadata
+
+// This is an alias to an internal type.
+type TaskMetadataParam = shared.TaskMetadataParam
+
+// This is an alias to an internal type.
+type TaskSpec = shared.TaskSpec
+
+// This is an alias to an internal type.
+type TaskSpecParam = shared.TaskSpecParam
 
 // This is an alias to an internal type.
 type UserStatus = shared.UserStatus
