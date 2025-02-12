@@ -1,6 +1,6 @@
 # Shared Params Types
 
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#AutomationTriggerParam">AutomationTriggerParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#AutomationTriggeParam">AutomationTriggeParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentClassParam">EnvironmentClassParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#FieldValueParam">FieldValueParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#OrganizationRole">OrganizationRole</a>
@@ -13,7 +13,7 @@
 
 # Shared Response Types
 
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#AutomationTrigger">AutomationTrigger</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#AutomationTrigge">AutomationTrigge</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentClass">EnvironmentClass</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#FieldValue">FieldValue</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#OrganizationRole">OrganizationRole</a>
