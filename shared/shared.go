@@ -13,16 +13,16 @@ import (
 // `post_environment_start` field indicates that the automation should be triggered
 // after the environment has started. The `post_devcontainer_start` field indicates
 // that the automation should be triggered after the dev container has started.
-type AutomationTrigge struct {
-	Manual                bool                 `json:"manual"`
-	PostDevcontainerStart bool                 `json:"postDevcontainerStart"`
-	PostEnvironmentStart  bool                 `json:"postEnvironmentStart"`
-	JSON                  automationTriggeJSON `json:"-"`
+type AutomationTrigger struct {
+	Manual                bool                  `json:"manual"`
+	PostDevcontainerStart bool                  `json:"postDevcontainerStart"`
+	PostEnvironmentStart  bool                  `json:"postEnvironmentStart"`
+	JSON                  automationTriggerJSON `json:"-"`
 }
 
-// automationTriggeJSON contains the JSON metadata for the struct
-// [AutomationTrigge]
-type automationTriggeJSON struct {
+// automationTriggerJSON contains the JSON metadata for the struct
+// [AutomationTrigger]
+type automationTriggerJSON struct {
 	Manual                apijson.Field
 	PostDevcontainerStart apijson.Field
 	PostEnvironmentStart  apijson.Field
@@ -30,11 +30,11 @@ type automationTriggeJSON struct {
 	ExtraFields           map[string]apijson.Field
 }
 
-func (r *AutomationTrigge) UnmarshalJSON(data []byte) (err error) {
+func (r *AutomationTrigger) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r automationTriggeJSON) RawJSON() string {
+func (r automationTriggerJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -42,13 +42,13 @@ func (r automationTriggeJSON) RawJSON() string {
 // `post_environment_start` field indicates that the automation should be triggered
 // after the environment has started. The `post_devcontainer_start` field indicates
 // that the automation should be triggered after the dev container has started.
-type AutomationTriggeParam struct {
+type AutomationTriggerParam struct {
 	Manual                param.Field[bool] `json:"manual"`
 	PostDevcontainerStart param.Field[bool] `json:"postDevcontainerStart"`
 	PostEnvironmentStart  param.Field[bool] `json:"postEnvironmentStart"`
 }
 
-func (r AutomationTriggeParam) MarshalJSON() (data []byte, err error) {
+func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -924,8 +924,8 @@ type TaskMetadata struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy []AutomationTrigge `json:"triggeredBy"`
-	JSON        taskMetadataJSON   `json:"-"`
+	TriggeredBy []AutomationTrigger `json:"triggeredBy"`
+	JSON        taskMetadataJSON    `json:"-"`
 }
 
 // taskMetadataJSON contains the JSON metadata for the struct [TaskMetadata]
@@ -1052,7 +1052,7 @@ type TaskMetadataParam struct {
 	// the task in user interactions (e.g. the CLI).
 	Reference param.Field[string] `json:"reference"`
 	// triggered_by is a list of trigger that start the task.
-	TriggeredBy param.Field[[]AutomationTriggeParam] `json:"triggeredBy"`
+	TriggeredBy param.Field[[]AutomationTriggerParam] `json:"triggeredBy"`
 }
 
 func (r TaskMetadataParam) MarshalJSON() (data []byte, err error) {
