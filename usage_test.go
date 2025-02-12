@@ -24,9 +24,9 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
+	response, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{})
 	if err != nil {
 		t.Error(err)
 	}
-	t.Logf("%+v\n", runner.AccessToken)
+	t.Logf("%+v\n", response.OrganizationID)
 }
