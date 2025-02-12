@@ -244,8 +244,8 @@ type ServiceMetadata struct {
 	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
-	TriggeredBy []shared.AutomationTrigge `json:"triggeredBy"`
-	JSON        serviceMetadataJSON       `json:"-"`
+	TriggeredBy []shared.AutomationTrigger `json:"triggeredBy"`
+	JSON        serviceMetadataJSON        `json:"-"`
 }
 
 // serviceMetadataJSON contains the JSON metadata for the struct [ServiceMetadata]
@@ -372,7 +372,7 @@ type ServiceMetadataParam struct {
 	// identify the service in user interactions (e.g. the CLI).
 	Reference param.Field[string] `json:"reference"`
 	// triggered_by is a list of trigger that start the service.
-	TriggeredBy param.Field[[]shared.AutomationTriggeParam] `json:"triggeredBy"`
+	TriggeredBy param.Field[[]shared.AutomationTriggerParam] `json:"triggeredBy"`
 }
 
 func (r ServiceMetadataParam) MarshalJSON() (data []byte, err error) {
@@ -665,7 +665,7 @@ func (r EnvironmentAutomationServiceUpdateParamsMetadata) MarshalJSON() (data []
 }
 
 type EnvironmentAutomationServiceUpdateParamsMetadataTriggeredBy struct {
-	Trigger param.Field[[]shared.AutomationTriggeParam] `json:"trigger"`
+	Trigger param.Field[[]shared.AutomationTriggerParam] `json:"trigger"`
 }
 
 func (r EnvironmentAutomationServiceUpdateParamsMetadataTriggeredBy) MarshalJSON() (data []byte, err error) {
