@@ -40,7 +40,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			Reference:   gitpod.F("reference"),
-			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
+			TriggeredBy: gitpod.F([]shared.AutomationTriggeParam{{
 				Manual:                gitpod.F(true),
 				PostDevcontainerStart: gitpod.F(true),
 				PostEnvironmentStart:  gitpod.F(true),
@@ -110,7 +110,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
 			TriggeredBy: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy{
-				Trigger: gitpod.F([]shared.AutomationTriggerParam{{
+				Trigger: gitpod.F([]shared.AutomationTriggeParam{{
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),
