@@ -175,7 +175,7 @@ func (r InviteDomainsParam) MarshalJSON() (data []byte, err error) {
 }
 
 type Organization struct {
-	ID string `json:"id" format:"uuid"`
+	ID string `json:"id,required" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -264,9 +264,8 @@ type Organization struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt     time.Time     `json:"createdAt" format:"date-time"`
-	InviteDomains InviteDomains `json:"inviteDomains"`
-	Name          string        `json:"name"`
+	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	Name      string    `json:"name,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -355,17 +354,18 @@ type Organization struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time        `json:"updatedAt" format:"date-time"`
-	JSON      organizationJSON `json:"-"`
+	UpdatedAt     time.Time        `json:"updatedAt,required" format:"date-time"`
+	InviteDomains InviteDomains    `json:"inviteDomains"`
+	JSON          organizationJSON `json:"-"`
 }
 
 // organizationJSON contains the JSON metadata for the struct [Organization]
 type organizationJSON struct {
 	ID            apijson.Field
 	CreatedAt     apijson.Field
-	InviteDomains apijson.Field
 	Name          apijson.Field
 	UpdatedAt     apijson.Field
+	InviteDomains apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
@@ -379,11 +379,10 @@ func (r organizationJSON) RawJSON() string {
 }
 
 type OrganizationMember struct {
-	AvatarURL string `json:"avatarUrl"`
-	Email     string `json:"email"`
-	FullName  string `json:"fullName"`
+	Email    string `json:"email,required"`
+	FullName string `json:"fullName,required"`
 	// login_provider is the login provider the user uses to sign in
-	LoginProvider string `json:"loginProvider"`
+	LoginProvider string `json:"loginProvider,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -472,17 +471,17 @@ type OrganizationMember struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	MemberSince time.Time               `json:"memberSince" format:"date-time"`
-	Role        shared.OrganizationRole `json:"role"`
-	Status      shared.UserStatus       `json:"status"`
-	UserID      string                  `json:"userId" format:"uuid"`
+	MemberSince time.Time               `json:"memberSince,required" format:"date-time"`
+	Role        shared.OrganizationRole `json:"role,required"`
+	Status      shared.UserStatus       `json:"status,required"`
+	UserID      string                  `json:"userId,required" format:"uuid"`
+	AvatarURL   string                  `json:"avatarUrl"`
 	JSON        organizationMemberJSON  `json:"-"`
 }
 
 // organizationMemberJSON contains the JSON metadata for the struct
 // [OrganizationMember]
 type organizationMemberJSON struct {
-	AvatarURL     apijson.Field
 	Email         apijson.Field
 	FullName      apijson.Field
 	LoginProvider apijson.Field
@@ -490,6 +489,7 @@ type organizationMemberJSON struct {
 	Role          apijson.Field
 	Status        apijson.Field
 	UserID        apijson.Field
+	AvatarURL     apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
@@ -519,19 +519,19 @@ func (r Scope) IsKnown() bool {
 }
 
 type OrganizationNewResponse struct {
+	// organization is the created organization
+	Organization Organization `json:"organization,required"`
 	// member is the member that joined the org on creation. Only set if specified
 	// "join_organization" is "true" in the request.
-	Member OrganizationMember `json:"member"`
-	// organization is the created organization
-	Organization Organization                `json:"organization"`
-	JSON         organizationNewResponseJSON `json:"-"`
+	Member OrganizationMember          `json:"member"`
+	JSON   organizationNewResponseJSON `json:"-"`
 }
 
 // organizationNewResponseJSON contains the JSON metadata for the struct
 // [OrganizationNewResponse]
 type organizationNewResponseJSON struct {
-	Member       apijson.Field
 	Organization apijson.Field
+	Member       apijson.Field
 	raw          string
 	ExtraFields  map[string]apijson.Field
 }
@@ -546,7 +546,7 @@ func (r organizationNewResponseJSON) RawJSON() string {
 
 type OrganizationGetResponse struct {
 	// organization is the requested organization
-	Organization Organization                `json:"organization"`
+	Organization Organization                `json:"organization,required"`
 	JSON         organizationGetResponseJSON `json:"-"`
 }
 
@@ -568,7 +568,7 @@ func (r organizationGetResponseJSON) RawJSON() string {
 
 type OrganizationUpdateResponse struct {
 	// organization is the updated organization
-	Organization Organization                   `json:"organization"`
+	Organization Organization                   `json:"organization,required"`
 	JSON         organizationUpdateResponseJSON `json:"-"`
 }
 
@@ -592,7 +592,7 @@ type OrganizationDeleteResponse = interface{}
 
 type OrganizationJoinResponse struct {
 	// member is the member that was created by joining the organization.
-	Member OrganizationMember           `json:"member"`
+	Member OrganizationMember           `json:"member,required"`
 	JSON   organizationJoinResponseJSON `json:"-"`
 }
 
@@ -617,14 +617,14 @@ type OrganizationLeaveResponse = interface{}
 type OrganizationSetRoleResponse = interface{}
 
 type OrganizationNewParams struct {
+	// name is the organization name
+	Name param.Field[string] `json:"name,required"`
 	// Should other Accounts with the same domain be automatically invited to the
 	// organization?
 	InviteAccountsWithMatchingDomain param.Field[bool] `json:"inviteAccountsWithMatchingDomain"`
 	// join_organization decides whether the Identity issuing this request joins the
 	// org on creation
 	JoinOrganization param.Field[bool] `json:"joinOrganization"`
-	// name is the organization name
-	Name param.Field[string] `json:"name"`
 }
 
 func (r OrganizationNewParams) MarshalJSON() (data []byte, err error) {
@@ -633,7 +633,7 @@ func (r OrganizationNewParams) MarshalJSON() (data []byte, err error) {
 
 type OrganizationGetParams struct {
 	// organization_id is the unique identifier of the Organization to retreive.
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
 }
 
 func (r OrganizationGetParams) MarshalJSON() (data []byte, err error) {
@@ -641,12 +641,12 @@ func (r OrganizationGetParams) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationUpdateParams struct {
+	// organization_id is the ID of the organization to update the settings for.
+	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
 	// invite_domains is the domain allowlist of the organization
 	InviteDomains param.Field[InviteDomainsParam] `json:"inviteDomains"`
 	// name is the new name of the organization
 	Name param.Field[string] `json:"name"`
-	// organization_id is the ID of the organization to update the settings for.
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 }
 
 func (r OrganizationUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -690,7 +690,7 @@ func (r OrganizationListParamsPagination) MarshalJSON() (data []byte, err error)
 
 type OrganizationDeleteParams struct {
 	// organization_id is the ID of the organization to delete
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
 }
 
 func (r OrganizationDeleteParams) MarshalJSON() (data []byte, err error) {
@@ -709,7 +709,7 @@ func (r OrganizationJoinParams) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationLeaveParams struct {
-	UserID param.Field[string] `json:"userId" format:"uuid"`
+	UserID param.Field[string] `json:"userId,required" format:"uuid"`
 }
 
 func (r OrganizationLeaveParams) MarshalJSON() (data []byte, err error) {
@@ -717,10 +717,10 @@ func (r OrganizationLeaveParams) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationListMembersParams struct {
-	Token    param.Field[string] `query:"token"`
-	PageSize param.Field[int64]  `query:"pageSize"`
 	// organization_id is the ID of the organization to list members for
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	Token          param.Field[string] `query:"token"`
+	PageSize       param.Field[int64]  `query:"pageSize"`
 	// pagination contains the pagination options for listing members
 	Pagination param.Field[OrganizationListMembersParamsPagination] `json:"pagination"`
 }
@@ -753,9 +753,9 @@ func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err
 }
 
 type OrganizationSetRoleParams struct {
-	OrganizationID param.Field[string]                  `json:"organizationId" format:"uuid"`
+	OrganizationID param.Field[string]                  `json:"organizationId,required" format:"uuid"`
+	UserID         param.Field[string]                  `json:"userId,required" format:"uuid"`
 	Role           param.Field[shared.OrganizationRole] `json:"role"`
-	UserID         param.Field[string]                  `json:"userId" format:"uuid"`
 }
 
 func (r OrganizationSetRoleParams) MarshalJSON() (data []byte, err error) {

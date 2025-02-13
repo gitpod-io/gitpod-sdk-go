@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestOrganizationInviteNewWithOptionalParams(t *testing.T) {
+func TestOrganizationInviteNew(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -38,7 +38,7 @@ func TestOrganizationInviteNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationInviteGetWithOptionalParams(t *testing.T) {
+func TestOrganizationInviteGet(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -63,7 +63,7 @@ func TestOrganizationInviteGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationInviteGetSummaryWithOptionalParams(t *testing.T) {
+func TestOrganizationInviteGetSummary(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {

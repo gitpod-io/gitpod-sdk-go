@@ -28,9 +28,9 @@ func TestOrganizationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.New(context.TODO(), gitpod.OrganizationNewParams{
+		Name:                             gitpod.F("xxx"),
 		InviteAccountsWithMatchingDomain: gitpod.F(true),
 		JoinOrganization:                 gitpod.F(true),
-		Name:                             gitpod.F("xxx"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -41,7 +41,7 @@ func TestOrganizationNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationGetWithOptionalParams(t *testing.T) {
+func TestOrganizationGet(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -80,11 +80,11 @@ func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Update(context.TODO(), gitpod.OrganizationUpdateParams{
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		InviteDomains: gitpod.F(gitpod.InviteDomainsParam{
 			Domains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
 		}),
-		Name:           gitpod.F("name"),
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Name: gitpod.F("name"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -126,7 +126,7 @@ func TestOrganizationListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationDeleteWithOptionalParams(t *testing.T) {
+func TestOrganizationDelete(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -177,7 +177,7 @@ func TestOrganizationJoinWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationLeaveWithOptionalParams(t *testing.T) {
+func TestOrganizationLeave(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -216,9 +216,9 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.ListMembers(context.TODO(), gitpod.OrganizationListMembersParams{
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.OrganizationListMembersParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
@@ -248,8 +248,8 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Role:           gitpod.F(shared.OrganizationRoleUnspecified),
 		UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Role:           gitpod.F(shared.OrganizationRoleUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

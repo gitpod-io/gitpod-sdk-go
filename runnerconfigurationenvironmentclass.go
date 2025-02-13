@@ -60,8 +60,8 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 	return
 }
 
-// ListEnvironmentClasses returns all environment classes configured for a runner.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE ListEnvironmentClasses returns all
+// environment classes configured for a runner.
 func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -79,8 +79,8 @@ func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, p
 	return res, nil
 }
 
-// ListEnvironmentClasses returns all environment classes configured for a runner.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE ListEnvironmentClasses returns all
+// environment classes configured for a runner.
 func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }
