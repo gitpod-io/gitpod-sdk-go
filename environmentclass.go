@@ -35,9 +35,24 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 	return
 }
 
-// ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the query buf:lint:ignore
-// RPC_REQUEST_RESPONSE_UNIQUE
+// Lists available environment classes with their specifications and resource
+// limits.
+//
+// Use this method to understand what types of environments you can create and
+// their capabilities. Environment classes define the compute resources and
+// features available to your environments.
+//
+// ### Examples
+//
+// - List all available classes:
+//
+//	Retrieves a list of all environment classes with their specifications.
+//
+//	```yaml
+//	{}
+//	```
+//
+//	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -55,9 +70,24 @@ func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentCl
 	return res, nil
 }
 
-// ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the query buf:lint:ignore
-// RPC_REQUEST_RESPONSE_UNIQUE
+// Lists available environment classes with their specifications and resource
+// limits.
+//
+// Use this method to understand what types of environments you can create and
+// their capabilities. Environment classes define the compute resources and
+// features available to your environments.
+//
+// ### Examples
+//
+// - List all available classes:
+//
+//	Retrieves a list of all environment classes with their specifications.
+//
+//	```yaml
+//	{}
+//	```
+//
+//	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }
