@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestEditorGetWithOptionalParams(t *testing.T) {
+func TestEditorGet(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -68,7 +68,7 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEditorResolveURLWithOptionalParams(t *testing.T) {
+func TestEditorResolveURL(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
