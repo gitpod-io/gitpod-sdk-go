@@ -35,9 +35,24 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 	return
 }
 
-// ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the query buf:lint:ignore
-// RPC_REQUEST_RESPONSE_UNIQUE
+// Lists available environment classes with their specifications and resource
+// limits.
+//
+// Use this method to understand what types of environments you can create and
+// their capabilities. Environment classes define the compute resources and
+// features available to your environments.
+//
+// ### Examples
+//
+// - List all available classes:
+//
+//	Retrieves a list of all environment classes with their specifications.
+//
+//	```yaml
+//	{}
+//	```
+//
+//	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -55,9 +70,24 @@ func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentCl
 	return res, nil
 }
 
-// ListEnvironmentClasses returns the list of environment classes with runner
-// details a user is able to use based on the query buf:lint:ignore
-// RPC_REQUEST_RESPONSE_UNIQUE
+// Lists available environment classes with their specifications and resource
+// limits.
+//
+// Use this method to understand what types of environments you can create and
+// their capabilities. Environment classes define the compute resources and
+// features available to your environments.
+//
+// ### Examples
+//
+// - List all available classes:
+//
+//	Retrieves a list of all environment classes with their specifications.
+//
+//	```yaml
+//	{}
+//	```
+//
+//	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *EnvironmentClassService) ListAutoPaging(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }
@@ -84,11 +114,22 @@ func (r EnvironmentClassListParams) URLQuery() (v url.Values) {
 }
 
 type EnvironmentClassListParamsFilter struct {
+	// can_create_environments filters the response to only environment classes that
+	// can be used to create new environments by the caller. Unlike enabled, which
+	// indicates general availability, this ensures the caller only sees environment
+	// classes they are allowed to use.
+	CanCreateEnvironments param.Field[bool] `json:"canCreateEnvironments"`
 	// enabled filters the response to only enabled or disabled environment classes. If
 	// not set, all environment classes are returned.
 	Enabled param.Field[bool] `json:"enabled"`
 	// runner_ids filters the response to only EnvironmentClasses of these Runner IDs
 	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
+	// runner_kind filters the response to only environment classes from runners of
+	// these kinds.
+	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
+	// runner_providers filters the response to only environment classes from runners
+	// of these providers.
+	RunnerProviders param.Field[[]RunnerProvider] `json:"runnerProviders"`
 }
 
 func (r EnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {

@@ -24,11 +24,11 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	iter := client.Environments.Automations.Services.ListAutoPaging(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{})
+	iter := client.Environments.ListAutoPaging(context.TODO(), gitpod.EnvironmentListParams{})
 	// Prism mock isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
-		service := iter.Current()
-		t.Logf("%+v\n", service.ID)
+		environment := iter.Current()
+		t.Logf("%+v\n", environment.ID)
 	}
 	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())

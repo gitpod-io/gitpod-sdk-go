@@ -31,7 +31,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Tasks.New(context.TODO(), gitpod.EnvironmentAutomationTaskNewParams{
 		DependsOn:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Metadata: gitpod.F(gitpod.TaskMetadataParam{
+		Metadata: gitpod.F(shared.TaskMetadataParam{
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(shared.SubjectParam{
 				ID:        gitpod.F("id"),
@@ -46,7 +46,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 				PostEnvironmentStart:  gitpod.F(true),
 			}}),
 		}),
-		Spec: gitpod.F(gitpod.TaskSpecParam{
+		Spec: gitpod.F(shared.TaskSpecParam{
 			Command: gitpod.F("command"),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{

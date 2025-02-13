@@ -40,21 +40,22 @@ func NewEnvironmentService(opts ...option.RequestOption) (r *EnvironmentService)
 	return
 }
 
-// CreateEnvironment creates a new environment and starts it.
+// Creates a development environment from a context URL (e.g. Git repository) and
+// starts it.
 //
 // The `class` field must be a valid environment class ID. You can find a list of
 // available environment classes with the `ListEnvironmentClasses` method.
 //
 // ### Examples
 //
-// - from context URL:
+// - Create from context URL:
 //
-//	Creates an environment from a context URL, e.g. a GitHub repository.
+//	Creates an environment from a Git repository URL with default settings.
 //
 //	```yaml
 //	spec:
 //	  machine:
-//	    class: "61000000-0000-0000-0000-000000000000"
+//	    class: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	  content:
 //	    initializer:
 //	      specs:
@@ -62,15 +63,14 @@ func NewEnvironmentService(opts ...option.RequestOption) (r *EnvironmentService)
 //	            url: "https://github.com/gitpod-io/gitpod"
 //	```
 //
-// - from Git repository:
+// - Create from Git repository:
 //
-//	Creates an environment from a Git repository directly. While less convenient,
-//	this is useful if you want to specify a specific branch, commit, etc.
+//	Creates an environment from a Git repository with specific branch targeting.
 //
 //	```yaml
 //	spec:
 //	  machine:
-//	    class: "61000000-0000-0000-0000-000000000000"
+//	    class: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	  content:
 //	    initializer:
 //	      specs:
@@ -79,6 +79,28 @@ func NewEnvironmentService(opts ...option.RequestOption) (r *EnvironmentService)
 //	            cloneTarget: "main"
 //	            targetMode: "CLONE_TARGET_MODE_REMOTE_BRANCH"
 //	```
+//
+// - Create with custom timeout and ports:
+//
+//	Creates an environment with custom inactivity timeout and exposed port
+//	configuration.
+//
+//	```yaml
+//	spec:
+//	  machine:
+//	    class: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	  content:
+//	    initializer:
+//	      specs:
+//	        - contextUrl:
+//	            url: "https://github.com/gitpod-io/gitpod"
+//	  timeout:
+//	    disconnected: "7200s" # 2 hours in seconds
+//	  ports:
+//	    - port: 3000
+//	      admission: "ADMISSION_LEVEL_EVERYONE"
+//	      name: "Web App"
+//	```
 func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams, opts ...option.RequestOption) (res *EnvironmentNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironment"
@@ -86,7 +108,26 @@ func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams,
 	return
 }
 
-// GetEnvironment returns a single environment.
+// Gets details about a specific environment including its status, configuration,
+// and context URL.
+//
+// Use this method to:
+//
+// - Check if an environment is ready to use
+// - Get connection details for IDE and exposed ports
+// - Monitor environment health and resource usage
+// - Debug environment setup issues
+//
+// ### Examples
+//
+// - Get environment details:
+//
+//	Retrieves detailed information about a specific environment using its unique
+//	identifier.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
 func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams, opts ...option.RequestOption) (res *EnvironmentGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
@@ -94,7 +135,56 @@ func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams,
 	return
 }
 
-// UpdateEnvironment updates the environment partially.
+// Updates an environment's configuration while it is running.
+//
+// Updates are limited to:
+//
+// - Git credentials (username, email)
+// - SSH public keys
+// - Content initialization
+// - Port configurations
+// - Automation files
+// - Environment timeouts
+//
+// ### Examples
+//
+// - Update Git credentials:
+//
+//	Updates the Git configuration for the environment.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	spec:
+//	  content:
+//	    gitUsername: "example-user"
+//	    gitEmail: "user@example.com"
+//	```
+//
+// - Add SSH public key:
+//
+//	Adds a new SSH public key for authentication.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	spec:
+//	  sshPublicKeys:
+//	    - id: "0194b7c1-c954-718d-91a4-9a742aa5fc11"
+//	      value: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
+//	```
+//
+// - Update content session:
+//
+//	Updates the content session identifier for the environment.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	spec:
+//	  content:
+//	    session: "0194b7c1-c954-718d-91a4-9a742aa5fc11"
+//	```
+//
+// Note: Machine class changes require stopping the environment and creating a new
+// one.
 func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateParams, opts ...option.RequestOption) (res *EnvironmentUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/UpdateEnvironment"
@@ -102,7 +192,43 @@ func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateP
 	return
 }
 
-// ListEnvironments returns a list of environments that match the query.
+// Lists all environments matching the specified criteria.
+//
+// Use this method to find and monitor environments across your organization.
+// Results are ordered by creation time with newest environments first.
+//
+// ### Examples
+//
+// - List running environments for a project:
+//
+//	Retrieves all running environments for a specific project with pagination.
+//
+//	```yaml
+//	filter:
+//	  statusPhases: ["ENVIRONMENT_PHASE_RUNNING"]
+//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
+//	pagination:
+//	  pageSize: 10
+//	```
+//
+// - List all environments for a specific runner:
+//
+//	Filters environments by runner ID and creator ID.
+//
+//	```yaml
+//	filter:
+//	  runnerIds: ["e6aa9c54-89d3-42c1-ac31-bd8d8f1concentrate"]
+//	  creatorIds: ["f53d2330-3795-4c5d-a1f3-453121af9c60"]
+//	```
+//
+// - List stopped and deleted environments:
+//
+//	Retrieves all environments in stopped or deleted state.
+//
+//	```yaml
+//	filter:
+//	  statusPhases: ["ENVIRONMENT_PHASE_STOPPED", "ENVIRONMENT_PHASE_DELETED"]
+//	```
 func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) (res *pagination.EnvironmentsPage[Environment], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -120,13 +246,71 @@ func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListPar
 	return res, nil
 }
 
-// ListEnvironments returns a list of environments that match the query.
+// Lists all environments matching the specified criteria.
+//
+// Use this method to find and monitor environments across your organization.
+// Results are ordered by creation time with newest environments first.
+//
+// ### Examples
+//
+// - List running environments for a project:
+//
+//	Retrieves all running environments for a specific project with pagination.
+//
+//	```yaml
+//	filter:
+//	  statusPhases: ["ENVIRONMENT_PHASE_RUNNING"]
+//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
+//	pagination:
+//	  pageSize: 10
+//	```
+//
+// - List all environments for a specific runner:
+//
+//	Filters environments by runner ID and creator ID.
+//
+//	```yaml
+//	filter:
+//	  runnerIds: ["e6aa9c54-89d3-42c1-ac31-bd8d8f1concentrate"]
+//	  creatorIds: ["f53d2330-3795-4c5d-a1f3-453121af9c60"]
+//	```
+//
+// - List stopped and deleted environments:
+//
+//	Retrieves all environments in stopped or deleted state.
+//
+//	```yaml
+//	filter:
+//	  statusPhases: ["ENVIRONMENT_PHASE_STOPPED", "ENVIRONMENT_PHASE_DELETED"]
+//	```
 func (r *EnvironmentService) ListAutoPaging(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) *pagination.EnvironmentsPageAutoPager[Environment] {
 	return pagination.NewEnvironmentsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteEnvironment deletes an environment. When the environment is running, it
-// will be stopped as well. Deleted environments cannot be started again.
+// Permanently deletes an environment.
+//
+// Running environments are automatically stopped before deletion. If force is
+// true, the environment is deleted immediately without graceful shutdown.
+//
+// ### Examples
+//
+// - Delete with graceful shutdown:
+//
+//	Deletes an environment after gracefully stopping it.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	force: false
+//	```
+//
+// - Force delete:
+//
+//	Immediately deletes an environment without waiting for graceful shutdown.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	force: true
+//	```
 func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteParams, opts ...option.RequestOption) (res *EnvironmentDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/DeleteEnvironment"
@@ -134,8 +318,36 @@ func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteP
 	return
 }
 
-// CreateAbdStartEnvironmentFromProject creates a new environment from a project
-// and starts it.
+// Creates an environment from an existing project configuration and starts it.
+//
+// This method uses project settings as defaults but allows overriding specific
+// configurations. Project settings take precedence over default configurations,
+// while custom specifications in the request override project settings.
+//
+// ### Examples
+//
+// - Create with project defaults:
+//
+//	Creates an environment using all default settings from the project
+//	configuration.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
+//
+// - Create with custom compute resources:
+//
+//	Creates an environment from project with custom machine class and timeout
+//	settings.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	spec:
+//	  machine:
+//	    class: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	  timeout:
+//	    disconnected: "14400s" # 4 hours in seconds
+//	```
 func (r *EnvironmentService) NewFromProject(ctx context.Context, body EnvironmentNewFromProjectParams, opts ...option.RequestOption) (res *EnvironmentNewFromProjectResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentFromProject"
@@ -143,8 +355,20 @@ func (r *EnvironmentService) NewFromProject(ctx context.Context, body Environmen
 	return
 }
 
-// CreateEnvironmentLogsToken creates a token that can be used to access the logs
-// of an environment.
+// Creates an access token for retrieving environment logs.
+//
+// Generated tokens are valid for one hour and provide read-only access to the
+// environment's logs.
+//
+// ### Examples
+//
+// - Generate logs token:
+//
+//	Creates a temporary access token for retrieving environment logs.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
 func (r *EnvironmentService) NewLogsToken(ctx context.Context, body EnvironmentNewLogsTokenParams, opts ...option.RequestOption) (res *EnvironmentNewLogsTokenResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentLogsToken"
@@ -152,7 +376,23 @@ func (r *EnvironmentService) NewLogsToken(ctx context.Context, body EnvironmentN
 	return
 }
 
-// MarkEnvironmentActive allows tools to signal activity for an environment.
+// Records environment activity to prevent automatic shutdown.
+//
+// Activity signals should be sent every 5 minutes while the environment is
+// actively being used. The source must be between 3-80 characters.
+//
+// ### Examples
+//
+// - Signal VS Code activity:
+//
+//	Records VS Code editor activity to prevent environment shutdown.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	activitySignal:
+//	  source: "VS Code"
+//	  timestamp: "2025-02-12T14:30:00Z"
+//	```
 func (r *EnvironmentService) MarkActive(ctx context.Context, body EnvironmentMarkActiveParams, opts ...option.RequestOption) (res *EnvironmentMarkActiveResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/MarkEnvironmentActive"
@@ -160,8 +400,21 @@ func (r *EnvironmentService) MarkActive(ctx context.Context, body EnvironmentMar
 	return
 }
 
-// StartEnvironment starts an environment. This function is idempotent, i.e. if the
-// environment is already running no error is returned.
+// Starts a stopped environment.
+//
+// Use this method to resume work on a previously stopped environment. The
+// environment retains its configuration and workspace content from when it was
+// stopped.
+//
+// ### Examples
+//
+// - Start an environment:
+//
+//	Resumes a previously stopped environment with its existing configuration.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
 func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartParams, opts ...option.RequestOption) (res *EnvironmentStartResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/StartEnvironment"
@@ -169,7 +422,20 @@ func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartPar
 	return
 }
 
-// StopEnvironment stops a running environment.
+// Stops a running environment.
+//
+// Use this method to pause work while preserving the environment's state. The
+// environment can be resumed later using StartEnvironment.
+//
+// ### Examples
+//
+// - Stop an environment:
+//
+//	Gracefully stops a running environment while preserving its state.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
 func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParams, opts ...option.RequestOption) (res *EnvironmentStopResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentService/StopEnvironment"
@@ -892,7 +1158,10 @@ func (r environmentSpecPortJSON) RawJSON() string {
 }
 
 type EnvironmentSpecSecret struct {
-	EnvironmentVariable string `json:"environmentVariable"`
+	// container_registry_basic_auth_host is the hostname of the container registry
+	// that supports basic auth
+	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
+	EnvironmentVariable            string `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          string `json:"filePath"`
 	GitCredentialHost string `json:"gitCredentialHost"`
@@ -911,15 +1180,16 @@ type EnvironmentSpecSecret struct {
 // environmentSpecSecretJSON contains the JSON metadata for the struct
 // [EnvironmentSpecSecret]
 type environmentSpecSecretJSON struct {
-	EnvironmentVariable apijson.Field
-	FilePath            apijson.Field
-	GitCredentialHost   apijson.Field
-	Name                apijson.Field
-	Session             apijson.Field
-	Source              apijson.Field
-	SourceRef           apijson.Field
-	raw                 string
-	ExtraFields         map[string]apijson.Field
+	ContainerRegistryBasicAuthHost apijson.Field
+	EnvironmentVariable            apijson.Field
+	FilePath                       apijson.Field
+	GitCredentialHost              apijson.Field
+	Name                           apijson.Field
+	Session                        apijson.Field
+	Source                         apijson.Field
+	SourceRef                      apijson.Field
+	raw                            string
+	ExtraFields                    map[string]apijson.Field
 }
 
 func (r *EnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
@@ -1140,7 +1410,10 @@ func (r EnvironmentSpecPortParam) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentSpecSecretParam struct {
-	EnvironmentVariable param.Field[string] `json:"environmentVariable"`
+	// container_registry_basic_auth_host is the hostname of the container registry
+	// that supports basic auth
+	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
+	EnvironmentVariable            param.Field[string] `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          param.Field[string] `json:"filePath"`
 	GitCredentialHost param.Field[string] `json:"gitCredentialHost"`
@@ -2050,7 +2323,7 @@ func (r EnvironmentNewParams) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentGetParams struct {
 	// environment_id specifies the environment to get
-	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
 }
 
 func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
@@ -2231,8 +2504,6 @@ type EnvironmentListParams struct {
 	Token    param.Field[string]                      `query:"token"`
 	PageSize param.Field[int64]                       `query:"pageSize"`
 	Filter   param.Field[EnvironmentListParamsFilter] `json:"filter"`
-	// organization_id is the ID of the organization that contains the environments
-	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// pagination contains the pagination options for listing environments
 	Pagination param.Field[EnvironmentListParamsPagination] `json:"pagination"`
 }

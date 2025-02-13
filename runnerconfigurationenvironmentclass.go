@@ -60,8 +60,8 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 	return
 }
 
-// ListEnvironmentClasses returns all environment classes configured for a runner.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE ListEnvironmentClasses returns all
+// environment classes configured for a runner.
 func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -79,8 +79,8 @@ func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, p
 	return res, nil
 }
 
-// ListEnvironmentClasses returns all environment classes configured for a runner.
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE ListEnvironmentClasses returns all
+// environment classes configured for a runner.
 func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }
@@ -181,11 +181,22 @@ func (r RunnerConfigurationEnvironmentClassListParams) URLQuery() (v url.Values)
 }
 
 type RunnerConfigurationEnvironmentClassListParamsFilter struct {
+	// can_create_environments filters the response to only environment classes that
+	// can be used to create new environments by the caller. Unlike enabled, which
+	// indicates general availability, this ensures the caller only sees environment
+	// classes they are allowed to use.
+	CanCreateEnvironments param.Field[bool] `json:"canCreateEnvironments"`
 	// enabled filters the response to only enabled or disabled environment classes. If
 	// not set, all environment classes are returned.
 	Enabled param.Field[bool] `json:"enabled"`
 	// runner_ids filters the response to only EnvironmentClasses of these Runner IDs
 	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
+	// runner_kind filters the response to only environment classes from runners of
+	// these kinds.
+	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
+	// runner_providers filters the response to only environment classes from runners
+	// of these providers.
+	RunnerProviders param.Field[[]RunnerProvider] `json:"runnerProviders"`
 }
 
 func (r RunnerConfigurationEnvironmentClassListParamsFilter) MarshalJSON() (data []byte, err error) {

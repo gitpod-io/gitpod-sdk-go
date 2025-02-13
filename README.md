@@ -3,7 +3,7 @@
 <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go"><img src="https://pkg.go.dev/badge/github.com/gitpod-io/gitpod-sdk-go.svg" alt="Go Reference"></a>
 
 The Gitpod Go library provides convenient access to [the Gitpod REST
-API](https://docs.gitpod.com) from applications written in Go. The full API of this library can be found in [api.md](api.md).
+API](https://docs.gitpod.io) from applications written in Go. The full API of this library can be found in [api.md](api.md).
 
 It is generated with [Stainless](https://www.stainlessapi.com/).
 
@@ -24,7 +24,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/gitpod-io/gitpod-sdk-go@v0.1.0-alpha.2'
+go get -u 'github.com/gitpod-io/gitpod-sdk-go@v0.1.0-alpha.3'
 ```
 
 <!-- x-release-please-end -->
@@ -52,11 +52,11 @@ func main() {
 	client := gitpod.NewClient(
 		option.WithBearerToken("My Bearer Token"), // defaults to os.LookupEnv("GITPOD_API_KEY")
 	)
-	runner, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
+	response, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", runner.AccessToken)
+	fmt.Printf("%+v\n", response.OrganizationID)
 }
 
 ```
@@ -145,7 +145,7 @@ client := gitpod.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Runners.New(context.TODO(), ...,
+client.Identity.GetAuthenticatedIdentity(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -162,11 +162,11 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Environments.Automations.Services.ListAutoPaging(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{})
+iter := client.Environments.ListAutoPaging(context.TODO(), gitpod.EnvironmentListParams{})
 // Automatically fetches more pages as needed.
 for iter.Next() {
-	service := iter.Current()
-	fmt.Printf("%+v\n", service)
+	environment := iter.Current()
+	fmt.Printf("%+v\n", environment)
 }
 if err := iter.Err(); err != nil {
 	panic(err.Error())
@@ -177,10 +177,10 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{})
+page, err := client.Environments.List(context.TODO(), gitpod.EnvironmentListParams{})
 for page != nil {
-	for _, service := range page.Services {
-		fmt.Printf("%+v\n", service)
+	for _, environment := range page.Environments {
+		fmt.Printf("%+v\n", environment)
 	}
 	page, err = page.GetNextPage()
 }
@@ -199,14 +199,14 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{})
+_, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{})
 if err != nil {
 	var apierr *gitpod.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/gitpod.v1.RunnerService/CreateRunner": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/gitpod.v1.IdentityService/GetAuthenticatedIdentity": 400 Bad Request { ... }
 }
 ```
 
@@ -224,9 +224,9 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Runners.New(
+client.Identity.GetAuthenticatedIdentity(
 	ctx,
-	gitpod.RunnerNewParams{},
+	gitpod.IdentityGetAuthenticatedIdentityParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -260,9 +260,9 @@ client := gitpod.NewClient(
 )
 
 // Override per-request:
-client.Runners.New(
+client.Identity.GetAuthenticatedIdentity(
 	context.TODO(),
-	gitpod.RunnerNewParams{},
+	gitpod.IdentityGetAuthenticatedIdentityParams{},
 	option.WithMaxRetries(5),
 )
 ```
@@ -275,15 +275,15 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-runner, err := client.Runners.New(
+response, err := client.Identity.GetAuthenticatedIdentity(
 	context.TODO(),
-	gitpod.RunnerNewParams{},
+	gitpod.IdentityGetAuthenticatedIdentityParams{},
 	option.WithResponseInto(&response),
 )
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", runner)
+fmt.Printf("%+v\n", response)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)

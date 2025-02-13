@@ -24,12 +24,12 @@ func TestManualPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	page, err := client.Environments.Automations.Services.List(context.TODO(), gitpod.EnvironmentAutomationServiceListParams{})
+	page, err := client.Environments.List(context.TODO(), gitpod.EnvironmentListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	for _, service := range page.Services {
-		t.Logf("%+v\n", service.ID)
+	for _, environment := range page.Environments {
+		t.Logf("%+v\n", environment.ID)
 	}
 	// Prism mock isn't going to give us real pagination
 	page, err = page.GetNextPage()
@@ -37,8 +37,8 @@ func TestManualPagination(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 	if page != nil {
-		for _, service := range page.Services {
-			t.Logf("%+v\n", service.ID)
+		for _, environment := range page.Environments {
+			t.Logf("%+v\n", environment.ID)
 		}
 	}
 }
