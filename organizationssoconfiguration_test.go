@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
+func TestOrganizationSSOConfigurationNew(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -42,7 +42,7 @@ func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationSSOConfigurationGetWithOptionalParams(t *testing.T) {
+func TestOrganizationSSOConfigurationGet(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -81,15 +81,15 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Update(context.TODO(), gitpod.OrganizationSSOConfigurationUpdateParams{
+		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Claims: gitpod.F(map[string]string{
 			"foo": "string",
 		}),
-		ClientID:           gitpod.F("x"),
-		ClientSecret:       gitpod.F("x"),
-		EmailDomain:        gitpod.F("xxxx"),
-		IssuerURL:          gitpod.F("https://example.com"),
-		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		State:              gitpod.F(gitpod.SSOConfigurationStateUnspecified),
+		ClientID:     gitpod.F("x"),
+		ClientSecret: gitpod.F("x"),
+		EmailDomain:  gitpod.F("xxxx"),
+		IssuerURL:    gitpod.F("https://example.com"),
+		State:        gitpod.F(gitpod.SSOConfigurationStateUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -114,9 +114,9 @@ func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.List(context.TODO(), gitpod.OrganizationSSOConfigurationListParams{
+		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Pagination: gitpod.F(gitpod.OrganizationSSOConfigurationListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
@@ -131,7 +131,7 @@ func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationSSOConfigurationDeleteWithOptionalParams(t *testing.T) {
+func TestOrganizationSSOConfigurationDelete(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
