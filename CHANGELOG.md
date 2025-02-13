@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.0-alpha.3 (2025-02-13)
+
+Full Changelog: [v0.1.0-alpha.2...v0.1.0-alpha.3](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.1.0-alpha.2...v0.1.0-alpha.3)
+
+### Features
+
+* **api:** manual updates ([#17](https://github.com/gitpod-io/gitpod-sdk-go/issues/17)) ([762e8f7](https://github.com/gitpod-io/gitpod-sdk-go/commit/762e8f70ad9507a80a2cddefe31e79d128919c06))
+* **api:** manual updates ([#18](https://github.com/gitpod-io/gitpod-sdk-go/issues/18)) ([3d70885](https://github.com/gitpod-io/gitpod-sdk-go/commit/3d708857be80530a1b8cc5169b5b03dbc38bebd3))
+* **api:** manual updates ([#20](https://github.com/gitpod-io/gitpod-sdk-go/issues/20)) ([47bc0b1](https://github.com/gitpod-io/gitpod-sdk-go/commit/47bc0b103590ceace9c56bec72a8c6da133f5f17))
+* **api:** manual updates ([#22](https://github.com/gitpod-io/gitpod-sdk-go/issues/22)) ([fd57922](https://github.com/gitpod-io/gitpod-sdk-go/commit/fd57922f815b9c876056ea9a878ac5c352af1ca9))
+* **api:** manual updates ([#23](https://github.com/gitpod-io/gitpod-sdk-go/issues/23)) ([33e7aed](https://github.com/gitpod-io/gitpod-sdk-go/commit/33e7aed13c50f6458e8f0c4a7fba7fcb9e775f24))
+* **api:** manual updates ([#25](https://github.com/gitpod-io/gitpod-sdk-go/issues/25)) ([d8140c6](https://github.com/gitpod-io/gitpod-sdk-go/commit/d8140c673b66d53bfe58ff315ad4e9062b7cc5ac))
+* **api:** Overview page updates ([#26](https://github.com/gitpod-io/gitpod-sdk-go/issues/26)) ([a85f0c2](https://github.com/gitpod-io/gitpod-sdk-go/commit/a85f0c2a5d99d9616bb3013fb98b88b23967e1df))
+* **api:** update examples ([#21](https://github.com/gitpod-io/gitpod-sdk-go/issues/21)) ([48bf713](https://github.com/gitpod-io/gitpod-sdk-go/commit/48bf7138ab06ae118aaefc46c9ff2a9809a25d77))
+* **api:** update with latest API spec ([#24](https://github.com/gitpod-io/gitpod-sdk-go/issues/24)) ([7232ba6](https://github.com/gitpod-io/gitpod-sdk-go/commit/7232ba6189894f53d16d94218c7b0e2d361c4ea7))
+
 ## 0.1.0-alpha.2 (2025-02-11)
 
 Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
