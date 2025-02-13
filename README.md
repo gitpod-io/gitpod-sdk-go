@@ -3,7 +3,7 @@
 <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go"><img src="https://pkg.go.dev/badge/github.com/gitpod-io/gitpod-sdk-go.svg" alt="Go Reference"></a>
 
 The Gitpod Go library provides convenient access to [the Gitpod REST
-API](https://docs.gitpod.com) from applications written in Go. The full API of this library can be found in [api.md](api.md).
+API](https://docs.gitpod.io) from applications written in Go. The full API of this library can be found in [api.md](api.md).
 
 It is generated with [Stainless](https://www.stainlessapi.com/).
 
