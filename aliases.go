@@ -8,6 +8,30 @@ import (
 )
 
 type Error = apierror.Error
+type ErrorCode = apierror.ErrorCode
+
+const ErrorCodeCanceled = apierror.ErrorCodeCanceled
+const ErrorCodeUnknown = apierror.ErrorCodeUnknown
+const ErrorCodeInvalidArgument = apierror.ErrorCodeInvalidArgument
+const ErrorCodeDeadlineExceeded = apierror.ErrorCodeDeadlineExceeded
+const ErrorCodeNotFound = apierror.ErrorCodeNotFound
+const ErrorCodeAlreadyExists = apierror.ErrorCodeAlreadyExists
+const ErrorCodePermissionDenied = apierror.ErrorCodePermissionDenied
+const ErrorCodeResourceExhausted = apierror.ErrorCodeResourceExhausted
+const ErrorCodeFailedPrecondition = apierror.ErrorCodeFailedPrecondition
+const ErrorCodeAborted = apierror.ErrorCodeAborted
+const ErrorCodeOutOfRange = apierror.ErrorCodeOutOfRange
+const ErrorCodeUnimplemented = apierror.ErrorCodeUnimplemented
+const ErrorCodeInternal = apierror.ErrorCodeInternal
+const ErrorCodeUnavailable = apierror.ErrorCodeUnavailable
+const ErrorCodeDataLoss = apierror.ErrorCodeDataLoss
+const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
+
+type ArbitraryData = apierror.ArbitraryData
+type ArbitraryDataDebug = apierror.ArbitraryDataDebug
+type ArbitraryDataType = apierror.ArbitraryDataType
+type ArbitraryDataValue = apierror.ArbitraryDataValue
+type ArbitraryData = apierror.ArbitraryData
 
 // An AutomationTrigger represents a trigger for an automation action. The
 // `post_environment_start` field indicates that the automation should be triggered
