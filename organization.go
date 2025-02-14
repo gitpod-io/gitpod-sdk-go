@@ -42,7 +42,35 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 	return
 }
 
-// CreateOrganization creates a new Organization.
+// Creates a new organization with the specified name and settings.
+//
+// Use this method to:
+//
+// - Create a new organization for team collaboration
+// - Set up automatic domain-based invites for team members
+// - Join the organization immediately upon creation
+//
+// ### Examples
+//
+// - Create a basic organization:
+//
+//	Creates an organization with just a name.
+//
+//	```yaml
+//	name: "Acme Corp Engineering"
+//	joinOrganization: true
+//	```
+//
+// - Create with domain-based invites:
+//
+//	Creates an organization that automatically invites users with matching email
+//	domains.
+//
+//	```yaml
+//	name: "Acme Corp"
+//	joinOrganization: true
+//	inviteAccountsWithMatchingDomain: true
+//	```
 func (r *OrganizationService) New(ctx context.Context, body OrganizationNewParams, opts ...option.RequestOption) (res *OrganizationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateOrganization"
@@ -50,7 +78,23 @@ func (r *OrganizationService) New(ctx context.Context, body OrganizationNewParam
 	return
 }
 
-// GetOrganization retrieves a single Organization.
+// Gets details about a specific organization.
+//
+// Use this method to:
+//
+// - Retrieve organization settings and configuration
+// - Check organization membership status
+// - View domain verification settings
+//
+// ### Examples
+//
+// - Get organization details:
+//
+//	Retrieves information about a specific organization.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
 func (r *OrganizationService) Get(ctx context.Context, body OrganizationGetParams, opts ...option.RequestOption) (res *OrganizationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganization"
@@ -58,7 +102,40 @@ func (r *OrganizationService) Get(ctx context.Context, body OrganizationGetParam
 	return
 }
 
-// UpdateOrganization updates the properties of an Organization.
+// Updates an organization's settings including name, invite domains, and member
+// policies.
+//
+// Use this method to:
+//
+// - Modify organization display name
+// - Configure email domain restrictions
+// - Update organization-wide settings
+// - Manage member access policies
+//
+// ### Examples
+//
+// - Update basic settings:
+//
+//	Changes organization name and invite domains.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	name: "New Company Name"
+//	inviteDomains:
+//	  domains:
+//	    - "company.com"
+//	    - "subsidiary.com"
+//	```
+//
+// - Remove domain restrictions:
+//
+//	Clears all domain-based invite restrictions.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	inviteDomains:
+//	  domains: []
+//	```
 func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdateParams, opts ...option.RequestOption) (res *OrganizationUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/UpdateOrganization"
@@ -66,7 +143,35 @@ func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdat
 	return
 }
 
-// ListOrganizations lists all organization the caller has access to.
+// Lists all organizations the caller has access to with optional filtering.
+//
+// Use this method to:
+//
+// - View organizations you're a member of
+// - Browse all available organizations
+// - Paginate through organization results
+//
+// ### Examples
+//
+// - List member organizations:
+//
+//	Shows organizations where the caller is a member.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	scope: SCOPE_MEMBER
+//	```
+//
+// - List all organizations:
+//
+//	Shows all organizations visible to the caller.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 50
+//	scope: SCOPE_ALL
+//	```
 func (r *OrganizationService) List(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) (res *pagination.OrganizationsPage[Organization], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -84,12 +189,56 @@ func (r *OrganizationService) List(ctx context.Context, params OrganizationListP
 	return res, nil
 }
 
-// ListOrganizations lists all organization the caller has access to.
+// Lists all organizations the caller has access to with optional filtering.
+//
+// Use this method to:
+//
+// - View organizations you're a member of
+// - Browse all available organizations
+// - Paginate through organization results
+//
+// ### Examples
+//
+// - List member organizations:
+//
+//	Shows organizations where the caller is a member.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	scope: SCOPE_MEMBER
+//	```
+//
+// - List all organizations:
+//
+//	Shows all organizations visible to the caller.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 50
+//	scope: SCOPE_ALL
+//	```
 func (r *OrganizationService) ListAutoPaging(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) *pagination.OrganizationsPageAutoPager[Organization] {
 	return pagination.NewOrganizationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteOrganization deletes the specified organization.
+// Permanently deletes an organization.
+//
+// Use this method to:
+//
+// - Remove unused organizations
+// - Clean up test organizations
+// - Complete organization migration
+//
+// ### Examples
+//
+// - Delete organization:
+//
+//	Permanently removes an organization and all its data.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
 func (r *OrganizationService) Delete(ctx context.Context, body OrganizationDeleteParams, opts ...option.RequestOption) (res *OrganizationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/DeleteOrganization"
@@ -97,7 +246,32 @@ func (r *OrganizationService) Delete(ctx context.Context, body OrganizationDelet
 	return
 }
 
-// JoinOrganization lets accounts join an Organization.
+// Allows users to join an organization through direct ID, invite link, or
+// domain-based auto-join.
+//
+// Use this method to:
+//
+// - Join an organization via direct ID or invite
+// - Join automatically based on email domain
+// - Accept organization invitations
+//
+// ### Examples
+//
+// - Join via organization ID:
+//
+//	Joins an organization directly when you have the ID.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
+//
+// - Join via invite:
+//
+//	Accepts an organization invitation link.
+//
+//	```yaml
+//	inviteId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationService) Join(ctx context.Context, body OrganizationJoinParams, opts ...option.RequestOption) (res *OrganizationJoinResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/JoinOrganization"
@@ -105,7 +279,26 @@ func (r *OrganizationService) Join(ctx context.Context, body OrganizationJoinPar
 	return
 }
 
-// LeaveOrganization lets the passed user leave an Organization.
+// Removes a user from an organization while preserving organization data.
+//
+// Use this method to:
+//
+// - Remove yourself from an organization
+// - Clean up inactive memberships
+// - Transfer project ownership before leaving
+// - Manage team transitions
+//
+// ### Examples
+//
+// - Leave organization:
+//
+//	Removes user from organization membership.
+//
+//	```yaml
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	```
+//
+// Note: Ensure all projects and resources are transferred before leaving.
 func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveParams, opts ...option.RequestOption) (res *OrganizationLeaveResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/LeaveOrganization"
@@ -113,7 +306,36 @@ func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveP
 	return
 }
 
-// ListMembers lists all members of the specified organization.
+// Lists and filters organization members with optional pagination.
+//
+// Use this method to:
+//
+// - View all organization members
+// - Monitor member activity
+// - Manage team membership
+//
+// ### Examples
+//
+// - List active members:
+//
+//	Retrieves active members with pagination.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List with pagination:
+//
+//	Retrieves next page of members.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 50
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *pagination.MembersPage[OrganizationMember], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -131,12 +353,70 @@ func (r *OrganizationService) ListMembers(ctx context.Context, params Organizati
 	return res, nil
 }
 
-// ListMembers lists all members of the specified organization.
+// Lists and filters organization members with optional pagination.
+//
+// Use this method to:
+//
+// - View all organization members
+// - Monitor member activity
+// - Manage team membership
+//
+// ### Examples
+//
+// - List active members:
+//
+//	Retrieves active members with pagination.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List with pagination:
+//
+//	Retrieves next page of members.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 50
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *OrganizationService) ListMembersAutoPaging(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) *pagination.MembersPageAutoPager[OrganizationMember] {
 	return pagination.NewMembersPageAutoPager(r.ListMembers(ctx, params, opts...))
 }
 
-// SetRole
+// Manages organization membership and roles by setting a user's role within the
+// organization.
+//
+// Use this method to:
+//
+// - Promote members to admin role
+// - Change member permissions
+// - Demote admins to regular members
+//
+// ### Examples
+//
+// - Promote to admin:
+//
+//	Makes a user an organization administrator.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	role: ORGANIZATION_ROLE_ADMIN
+//	```
+//
+// - Change to member:
+//
+//	Changes a user's role to regular member.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	role: ORGANIZATION_ROLE_MEMBER
+//	```
 func (r *OrganizationService) SetRole(ctx context.Context, body OrganizationSetRoleParams, opts ...option.RequestOption) (res *OrganizationSetRoleResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/SetRole"

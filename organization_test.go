@@ -28,7 +28,7 @@ func TestOrganizationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.New(context.TODO(), gitpod.OrganizationNewParams{
-		Name:                             gitpod.F("xxx"),
+		Name:                             gitpod.F("Acme Corp Engineering"),
 		InviteAccountsWithMatchingDomain: gitpod.F(true),
 		JoinOrganization:                 gitpod.F(true),
 	})
@@ -55,7 +55,7 @@ func TestOrganizationGet(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Get(context.TODO(), gitpod.OrganizationGetParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -80,7 +80,7 @@ func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Update(context.TODO(), gitpod.OrganizationUpdateParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		InviteDomains: gitpod.F(gitpod.InviteDomainsParam{
 			Domains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
 		}),
@@ -113,7 +113,7 @@ func TestOrganizationListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.OrganizationListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(50)),
 		}),
 		Scope: gitpod.F(gitpod.ScopeUnspecified),
 	})
@@ -140,7 +140,7 @@ func TestOrganizationDelete(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Delete(context.TODO(), gitpod.OrganizationDeleteParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -165,7 +165,7 @@ func TestOrganizationJoinWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Join(context.TODO(), gitpod.OrganizationJoinParams{
-		InviteID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		InviteID:       gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -191,7 +191,7 @@ func TestOrganizationLeave(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Leave(context.TODO(), gitpod.OrganizationLeaveParams{
-		UserID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		UserID: gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -216,12 +216,12 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.ListMembers(context.TODO(), gitpod.OrganizationListMembersParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.OrganizationListMembersParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -247,8 +247,8 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		UserID:         gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 		Role:           gitpod.F(shared.OrganizationRoleUnspecified),
 	})
 	if err != nil {
