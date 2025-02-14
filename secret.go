@@ -95,7 +95,7 @@ func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueP
 type Secret struct {
 	ID string `json:"id" format:"uuid"`
 	// secret will be mounted as a registry secret
-	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
+	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost" format:"uri"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -359,12 +359,8 @@ type SecretUpdateValueResponse = interface{}
 
 type SecretNewParams struct {
 	// secret will be mounted as a docker config in the environment VM, mount will have
-	// the docker host value must be a valid registry hostname with optional port:
-	//
-	// ```
-	// this.matches('^[a-zA-Z0-9][a-zA-Z0-9.-]*[a-zA-Z0-9](:[0-9]+)?$')
-	// ```
-	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
+	// the docker registry host
+	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost" format:"uri"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable param.Field[bool] `json:"environmentVariable"`

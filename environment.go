@@ -1107,7 +1107,7 @@ func (r environmentSpecDevcontainerJSON) RawJSON() string {
 // machine is the machine spec of the environment
 type EnvironmentSpecMachine struct {
 	// Class denotes the class of the environment we ought to start
-	Class   string                     `json:"class" format:"uuid"`
+	Class   string                     `json:"class"`
 	Session string                     `json:"session"`
 	JSON    environmentSpecMachineJSON `json:"-"`
 }
@@ -1388,7 +1388,7 @@ func (r EnvironmentSpecDevcontainerParam) MarshalJSON() (data []byte, err error)
 // machine is the machine spec of the environment
 type EnvironmentSpecMachineParam struct {
 	// Class denotes the class of the environment we ought to start
-	Class   param.Field[string] `json:"class" format:"uuid"`
+	Class   param.Field[string] `json:"class"`
 	Session param.Field[string] `json:"session"`
 }
 

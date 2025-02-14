@@ -179,9 +179,6 @@ type Account struct {
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	Email     string    `json:"email,required"`
 	Name      string    `json:"name,required"`
-	// public_email_provider is true if the email for the Account matches a known
-	// public email provider
-	PublicEmailProvider bool `json:"publicEmailProvider,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -276,8 +273,11 @@ type Account struct {
 	Memberships []AccountMembership    `json:"memberships"`
 	// organization_id is the ID of the organization the account is owned by if it's
 	// created through custom SSO
-	OrganizationID string      `json:"organizationId,nullable"`
-	JSON           accountJSON `json:"-"`
+	OrganizationID string `json:"organizationId,nullable"`
+	// public_email_provider is true if the email for the Account matches a known
+	// public email provider
+	PublicEmailProvider bool        `json:"publicEmailProvider"`
+	JSON                accountJSON `json:"-"`
 }
 
 // accountJSON contains the JSON metadata for the struct [Account]
@@ -286,12 +286,12 @@ type accountJSON struct {
 	CreatedAt           apijson.Field
 	Email               apijson.Field
 	Name                apijson.Field
-	PublicEmailProvider apijson.Field
 	UpdatedAt           apijson.Field
 	AvatarURL           apijson.Field
 	Joinables           apijson.Field
 	Memberships         apijson.Field
 	OrganizationID      apijson.Field
+	PublicEmailProvider apijson.Field
 	raw                 string
 	ExtraFields         map[string]apijson.Field
 }
@@ -307,26 +307,26 @@ func (r accountJSON) RawJSON() string {
 type AccountMembership struct {
 	// organization_id is the id of the organization the user is a member of
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
-	// organization_name is the member count of the organization the user is a member
-	// of
-	OrganizationMemberCount int64 `json:"organizationMemberCount,required"`
 	// organization_name is the name of the organization the user is a member of
 	OrganizationName string `json:"organizationName,required"`
 	// user_id is the ID the user has in the organization
 	UserID string `json:"userId,required" format:"uuid"`
 	// user_role is the role the user has in the organization
 	UserRole shared.OrganizationRole `json:"userRole,required"`
-	JSON     accountMembershipJSON   `json:"-"`
+	// organization_name is the member count of the organization the user is a member
+	// of
+	OrganizationMemberCount int64                 `json:"organizationMemberCount"`
+	JSON                    accountMembershipJSON `json:"-"`
 }
 
 // accountMembershipJSON contains the JSON metadata for the struct
 // [AccountMembership]
 type accountMembershipJSON struct {
 	OrganizationID          apijson.Field
-	OrganizationMemberCount apijson.Field
 	OrganizationName        apijson.Field
 	UserID                  apijson.Field
 	UserRole                apijson.Field
+	OrganizationMemberCount apijson.Field
 	raw                     string
 	ExtraFields             map[string]apijson.Field
 }
@@ -342,20 +342,20 @@ func (r accountMembershipJSON) RawJSON() string {
 type JoinableOrganization struct {
 	// organization_id is the id of the organization the user can join
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	// organization_name is the name of the organization the user can join
+	OrganizationName string `json:"organizationName,required"`
 	// organization_member_count is the member count of the organization the user can
 	// join
-	OrganizationMemberCount int64 `json:"organizationMemberCount,required"`
-	// organization_name is the name of the organization the user can join
-	OrganizationName string                   `json:"organizationName,required"`
-	JSON             joinableOrganizationJSON `json:"-"`
+	OrganizationMemberCount int64                    `json:"organizationMemberCount"`
+	JSON                    joinableOrganizationJSON `json:"-"`
 }
 
 // joinableOrganizationJSON contains the JSON metadata for the struct
 // [JoinableOrganization]
 type joinableOrganizationJSON struct {
 	OrganizationID          apijson.Field
-	OrganizationMemberCount apijson.Field
 	OrganizationName        apijson.Field
+	OrganizationMemberCount apijson.Field
 	raw                     string
 	ExtraFields             map[string]apijson.Field
 }
@@ -369,18 +369,19 @@ func (r joinableOrganizationJSON) RawJSON() string {
 }
 
 type LoginProvider struct {
-	// login_url is the URL to redirect the browser agent to for login
-	LoginURL string `json:"loginUrl,required"`
 	// provider is the provider used by this login method, e.g. "github", "google",
 	// "custom"
-	Provider string            `json:"provider,required"`
+	Provider string `json:"provider,required"`
+	// login_url is the URL to redirect the browser agent to for login, when provider
+	// is "custom"
+	LoginURL string            `json:"loginUrl"`
 	JSON     loginProviderJSON `json:"-"`
 }
 
 // loginProviderJSON contains the JSON metadata for the struct [LoginProvider]
 type loginProviderJSON struct {
-	LoginURL    apijson.Field
 	Provider    apijson.Field
+	LoginURL    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
