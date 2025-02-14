@@ -31,8 +31,24 @@ func NewOrganizationInviteService(opts ...option.RequestOption) (r *Organization
 	return
 }
 
-// CreateOrganizationInvite creates an invite for the organization. Any existing
+// Creates an invite link for joining an organization. Any existing
 // OrganizationInvites are invalidated and can no longer be used.
+//
+// Use this method to:
+//
+// - Generate shareable invite links
+// - Manage team growth
+// - Control organization access
+//
+// ### Examples
+//
+// - Create organization invite:
+//
+//	Generates a new invite link for the organization.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
 func (r *OrganizationInviteService) New(ctx context.Context, body OrganizationInviteNewParams, opts ...option.RequestOption) (res *OrganizationInviteNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateOrganizationInvite"
@@ -40,8 +56,7 @@ func (r *OrganizationInviteService) New(ctx context.Context, body OrganizationIn
 	return
 }
 
-// GetOrganizationInvite retrieves invite for the organization. If no invite
-// exists, a new one is created.
+// GetOrganizationInvite
 func (r *OrganizationInviteService) Get(ctx context.Context, body OrganizationInviteGetParams, opts ...option.RequestOption) (res *OrganizationInviteGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInvite"
@@ -49,8 +64,24 @@ func (r *OrganizationInviteService) Get(ctx context.Context, body OrganizationIn
 	return
 }
 
-// GetOrganizationInviteSummary retrieves a summary of the organization based on an
-// Invite ID. Used to discover which organization an invite is for.
+// Retrieves organization details and membership info based on an invite link.
+//
+// Use this method to:
+//
+// - Preview organization details before joining
+// - Validate invite link authenticity
+// - Check organization size and activity
+// - View team information before accepting
+//
+// ### Examples
+//
+// - Get invite summary:
+//
+//	Retrieves organization information from an invite.
+//
+//	```yaml
+//	inviteId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationInviteService) GetSummary(ctx context.Context, body OrganizationInviteGetSummaryParams, opts ...option.RequestOption) (res *OrganizationInviteGetSummaryResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"

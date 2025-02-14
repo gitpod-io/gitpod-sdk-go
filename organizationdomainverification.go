@@ -35,7 +35,34 @@ func NewOrganizationDomainVerificationService(opts ...option.RequestOption) (r *
 	return
 }
 
-// CreateDomainVerification creates a new domain verification request
+// Initiates domain verification process to enable organization features.
+//
+// Use this method to:
+//
+// - Start domain ownership verification
+// - Enable automatic team joining
+// - Set up SSO restrictions
+// - Configure email-based policies
+//
+// ### Examples
+//
+// - Verify primary domain:
+//
+//	Starts verification for main company domain.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	domain: "acme-corp.com"
+//	```
+//
+// - Verify subsidiary domain:
+//
+//	Adds verification for additional company domain.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	domain: "acme-subsidiary.com"
+//	```
 func (r *OrganizationDomainVerificationService) New(ctx context.Context, body OrganizationDomainVerificationNewParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateDomainVerification"
@@ -43,7 +70,23 @@ func (r *OrganizationDomainVerificationService) New(ctx context.Context, body Or
 	return
 }
 
-// GetDomainVerification retrieves a domain verification request
+// Retrieves the status of a domain verification request.
+//
+// Use this method to:
+//
+// - Check verification progress
+// - View verification requirements
+// - Monitor domain status
+//
+// ### Examples
+//
+// - Get verification status:
+//
+//	Checks the current state of a domain verification.
+//
+//	```yaml
+//	domainVerificationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationDomainVerificationService) Get(ctx context.Context, body OrganizationDomainVerificationGetParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetDomainVerification"
@@ -51,7 +94,37 @@ func (r *OrganizationDomainVerificationService) Get(ctx context.Context, body Or
 	return
 }
 
-// ListDomainVerifications lists all domain verifications for an organization
+// Lists and monitors domain verification status across an organization.
+//
+// Use this method to:
+//
+// - Track verification progress
+// - View all verified domains
+// - Monitor pending verifications
+// - Audit domain settings
+//
+// ### Examples
+//
+// - List all verifications:
+//
+//	Shows all domain verifications regardless of status.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List with pagination:
+//
+//	Retrieves next page of verifications.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *OrganizationDomainVerificationService) List(ctx context.Context, params OrganizationDomainVerificationListParams, opts ...option.RequestOption) (res *pagination.DomainVerificationsPage[DomainVerification], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -69,12 +142,58 @@ func (r *OrganizationDomainVerificationService) List(ctx context.Context, params
 	return res, nil
 }
 
-// ListDomainVerifications lists all domain verifications for an organization
+// Lists and monitors domain verification status across an organization.
+//
+// Use this method to:
+//
+// - Track verification progress
+// - View all verified domains
+// - Monitor pending verifications
+// - Audit domain settings
+//
+// ### Examples
+//
+// - List all verifications:
+//
+//	Shows all domain verifications regardless of status.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List with pagination:
+//
+//	Retrieves next page of verifications.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *OrganizationDomainVerificationService) ListAutoPaging(ctx context.Context, params OrganizationDomainVerificationListParams, opts ...option.RequestOption) *pagination.DomainVerificationsPageAutoPager[DomainVerification] {
 	return pagination.NewDomainVerificationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteDomainVerification deletes a domain verification request
+// Removes a domain verification request.
+//
+// Use this method to:
+//
+// - Cancel pending verifications
+// - Remove verified domains
+// - Clean up unused domain records
+//
+// ### Examples
+//
+// - Delete verification:
+//
+//	Removes a domain verification request.
+//
+//	```yaml
+//	domainVerificationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationDomainVerificationService) Delete(ctx context.Context, body OrganizationDomainVerificationDeleteParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/DeleteDomainVerification"
@@ -82,7 +201,23 @@ func (r *OrganizationDomainVerificationService) Delete(ctx context.Context, body
 	return
 }
 
-// VerifyDomain verifies a domain ownership
+// Verifies domain ownership for an organization.
+//
+// Use this method to:
+//
+// - Complete domain verification process
+// - Enable domain-based features
+// - Validate DNS configuration
+//
+// ### Examples
+//
+// - Verify domain ownership:
+//
+//	Verifies ownership after DNS records are configured.
+//
+//	```yaml
+//	domainVerificationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationDomainVerificationService) Verify(ctx context.Context, body OrganizationDomainVerificationVerifyParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationVerifyResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/VerifyDomain"
