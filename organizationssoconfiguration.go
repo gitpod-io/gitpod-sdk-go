@@ -108,9 +108,6 @@ func (r ProviderType) IsKnown() bool {
 type SSOConfiguration struct {
 	// id is the unique identifier of the SSO configuration
 	ID string `json:"id,required" format:"uuid"`
-	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID    string `json:"clientId,required"`
-	EmailDomain string `json:"emailDomain,required"`
 	// issuer_url is the URL of the IdP issuer
 	IssuerURL      string `json:"issuerUrl,required"`
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
@@ -119,21 +116,24 @@ type SSOConfiguration struct {
 	// state is the state of the SSO configuration
 	State SSOConfigurationState `json:"state,required"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
-	Claims map[string]string    `json:"claims"`
-	JSON   ssoConfigurationJSON `json:"-"`
+	Claims map[string]string `json:"claims"`
+	// client_id is the client ID of the OIDC application set on the IdP
+	ClientID    string               `json:"clientId"`
+	EmailDomain string               `json:"emailDomain"`
+	JSON        ssoConfigurationJSON `json:"-"`
 }
 
 // ssoConfigurationJSON contains the JSON metadata for the struct
 // [SSOConfiguration]
 type ssoConfigurationJSON struct {
 	ID             apijson.Field
-	ClientID       apijson.Field
-	EmailDomain    apijson.Field
 	IssuerURL      apijson.Field
 	OrganizationID apijson.Field
 	ProviderType   apijson.Field
 	State          apijson.Field
 	Claims         apijson.Field
+	ClientID       apijson.Field
+	EmailDomain    apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }

@@ -74,25 +74,25 @@ func (r *EditorService) ResolveURL(ctx context.Context, body EditorResolveURLPar
 }
 
 type Editor struct {
-	ID                       string     `json:"id,required"`
-	Alias                    string     `json:"alias,required"`
-	IconURL                  string     `json:"iconUrl,required"`
+	ID                       string     `json:"id,required" format:"uuid"`
 	InstallationInstructions string     `json:"installationInstructions,required"`
 	Name                     string     `json:"name,required"`
-	ShortDescription         string     `json:"shortDescription,required"`
 	URLTemplate              string     `json:"urlTemplate,required"`
+	Alias                    string     `json:"alias"`
+	IconURL                  string     `json:"iconUrl"`
+	ShortDescription         string     `json:"shortDescription"`
 	JSON                     editorJSON `json:"-"`
 }
 
 // editorJSON contains the JSON metadata for the struct [Editor]
 type editorJSON struct {
 	ID                       apijson.Field
-	Alias                    apijson.Field
-	IconURL                  apijson.Field
 	InstallationInstructions apijson.Field
 	Name                     apijson.Field
-	ShortDescription         apijson.Field
 	URLTemplate              apijson.Field
+	Alias                    apijson.Field
+	IconURL                  apijson.Field
+	ShortDescription         apijson.Field
 	raw                      string
 	ExtraFields              map[string]apijson.Field
 }

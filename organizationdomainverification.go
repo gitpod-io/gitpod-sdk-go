@@ -183,7 +183,7 @@ type DomainVerification struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	VerifiedAt time.Time              `json:"verifiedAt,required" format:"date-time"`
+	VerifiedAt time.Time              `json:"verifiedAt" format:"date-time"`
 	JSON       domainVerificationJSON `json:"-"`
 }
 
