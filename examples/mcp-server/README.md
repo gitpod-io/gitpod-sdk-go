@@ -29,7 +29,9 @@ go build -o /tmp/gitpod-mcp
   "mcpServers": {
     "gitpod": {
       "command": "/tmp/gitpod-mcp",
-      "args": ["/tmp/gitpod-personal-access-token.txt"]
+      "env": {
+          "GITPOD_API_KEY": "your-key-here",
+      }
     }
   }
 }
