@@ -96,7 +96,7 @@ func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedPar
 
 type User struct {
 	// id is a UUID of the user
-	ID string `json:"id" format:"uuid"`
+	ID string `json:"id,required" format:"uuid"`
 	// avatar_url is a link to the user avatar
 	AvatarURL string `json:"avatarUrl"`
 	// A Timestamp represents a point in time independent of any time zone or local
