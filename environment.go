@@ -2215,7 +2215,7 @@ func (r EnvironmentStatusSSHPublicKeysPhase) IsKnown() bool {
 
 type EnvironmentNewResponse struct {
 	// +resource get environment
-	Environment Environment                `json:"environment"`
+	Environment Environment                `json:"environment,required"`
 	JSON        environmentNewResponseJSON `json:"-"`
 }
 
@@ -2237,7 +2237,7 @@ func (r environmentNewResponseJSON) RawJSON() string {
 
 type EnvironmentGetResponse struct {
 	// +resource get environment
-	Environment Environment                `json:"environment"`
+	Environment Environment                `json:"environment,required"`
 	JSON        environmentGetResponseJSON `json:"-"`
 }
 
@@ -2263,7 +2263,7 @@ type EnvironmentDeleteResponse = interface{}
 
 type EnvironmentNewFromProjectResponse struct {
 	// +resource get environment
-	Environment Environment                           `json:"environment"`
+	Environment Environment                           `json:"environment,required"`
 	JSON        environmentNewFromProjectResponseJSON `json:"-"`
 }
 
@@ -2285,7 +2285,7 @@ func (r environmentNewFromProjectResponseJSON) RawJSON() string {
 
 type EnvironmentNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs of the environment
-	AccessToken string                              `json:"accessToken"`
+	AccessToken string                              `json:"accessToken,required"`
 	JSON        environmentNewLogsTokenResponseJSON `json:"-"`
 }
 

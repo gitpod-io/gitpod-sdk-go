@@ -784,7 +784,7 @@ func (r serviceStatusJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationServiceNewResponse struct {
-	Service Service                                     `json:"service"`
+	Service Service                                     `json:"service,required"`
 	JSON    environmentAutomationServiceNewResponseJSON `json:"-"`
 }
 
@@ -805,7 +805,7 @@ func (r environmentAutomationServiceNewResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationServiceGetResponse struct {
-	Service Service                                     `json:"service"`
+	Service Service                                     `json:"service,required"`
 	JSON    environmentAutomationServiceGetResponseJSON `json:"-"`
 }
 

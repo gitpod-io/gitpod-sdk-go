@@ -281,7 +281,7 @@ func (r *EnvironmentAutomationTaskService) Start(ctx context.Context, body Envir
 }
 
 type EnvironmentAutomationTaskNewResponse struct {
-	Task shared.Task                              `json:"task"`
+	Task shared.Task                              `json:"task,required"`
 	JSON environmentAutomationTaskNewResponseJSON `json:"-"`
 }
 
@@ -302,7 +302,7 @@ func (r environmentAutomationTaskNewResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationTaskGetResponse struct {
-	Task shared.Task                              `json:"task"`
+	Task shared.Task                              `json:"task,required"`
 	JSON environmentAutomationTaskGetResponseJSON `json:"-"`
 }
 
@@ -327,7 +327,7 @@ type EnvironmentAutomationTaskUpdateResponse = interface{}
 type EnvironmentAutomationTaskDeleteResponse = interface{}
 
 type EnvironmentAutomationTaskStartResponse struct {
-	TaskExecution shared.TaskExecution                       `json:"taskExecution"`
+	TaskExecution shared.TaskExecution                       `json:"taskExecution,required"`
 	JSON          environmentAutomationTaskStartResponseJSON `json:"-"`
 }
 
