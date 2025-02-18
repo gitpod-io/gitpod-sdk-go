@@ -36,7 +36,52 @@ func NewEnvironmentAutomationServiceService(opts ...option.RequestOption) (r *En
 	return
 }
 
-// CreateService
+// Creates a new automation service for an environment.
+//
+// Use this method to:
+//
+// - Set up long-running services
+// - Configure service triggers
+// - Define service dependencies
+// - Specify runtime environments
+//
+// ### Examples
+//
+// - Create basic service:
+//
+//	Creates a simple service with start command.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	metadata:
+//	  reference: "web-server"
+//	  name: "Web Server"
+//	  description: "Runs the development web server"
+//	  triggeredBy:
+//	    - postDevcontainerStart: true
+//	spec:
+//	  commands:
+//	    start: "npm run dev"
+//	    ready: "curl -s http://localhost:3000"
+//	```
+//
+// - Create Docker-based service:
+//
+//	Creates a service running in a specific container.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	metadata:
+//	  reference: "redis"
+//	  name: "Redis Server"
+//	  description: "Redis cache service"
+//	spec:
+//	  commands:
+//	    start: "redis-server"
+//	  runsOn:
+//	    docker:
+//	      image: "redis:7"
+//	```
 func (r *EnvironmentAutomationServiceService) New(ctx context.Context, body EnvironmentAutomationServiceNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateService"
@@ -44,7 +89,24 @@ func (r *EnvironmentAutomationServiceService) New(ctx context.Context, body Envi
 	return
 }
 
-// GetService
+// Gets details about a specific automation service.
+//
+// Use this method to:
+//
+// - Check service status
+// - View service configuration
+// - Monitor service health
+// - Retrieve service metadata
+//
+// ### Examples
+//
+// - Get service details:
+//
+//	Retrieves information about a specific service.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, body EnvironmentAutomationServiceGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/GetService"
@@ -52,7 +114,41 @@ func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, body Envi
 	return
 }
 
-// UpdateService
+// Updates an automation service configuration.
+//
+// Use this method to:
+//
+// - Modify service commands
+// - Update triggers
+// - Change runtime settings
+// - Adjust dependencies
+//
+// ### Examples
+//
+// - Update commands:
+//
+//	Changes service start and ready commands.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	spec:
+//	  commands:
+//	    start: "npm run start:dev"
+//	    ready: "curl -s http://localhost:8080"
+//	```
+//
+// - Update triggers:
+//
+//	Modifies when the service starts.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	metadata:
+//	  triggeredBy:
+//	    trigger:
+//	      - postDevcontainerStart: true
+//	      - manual: true
+//	```
 func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body EnvironmentAutomationServiceUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateService"
@@ -60,7 +156,37 @@ func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body E
 	return
 }
 
-// ListServices
+// Lists automation services with optional filtering.
+//
+// Use this method to:
+//
+// - View all services in an environment
+// - Filter services by reference
+// - Monitor service status
+//
+// ### Examples
+//
+// - List environment services:
+//
+//	Shows all services for an environment.
+//
+//	```yaml
+//	filter:
+//	  environmentIds: ["07e03a28-65a5-4d98-b532-8ea67b188048"]
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by reference:
+//
+//	Lists services matching specific references.
+//
+//	```yaml
+//	filter:
+//	  references: ["web-server", "database"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) (res *pagination.ServicesPage[Service], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -78,13 +204,69 @@ func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params E
 	return res, nil
 }
 
-// ListServices
+// Lists automation services with optional filtering.
+//
+// Use this method to:
+//
+// - View all services in an environment
+// - Filter services by reference
+// - Monitor service status
+//
+// ### Examples
+//
+// - List environment services:
+//
+//	Shows all services for an environment.
+//
+//	```yaml
+//	filter:
+//	  environmentIds: ["07e03a28-65a5-4d98-b532-8ea67b188048"]
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by reference:
+//
+//	Lists services matching specific references.
+//
+//	```yaml
+//	filter:
+//	  references: ["web-server", "database"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *EnvironmentAutomationServiceService) ListAutoPaging(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) *pagination.ServicesPageAutoPager[Service] {
 	return pagination.NewServicesPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteService deletes a service. This call does not block until the service is
+// Deletes an automation service. This call does not block until the service is
 // deleted. If the service is not stopped it will be stopped before deletion.
+//
+// Use this method to:
+//
+// - Remove unused services
+// - Clean up service configurations
+// - Stop and delete services
+//
+// ### Examples
+//
+// - Delete service:
+//
+//	Removes a service after stopping it.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	force: false
+//	```
+//
+// - Force delete:
+//
+//	Immediately removes a service.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	force: true
+//	```
 func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteService"
@@ -92,9 +274,25 @@ func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body E
 	return
 }
 
-// StartService starts a service. This call does not block until the service is
+// Starts an automation service. This call does not block until the service is
 // started. This call will not error if the service is already running or has been
 // started.
+//
+// Use this method to:
+//
+// - Start stopped services
+// - Resume service operations
+// - Trigger service initialization
+//
+// ### Examples
+//
+// - Start service:
+//
+//	Starts a previously stopped service.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StartService"
@@ -102,9 +300,25 @@ func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body En
 	return
 }
 
-// StopService stops a service. This call does not block until the service is
+// Stops an automation service. This call does not block until the service is
 // stopped. This call will not error if the service is already stopped or has been
 // stopped.
+//
+// Use this method to:
+//
+// - Pause service operations
+// - Gracefully stop services
+// - Prepare for updates
+//
+// ### Examples
+//
+// - Stop service:
+//
+//	Gracefully stops a running service.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/StopService"
@@ -113,7 +327,7 @@ func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body Env
 }
 
 type Service struct {
-	ID            string          `json:"id" format:"uuid"`
+	ID            string          `json:"id,required" format:"uuid"`
 	EnvironmentID string          `json:"environmentId" format:"uuid"`
 	Metadata      ServiceMetadata `json:"metadata"`
 	Spec          ServiceSpec     `json:"spec"`

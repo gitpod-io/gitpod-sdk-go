@@ -52,7 +52,7 @@ func TestAccountDelete(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.Delete(context.TODO(), gitpod.AccountDeleteParams{
-		AccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		AccountID: gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -77,7 +77,7 @@ func TestAccountGetSSOLoginURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Accounts.GetSSOLoginURL(context.TODO(), gitpod.AccountGetSSOLoginURLParams{
-		Email:    gitpod.F("dev@stainlessapi.com"),
+		Email:    gitpod.F("user@company.com"),
 		ReturnTo: gitpod.F("https://example.com"),
 	})
 	if err != nil {
@@ -110,7 +110,7 @@ func TestAccountListLoginProvidersWithOptionalParams(t *testing.T) {
 		}),
 		Pagination: gitpod.F(gitpod.AccountListLoginProvidersParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {

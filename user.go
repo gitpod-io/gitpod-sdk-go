@@ -35,7 +35,24 @@ func NewUserService(opts ...option.RequestOption) (r *UserService) {
 	return
 }
 
-// GetAuthenticatedUser allows to retrieve the current user.
+// Gets information about the currently authenticated user.
+//
+// Use this method to:
+//
+// - Get user profile information
+// - Check authentication status
+// - Retrieve user settings
+// - Verify account details
+//
+// ### Examples
+//
+// - Get current user:
+//
+//	Retrieves details about the authenticated user.
+//
+//	```yaml
+//	{}
+//	```
 func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuthenticatedUserParams, opts ...option.RequestOption) (res *UserGetAuthenticatedUserResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
@@ -43,7 +60,33 @@ func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuth
 	return
 }
 
-// SetSuspended sets the suspended state of the user.
+// Sets whether a user account is suspended.
+//
+// Use this method to:
+//
+// - Suspend problematic users
+// - Reactivate suspended accounts
+// - Manage user access
+//
+// ### Examples
+//
+// - Suspend user:
+//
+//	Suspends a user account.
+//
+//	```yaml
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	suspended: true
+//	```
+//
+// - Reactivate user:
+//
+//	Removes suspension from a user account.
+//
+//	```yaml
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	suspended: false
+//	```
 func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedParams, opts ...option.RequestOption) (res *UserSetSuspendedResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/SetSuspended"
