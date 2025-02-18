@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.2.0 (2025-02-18)
+
+Full Changelog: [v0.1.1...v0.2.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.1.1...v0.2.0)
+
+### Features
+
+* **api:** manual updates ([#33](https://github.com/gitpod-io/gitpod-sdk-go/issues/33)) ([8b18e3a](https://github.com/gitpod-io/gitpod-sdk-go/commit/8b18e3af0ace255d515d1f53e9d8573a57ba8617))
+* **api:** manual updates ([#36](https://github.com/gitpod-io/gitpod-sdk-go/issues/36)) ([9612bdb](https://github.com/gitpod-io/gitpod-sdk-go/commit/9612bdbb4a43b3fdc23e72b446b0ac0b295fb326))
+* **api:** Organizations Open API docs ([#31](https://github.com/gitpod-io/gitpod-sdk-go/issues/31)) ([8c99874](https://github.com/gitpod-io/gitpod-sdk-go/commit/8c99874c9c17e63becdbd0fb30a45d77c51bdf2f))
+
+
+### Bug Fixes
+
+* **client:** don't truncate manually specified filenames ([#34](https://github.com/gitpod-io/gitpod-sdk-go/issues/34)) ([bb87acd](https://github.com/gitpod-io/gitpod-sdk-go/commit/bb87acddf4cf002b37c63e8a74bb2f044deac221))
+
 ## 0.1.1 (2025-02-14)
 
 Full Changelog: [v0.1.0-alpha.3...v0.1.1](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.1.0-alpha.3...v0.1.1)
