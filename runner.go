@@ -661,22 +661,22 @@ func (r runnerStatusJSON) RawJSON() string {
 }
 
 type RunnerNewResponse struct {
+	Runner Runner `json:"runner,required"`
 	// deprecated, will be removed. Use exchange_token instead.
 	AccessToken string `json:"accessToken"`
 	// exchange_token is a one-time use token that should be exchanged by the runner
 	// for an access token, using the IdentityService.ExchangeToken rpc. The token
 	// expires after 24 hours.
 	ExchangeToken string                `json:"exchangeToken"`
-	Runner        Runner                `json:"runner"`
 	JSON          runnerNewResponseJSON `json:"-"`
 }
 
 // runnerNewResponseJSON contains the JSON metadata for the struct
 // [RunnerNewResponse]
 type runnerNewResponseJSON struct {
+	Runner        apijson.Field
 	AccessToken   apijson.Field
 	ExchangeToken apijson.Field
-	Runner        apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
@@ -690,7 +690,7 @@ func (r runnerNewResponseJSON) RawJSON() string {
 }
 
 type RunnerGetResponse struct {
-	Runner Runner                `json:"runner"`
+	Runner Runner                `json:"runner,required"`
 	JSON   runnerGetResponseJSON `json:"-"`
 }
 
