@@ -34,7 +34,40 @@ func NewOrganizationSSOConfigurationService(opts ...option.RequestOption) (r *Or
 	return
 }
 
-// CreateSSOConfiguration creates a new SSO configuration for the organization.
+// Creates or updates SSO configuration for organizational authentication.
+//
+// Use this method to:
+//
+// - Configure OIDC-based SSO providers
+// - Set up built-in providers (Google, GitHub, etc.)
+// - Define custom identity providers
+// - Manage authentication policies
+//
+// ### Examples
+//
+// - Configure built-in Google SSO:
+//
+//	Sets up SSO using Google Workspace.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	clientId: "012345678-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com"
+//	clientSecret: "GOCSPX-abcdefghijklmnopqrstuvwxyz123456"
+//	issuerUrl: "https://accounts.google.com"
+//	emailDomain: "acme-corp.com"
+//	```
+//
+// - Configure custom OIDC provider:
+//
+//	Sets up SSO with a custom identity provider.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	clientId: "acme-corp-gitpod"
+//	clientSecret: "secret-token-value"
+//	issuerUrl: "https://sso.acme-corp.com"
+//	emailDomain: "acme-corp.com"
+//	```
 func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body OrganizationSSOConfigurationNewParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/CreateSSOConfiguration"
@@ -42,7 +75,23 @@ func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body Orga
 	return
 }
 
-// GetSSOConfiguration returns an SSO configuration.
+// Retrieves a specific SSO configuration.
+//
+// Use this method to:
+//
+// - View SSO provider details
+// - Check configuration status
+// - Verify SSO settings
+//
+// ### Examples
+//
+// - Get SSO configuration:
+//
+//	Retrieves details of a specific SSO configuration.
+//
+//	```yaml
+//	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body OrganizationSSOConfigurationGetParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/GetSSOConfiguration"
@@ -50,7 +99,36 @@ func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body Orga
 	return
 }
 
-// UpdateSSOConfiguration updates the SSO configuration for the organization.
+// Updates SSO provider settings and authentication rules.
+//
+// Use this method to:
+//
+// - Rotate client credentials
+// - Update provider endpoints
+// - Modify claim mappings
+// - Change authentication policies
+// - Toggle SSO enforcement
+//
+// ### Examples
+//
+// - Update credentials:
+//
+//	Rotates client ID and secret.
+//
+//	```yaml
+//	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	clientId: "new-client-id"
+//	clientSecret: "new-client-secret"
+//	```
+//
+// - Update provider status:
+//
+//	Activates or deactivates SSO provider.
+//
+//	```yaml
+//	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	state: SSO_CONFIGURATION_STATE_ACTIVE
+//	```
 func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body OrganizationSSOConfigurationUpdateParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/UpdateSSOConfiguration"
@@ -58,7 +136,37 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 	return
 }
 
-// ListSSOConfigurations lists all SSO configurations matching provided filters.
+// Lists and filters SSO configurations for an organization.
+//
+// Use this method to:
+//
+// - View all SSO providers
+// - Monitor authentication status
+// - Audit security settings
+// - Manage provider configurations
+//
+// ### Examples
+//
+// - List active configurations:
+//
+//	Shows all active SSO providers.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List by provider type:
+//
+//	Shows custom SSO configurations.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.SSOConfigurationsPage[SSOConfiguration], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -76,12 +184,58 @@ func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params O
 	return res, nil
 }
 
-// ListSSOConfigurations lists all SSO configurations matching provided filters.
+// Lists and filters SSO configurations for an organization.
+//
+// Use this method to:
+//
+// - View all SSO providers
+// - Monitor authentication status
+// - Audit security settings
+// - Manage provider configurations
+//
+// ### Examples
+//
+// - List active configurations:
+//
+//	Shows all active SSO providers.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List by provider type:
+//
+//	Shows custom SSO configurations.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) *pagination.SSOConfigurationsPageAutoPager[SSOConfiguration] {
 	return pagination.NewSSOConfigurationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteSSOConfiguration deletes an SSO configuration.
+// Removes an SSO configuration from an organization.
+//
+// Use this method to:
+//
+// - Disable SSO authentication
+// - Remove outdated providers
+// - Clean up unused configurations
+//
+// ### Examples
+//
+// - Delete SSO configuration:
+//
+//	Removes a specific SSO configuration.
+//
+//	```yaml
+//	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body OrganizationSSOConfigurationDeleteParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.OrganizationService/DeleteSSOConfiguration"

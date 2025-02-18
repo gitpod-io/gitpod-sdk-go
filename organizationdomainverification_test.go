@@ -27,8 +27,8 @@ func TestOrganizationDomainVerificationNew(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.DomainVerifications.New(context.TODO(), gitpod.OrganizationDomainVerificationNewParams{
-		Domain:         gitpod.F("xxxx"),
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Domain:         gitpod.F("acme-corp.com"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -53,7 +53,7 @@ func TestOrganizationDomainVerificationGet(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.DomainVerifications.Get(context.TODO(), gitpod.OrganizationDomainVerificationGetParams{
-		DomainVerificationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		DomainVerificationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -78,12 +78,12 @@ func TestOrganizationDomainVerificationListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.DomainVerifications.List(context.TODO(), gitpod.OrganizationDomainVerificationListParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.OrganizationDomainVerificationListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -109,7 +109,7 @@ func TestOrganizationDomainVerificationDelete(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.DomainVerifications.Delete(context.TODO(), gitpod.OrganizationDomainVerificationDeleteParams{
-		DomainVerificationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		DomainVerificationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -134,7 +134,7 @@ func TestOrganizationDomainVerificationVerify(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.DomainVerifications.Verify(context.TODO(), gitpod.OrganizationDomainVerificationVerifyParams{
-		DomainVerificationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		DomainVerificationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -27,7 +27,7 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Identity.ExchangeToken(context.TODO(), gitpod.IdentityExchangeTokenParams{
-		ExchangeToken: gitpod.F("exchangeToken"),
+		ExchangeToken: gitpod.F("exchange-token-value"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -77,7 +77,7 @@ func TestIdentityGetIDTokenWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Identity.GetIDToken(context.TODO(), gitpod.IdentityGetIDTokenParams{
-		Audience: gitpod.F([]string{"string"}),
+		Audience: gitpod.F([]string{"https://api.gitpod.io", "https://ws.gitpod.io"}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

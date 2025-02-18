@@ -36,7 +36,24 @@ func NewAccountService(opts ...option.RequestOption) (r *AccountService) {
 	return
 }
 
-// GetAccount retrieves a single Account.
+// Gets information about the currently authenticated account.
+//
+// Use this method to:
+//
+// - Retrieve account profile information
+// - Check organization memberships
+// - View account settings
+// - Get joinable organizations
+//
+// ### Examples
+//
+// - Get account details:
+//
+//	Retrieves information about the authenticated account.
+//
+//	```yaml
+//	{}
+//	```
 func (r *AccountService) Get(ctx context.Context, body AccountGetParams, opts ...option.RequestOption) (res *AccountGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.AccountService/GetAccount"
@@ -44,8 +61,25 @@ func (r *AccountService) Get(ctx context.Context, body AccountGetParams, opts ..
 	return
 }
 
-// DeleteAccount deletes an Account. To Delete an Account, the Account must not be
-// an active member of any Organization.
+// Deletes an account permanently.
+//
+// Use this method to:
+//
+// - Remove unused accounts
+// - Clean up test accounts
+// - Complete account deletion requests
+//
+// The account must not be an active member of any organization.
+//
+// ### Examples
+//
+// - Delete account:
+//
+//	Permanently removes an account.
+//
+//	```yaml
+//	accountId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	```
 func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, opts ...option.RequestOption) (res *AccountDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.AccountService/DeleteAccount"
@@ -53,7 +87,32 @@ func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, o
 	return
 }
 
-// GetSSOLoginURL returns the URL to redirect the user to for SSO login.
+// Gets the SSO login URL for a specific email domain.
+//
+// Use this method to:
+//
+// - Initiate SSO authentication
+// - Get organization-specific login URLs
+// - Handle SSO redirects
+//
+// ### Examples
+//
+// - Get login URL:
+//
+//	Retrieves SSO URL for email domain.
+//
+//	```yaml
+//	email: "user@company.com"
+//	```
+//
+// - Get URL with return path:
+//
+//	Gets SSO URL with specific return location.
+//
+//	```yaml
+//	email: "user@company.com"
+//	returnTo: "https://gitpod.io/workspaces"
+//	```
 func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOLoginURLParams, opts ...option.RequestOption) (res *AccountGetSSOLoginURLResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.AccountService/GetSSOLoginURL"
@@ -61,8 +120,35 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 	return
 }
 
-// ListLoginProviders returns the list of login providers matching the provided
-// filters.
+// Lists available login providers with optional filtering.
+//
+// Use this method to:
+//
+// - View supported authentication methods
+// - Get provider-specific login URLs
+// - Filter providers by invite
+//
+// ### Examples
+//
+// - List all providers:
+//
+//	Shows all available login providers.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List for specific invite:
+//
+//	Shows providers available for an invite.
+//
+//	```yaml
+//	filter:
+//	  inviteId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) (res *pagination.LoginProvidersPage[LoginProvider], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -80,8 +166,35 @@ func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountL
 	return res, nil
 }
 
-// ListLoginProviders returns the list of login providers matching the provided
-// filters.
+// Lists available login providers with optional filtering.
+//
+// Use this method to:
+//
+// - View supported authentication methods
+// - Get provider-specific login URLs
+// - Filter providers by invite
+//
+// ### Examples
+//
+// - List all providers:
+//
+//	Shows all available login providers.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List for specific invite:
+//
+//	Shows providers available for an invite.
+//
+//	```yaml
+//	filter:
+//	  inviteId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *AccountService) ListLoginProvidersAutoPaging(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) *pagination.LoginProvidersPageAutoPager[LoginProvider] {
 	return pagination.NewLoginProvidersPageAutoPager(r.ListLoginProviders(ctx, params, opts...))
 }

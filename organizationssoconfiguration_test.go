@@ -27,11 +27,11 @@ func TestOrganizationSSOConfigurationNew(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.New(context.TODO(), gitpod.OrganizationSSOConfigurationNewParams{
-		ClientID:       gitpod.F("x"),
-		ClientSecret:   gitpod.F("x"),
-		EmailDomain:    gitpod.F("xxxx"),
-		IssuerURL:      gitpod.F("https://example.com"),
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ClientID:       gitpod.F("012345678-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com"),
+		ClientSecret:   gitpod.F("GOCSPX-abcdefghijklmnopqrstuvwxyz123456"),
+		EmailDomain:    gitpod.F("acme-corp.com"),
+		IssuerURL:      gitpod.F("https://accounts.google.com"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -56,7 +56,7 @@ func TestOrganizationSSOConfigurationGet(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Get(context.TODO(), gitpod.OrganizationSSOConfigurationGetParams{
-		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -81,12 +81,12 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Update(context.TODO(), gitpod.OrganizationSSOConfigurationUpdateParams{
-		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Claims: gitpod.F(map[string]string{
 			"foo": "string",
 		}),
-		ClientID:     gitpod.F("x"),
-		ClientSecret: gitpod.F("x"),
+		ClientID:     gitpod.F("new-client-id"),
+		ClientSecret: gitpod.F("new-client-secret"),
 		EmailDomain:  gitpod.F("xxxx"),
 		IssuerURL:    gitpod.F("https://example.com"),
 		State:        gitpod.F(gitpod.SSOConfigurationStateUnspecified),
@@ -114,12 +114,12 @@ func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.List(context.TODO(), gitpod.OrganizationSSOConfigurationListParams{
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.OrganizationSSOConfigurationListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -145,7 +145,7 @@ func TestOrganizationSSOConfigurationDelete(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.Delete(context.TODO(), gitpod.OrganizationSSOConfigurationDeleteParams{
-		SSOConfigurationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

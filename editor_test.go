@@ -27,7 +27,7 @@ func TestEditorGet(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
-		ID: gitpod.F("id"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -56,7 +56,7 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.EditorListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -82,9 +82,9 @@ func TestEditorResolveURL(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Editors.ResolveURL(context.TODO(), gitpod.EditorResolveURLParams{
-		EditorID:       gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		EnvironmentID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EditorID:       gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		EnvironmentID:  gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
