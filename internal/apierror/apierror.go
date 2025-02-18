@@ -18,9 +18,6 @@ type Error struct {
 	// The status code, which should be an enum value of
 	// [google.rpc.Code][google.rpc.Code].
 	Code shared.ErrorCode `json:"code"`
-	// Contains an arbitrary serialized message along with a @type that describes the
-	// type of the serialized message.
-	Detail shared.ArbitraryData `json:"detail"`
 	// A developer-facing error message, which should be in English. Any user-facing
 	// error message should be localized and sent in the
 	// [google.rpc.Status.details][google.rpc.Status.details] field, or localized by
@@ -36,7 +33,6 @@ type Error struct {
 // errorJSON contains the JSON metadata for the struct [Error]
 type errorJSON struct {
 	Code        apijson.Field
-	Detail      apijson.Field
 	Message     apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
