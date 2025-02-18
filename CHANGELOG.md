@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 (2025-02-18)
+
+Full Changelog: [v0.3.1...v0.3.2](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.3.1...v0.3.2)
+
+### Features
+
+* feat(shared): add standard error codes for API errors ([#45](https://github.com/gitpod-io/gitpod-sdk-go/issues/45)) ([bab81e0](https://github.com/gitpod-io/gitpod-sdk-go/commit/bab81e0dc68c2499dc57faf6ae25f7162da06427))
+
 ## 0.3.1 (2025-02-18)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.3.0...v0.3.1)
