@@ -220,7 +220,7 @@ func (r userJSON) RawJSON() string {
 }
 
 type UserGetAuthenticatedUserResponse struct {
-	User User                                 `json:"user"`
+	User User                                 `json:"user,required"`
 	JSON userGetAuthenticatedUserResponseJSON `json:"-"`
 }
 

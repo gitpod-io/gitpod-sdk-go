@@ -121,7 +121,7 @@ func (r RunnerRole) IsKnown() bool {
 }
 
 type RunnerPolicyNewResponse struct {
-	Policy RunnerPolicy                `json:"policy"`
+	Policy RunnerPolicy                `json:"policy,required"`
 	JSON   runnerPolicyNewResponseJSON `json:"-"`
 }
 
@@ -142,7 +142,7 @@ func (r runnerPolicyNewResponseJSON) RawJSON() string {
 }
 
 type RunnerPolicyUpdateResponse struct {
-	Policy RunnerPolicy                   `json:"policy"`
+	Policy RunnerPolicy                   `json:"policy,required"`
 	JSON   runnerPolicyUpdateResponseJSON `json:"-"`
 }
 

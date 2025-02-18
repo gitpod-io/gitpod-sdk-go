@@ -92,7 +92,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.C
 }
 
 type HostAuthenticationToken struct {
-	ID string `json:"id"`
+	ID string `json:"id,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -227,7 +227,7 @@ func (r HostAuthenticationTokenSource) IsKnown() bool {
 }
 
 type RunnerConfigurationHostAuthenticationTokenNewResponse struct {
-	Token HostAuthenticationToken                                   `json:"token"`
+	Token HostAuthenticationToken                                   `json:"token,required"`
 	JSON  runnerConfigurationHostAuthenticationTokenNewResponseJSON `json:"-"`
 }
 
@@ -248,7 +248,7 @@ func (r runnerConfigurationHostAuthenticationTokenNewResponseJSON) RawJSON() str
 }
 
 type RunnerConfigurationHostAuthenticationTokenGetResponse struct {
-	Token HostAuthenticationToken                                   `json:"token"`
+	Token HostAuthenticationToken                                   `json:"token,required"`
 	JSON  runnerConfigurationHostAuthenticationTokenGetResponseJSON `json:"-"`
 }
 

@@ -55,6 +55,9 @@ func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
 type EnvironmentClass struct {
 	// id is the unique identifier of the environment class
 	ID string `json:"id,required"`
+	// runner_id is the unique identifier of the runner the environment class belongs
+	// to
+	RunnerID string `json:"runnerId,required"`
 	// configuration describes the configuration of the environment class
 	Configuration []FieldValue `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -63,22 +66,19 @@ type EnvironmentClass struct {
 	DisplayName string `json:"displayName"`
 	// enabled indicates whether the environment class can be used to create new
 	// environments.
-	Enabled bool `json:"enabled"`
-	// runner_id is the unique identifier of the runner the environment class belongs
-	// to
-	RunnerID string               `json:"runnerId"`
-	JSON     environmentClassJSON `json:"-"`
+	Enabled bool                 `json:"enabled"`
+	JSON    environmentClassJSON `json:"-"`
 }
 
 // environmentClassJSON contains the JSON metadata for the struct
 // [EnvironmentClass]
 type environmentClassJSON struct {
 	ID            apijson.Field
+	RunnerID      apijson.Field
 	Configuration apijson.Field
 	Description   apijson.Field
 	DisplayName   apijson.Field
 	Enabled       apijson.Field
-	RunnerID      apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
@@ -94,6 +94,9 @@ func (r environmentClassJSON) RawJSON() string {
 type EnvironmentClassParam struct {
 	// id is the unique identifier of the environment class
 	ID param.Field[string] `json:"id,required"`
+	// runner_id is the unique identifier of the runner the environment class belongs
+	// to
+	RunnerID param.Field[string] `json:"runnerId,required"`
 	// configuration describes the configuration of the environment class
 	Configuration param.Field[[]FieldValueParam] `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -103,9 +106,6 @@ type EnvironmentClassParam struct {
 	// enabled indicates whether the environment class can be used to create new
 	// environments.
 	Enabled param.Field[bool] `json:"enabled"`
-	// runner_id is the unique identifier of the runner the environment class belongs
-	// to
-	RunnerID param.Field[string] `json:"runnerId"`
 }
 
 func (r EnvironmentClassParam) MarshalJSON() (data []byte, err error) {
@@ -302,7 +302,7 @@ func (r taskJSON) RawJSON() string {
 }
 
 type TaskExecution struct {
-	ID       string                `json:"id" format:"uuid"`
+	ID       string                `json:"id,required" format:"uuid"`
 	Metadata TaskExecutionMetadata `json:"metadata"`
 	Spec     TaskExecutionSpec     `json:"spec"`
 	Status   TaskExecutionStatus   `json:"status"`
