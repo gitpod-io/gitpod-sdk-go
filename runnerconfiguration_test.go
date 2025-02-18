@@ -29,7 +29,8 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.Configurations.Validate(context.TODO(), gitpod.RunnerConfigurationValidateParams{
 		EnvironmentClass: gitpod.F(shared.EnvironmentClassParam{
-			ID: gitpod.F("id"),
+			ID:       gitpod.F("id"),
+			RunnerID: gitpod.F("runnerId"),
 			Configuration: gitpod.F([]shared.FieldValueParam{{
 				Key:   gitpod.F("key"),
 				Value: gitpod.F("value"),
@@ -37,7 +38,6 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 			Description: gitpod.F("xxx"),
 			DisplayName: gitpod.F("xxx"),
 			Enabled:     gitpod.F(true),
-			RunnerID:    gitpod.F("runnerId"),
 		}),
 		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		ScmIntegration: gitpod.F(gitpod.RunnerConfigurationValidateParamsScmIntegration{
