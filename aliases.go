@@ -27,12 +27,6 @@ const ErrorCodeUnavailable = apierror.ErrorCodeUnavailable
 const ErrorCodeDataLoss = apierror.ErrorCodeDataLoss
 const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
 
-type ArbitraryData = apierror.ArbitraryData
-type ArbitraryDataDebug = apierror.ArbitraryDataDebug
-type ArbitraryDataType = apierror.ArbitraryDataType
-type ArbitraryDataValue = apierror.ArbitraryDataValue
-type ArbitraryData = apierror.ArbitraryData
-
 // An AutomationTrigger represents a trigger for an automation action. The
 // `post_environment_start` field indicates that the automation should be triggered
 // after the environment has started. The `post_devcontainer_start` field indicates
