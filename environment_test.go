@@ -56,7 +56,12 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
-				Session:              gitpod.F("session"),
+				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
+					Repository:     gitpod.F("https://example.com"),
+					InstallCommand: gitpod.F("installCommand"),
+					TargetPath:     gitpod.F("targetPath"),
+				}),
+				Session: gitpod.F("session"),
 			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
@@ -294,7 +299,12 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
-				Session:              gitpod.F("session"),
+				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
+					Repository:     gitpod.F("https://example.com"),
+					InstallCommand: gitpod.F("installCommand"),
+					TargetPath:     gitpod.F("targetPath"),
+				}),
+				Session: gitpod.F("session"),
 			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),

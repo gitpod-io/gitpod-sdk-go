@@ -1082,15 +1082,18 @@ type EnvironmentSpecDevcontainer struct {
 	// ```
 	// this.matches('^$|^[^/].*')
 	// ```
-	DevcontainerFilePath string                          `json:"devcontainerFilePath"`
-	Session              string                          `json:"session"`
-	JSON                 environmentSpecDevcontainerJSON `json:"-"`
+	DevcontainerFilePath string `json:"devcontainerFilePath"`
+	// Experimental: dotfiles is the dotfiles configuration of the devcontainer
+	Dotfiles EnvironmentSpecDevcontainerDotfiles `json:"dotfiles"`
+	Session  string                              `json:"session"`
+	JSON     environmentSpecDevcontainerJSON     `json:"-"`
 }
 
 // environmentSpecDevcontainerJSON contains the JSON metadata for the struct
 // [EnvironmentSpecDevcontainer]
 type environmentSpecDevcontainerJSON struct {
 	DevcontainerFilePath apijson.Field
+	Dotfiles             apijson.Field
 	Session              apijson.Field
 	raw                  string
 	ExtraFields          map[string]apijson.Field
@@ -1101,6 +1104,39 @@ func (r *EnvironmentSpecDevcontainer) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r environmentSpecDevcontainerJSON) RawJSON() string {
+	return r.raw
+}
+
+// Experimental: dotfiles is the dotfiles configuration of the devcontainer
+type EnvironmentSpecDevcontainerDotfiles struct {
+	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
+	Repository string `json:"repository,required" format:"uri"`
+	// install_command is the command to run after cloning the dotfiles repository.
+	// Defaults to run the first file of `install.sh`, `install`, `bootstrap.sh`,
+	// `bootstrap`, `setup.sh` and `setup` found in the dotfiles repository's root
+	// folder.
+	InstallCommand string `json:"installCommand"`
+	// target_path is the path to clone the dotfiles repository to. Defaults to
+	// `~/dotfiles`.
+	TargetPath string                                  `json:"targetPath"`
+	JSON       environmentSpecDevcontainerDotfilesJSON `json:"-"`
+}
+
+// environmentSpecDevcontainerDotfilesJSON contains the JSON metadata for the
+// struct [EnvironmentSpecDevcontainerDotfiles]
+type environmentSpecDevcontainerDotfilesJSON struct {
+	Repository     apijson.Field
+	InstallCommand apijson.Field
+	TargetPath     apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *EnvironmentSpecDevcontainerDotfiles) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentSpecDevcontainerDotfilesJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1378,10 +1414,30 @@ type EnvironmentSpecDevcontainerParam struct {
 	// this.matches('^$|^[^/].*')
 	// ```
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
-	Session              param.Field[string] `json:"session"`
+	// Experimental: dotfiles is the dotfiles configuration of the devcontainer
+	Dotfiles param.Field[EnvironmentSpecDevcontainerDotfilesParam] `json:"dotfiles"`
+	Session  param.Field[string]                                   `json:"session"`
 }
 
 func (r EnvironmentSpecDevcontainerParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Experimental: dotfiles is the dotfiles configuration of the devcontainer
+type EnvironmentSpecDevcontainerDotfilesParam struct {
+	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
+	Repository param.Field[string] `json:"repository,required" format:"uri"`
+	// install_command is the command to run after cloning the dotfiles repository.
+	// Defaults to run the first file of `install.sh`, `install`, `bootstrap.sh`,
+	// `bootstrap`, `setup.sh` and `setup` found in the dotfiles repository's root
+	// folder.
+	InstallCommand param.Field[string] `json:"installCommand"`
+	// target_path is the path to clone the dotfiles repository to. Defaults to
+	// `~/dotfiles`.
+	TargetPath param.Field[string] `json:"targetPath"`
+}
+
+func (r EnvironmentSpecDevcontainerDotfilesParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
