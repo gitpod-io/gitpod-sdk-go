@@ -30,16 +30,16 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Environments.Automations.Tasks.New(context.TODO(), gitpod.EnvironmentAutomationTaskNewParams{
 		DependsOn:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 		Metadata: gitpod.F(shared.TaskMetadataParam{
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(shared.SubjectParam{
 				ID:        gitpod.F("id"),
 				Principal: gitpod.F(shared.PrincipalUnspecified),
 			}),
-			Description: gitpod.F("description"),
-			Name:        gitpod.F("x"),
-			Reference:   gitpod.F("reference"),
+			Description: gitpod.F("Builds the project artifacts"),
+			Name:        gitpod.F("Build Project"),
+			Reference:   gitpod.F("build"),
 			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
 				Manual:                gitpod.F(true),
 				PostDevcontainerStart: gitpod.F(true),
@@ -47,7 +47,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 			}}),
 		}),
 		Spec: gitpod.F(shared.TaskSpecParam{
-			Command: gitpod.F("command"),
+			Command: gitpod.F("npm run build"),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
@@ -79,7 +79,7 @@ func TestEnvironmentAutomationTaskGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Get(context.TODO(), gitpod.EnvironmentAutomationTaskGetParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -104,7 +104,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Update(context.TODO(), gitpod.EnvironmentAutomationTaskUpdateParams{
-		ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID:        gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		DependsOn: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		Metadata: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadata{
 			Description: gitpod.F("description"),
@@ -118,7 +118,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 			}),
 		}),
 		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsSpec{
-			Command: gitpod.F("command"),
+			Command: gitpod.F("npm run test:coverage"),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
@@ -154,12 +154,12 @@ func TestEnvironmentAutomationTaskListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			References:     gitpod.F([]string{"x"}),
+			References:     gitpod.F([]string{"build", "test"}),
 			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -185,7 +185,7 @@ func TestEnvironmentAutomationTaskDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Delete(context.TODO(), gitpod.EnvironmentAutomationTaskDeleteParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -210,7 +210,7 @@ func TestEnvironmentAutomationTaskStartWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Start(context.TODO(), gitpod.EnvironmentAutomationTaskStartParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

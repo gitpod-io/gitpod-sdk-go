@@ -464,7 +464,7 @@ func (r AdmissionLevel) IsKnown() bool {
 type Environment struct {
 	// ID is a unique identifier of this environment. No other environment with the
 	// same name must be managed by this environment manager
-	ID string `json:"id"`
+	ID string `json:"id,required"`
 	// EnvironmentMetadata is data associated with an environment that's required for
 	// other parts of the system to function
 	Metadata EnvironmentMetadata `json:"metadata"`

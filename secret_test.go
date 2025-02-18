@@ -30,9 +30,9 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		ContainerRegistryBasicAuthHost: gitpod.F("https://example.com"),
 		EnvironmentVariable:            gitpod.F(true),
 		FilePath:                       gitpod.F("filePath"),
-		Name:                           gitpod.F("name"),
-		ProjectID:                      gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Value:                          gitpod.F("x"),
+		Name:                           gitpod.F("DATABASE_URL"),
+		ProjectID:                      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		Value:                          gitpod.F("postgresql://user:pass@localhost:5432/db"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -60,11 +60,11 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.SecretListParamsFilter{
-			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ProjectIDs: gitpod.F([]string{"b0e12f6c-4c67-429d-a4a6-d9838b5da047"}),
 		}),
 		Pagination: gitpod.F(gitpod.SecretListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -90,7 +90,7 @@ func TestSecretDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Secrets.Delete(context.TODO(), gitpod.SecretDeleteParams{
-		SecretID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -115,7 +115,7 @@ func TestSecretGetValueWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Secrets.GetValue(context.TODO(), gitpod.SecretGetValueParams{
-		SecretID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -140,8 +140,8 @@ func TestSecretUpdateValueWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Secrets.UpdateValue(context.TODO(), gitpod.SecretUpdateValueParams{
-		SecretID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Value:    gitpod.F("x"),
+		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Value:    gitpod.F("new-secret-value"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

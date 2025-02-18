@@ -36,7 +36,49 @@ func NewSecretService(opts ...option.RequestOption) (r *SecretService) {
 	return
 }
 
-// CreateSecret creates a new secret.
+// Creates a new secret for a project.
+//
+// Use this method to:
+//
+// - Store sensitive configuration values
+// - Set up environment variables
+// - Configure registry authentication
+// - Add file-based secrets
+//
+// ### Examples
+//
+// - Create environment variable:
+//
+//	Creates a secret that will be available as an environment variable.
+//
+//	```yaml
+//	name: "DATABASE_URL"
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	value: "postgresql://user:pass@localhost:5432/db"
+//	environmentVariable: true
+//	```
+//
+// - Create file secret:
+//
+//	Creates a secret that will be mounted as a file.
+//
+//	```yaml
+//	name: "SSH_KEY"
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	value: "-----BEGIN RSA PRIVATE KEY-----\n..."
+//	filePath: "/home/gitpod/.ssh/id_rsa"
+//	```
+//
+// - Create registry auth:
+//
+//	Creates credentials for private container registry.
+//
+//	```yaml
+//	name: "DOCKER_AUTH"
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	value: "username:password"
+//	containerRegistryBasicAuthHost: "https://registry.example.com"
+//	```
 func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...option.RequestOption) (res *SecretNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/CreateSecret"
@@ -44,7 +86,25 @@ func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...o
 	return
 }
 
-// ListSecrets lists secrets.
+// Lists secrets with optional filtering.
+//
+// Use this method to:
+//
+// - View all project secrets
+// - Filter secrets by project
+//
+// ### Examples
+//
+// - List project secrets:
+//
+//	Shows all secrets for a project.
+//
+//	```yaml
+//	filter:
+//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.SecretsPage[Secret], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -62,12 +122,45 @@ func (r *SecretService) List(ctx context.Context, params SecretListParams, opts 
 	return res, nil
 }
 
-// ListSecrets lists secrets.
+// Lists secrets with optional filtering.
+//
+// Use this method to:
+//
+// - View all project secrets
+// - Filter secrets by project
+//
+// ### Examples
+//
+// - List project secrets:
+//
+//	Shows all secrets for a project.
+//
+//	```yaml
+//	filter:
+//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListParams, opts ...option.RequestOption) *pagination.SecretsPageAutoPager[Secret] {
 	return pagination.NewSecretsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteSecret deletes a secret.
+// Deletes a secret permanently.
+//
+// Use this method to:
+//
+// - Remove unused secrets
+// - Clean up old credentials
+//
+// ### Examples
+//
+// - Delete secret:
+//
+//	Permanently removes a secret.
+//
+//	```yaml
+//	secretId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *SecretService) Delete(ctx context.Context, body SecretDeleteParams, opts ...option.RequestOption) (res *SecretDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/DeleteSecret"
@@ -75,8 +168,23 @@ func (r *SecretService) Delete(ctx context.Context, body SecretDeleteParams, opt
 	return
 }
 
-// GetSecretValue retrieves the value of a secret Only Environments can perform
-// this operation, and only for secrets specified on the EnvironmentSpec.
+// Gets the value of a secret. Only available to environments that are authorized
+// to access the secret.
+//
+// Use this method to:
+//
+// - Retrieve secret values
+// - Access credentials
+//
+// ### Examples
+//
+// - Get secret value:
+//
+//	Retrieves the value of a specific secret.
+//
+//	```yaml
+//	secretId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *SecretService) GetValue(ctx context.Context, body SecretGetValueParams, opts ...option.RequestOption) (res *SecretGetValueResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/GetSecretValue"
@@ -84,7 +192,23 @@ func (r *SecretService) GetValue(ctx context.Context, body SecretGetValueParams,
 	return
 }
 
-// UpdateSecretValue updates the value of a secret.
+// Updates the value of an existing secret.
+//
+// Use this method to:
+//
+// - Rotate secret values
+// - Update credentials
+//
+// ### Examples
+//
+// - Update secret value:
+//
+//	Changes the value of an existing secret.
+//
+//	```yaml
+//	secretId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	value: "new-secret-value"
+//	```
 func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueParams, opts ...option.RequestOption) (res *SecretUpdateValueResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.SecretService/UpdateSecretValue"
