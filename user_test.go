@@ -52,8 +52,8 @@ func TestUserSetSuspendedWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.SetSuspended(context.TODO(), gitpod.UserSetSuspendedParams{
-		Suspended: gitpod.F(true),
-		UserID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Suspended: gitpod.F(false),
+		UserID:    gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

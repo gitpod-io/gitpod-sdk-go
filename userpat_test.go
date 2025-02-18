@@ -30,11 +30,11 @@ func TestUserPatListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.UserPatListParamsFilter{
-			UserIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			UserIDs: gitpod.F([]string{"f53d2330-3795-4c5d-a1f3-453121af9c60"}),
 		}),
 		Pagination: gitpod.F(gitpod.UserPatListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -60,7 +60,7 @@ func TestUserPatDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.Pats.Delete(context.TODO(), gitpod.UserPatDeleteParams{
-		PersonalAccessTokenID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		PersonalAccessTokenID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -85,7 +85,7 @@ func TestUserPatGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Users.Pats.Get(context.TODO(), gitpod.UserPatGetParams{
-		PersonalAccessTokenID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		PersonalAccessTokenID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

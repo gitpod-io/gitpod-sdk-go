@@ -36,7 +36,26 @@ func NewUserPatService(opts ...option.RequestOption) (r *UserPatService) {
 	return
 }
 
-// ListPersonalAccessTokens
+// Lists personal access tokens with optional filtering.
+//
+// Use this method to:
+//
+// - View all active tokens
+// - Audit token usage
+// - Manage token lifecycle
+//
+// ### Examples
+//
+// - List user tokens:
+//
+//	Shows all tokens for specific users.
+//
+//	```yaml
+//	filter:
+//	  userIds: ["f53d2330-3795-4c5d-a1f3-453121af9c60"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[PersonalAccessToken], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -54,12 +73,47 @@ func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opt
 	return res, nil
 }
 
-// ListPersonalAccessTokens
+// Lists personal access tokens with optional filtering.
+//
+// Use this method to:
+//
+// - View all active tokens
+// - Audit token usage
+// - Manage token lifecycle
+//
+// ### Examples
+//
+// - List user tokens:
+//
+//	Shows all tokens for specific users.
+//
+//	```yaml
+//	filter:
+//	  userIds: ["f53d2330-3795-4c5d-a1f3-453121af9c60"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *UserPatService) ListAutoPaging(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) *pagination.PersonalAccessTokensPageAutoPager[PersonalAccessToken] {
 	return pagination.NewPersonalAccessTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeletePersonalAccessToken
+// Deletes a personal access token.
+//
+// Use this method to:
+//
+// - Revoke token access
+// - Remove unused tokens
+// - Rotate credentials
+//
+// ### Examples
+//
+// - Delete token:
+//
+//	Permanently revokes a token.
+//
+//	```yaml
+//	personalAccessTokenId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, opts ...option.RequestOption) (res *UserPatDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
@@ -67,7 +121,23 @@ func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, o
 	return
 }
 
-// GetPersonalAccessToken
+// Gets details about a specific personal access token.
+//
+// Use this method to:
+//
+// - View token metadata
+// - Check token expiration
+// - Monitor token usage
+//
+// ### Examples
+//
+// - Get token details:
+//
+//	Retrieves information about a specific token.
+//
+//	```yaml
+//	personalAccessTokenId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *UserPatService) Get(ctx context.Context, body UserPatGetParams, opts ...option.RequestOption) (res *UserPatGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.UserService/GetPersonalAccessToken"

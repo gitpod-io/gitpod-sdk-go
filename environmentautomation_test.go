@@ -30,14 +30,14 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Automations.Upsert(context.TODO(), gitpod.EnvironmentAutomationUpsertParams{
 		AutomationsFile: gitpod.F(gitpod.AutomationsFileParam{
 			Services: gitpod.F(map[string]gitpod.AutomationsFileServiceParam{
-				"foo": {
+				"web-server": {
 					Commands: gitpod.F(gitpod.AutomationsFileServicesCommandsParam{
-						Ready: gitpod.F("ready"),
-						Start: gitpod.F("x"),
+						Ready: gitpod.F("curl -s http://localhost:3000"),
+						Start: gitpod.F("npm run dev"),
 						Stop:  gitpod.F("stop"),
 					}),
-					Description: gitpod.F("description"),
-					Name:        gitpod.F("x"),
+					Description: gitpod.F("Development web server"),
+					Name:        gitpod.F("Web Server"),
 					RunsOn: gitpod.F(shared.RunsOnParam{
 						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),
@@ -48,11 +48,11 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 				},
 			}),
 			Tasks: gitpod.F(map[string]gitpod.AutomationsFileTaskParam{
-				"foo": {
-					Command:     gitpod.F("x"),
+				"build": {
+					Command:     gitpod.F("npm run build"),
 					DependsOn:   gitpod.F([]string{"string"}),
-					Description: gitpod.F("description"),
-					Name:        gitpod.F("x"),
+					Description: gitpod.F("Builds the project artifacts"),
+					Name:        gitpod.F("Build Project"),
 					RunsOn: gitpod.F(shared.RunsOnParam{
 						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),
@@ -63,7 +63,7 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 				},
 			}),
 		}),
-		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

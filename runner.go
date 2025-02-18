@@ -362,11 +362,12 @@ type RunnerCapability string
 const (
 	RunnerCapabilityUnspecified               RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
 	RunnerCapabilityFetchLocalScmIntegrations RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+	RunnerCapabilitySecretContainerRegistry   RunnerCapability = "RUNNER_CAPABILITY_SECRET_CONTAINER_REGISTRY"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry:
 		return true
 	}
 	return false
@@ -714,11 +715,20 @@ type RunnerUpdateResponse = interface{}
 type RunnerDeleteResponse = interface{}
 
 type RunnerCheckAuthenticationForHostResponse struct {
-	Authenticated     bool                                         `json:"authenticated"`
-	AuthenticationURL string                                       `json:"authenticationUrl"`
-	PatSupported      bool                                         `json:"patSupported"`
-	ScmID             string                                       `json:"scmId"`
-	JSON              runnerCheckAuthenticationForHostResponseJSON `json:"-"`
+	Authenticated     bool   `json:"authenticated"`
+	AuthenticationURL string `json:"authenticationUrl"`
+	PatSupported      bool   `json:"patSupported"`
+	// scm_id is the unique identifier of the SCM provider
+	ScmID string `json:"scmId"`
+	// scm_name is the human-readable name of the SCM provider (e.g., "GitHub",
+	// "GitLab")
+	ScmName string `json:"scmName"`
+	// supports_oauth2 indicates that the host supports OAuth2 authentication
+	SupportsOauth2 RunnerCheckAuthenticationForHostResponseSupportsOauth2 `json:"supportsOauth2"`
+	// supports_pat indicates that the host supports Personal Access Token
+	// authentication
+	SupportsPat RunnerCheckAuthenticationForHostResponseSupportsPat `json:"supportsPat"`
+	JSON        runnerCheckAuthenticationForHostResponseJSON        `json:"-"`
 }
 
 // runnerCheckAuthenticationForHostResponseJSON contains the JSON metadata for the
@@ -728,6 +738,9 @@ type runnerCheckAuthenticationForHostResponseJSON struct {
 	AuthenticationURL apijson.Field
 	PatSupported      apijson.Field
 	ScmID             apijson.Field
+	ScmName           apijson.Field
+	SupportsOauth2    apijson.Field
+	SupportsPat       apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -737,6 +750,66 @@ func (r *RunnerCheckAuthenticationForHostResponse) UnmarshalJSON(data []byte) (e
 }
 
 func (r runnerCheckAuthenticationForHostResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// supports_oauth2 indicates that the host supports OAuth2 authentication
+type RunnerCheckAuthenticationForHostResponseSupportsOauth2 struct {
+	// auth_url is the URL where users can authenticate
+	AuthURL string `json:"authUrl"`
+	// docs_url is the URL to the documentation explaining this authentication method
+	DocsURL string                                                     `json:"docsUrl"`
+	JSON    runnerCheckAuthenticationForHostResponseSupportsOauth2JSON `json:"-"`
+}
+
+// runnerCheckAuthenticationForHostResponseSupportsOauth2JSON contains the JSON
+// metadata for the struct [RunnerCheckAuthenticationForHostResponseSupportsOauth2]
+type runnerCheckAuthenticationForHostResponseSupportsOauth2JSON struct {
+	AuthURL     apijson.Field
+	DocsURL     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerCheckAuthenticationForHostResponseSupportsOauth2) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerCheckAuthenticationForHostResponseSupportsOauth2JSON) RawJSON() string {
+	return r.raw
+}
+
+// supports_pat indicates that the host supports Personal Access Token
+// authentication
+type RunnerCheckAuthenticationForHostResponseSupportsPat struct {
+	// create_url is the URL where users can create a new Personal Access Token
+	CreateURL string `json:"createUrl"`
+	// docs_url is the URL to the documentation explaining PAT usage for this host
+	DocsURL string `json:"docsUrl"`
+	// example is an example of a Personal Access Token
+	Example string `json:"example"`
+	// required_scopes is the list of permissions required for the Personal Access
+	// Token
+	RequiredScopes []string                                                `json:"requiredScopes"`
+	JSON           runnerCheckAuthenticationForHostResponseSupportsPatJSON `json:"-"`
+}
+
+// runnerCheckAuthenticationForHostResponseSupportsPatJSON contains the JSON
+// metadata for the struct [RunnerCheckAuthenticationForHostResponseSupportsPat]
+type runnerCheckAuthenticationForHostResponseSupportsPatJSON struct {
+	CreateURL      apijson.Field
+	DocsURL        apijson.Field
+	Example        apijson.Field
+	RequiredScopes apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *RunnerCheckAuthenticationForHostResponseSupportsPat) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerCheckAuthenticationForHostResponseSupportsPatJSON) RawJSON() string {
 	return r.raw
 }
 

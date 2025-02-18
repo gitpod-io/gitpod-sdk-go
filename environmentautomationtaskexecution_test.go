@@ -28,7 +28,7 @@ func TestEnvironmentAutomationTaskExecutionGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Executions.Get(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionGetParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -57,13 +57,13 @@ func TestEnvironmentAutomationTaskExecutionListWithOptionalParams(t *testing.T) 
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Phases:         gitpod.F([]shared.TaskExecutionPhase{shared.TaskExecutionPhaseUnspecified}),
+			Phases:         gitpod.F([]shared.TaskExecutionPhase{shared.TaskExecutionPhaseUnspecified, shared.TaskExecutionPhasePending}),
 			TaskIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			TaskReferences: gitpod.F([]string{"string"}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationTaskExecutionListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -89,7 +89,7 @@ func TestEnvironmentAutomationTaskExecutionStopWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Automations.Tasks.Executions.Stop(context.TODO(), gitpod.EnvironmentAutomationTaskExecutionStopParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

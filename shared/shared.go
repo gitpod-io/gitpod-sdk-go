@@ -54,7 +54,7 @@ func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentClass struct {
 	// id is the unique identifier of the environment class
-	ID string `json:"id"`
+	ID string `json:"id,required"`
 	// configuration describes the configuration of the environment class
 	Configuration []FieldValue `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -93,7 +93,7 @@ func (r environmentClassJSON) RawJSON() string {
 
 type EnvironmentClassParam struct {
 	// id is the unique identifier of the environment class
-	ID param.Field[string] `json:"id"`
+	ID param.Field[string] `json:"id,required"`
 	// configuration describes the configuration of the environment class
 	Configuration param.Field[[]FieldValueParam] `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -273,7 +273,7 @@ func (r SubjectParam) MarshalJSON() (data []byte, err error) {
 }
 
 type Task struct {
-	ID string `json:"id" format:"uuid"`
+	ID string `json:"id,required" format:"uuid"`
 	// dependencies specifies the IDs of the automations this task depends on.
 	DependsOn     []string     `json:"dependsOn" format:"uuid"`
 	EnvironmentID string       `json:"environmentId" format:"uuid"`
