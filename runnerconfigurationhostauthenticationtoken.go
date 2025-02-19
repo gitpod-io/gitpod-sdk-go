@@ -36,7 +36,29 @@ func NewRunnerConfigurationHostAuthenticationTokenService(opts ...option.Request
 	return
 }
 
-// CreateHostAuthenticationToken
+// Creates a new authentication token for accessing remote hosts.
+//
+// Use this method to:
+//
+// - Set up SCM authentication
+// - Configure OAuth credentials
+// - Manage PAT tokens
+//
+// ### Examples
+//
+// - Create OAuth token:
+//
+//	Creates a new OAuth-based authentication token.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	host: "github.com"
+//	token: "gho_xxxxxxxxxxxx"
+//	source: HOST_AUTHENTICATION_TOKEN_SOURCE_OAUTH
+//	expiresAt: "2024-12-31T23:59:59Z"
+//	refreshToken: "ghr_xxxxxxxxxxxx"
+//	```
 func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenNewParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
@@ -44,7 +66,23 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Cont
 	return
 }
 
-// GetHostAuthenticationToken
+// Gets details about a specific host authentication token.
+//
+// Use this method to:
+//
+// - View token information
+// - Check token expiration
+// - Verify token validity
+//
+// ### Examples
+//
+// - Get token details:
+//
+//	Retrieves information about a specific token.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenGetParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
@@ -52,7 +90,26 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Cont
 	return
 }
 
-// UpdateHostAuthenticationToken
+// Updates an existing host authentication token.
+//
+// Use this method to:
+//
+// - Refresh token values
+// - Update expiration
+// - Modify token settings
+//
+// ### Examples
+//
+// - Update token:
+//
+//	Updates token value and expiration.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	token: "gho_xxxxxxxxxxxx"
+//	expiresAt: "2024-12-31T23:59:59Z"
+//	refreshToken: "ghr_xxxxxxxxxxxx"
+//	```
 func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
@@ -60,7 +117,35 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.C
 	return
 }
 
-// ListHostAuthenticationTokens
+// Lists host authentication tokens with optional filtering.
+//
+// Use this method to:
+//
+// - View all tokens
+// - Filter by runner or user
+// - Monitor token status
+//
+// ### Examples
+//
+// - List all tokens:
+//
+//	Shows all tokens with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by runner:
+//
+//	Lists tokens for a specific runner.
+//
+//	```yaml
+//	filter:
+//	  runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) (res *pagination.TokensPage[HostAuthenticationToken], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -78,12 +163,56 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) List(ctx context.Con
 	return res, nil
 }
 
-// ListHostAuthenticationTokens
+// Lists host authentication tokens with optional filtering.
+//
+// Use this method to:
+//
+// - View all tokens
+// - Filter by runner or user
+// - Monitor token status
+//
+// ### Examples
+//
+// - List all tokens:
+//
+//	Shows all tokens with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by runner:
+//
+//	Lists tokens for a specific runner.
+//
+//	```yaml
+//	filter:
+//	  runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *RunnerConfigurationHostAuthenticationTokenService) ListAutoPaging(ctx context.Context, params RunnerConfigurationHostAuthenticationTokenListParams, opts ...option.RequestOption) *pagination.TokensPageAutoPager[HostAuthenticationToken] {
 	return pagination.NewTokensPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteHostAuthenticationToken
+// Deletes a host authentication token.
+//
+// Use this method to:
+//
+// - Remove unused tokens
+// - Revoke access
+// - Clean up expired tokens
+//
+// ### Examples
+//
+// - Delete token:
+//
+//	Permanently removes a token.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.Context, body RunnerConfigurationHostAuthenticationTokenDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationHostAuthenticationTokenDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"

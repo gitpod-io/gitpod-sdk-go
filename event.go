@@ -37,8 +37,32 @@ func NewEventService(opts ...option.RequestOption) (r *EventService) {
 	return
 }
 
-// ListAuditLogs retrieves a paginated list of audit logs for the specified
-// organization
+// Lists audit logs with filtering and pagination options.
+//
+// Use this method to:
+//
+// - View audit history
+// - Track user actions
+// - Monitor system changes
+//
+// ### Examples
+//
+// - List all logs:
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by actor:
+//
+//	```yaml
+//	filter:
+//	  actorIds: ["d2c94c27-3b76-4a42-b88c-95a85e392c68"]
+//	  actorPrincipals: ["PRINCIPAL_USER"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *EventService) List(ctx context.Context, params EventListParams, opts ...option.RequestOption) (res *pagination.EntriesPage[EventListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -56,13 +80,53 @@ func (r *EventService) List(ctx context.Context, params EventListParams, opts ..
 	return res, nil
 }
 
-// ListAuditLogs retrieves a paginated list of audit logs for the specified
-// organization
+// Lists audit logs with filtering and pagination options.
+//
+// Use this method to:
+//
+// - View audit history
+// - Track user actions
+// - Monitor system changes
+//
+// ### Examples
+//
+// - List all logs:
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by actor:
+//
+//	```yaml
+//	filter:
+//	  actorIds: ["d2c94c27-3b76-4a42-b88c-95a85e392c68"]
+//	  actorPrincipals: ["PRINCIPAL_USER"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *EventService) ListAutoPaging(ctx context.Context, params EventListParams, opts ...option.RequestOption) *pagination.EntriesPageAutoPager[EventListResponse] {
 	return pagination.NewEntriesPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// WatchEvents streams all requests events to the client
+// Streams events for all projects, runners, environments, tasks, and services
+// based on the specified scope.
+//
+// Use this method to:
+//
+// - Monitor resource changes in real-time
+// - Track system events
+// - Receive notifications
+//
+// The scope parameter determines which events to watch:
+//
+//   - Organization scope (default): Watch all organization-wide events including
+//     projects, runners and environments. Task and service events are not included.
+//     Use by setting organization=true or omitting the scope.
+//   - Environment scope: Watch events for a specific environment, including its
+//     tasks, task executions, and services. Use by setting environment_id to the
+//     UUID of the environment to watch.
 func (r *EventService) WatchStreaming(ctx context.Context, body EventWatchParams, opts ...option.RequestOption) (stream *jsonl.Stream[EventWatchResponse]) {
 	var (
 		raw *http.Response
