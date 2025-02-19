@@ -39,15 +39,15 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 			DisplayName: gitpod.F("xxx"),
 			Enabled:     gitpod.F(true),
 		}),
-		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		ScmIntegration: gitpod.F(gitpod.RunnerConfigurationValidateParamsScmIntegration{
-			ID:                         gitpod.F("id"),
-			Host:                       gitpod.F("host"),
-			OAuthClientID:              gitpod.F("oauthClientId"),
+			ID:                         gitpod.F("integration-id"),
+			Host:                       gitpod.F("github.com"),
+			OAuthClientID:              gitpod.F("client_id"),
 			OAuthEncryptedClientSecret: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
-			OAuthPlaintextClientSecret: gitpod.F("oauthPlaintextClientSecret"),
+			OAuthPlaintextClientSecret: gitpod.F("client_secret"),
 			Pat:                        gitpod.F(true),
-			ScmID:                      gitpod.F("scmId"),
+			ScmID:                      gitpod.F("github"),
 		}),
 	})
 	if err != nil {

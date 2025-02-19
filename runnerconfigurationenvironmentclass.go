@@ -36,7 +36,30 @@ func NewRunnerConfigurationEnvironmentClassService(opts ...option.RequestOption)
 	return
 }
 
-// CreateEnvironmentClass creates a new environment class on a runner.
+// Creates a new environment class for a runner.
+//
+// Use this method to:
+//
+// - Define compute resources
+// - Configure environment settings
+// - Set up runtime options
+//
+// ### Examples
+//
+// - Create environment class:
+//
+//	Creates a new environment configuration.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	displayName: "Large Instance"
+//	description: "8 CPU, 16GB RAM"
+//	configuration:
+//	  - key: "cpu"
+//	    value: "8"
+//	  - key: "memory"
+//	    value: "16384"
+//	```
 func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, body RunnerConfigurationEnvironmentClassNewParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
@@ -44,7 +67,23 @@ func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, bo
 	return
 }
 
-// GetEnvironmentClass returns a single environment class configured for a runner.
+// Gets details about a specific environment class.
+//
+// Use this method to:
+//
+// - View class configuration
+// - Check resource settings
+// - Verify availability
+//
+// ### Examples
+//
+// - Get class details:
+//
+//	Retrieves information about a specific class.
+//
+//	```yaml
+//	environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, body RunnerConfigurationEnvironmentClassGetParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
@@ -52,7 +91,26 @@ func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, bo
 	return
 }
 
-// UpdateEnvironmentClass updates an existing environment class on a runner.
+// Updates an environment class.
+//
+// Use this method to:
+//
+// - Modify class settings
+// - Update resource limits
+// - Change availability
+//
+// ### Examples
+//
+// - Update class:
+//
+//	Changes class configuration.
+//
+//	```yaml
+//	environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	displayName: "Updated Large Instance"
+//	description: "16 CPU, 32GB RAM"
+//	enabled: true
+//	```
 func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context, body RunnerConfigurationEnvironmentClassUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
@@ -60,8 +118,37 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 	return
 }
 
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE ListEnvironmentClasses returns all
-// environment classes configured for a runner.
+// Lists environment classes with optional filtering.
+//
+// Use this method to:
+//
+// - View available classes
+// - Filter by capability
+// - Check enabled status
+//
+// ### Examples
+//
+// - List all classes:
+//
+//	Shows all environment classes.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter enabled classes:
+//
+//	Lists only enabled environment classes.
+//
+//	```yaml
+//	filter:
+//	  enabled: true
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+//	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -79,8 +166,37 @@ func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, p
 	return res, nil
 }
 
-// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE ListEnvironmentClasses returns all
-// environment classes configured for a runner.
+// Lists environment classes with optional filtering.
+//
+// Use this method to:
+//
+// - View available classes
+// - Filter by capability
+// - Check enabled status
+//
+// ### Examples
+//
+// - List all classes:
+//
+//	Shows all environment classes.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter enabled classes:
+//
+//	Lists only enabled environment classes.
+//
+//	```yaml
+//	filter:
+//	  enabled: true
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+//	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *RunnerConfigurationEnvironmentClassService) ListAutoPaging(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) *pagination.EnvironmentClassesPageAutoPager[shared.EnvironmentClass] {
 	return pagination.NewEnvironmentClassesPageAutoPager(r.List(ctx, params, opts...))
 }

@@ -34,7 +34,25 @@ func NewProjectPolicyService(opts ...option.RequestOption) (r *ProjectPolicyServ
 	return
 }
 
-// CreateProjectPolicy creates a Project Policy.
+// Creates a new policy for a project.
+//
+// Use this method to:
+//
+// - Set up access controls
+// - Define group permissions
+// - Configure role-based access
+//
+// ### Examples
+//
+// - Create admin policy:
+//
+//	Grants admin access to a group.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	groupId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	role: PROJECT_ROLE_ADMIN
+//	```
 func (r *ProjectPolicyService) New(ctx context.Context, body ProjectPolicyNewParams, opts ...option.RequestOption) (res *ProjectPolicyNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProjectPolicy"
@@ -42,7 +60,25 @@ func (r *ProjectPolicyService) New(ctx context.Context, body ProjectPolicyNewPar
 	return
 }
 
-// UpdateProjectPolicy updates a Project Policy.
+// Updates an existing project policy.
+//
+// Use this method to:
+//
+// - Modify access levels
+// - Change group roles
+// - Update permissions
+//
+// ### Examples
+//
+// - Update policy role:
+//
+//	Changes a group's access level.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	groupId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	role: PROJECT_ROLE_EDITOR
+//	```
 func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpdateParams, opts ...option.RequestOption) (res *ProjectPolicyUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/UpdateProjectPolicy"
@@ -50,7 +86,25 @@ func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpd
 	return
 }
 
-// ListProjectPolicies lists policies for a project.
+// Lists policies for a project.
+//
+// Use this method to:
+//
+// - View access controls
+// - Check policy configurations
+// - Audit permissions
+//
+// ### Examples
+//
+// - List policies:
+//
+//	Shows all policies for a project.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[ProjectPolicy], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -68,12 +122,47 @@ func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyLis
 	return res, nil
 }
 
-// ListProjectPolicies lists policies for a project.
+// Lists policies for a project.
+//
+// Use this method to:
+//
+// - View access controls
+// - Check policy configurations
+// - Audit permissions
+//
+// ### Examples
+//
+// - List policies:
+//
+//	Shows all policies for a project.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *ProjectPolicyService) ListAutoPaging(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) *pagination.PoliciesPageAutoPager[ProjectPolicy] {
 	return pagination.NewPoliciesPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteProjectPolicy deletes a Project Policy.
+// Deletes a project policy.
+//
+// Use this method to:
+//
+// - Remove access controls
+// - Revoke permissions
+// - Clean up policies
+//
+// ### Examples
+//
+// - Delete policy:
+//
+//	Removes a group's access policy.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	groupId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	```
 func (r *ProjectPolicyService) Delete(ctx context.Context, body ProjectPolicyDeleteParams, opts ...option.RequestOption) (res *ProjectPolicyDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/DeleteProjectPolicy"

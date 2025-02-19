@@ -31,14 +31,14 @@ func TestEventListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EventListParamsFilter{
-			ActorIDs:        gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ActorIDs:        gitpod.F([]string{"d2c94c27-3b76-4a42-b88c-95a85e392c68"}),
 			ActorPrincipals: gitpod.F([]shared.Principal{shared.PrincipalUnspecified}),
 			SubjectIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			SubjectTypes:    gitpod.F([]gitpod.ResourceType{gitpod.ResourceTypeUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.EventListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {

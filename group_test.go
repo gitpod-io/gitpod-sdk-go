@@ -31,7 +31,7 @@ func TestGroupListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.GroupListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {

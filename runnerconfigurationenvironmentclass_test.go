@@ -29,12 +29,15 @@ func TestRunnerConfigurationEnvironmentClassNewWithOptionalParams(t *testing.T) 
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.New(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassNewParams{
 		Configuration: gitpod.F([]shared.FieldValueParam{{
-			Key:   gitpod.F("key"),
-			Value: gitpod.F("value"),
+			Key:   gitpod.F("cpu"),
+			Value: gitpod.F("8"),
+		}, {
+			Key:   gitpod.F("memory"),
+			Value: gitpod.F("16384"),
 		}}),
-		Description: gitpod.F("xxx"),
-		DisplayName: gitpod.F("xxx"),
-		RunnerID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Description: gitpod.F("8 CPU, 16GB RAM"),
+		DisplayName: gitpod.F("Large Instance"),
+		RunnerID:    gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -59,7 +62,7 @@ func TestRunnerConfigurationEnvironmentClassGetWithOptionalParams(t *testing.T) 
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.Get(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassGetParams{
-		EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -84,10 +87,10 @@ func TestRunnerConfigurationEnvironmentClassUpdateWithOptionalParams(t *testing.
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.EnvironmentClasses.Update(context.TODO(), gitpod.RunnerConfigurationEnvironmentClassUpdateParams{
-		Description:        gitpod.F("xxx"),
-		DisplayName:        gitpod.F("xxx"),
+		Description:        gitpod.F("16 CPU, 32GB RAM"),
+		DisplayName:        gitpod.F("Updated Large Instance"),
 		Enabled:            gitpod.F(true),
-		EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -123,7 +126,7 @@ func TestRunnerConfigurationEnvironmentClassListWithOptionalParams(t *testing.T)
 		}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationEnvironmentClassListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {

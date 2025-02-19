@@ -27,12 +27,12 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
-		Host:                       gitpod.F("host"),
-		OAuthClientID:              gitpod.F("oauthClientId"),
-		OAuthPlaintextClientSecret: gitpod.F("oauthPlaintextClientSecret"),
+		Host:                       gitpod.F("github.com"),
+		OAuthClientID:              gitpod.F("client_id"),
+		OAuthPlaintextClientSecret: gitpod.F("client_secret"),
 		Pat:                        gitpod.F(true),
-		RunnerID:                   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ScmID:                      gitpod.F("scmId"),
+		RunnerID:                   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		ScmID:                      gitpod.F("github"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -57,7 +57,7 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Get(context.TODO(), gitpod.RunnerConfigurationScmIntegrationGetParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -82,9 +82,9 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Update(context.TODO(), gitpod.RunnerConfigurationScmIntegrationUpdateParams{
-		ID:                         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		OAuthClientID:              gitpod.F("oauthClientId"),
-		OAuthPlaintextClientSecret: gitpod.F("oauthPlaintextClientSecret"),
+		ID:                         gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		OAuthClientID:              gitpod.F("new_client_id"),
+		OAuthPlaintextClientSecret: gitpod.F("new_client_secret"),
 		Pat:                        gitpod.F(true),
 	})
 	if err != nil {
@@ -113,11 +113,11 @@ func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsFilter{
-			RunnerIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerIDs: gitpod.F([]string{"d2c94c27-3b76-4a42-b88c-95a85e392c68"}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationScmIntegrationListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -143,7 +143,7 @@ func TestRunnerConfigurationScmIntegrationDeleteWithOptionalParams(t *testing.T)
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Delete(context.TODO(), gitpod.RunnerConfigurationScmIntegrationDeleteParams{
-		ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -27,8 +27,8 @@ func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.New(context.TODO(), gitpod.ProjectPolicyNewParams{
-		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		GroupID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Role:      gitpod.F(gitpod.ProjectRoleUnspecified),
 	})
 	if err != nil {
@@ -54,8 +54,8 @@ func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.Update(context.TODO(), gitpod.ProjectPolicyUpdateParams{
-		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		GroupID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Role:      gitpod.F(gitpod.ProjectRoleUnspecified),
 	})
 	if err != nil {
@@ -85,9 +85,9 @@ func TestProjectPolicyListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.ProjectPolicyListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -112,8 +112,8 @@ func TestProjectPolicyDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Policies.Delete(context.TODO(), gitpod.ProjectPolicyDeleteParams{
-		GroupID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		GroupID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

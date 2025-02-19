@@ -35,7 +35,35 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 	return
 }
 
-// ListGroups lists groups
+// Lists groups with optional pagination.
+//
+// Use this method to:
+//
+// - View all groups
+// - Check group memberships
+// - Monitor group configurations
+// - Audit group access
+//
+// ### Examples
+//
+// - List all groups:
+//
+//	Shows all groups with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List with custom page size:
+//
+//	Shows groups with specified page size.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 50
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.GroupsPage[Group], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -53,7 +81,35 @@ func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ..
 	return res, nil
 }
 
-// ListGroups lists groups
+// Lists groups with optional pagination.
+//
+// Use this method to:
+//
+// - View all groups
+// - Check group memberships
+// - Monitor group configurations
+// - Audit group access
+//
+// ### Examples
+//
+// - List all groups:
+//
+//	Shows all groups with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List with custom page size:
+//
+//	Shows groups with specified page size.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 50
+//	  token: "next-page-token-from-previous-response"
+//	```
 func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.GroupsPageAutoPager[Group] {
 	return pagination.NewGroupsPageAutoPager(r.List(ctx, params, opts...))
 }
