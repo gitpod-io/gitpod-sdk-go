@@ -57,9 +57,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
-					Repository:     gitpod.F("https://example.com"),
-					InstallCommand: gitpod.F("installCommand"),
-					TargetPath:     gitpod.F("targetPath"),
+					Repository: gitpod.F("https://example.com"),
 				}),
 				Session: gitpod.F("session"),
 			}),
@@ -300,9 +298,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
-					Repository:     gitpod.F("https://example.com"),
-					InstallCommand: gitpod.F("installCommand"),
-					TargetPath:     gitpod.F("targetPath"),
+					Repository: gitpod.F("https://example.com"),
 				}),
 				Session: gitpod.F("session"),
 			}),
