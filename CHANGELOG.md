@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 (2025-02-21)
+
+Full Changelog: [v0.3.2...v0.4.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.3.2...v0.4.0)
+
+### Features
+
+* **api:** manual updates ([#48](https://github.com/gitpod-io/gitpod-sdk-go/issues/48)) ([78b2504](https://github.com/gitpod-io/gitpod-sdk-go/commit/78b2504189e98dcfaef1427444378752ccede6cc))
+* **api:** manual updates ([#50](https://github.com/gitpod-io/gitpod-sdk-go/issues/50)) ([19015d3](https://github.com/gitpod-io/gitpod-sdk-go/commit/19015d3d486ef7569342f1f08bcadebc9e5f89e3))
+
 ## 0.3.2 (2025-02-18)
 
 Full Changelog: [v0.3.1...v0.3.2](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.3.1...v0.3.2)
