@@ -27,7 +27,7 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Secrets.New(context.TODO(), gitpod.SecretNewParams{
-		ContainerRegistryBasicAuthHost: gitpod.F("https://example.com"),
+		ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 		EnvironmentVariable:            gitpod.F(true),
 		FilePath:                       gitpod.F("filePath"),
 		Name:                           gitpod.F("DATABASE_URL"),

@@ -483,8 +483,13 @@ type SecretUpdateValueResponse = interface{}
 
 type SecretNewParams struct {
 	// secret will be mounted as a docker config in the environment VM, mount will have
-	// the docker registry host
-	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost" format:"uri"`
+	// the docker registry host value must be a valid registry host (e.g.
+	// registry.docker.com, https://registry.docker.com, ghcr.io:5050):
+	//
+	// ```
+	// this.matches('^[a-zA-Z0-9.-/:]+(:[0-9]+)?$')
+	// ```
+	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable param.Field[bool] `json:"environmentVariable"`

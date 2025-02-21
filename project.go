@@ -325,7 +325,7 @@ type EnvironmentInitializerSpecsGit struct {
 	CloneTarget string `json:"cloneTarget"`
 	// remote_uri is the Git remote origin
 	RemoteUri string `json:"remoteUri"`
-	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	// the target mode determines what gets checked out
 	TargetMode EnvironmentInitializerSpecsGitTargetMode `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
 	UpstreamRemoteUri string                             `json:"upstreamRemoteUri"`
@@ -352,7 +352,7 @@ func (r environmentInitializerSpecsGitJSON) RawJSON() string {
 	return r.raw
 }
 
-// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+// the target mode determines what gets checked out
 type EnvironmentInitializerSpecsGitTargetMode string
 
 const (
@@ -405,7 +405,7 @@ type EnvironmentInitializerSpecsGitParam struct {
 	CloneTarget param.Field[string] `json:"cloneTarget"`
 	// remote_uri is the Git remote origin
 	RemoteUri param.Field[string] `json:"remoteUri"`
-	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	// the target mode determines what gets checked out
 	TargetMode param.Field[EnvironmentInitializerSpecsGitTargetMode] `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
 	UpstreamRemoteUri param.Field[string] `json:"upstreamRemoteUri"`
@@ -425,7 +425,7 @@ type Project struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root
 	DevcontainerFilePath string `json:"devcontainerFilePath"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer is the content initializer
 	Initializer EnvironmentInitializer `json:"initializer"`
 	Metadata    ProjectMetadata        `json:"metadata"`
 	UsedBy      ProjectUsedBy          `json:"usedBy"`
@@ -811,7 +811,7 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 
 type ProjectNewParams struct {
 	EnvironmentClass param.Field[ProjectEnvironmentClassParam] `json:"environmentClass,required"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer is the content initializer
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
@@ -859,7 +859,7 @@ type ProjectUpdateParams struct {
 	// ```
 	DevcontainerFilePath param.Field[string]                       `json:"devcontainerFilePath"`
 	EnvironmentClass     param.Field[ProjectEnvironmentClassParam] `json:"environmentClass"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer is the content initializer
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer"`
 	Name        param.Field[string]                      `json:"name"`
 	// project_id specifies the project identifier
