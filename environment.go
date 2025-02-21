@@ -465,13 +465,13 @@ type Environment struct {
 	// ID is a unique identifier of this environment. No other environment with the
 	// same name must be managed by this environment manager
 	ID string `json:"id,required"`
-	// EnvironmentMetadata is data associated with an environment that's required for
-	// other parts of the system to function
+	// Metadata is data associated with this environment that's required for other
+	// parts of Gitpod to function
 	Metadata EnvironmentMetadata `json:"metadata"`
-	// EnvironmentSpec specifies the configuration of an environment for an environment
-	// start
+	// Spec is the configuration of the environment that's required for the runner to
+	// start the environment
 	Spec EnvironmentSpec `json:"spec"`
-	// EnvironmentStatus describes an environment status
+	// Status is the current status of the environment
 	Status EnvironmentStatus `json:"status"`
 	JSON   environmentJSON   `json:"-"`
 }
@@ -500,94 +500,8 @@ type EnvironmentActivitySignal struct {
 	// should be a human-readable string that describes the source of the activity
 	// signal.
 	Source string `json:"source"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// timestamp of when the activity was observed by the source. Only reported every 5
+	// minutes. Zero value means no activity was observed.
 	Timestamp time.Time                     `json:"timestamp" format:"date-time"`
 	JSON      environmentActivitySignalJSON `json:"-"`
 }
@@ -615,94 +529,8 @@ type EnvironmentActivitySignalParam struct {
 	// should be a human-readable string that describes the source of the activity
 	// signal.
 	Source param.Field[string] `json:"source"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// timestamp of when the activity was observed by the source. Only reported every 5
+	// minutes. Zero value means no activity was observed.
 	Timestamp param.Field[time.Time] `json:"timestamp" format:"date-time"`
 }
 
@@ -716,185 +544,12 @@ type EnvironmentMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// Time when the Environment was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
 	Creator shared.Subject `json:"creator"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// Time when the Environment was last started (i.e. CreateEnvironment or
+	// StartEnvironment were called).
 	LastStartedAt time.Time `json:"lastStartedAt" format:"date-time"`
 	// name is the name of the environment as specified by the user
 	Name string `json:"name"`
@@ -960,7 +615,7 @@ func (r EnvironmentPhase) IsKnown() bool {
 // EnvironmentSpec specifies the configuration of an environment for an environment
 // start
 type EnvironmentSpec struct {
-	// Admission level describes who can access an environment instance and its ports.
+	// admission controlls who can access the environment and its ports.
 	Admission AdmissionLevel `json:"admission"`
 	// automations_file is the automations file spec of the environment
 	AutomationsFile EnvironmentSpecAutomationsFile `json:"automationsFile"`
@@ -1049,7 +704,7 @@ type EnvironmentSpecContent struct {
 	GitEmail string `json:"gitEmail"`
 	// The Git username
 	GitUsername string `json:"gitUsername"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer configures how the environment is to be initialized
 	Initializer EnvironmentInitializer     `json:"initializer"`
 	Session     string                     `json:"session"`
 	JSON        environmentSpecContentJSON `json:"-"`
@@ -1110,26 +765,16 @@ func (r environmentSpecDevcontainerJSON) RawJSON() string {
 // Experimental: dotfiles is the dotfiles configuration of the devcontainer
 type EnvironmentSpecDevcontainerDotfiles struct {
 	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
-	Repository string `json:"repository,required" format:"uri"`
-	// install_command is the command to run after cloning the dotfiles repository.
-	// Defaults to run the first file of `install.sh`, `install`, `bootstrap.sh`,
-	// `bootstrap`, `setup.sh` and `setup` found in the dotfiles repository's root
-	// folder.
-	InstallCommand string `json:"installCommand"`
-	// target_path is the path to clone the dotfiles repository to. Defaults to
-	// `~/dotfiles`.
-	TargetPath string                                  `json:"targetPath"`
+	Repository string                                  `json:"repository,required" format:"uri"`
 	JSON       environmentSpecDevcontainerDotfilesJSON `json:"-"`
 }
 
 // environmentSpecDevcontainerDotfilesJSON contains the JSON metadata for the
 // struct [EnvironmentSpecDevcontainerDotfiles]
 type environmentSpecDevcontainerDotfilesJSON struct {
-	Repository     apijson.Field
-	InstallCommand apijson.Field
-	TargetPath     apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	Repository  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
 func (r *EnvironmentSpecDevcontainerDotfiles) UnmarshalJSON(data []byte) (err error) {
@@ -1166,7 +811,7 @@ func (r environmentSpecMachineJSON) RawJSON() string {
 }
 
 type EnvironmentSpecPort struct {
-	// Admission level describes who can access an environment instance and its ports.
+	// policy of this port
 	Admission AdmissionLevel `json:"admission"`
 	// name of this port
 	Name string `json:"name"`
@@ -1263,63 +908,8 @@ func (r environmentSpecSSHPublicKeyJSON) RawJSON() string {
 
 // Timeout configures the environment timeout
 type EnvironmentSpecTimeout struct {
-	// A Duration represents a signed, fixed-length span of time represented as a count
-	// of seconds and fractions of seconds at nanosecond resolution. It is independent
-	// of any calendar and concepts like "day" or "month". It is related to Timestamp
-	// in that the difference between two Timestamp values is a Duration and it can be
-	// added or subtracted from a Timestamp. Range is approximately +-10,000 years.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Duration from two Timestamps in pseudo code.
-	//
-	//	Timestamp start = ...;
-	//	Timestamp end = ...;
-	//	Duration duration = ...;
-	//
-	//	duration.seconds = end.seconds - start.seconds;
-	//	duration.nanos = end.nanos - start.nanos;
-	//
-	//	if (duration.seconds < 0 && duration.nanos > 0) {
-	//	  duration.seconds += 1;
-	//	  duration.nanos -= 1000000000;
-	//	} else if (duration.seconds > 0 && duration.nanos < 0) {
-	//	  duration.seconds -= 1;
-	//	  duration.nanos += 1000000000;
-	//	}
-	//
-	// Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.
-	//
-	//	Timestamp start = ...;
-	//	Duration duration = ...;
-	//	Timestamp end = ...;
-	//
-	//	end.seconds = start.seconds + duration.seconds;
-	//	end.nanos = start.nanos + duration.nanos;
-	//
-	//	if (end.nanos < 0) {
-	//	  end.seconds -= 1;
-	//	  end.nanos += 1000000000;
-	//	} else if (end.nanos >= 1000000000) {
-	//	  end.seconds += 1;
-	//	  end.nanos -= 1000000000;
-	//	}
-	//
-	// Example 3: Compute Duration from datetime.timedelta in Python.
-	//
-	//	td = datetime.timedelta(days=3, minutes=10)
-	//	duration = Duration()
-	//	duration.FromTimedelta(td)
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Duration type is encoded as a string rather than an object,
-	// where the string ends in the suffix "s" (indicating seconds) and is preceded by
-	// the number of seconds, with nanoseconds expressed as fractional seconds. For
-	// example, 3 seconds with 0 nanoseconds should be encoded in JSON format as "3s",
-	// while 3 seconds and 1 nanosecond should be expressed in JSON format as
-	// "3.000000001s", and 3 seconds and 1 microsecond should be expressed in JSON
-	// format as "3.000001s".
+	// inacitivity is the maximum time of disconnection before the environment is
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
 	Disconnected string                     `json:"disconnected" format:"regex"`
 	JSON         environmentSpecTimeoutJSON `json:"-"`
 }
@@ -1343,7 +933,7 @@ func (r environmentSpecTimeoutJSON) RawJSON() string {
 // EnvironmentSpec specifies the configuration of an environment for an environment
 // start
 type EnvironmentSpecParam struct {
-	// Admission level describes who can access an environment instance and its ports.
+	// admission controlls who can access the environment and its ports.
 	Admission param.Field[AdmissionLevel] `json:"admission"`
 	// automations_file is the automations file spec of the environment
 	AutomationsFile param.Field[EnvironmentSpecAutomationsFileParam] `json:"automationsFile"`
@@ -1396,7 +986,7 @@ type EnvironmentSpecContentParam struct {
 	GitEmail param.Field[string] `json:"gitEmail"`
 	// The Git username
 	GitUsername param.Field[string] `json:"gitUsername"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer configures how the environment is to be initialized
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer"`
 	Session     param.Field[string]                      `json:"session"`
 }
@@ -1427,14 +1017,6 @@ func (r EnvironmentSpecDevcontainerParam) MarshalJSON() (data []byte, err error)
 type EnvironmentSpecDevcontainerDotfilesParam struct {
 	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
 	Repository param.Field[string] `json:"repository,required" format:"uri"`
-	// install_command is the command to run after cloning the dotfiles repository.
-	// Defaults to run the first file of `install.sh`, `install`, `bootstrap.sh`,
-	// `bootstrap`, `setup.sh` and `setup` found in the dotfiles repository's root
-	// folder.
-	InstallCommand param.Field[string] `json:"installCommand"`
-	// target_path is the path to clone the dotfiles repository to. Defaults to
-	// `~/dotfiles`.
-	TargetPath param.Field[string] `json:"targetPath"`
 }
 
 func (r EnvironmentSpecDevcontainerDotfilesParam) MarshalJSON() (data []byte, err error) {
@@ -1453,7 +1035,7 @@ func (r EnvironmentSpecMachineParam) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentSpecPortParam struct {
-	// Admission level describes who can access an environment instance and its ports.
+	// policy of this port
 	Admission param.Field[AdmissionLevel] `json:"admission"`
 	// name of this port
 	Name param.Field[string] `json:"name"`
@@ -1501,63 +1083,8 @@ func (r EnvironmentSpecSSHPublicKeyParam) MarshalJSON() (data []byte, err error)
 
 // Timeout configures the environment timeout
 type EnvironmentSpecTimeoutParam struct {
-	// A Duration represents a signed, fixed-length span of time represented as a count
-	// of seconds and fractions of seconds at nanosecond resolution. It is independent
-	// of any calendar and concepts like "day" or "month". It is related to Timestamp
-	// in that the difference between two Timestamp values is a Duration and it can be
-	// added or subtracted from a Timestamp. Range is approximately +-10,000 years.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Duration from two Timestamps in pseudo code.
-	//
-	//	Timestamp start = ...;
-	//	Timestamp end = ...;
-	//	Duration duration = ...;
-	//
-	//	duration.seconds = end.seconds - start.seconds;
-	//	duration.nanos = end.nanos - start.nanos;
-	//
-	//	if (duration.seconds < 0 && duration.nanos > 0) {
-	//	  duration.seconds += 1;
-	//	  duration.nanos -= 1000000000;
-	//	} else if (duration.seconds > 0 && duration.nanos < 0) {
-	//	  duration.seconds -= 1;
-	//	  duration.nanos += 1000000000;
-	//	}
-	//
-	// Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.
-	//
-	//	Timestamp start = ...;
-	//	Duration duration = ...;
-	//	Timestamp end = ...;
-	//
-	//	end.seconds = start.seconds + duration.seconds;
-	//	end.nanos = start.nanos + duration.nanos;
-	//
-	//	if (end.nanos < 0) {
-	//	  end.seconds -= 1;
-	//	  end.nanos += 1000000000;
-	//	} else if (end.nanos >= 1000000000) {
-	//	  end.seconds += 1;
-	//	  end.nanos -= 1000000000;
-	//	}
-	//
-	// Example 3: Compute Duration from datetime.timedelta in Python.
-	//
-	//	td = datetime.timedelta(days=3, minutes=10)
-	//	duration = Duration()
-	//	duration.FromTimedelta(td)
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Duration type is encoded as a string rather than an object,
-	// where the string ends in the suffix "s" (indicating seconds) and is preceded by
-	// the number of seconds, with nanoseconds expressed as fractional seconds. For
-	// example, 3 seconds with 0 nanoseconds should be encoded in JSON format as "3s",
-	// while 3 seconds and 1 nanosecond should be expressed in JSON format as
-	// "3.000000001s", and 3 seconds and 1 microsecond should be expressed in JSON
-	// format as "3.000001s".
+	// inacitivity is the maximum time of disconnection before the environment is
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
 	Disconnected param.Field[string] `json:"disconnected" format:"regex"`
 }
 
@@ -1567,7 +1094,7 @@ func (r EnvironmentSpecTimeoutParam) MarshalJSON() (data []byte, err error) {
 
 // EnvironmentStatus describes an environment status
 type EnvironmentStatus struct {
-	// EnvironmentActivitySignal used to signal activity for an environment.
+	// activity_signal is the last activity signal for the environment.
 	ActivitySignal EnvironmentActivitySignal `json:"activitySignal"`
 	// automations_file contains the status of the automations file.
 	AutomationsFile EnvironmentStatusAutomationsFile `json:"automationsFile"`
@@ -1587,7 +1114,7 @@ type EnvironmentStatus struct {
 	// the phase of an environment is a simple, high-level summary of where the
 	// environment is in its lifecycle
 	Phase EnvironmentPhase `json:"phase"`
-	// RunnerACK is the acknowledgement from the runner that is has received the
+	// runner_ack contains the acknowledgement from the runner that is has received the
 	// environment spec.
 	RunnerAck EnvironmentStatusRunnerAck `json:"runnerAck"`
 	// secrets contains the status of the environment secrets
@@ -2128,7 +1655,7 @@ func (r environmentStatusMachineVersionsJSON) RawJSON() string {
 	return r.raw
 }
 
-// RunnerACK is the acknowledgement from the runner that is has received the
+// runner_ack contains the acknowledgement from the runner that is has received the
 // environment spec.
 type EnvironmentStatusRunnerAck struct {
 	Message     string                               `json:"message"`
@@ -2368,8 +1895,8 @@ type EnvironmentStartResponse = interface{}
 type EnvironmentStopResponse = interface{}
 
 type EnvironmentNewParams struct {
-	// EnvironmentSpec specifies the configuration of an environment for an environment
-	// start
+	// spec is the configuration of the environment that's required for the to start
+	// the environment
 	Spec param.Field[EnvironmentSpecParam] `json:"spec"`
 }
 
@@ -2439,7 +1966,7 @@ type EnvironmentUpdateParamsSpecContent struct {
 	GitEmail param.Field[string] `json:"gitEmail"`
 	// The Git username
 	GitUsername param.Field[string] `json:"gitUsername"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer configures how the environment is to be initialized
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer"`
 	// session should be changed to trigger a content reinitialization
 	Session param.Field[string] `json:"session"`
@@ -2466,7 +1993,7 @@ func (r EnvironmentUpdateParamsSpecDevcontainer) MarshalJSON() (data []byte, err
 }
 
 type EnvironmentUpdateParamsSpecPort struct {
-	// Admission level describes who can access an environment instance and its ports.
+	// policy of this port
 	Admission param.Field[AdmissionLevel] `json:"admission"`
 	// name of this port
 	Name param.Field[string] `json:"name"`
@@ -2492,63 +2019,8 @@ func (r EnvironmentUpdateParamsSpecSSHPublicKey) MarshalJSON() (data []byte, err
 
 // Timeout configures the environment timeout
 type EnvironmentUpdateParamsSpecTimeout struct {
-	// A Duration represents a signed, fixed-length span of time represented as a count
-	// of seconds and fractions of seconds at nanosecond resolution. It is independent
-	// of any calendar and concepts like "day" or "month". It is related to Timestamp
-	// in that the difference between two Timestamp values is a Duration and it can be
-	// added or subtracted from a Timestamp. Range is approximately +-10,000 years.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Duration from two Timestamps in pseudo code.
-	//
-	//	Timestamp start = ...;
-	//	Timestamp end = ...;
-	//	Duration duration = ...;
-	//
-	//	duration.seconds = end.seconds - start.seconds;
-	//	duration.nanos = end.nanos - start.nanos;
-	//
-	//	if (duration.seconds < 0 && duration.nanos > 0) {
-	//	  duration.seconds += 1;
-	//	  duration.nanos -= 1000000000;
-	//	} else if (duration.seconds > 0 && duration.nanos < 0) {
-	//	  duration.seconds -= 1;
-	//	  duration.nanos += 1000000000;
-	//	}
-	//
-	// Example 2: Compute Timestamp from Timestamp + Duration in pseudo code.
-	//
-	//	Timestamp start = ...;
-	//	Duration duration = ...;
-	//	Timestamp end = ...;
-	//
-	//	end.seconds = start.seconds + duration.seconds;
-	//	end.nanos = start.nanos + duration.nanos;
-	//
-	//	if (end.nanos < 0) {
-	//	  end.seconds -= 1;
-	//	  end.nanos += 1000000000;
-	//	} else if (end.nanos >= 1000000000) {
-	//	  end.seconds += 1;
-	//	  end.nanos -= 1000000000;
-	//	}
-	//
-	// Example 3: Compute Duration from datetime.timedelta in Python.
-	//
-	//	td = datetime.timedelta(days=3, minutes=10)
-	//	duration = Duration()
-	//	duration.FromTimedelta(td)
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Duration type is encoded as a string rather than an object,
-	// where the string ends in the suffix "s" (indicating seconds) and is preceded by
-	// the number of seconds, with nanoseconds expressed as fractional seconds. For
-	// example, 3 seconds with 0 nanoseconds should be encoded in JSON format as "3s",
-	// while 3 seconds and 1 nanosecond should be expressed in JSON format as
-	// "3.000000001s", and 3 seconds and 1 microsecond should be expressed in JSON
-	// format as "3.000001s".
+	// inacitivity is the maximum time of disconnection before the environment is
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
 	Disconnected param.Field[string] `json:"disconnected" format:"regex"`
 }
 
@@ -2629,8 +2101,9 @@ func (r EnvironmentDeleteParams) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentNewFromProjectParams struct {
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
-	// EnvironmentSpec specifies the configuration of an environment for an environment
-	// start
+	// Spec is the configuration of the environment that's required for the runner to
+	// start the environment Configuration already defined in the Project will override
+	// parts of the spec, if set
 	Spec param.Field[EnvironmentSpecParam] `json:"spec"`
 }
 
@@ -2651,7 +2124,7 @@ func (r EnvironmentNewLogsTokenParams) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentMarkActiveParams struct {
-	// EnvironmentActivitySignal used to signal activity for an environment.
+	// activity_signal specifies the activity.
 	ActivitySignal param.Field[EnvironmentActivitySignalParam] `json:"activitySignal"`
 	// The ID of the environment to update activity for.
 	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
