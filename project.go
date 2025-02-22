@@ -38,7 +38,46 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 	return
 }
 
-// CreateProject creates a new Project.
+// Creates a new project with specified configuration.
+//
+// Use this method to:
+//
+// - Set up development projects
+// - Configure project environments
+// - Define project settings
+// - Initialize project content
+//
+// ### Examples
+//
+// - Create basic project:
+//
+//	Creates a project with minimal configuration.
+//
+//	```yaml
+//	name: "Web Application"
+//	environmentClass:
+//	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	initializer:
+//	  specs:
+//	    - git:
+//	        remoteUri: "https://github.com/org/repo"
+//	```
+//
+// - Create project with devcontainer:
+//
+//	Creates a project with custom development container.
+//
+//	```yaml
+//	name: "Backend Service"
+//	environmentClass:
+//	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	initializer:
+//	  specs:
+//	    - git:
+//	        remoteUri: "https://github.com/org/backend"
+//	devcontainerFilePath: ".devcontainer/devcontainer.json"
+//	automationsFilePath: ".gitpod/automations.yaml"
+//	```
 func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProject"
@@ -46,7 +85,23 @@ func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ..
 	return
 }
 
-// GetProject retrieves a single Project.
+// Gets details about a specific project.
+//
+// Use this method to:
+//
+// - View project configuration
+// - Check project status
+// - Get project metadata
+//
+// ### Examples
+//
+// - Get project details:
+//
+//	Retrieves information about a specific project.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
 func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/GetProject"
@@ -54,7 +109,35 @@ func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ..
 	return
 }
 
-// UpdateProject updates the properties of a Project.
+// Updates a project's configuration.
+//
+// Use this method to:
+//
+// - Modify project settings
+// - Update environment class
+// - Change project name
+// - Configure initializers
+//
+// ### Examples
+//
+// - Update project name:
+//
+//	Changes the project's display name.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	name: "New Project Name"
+//	```
+//
+// - Update environment class:
+//
+//	Changes the project's environment class.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	environmentClass:
+//	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, opts ...option.RequestOption) (res *ProjectUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/UpdateProject"
@@ -62,7 +145,24 @@ func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, o
 	return
 }
 
-// ListProjects lists all projects the caller has access to.
+// Lists projects with optional filtering.
+//
+// Use this method to:
+//
+// - View all accessible projects
+// - Browse project configurations
+// - Monitor project status
+//
+// ### Examples
+//
+// - List projects:
+//
+//	Shows all projects with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) (res *pagination.ProjectsPage[Project], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -80,12 +180,45 @@ func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opt
 	return res, nil
 }
 
-// ListProjects lists all projects the caller has access to.
+// Lists projects with optional filtering.
+//
+// Use this method to:
+//
+// - View all accessible projects
+// - Browse project configurations
+// - Monitor project status
+//
+// ### Examples
+//
+// - List projects:
+//
+//	Shows all projects with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *ProjectService) ListAutoPaging(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) *pagination.ProjectsPageAutoPager[Project] {
 	return pagination.NewProjectsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteProject deletes the specified project.
+// Deletes a project permanently.
+//
+// Use this method to:
+//
+// - Remove unused projects
+// - Clean up test projects
+// - Delete obsolete configurations
+//
+// ### Examples
+//
+// - Delete project:
+//
+//	Permanently removes a project.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	```
 func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, opts ...option.RequestOption) (res *ProjectDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/DeleteProject"
@@ -93,7 +226,24 @@ func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, o
 	return
 }
 
-// CreateProject creates a new Project using an environment as template.
+// Creates a new project using an existing environment as a template.
+//
+// Use this method to:
+//
+// - Clone environment configurations
+// - Create projects from templates
+// - Share environment setups
+//
+// ### Examples
+//
+// - Create from environment:
+//
+//	Creates a project based on existing environment.
+//
+//	```yaml
+//	name: "Frontend Project"
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
 func (r *ProjectService) NewFromEnvironment(ctx context.Context, body ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
@@ -175,7 +325,7 @@ type EnvironmentInitializerSpecsGit struct {
 	CloneTarget string `json:"cloneTarget"`
 	// remote_uri is the Git remote origin
 	RemoteUri string `json:"remoteUri"`
-	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	// the target mode determines what gets checked out
 	TargetMode EnvironmentInitializerSpecsGitTargetMode `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
 	UpstreamRemoteUri string                             `json:"upstreamRemoteUri"`
@@ -202,7 +352,7 @@ func (r environmentInitializerSpecsGitJSON) RawJSON() string {
 	return r.raw
 }
 
-// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+// the target mode determines what gets checked out
 type EnvironmentInitializerSpecsGitTargetMode string
 
 const (
@@ -255,7 +405,7 @@ type EnvironmentInitializerSpecsGitParam struct {
 	CloneTarget param.Field[string] `json:"cloneTarget"`
 	// remote_uri is the Git remote origin
 	RemoteUri param.Field[string] `json:"remoteUri"`
-	// CloneTargetMode is the target state in which we want to leave a GitEnvironment
+	// the target mode determines what gets checked out
 	TargetMode param.Field[EnvironmentInitializerSpecsGitTargetMode] `json:"targetMode"`
 	// upstream_Remote_uri is the fork upstream of a repository
 	UpstreamRemoteUri param.Field[string] `json:"upstreamRemoteUri"`
@@ -275,7 +425,7 @@ type Project struct {
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root
 	DevcontainerFilePath string `json:"devcontainerFilePath"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer is the content initializer
 	Initializer EnvironmentInitializer `json:"initializer"`
 	Metadata    ProjectMetadata        `json:"metadata"`
 	UsedBy      ProjectUsedBy          `json:"usedBy"`
@@ -661,7 +811,7 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 
 type ProjectNewParams struct {
 	EnvironmentClass param.Field[ProjectEnvironmentClassParam] `json:"environmentClass,required"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer is the content initializer
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
@@ -709,7 +859,7 @@ type ProjectUpdateParams struct {
 	// ```
 	DevcontainerFilePath param.Field[string]                       `json:"devcontainerFilePath"`
 	EnvironmentClass     param.Field[ProjectEnvironmentClassParam] `json:"environmentClass"`
-	// EnvironmentInitializer specifies how an environment is to be initialized
+	// initializer is the content initializer
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer"`
 	Name        param.Field[string]                      `json:"name"`
 	// project_id specifies the project identifier

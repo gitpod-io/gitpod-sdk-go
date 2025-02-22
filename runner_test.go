@@ -28,12 +28,12 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		Kind:     gitpod.F(gitpod.RunnerKindUnspecified),
-		Name:     gitpod.F("xxx"),
+		Name:     gitpod.F("Production Runner"),
 		Provider: gitpod.F(gitpod.RunnerProviderUnspecified),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
 				AutoUpdate:     gitpod.F(true),
-				Region:         gitpod.F("region"),
+				Region:         gitpod.F("us-west"),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
@@ -62,7 +62,7 @@ func TestRunnerGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Get(context.TODO(), gitpod.RunnerGetParams{
-		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -87,8 +87,8 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Update(context.TODO(), gitpod.RunnerUpdateParams{
-		Name:     gitpod.F("xxx"),
-		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		Name:     gitpod.F("Updated Runner Name"),
+		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Spec: gitpod.F(gitpod.RunnerUpdateParamsSpec{
 			Configuration: gitpod.F(gitpod.RunnerUpdateParamsSpecConfiguration{
 				AutoUpdate:     gitpod.F(true),
@@ -129,7 +129,7 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 		}),
 		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -156,7 +156,7 @@ func TestRunnerDeleteWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.Delete(context.TODO(), gitpod.RunnerDeleteParams{
 		Force:    gitpod.F(true),
-		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -181,7 +181,7 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.CheckAuthenticationForHost(context.TODO(), gitpod.RunnerCheckAuthenticationForHostParams{
-		Host:     gitpod.F("host"),
+		Host:     gitpod.F("github.com"),
 		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -207,7 +207,7 @@ func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.NewRunnerToken(context.TODO(), gitpod.RunnerNewRunnerTokenParams{
-		RunnerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -232,7 +232,7 @@ func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.ParseContextURL(context.TODO(), gitpod.RunnerParseContextURLParams{
-		ContextURL: gitpod.F("https://example.com"),
+		ContextURL: gitpod.F("https://github.com/org/repo/tree/main"),
 		RunnerID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {

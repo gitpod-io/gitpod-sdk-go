@@ -34,7 +34,27 @@ func NewRunnerConfigurationScmIntegrationService(opts ...option.RequestOption) (
 	return
 }
 
-// CreateSCMIntegration creates a new SCM integration on a runner.
+// Creates a new SCM integration for a runner.
+//
+// Use this method to:
+//
+// - Configure source control access
+// - Set up repository integrations
+// - Enable code synchronization
+//
+// ### Examples
+//
+// - Create GitHub integration:
+//
+//	Sets up GitHub SCM integration.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	scmId: "github"
+//	host: "github.com"
+//	oauthClientId: "client_id"
+//	oauthPlaintextClientSecret: "client_secret"
+//	```
 func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body RunnerConfigurationScmIntegrationNewParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
@@ -42,7 +62,23 @@ func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body
 	return
 }
 
-// GetSCMIntegration returns a single SCM integration configured for a runner.
+// Gets details about a specific SCM integration.
+//
+// Use this method to:
+//
+// - View integration settings
+// - Check integration status
+// - Verify configuration
+//
+// ### Examples
+//
+// - Get integration details:
+//
+//	Retrieves information about a specific integration.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body RunnerConfigurationScmIntegrationGetParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
@@ -50,7 +86,25 @@ func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body
 	return
 }
 
-// UpdateSCMIntegration updates an existing SCM integration on a runner.
+// Updates an existing SCM integration.
+//
+// Use this method to:
+//
+// - Modify integration settings
+// - Update credentials
+// - Change configuration
+//
+// ### Examples
+//
+// - Update integration:
+//
+//	Updates OAuth credentials.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	oauthClientId: "new_client_id"
+//	oauthPlaintextClientSecret: "new_client_secret"
+//	```
 func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, body RunnerConfigurationScmIntegrationUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
@@ -58,7 +112,26 @@ func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, b
 	return
 }
 
-// ListSCMIntegrations returns all SCM integrations configured for a runner.
+// Lists SCM integrations for a runner.
+//
+// Use this method to:
+//
+// - View all integrations
+// - Monitor integration status
+// - Check available SCMs
+//
+// ### Examples
+//
+// - List integrations:
+//
+//	Shows all SCM integrations.
+//
+//	```yaml
+//	filter:
+//	  runnerIds: ["d2c94c27-3b76-4a42-b88c-95a85e392c68"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) (res *pagination.IntegrationsPage[ScmIntegration], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -76,12 +149,47 @@ func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, par
 	return res, nil
 }
 
-// ListSCMIntegrations returns all SCM integrations configured for a runner.
+// Lists SCM integrations for a runner.
+//
+// Use this method to:
+//
+// - View all integrations
+// - Monitor integration status
+// - Check available SCMs
+//
+// ### Examples
+//
+// - List integrations:
+//
+//	Shows all SCM integrations.
+//
+//	```yaml
+//	filter:
+//	  runnerIds: ["d2c94c27-3b76-4a42-b88c-95a85e392c68"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *RunnerConfigurationScmIntegrationService) ListAutoPaging(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) *pagination.IntegrationsPageAutoPager[ScmIntegration] {
 	return pagination.NewIntegrationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteSCMIntegration deletes an existing SCM integration on a runner.
+// Deletes an SCM integration.
+//
+// Use this method to:
+//
+// - Remove unused integrations
+// - Clean up configurations
+// - Revoke SCM access
+//
+// ### Examples
+//
+// - Delete integration:
+//
+//	Removes an SCM integration.
+//
+//	```yaml
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerConfigurationScmIntegrationService) Delete(ctx context.Context, body RunnerConfigurationScmIntegrationDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"

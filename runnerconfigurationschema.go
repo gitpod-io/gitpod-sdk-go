@@ -31,7 +31,23 @@ func NewRunnerConfigurationSchemaService(opts ...option.RequestOption) (r *Runne
 	return
 }
 
-// GetRunnerConfigurationSchema retrieves the latest Runner configuration schema
+// Gets the latest runner configuration schema.
+//
+// Use this method to:
+//
+// - View available settings
+// - Check configuration options
+// - Validate configurations
+//
+// ### Examples
+//
+// - Get schema:
+//
+//	Retrieves configuration schema for a runner.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerConfigurationSchemaService) Get(ctx context.Context, body RunnerConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationSchemaGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"

@@ -28,7 +28,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
 		EnvironmentClass: gitpod.F(gitpod.ProjectEnvironmentClassParam{
-			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 			LocalRunner:        gitpod.F(true),
 		}),
 		Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
@@ -39,7 +39,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 				Git: gitpod.F(gitpod.EnvironmentInitializerSpecsGitParam{
 					CheckoutLocation:  gitpod.F("checkoutLocation"),
 					CloneTarget:       gitpod.F("cloneTarget"),
-					RemoteUri:         gitpod.F("remoteUri"),
+					RemoteUri:         gitpod.F("https://github.com/org/repo"),
 					TargetMode:        gitpod.F(gitpod.EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified),
 					UpstreamRemoteUri: gitpod.F("upstreamRemoteUri"),
 				}),
@@ -47,7 +47,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		}),
 		AutomationsFilePath:  gitpod.F("automationsFilePath"),
 		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
-		Name:                 gitpod.F("x"),
+		Name:                 gitpod.F("Web Application"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -72,7 +72,7 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Get(context.TODO(), gitpod.ProjectGetParams{
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -100,7 +100,7 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 		AutomationsFilePath:  gitpod.F("automationsFilePath"),
 		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 		EnvironmentClass: gitpod.F(gitpod.ProjectEnvironmentClassParam{
-			EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 			LocalRunner:        gitpod.F(true),
 		}),
 		Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
@@ -118,7 +118,7 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 			}}),
 		}),
 		Name:      gitpod.F("x"),
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -147,7 +147,7 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Pagination: gitpod.F(gitpod.ProjectListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {
@@ -173,7 +173,7 @@ func TestProjectDeleteWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.Delete(context.TODO(), gitpod.ProjectDeleteParams{
-		ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -198,8 +198,8 @@ func TestProjectNewFromEnvironmentWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.NewFromEnvironment(context.TODO(), gitpod.ProjectNewFromEnvironmentParams{
-		EnvironmentID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		Name:          gitpod.F("x"),
+		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
+		Name:          gitpod.F("Frontend Project"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

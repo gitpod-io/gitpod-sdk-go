@@ -40,9 +40,46 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 	return
 }
 
-// CreateRunner creates a new runner with the server. Registrations are very
-// short-lived and must be renewed every 30 seconds. Runners can be registered for
-// an entire organisation or a single user.
+// Creates a new runner registration with the server. Registrations are very
+// short-lived and must be renewed every 30 seconds.
+//
+// Use this method to:
+//
+// - Register organization runners
+// - Set up runner configurations
+// - Initialize runner credentials
+// - Configure auto-updates
+//
+// ### Examples
+//
+// - Create cloud runner:
+//
+//	Creates a new runner in AWS EC2.
+//
+//	```yaml
+//	name: "Production Runner"
+//	provider: RUNNER_PROVIDER_AWS_EC2
+//	spec:
+//	  desiredPhase: RUNNER_PHASE_ACTIVE
+//	  configuration:
+//	    region: "us-west"
+//	    releaseChannel: RUNNER_RELEASE_CHANNEL_STABLE
+//	    autoUpdate: true
+//	```
+//
+// - Create local runner:
+//
+//	Creates a new local runner on Linux.
+//
+//	```yaml
+//	name: "Local Development Runner"
+//	provider: RUNNER_PROVIDER_LINUX_HOST
+//	spec:
+//	  desiredPhase: RUNNER_PHASE_ACTIVE
+//	  configuration:
+//	    releaseChannel: RUNNER_RELEASE_CHANNEL_LATEST
+//	    autoUpdate: true
+//	```
 func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...option.RequestOption) (res *RunnerNewResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunner"
@@ -50,7 +87,24 @@ func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...o
 	return
 }
 
-// GetRunner returns a single runner.
+// Gets details about a specific runner.
+//
+// Use this method to:
+//
+// - Check runner status
+// - View runner configuration
+// - Monitor runner health
+// - Verify runner capabilities
+//
+// ### Examples
+//
+// - Get runner details:
+//
+//	Retrieves information about a specific runner.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...option.RequestOption) (res *RunnerGetResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/GetRunner"
@@ -58,7 +112,29 @@ func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...o
 	return
 }
 
-// UpdateRunner updates an environment runner.
+// Updates a runner's configuration.
+//
+// Use this method to:
+//
+// - Modify runner settings
+// - Update release channels
+// - Change runner status
+// - Configure auto-update settings
+//
+// ### Examples
+//
+// - Update configuration:
+//
+//	Changes runner settings.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	name: "Updated Runner Name"
+//	spec:
+//	  configuration:
+//	    releaseChannel: RUNNER_RELEASE_CHANNEL_LATEST
+//	    autoUpdate: true
+//	```
 func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opts ...option.RequestOption) (res *RunnerUpdateResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/UpdateRunner"
@@ -66,7 +142,36 @@ func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opt
 	return
 }
 
-// ListRunners returns all runners registered in the scope.
+// Lists all registered runners with optional filtering.
+//
+// Use this method to:
+//
+// - View all available runners
+// - Filter by runner type
+// - Monitor runner status
+// - Check runner availability
+//
+// ### Examples
+//
+// - List all runners:
+//
+//	Shows all runners with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by provider:
+//
+//	Lists only AWS EC2 runners.
+//
+//	```yaml
+//	filter:
+//	  providers: ["RUNNER_PROVIDER_AWS_EC2"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *pagination.RunnersPage[Runner], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -84,12 +189,57 @@ func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts 
 	return res, nil
 }
 
-// ListRunners returns all runners registered in the scope.
+// Lists all registered runners with optional filtering.
+//
+// Use this method to:
+//
+// - View all available runners
+// - Filter by runner type
+// - Monitor runner status
+// - Check runner availability
+//
+// ### Examples
+//
+// - List all runners:
+//
+//	Shows all runners with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by provider:
+//
+//	Lists only AWS EC2 runners.
+//
+//	```yaml
+//	filter:
+//	  providers: ["RUNNER_PROVIDER_AWS_EC2"]
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *RunnerService) ListAutoPaging(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) *pagination.RunnersPageAutoPager[Runner] {
 	return pagination.NewRunnersPageAutoPager(r.List(ctx, params, opts...))
 }
 
-// DeleteRunner deletes an environment runner.
+// Deletes a runner permanently.
+//
+// Use this method to:
+//
+// - Remove unused runners
+// - Clean up runner registrations
+// - Delete obsolete runners
+//
+// ### Examples
+//
+// - Delete runner:
+//
+//	Permanently removes a runner.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opts ...option.RequestOption) (res *RunnerDeleteResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/DeleteRunner"
@@ -97,10 +247,23 @@ func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opt
 	return
 }
 
-// CheckAuthenticationForHost asks a runner if the user is authenticated against a
-// particular host, e.g. an SCM system. If not, this function will return a URL
-// that the user should visit to authenticate, or indicate that Personal Access
-// Tokens are supported.
+// Checks if a user is authenticated for a specific host.
+//
+// Use this method to:
+//
+// - Verify authentication status
+// - Get authentication URLs
+// - Check PAT support
+//
+// ### Examples
+//
+// - Check authentication:
+//
+//	Verifies authentication for a host.
+//
+//	```yaml
+//	host: "github.com"
+//	```
 func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body RunnerCheckAuthenticationForHostParams, opts ...option.RequestOption) (res *RunnerCheckAuthenticationForHostResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CheckAuthenticationForHost"
@@ -108,9 +271,25 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 	return
 }
 
-// CreateRunnerToken returns a token that can be used to authenticate as the
-// runner. Use this call to renew an outdated token - this does not expire any
-// previously issued tokens.
+// Creates a new authentication token for a runner.
+//
+// Use this method to:
+//
+// - Generate runner credentials
+// - Renew expired tokens
+// - Set up runner authentication
+//
+// Note: This does not expire previously issued tokens.
+//
+// ### Examples
+//
+// - Create token:
+//
+//	Creates a new token for runner authentication.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
 func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunnerTokenParams, opts ...option.RequestOption) (res *RunnerNewRunnerTokenResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
@@ -118,18 +297,30 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 	return
 }
 
-// ParseContextURL asks a runner to parse a context URL, and return the parsed
-// result.
+// Parses a context URL and returns the parsed result.
 //
-// # This call returns
+// Use this method to:
 //
-//   - FAILED_PRECONDITION if the user requires authentication on the runner to
-//     access the context URL
-//   - PERMISSION_DENIED if the user is not allowed to access the context URL using
-//     the credentials they have
-//   - INVALID_ARGUMENT if the context URL is invalid
-//   - NOT_FOUND if the repository or branch indicated by the context URL does not
-//     exist
+// - Validate context URLs
+// - Check repository access
+// - Verify branch existence
+//
+// Returns:
+//
+// - FAILED_PRECONDITION if authentication is required
+// - PERMISSION_DENIED if access is not allowed
+// - INVALID_ARGUMENT if URL is invalid
+// - NOT_FOUND if repository/branch doesn't exist
+//
+// ### Examples
+//
+// - Parse URL:
+//
+//	Parses and validates a context URL.
+//
+//	```yaml
+//	contextUrl: "https://github.com/org/repo/tree/main"
+//	```
 func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseContextURLParams, opts ...option.RequestOption) (res *RunnerParseContextURLResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
@@ -138,198 +329,22 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseCon
 }
 
 type Runner struct {
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// Time when the Runner was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
 	Creator shared.Subject `json:"creator"`
-	// RunnerKind represents the kind of a runner
+	// The runner's kind
 	Kind RunnerKind `json:"kind"`
 	// The runner's name which is shown to users
 	Name string `json:"name"`
-	// RunnerProvider identifies the specific implementation type of a runner. Each
-	// provider maps to a specific kind of runner (local or remote), as specified below
-	// for each provider.
+	// The runner's provider
 	Provider RunnerProvider `json:"provider"`
 	RunnerID string         `json:"runnerId"`
 	// The runner's specification
 	Spec RunnerSpec `json:"spec"`
-	// RunnerStatus represents the status of a runner
+	// The runner's status
 	Status RunnerStatus `json:"status"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// Time when the Runner was last udpated.
 	UpdatedAt time.Time  `json:"updatedAt" format:"date-time"`
 	JSON      runnerJSON `json:"-"`
 }
@@ -539,99 +554,12 @@ type RunnerStatus struct {
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
-	// RunnerPhase represents the phase a runner is in
+	// The runner's reported phase
 	Phase RunnerPhase `json:"phase"`
 	// region is the region the runner is running in, if applicable.
 	Region        string `json:"region"`
 	SystemDetails string `json:"systemDetails"`
-	// A Timestamp represents a point in time independent of any time zone or local
-	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
-	// resolution. The count is relative to an epoch at UTC midnight on January 1,
-	// 1970, in the proleptic Gregorian calendar which extends the Gregorian calendar
-	// backwards to year one.
-	//
-	// All minutes are 60 seconds long. Leap seconds are "smeared" so that no leap
-	// second table is needed for interpretation, using a
-	// [24-hour linear smear](https://developers.google.com/time/smear).
-	//
-	// The range is from 0001-01-01T00:00:00Z to 9999-12-31T23:59:59.999999999Z. By
-	// restricting to that range, we ensure that we can convert to and from
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) date strings.
-	//
-	// # Examples
-	//
-	// Example 1: Compute Timestamp from POSIX `time()`.
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(time(NULL));
-	//	timestamp.set_nanos(0);
-	//
-	// Example 2: Compute Timestamp from POSIX `gettimeofday()`.
-	//
-	//	struct timeval tv;
-	//	gettimeofday(&tv, NULL);
-	//
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds(tv.tv_sec);
-	//	timestamp.set_nanos(tv.tv_usec * 1000);
-	//
-	// Example 3: Compute Timestamp from Win32 `GetSystemTimeAsFileTime()`.
-	//
-	//	FILETIME ft;
-	//	GetSystemTimeAsFileTime(&ft);
-	//	UINT64 ticks = (((UINT64)ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
-	//
-	//	// A Windows tick is 100 nanoseconds. Windows epoch 1601-01-01T00:00:00Z
-	//	// is 11644473600 seconds before Unix epoch 1970-01-01T00:00:00Z.
-	//	Timestamp timestamp;
-	//	timestamp.set_seconds((INT64) ((ticks / 10000000) - 11644473600LL));
-	//	timestamp.set_nanos((INT32) ((ticks % 10000000) * 100));
-	//
-	// Example 4: Compute Timestamp from Java `System.currentTimeMillis()`.
-	//
-	//	long millis = System.currentTimeMillis();
-	//
-	//	Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-	//	    .setNanos((int) ((millis % 1000) * 1000000)).build();
-	//
-	// Example 5: Compute Timestamp from Java `Instant.now()`.
-	//
-	//	Instant now = Instant.now();
-	//
-	//	Timestamp timestamp =
-	//	    Timestamp.newBuilder().setSeconds(now.getEpochSecond())
-	//	        .setNanos(now.getNano()).build();
-	//
-	// Example 6: Compute Timestamp from current time in Python.
-	//
-	//	timestamp = Timestamp()
-	//	timestamp.GetCurrentTime()
-	//
-	// # JSON Mapping
-	//
-	// In JSON format, the Timestamp type is encoded as a string in the
-	// [RFC 3339](https://www.ietf.org/rfc/rfc3339.txt) format. That is, the format is
-	// "{year}-{month}-{day}T{hour}:{min}:{sec}[.{frac_sec}]Z" where {year} is always
-	// expressed using four digits while {month}, {day}, {hour}, {min}, and {sec} are
-	// zero-padded to two digits each. The fractional seconds, which can go up to 9
-	// digits (i.e. up to 1 nanosecond resolution), are optional. The "Z" suffix
-	// indicates the timezone ("UTC"); the timezone is required. A proto3 JSON
-	// serializer should always use UTC (as indicated by "Z") when printing the
-	// Timestamp type and a proto3 JSON parser should be able to accept both UTC and
-	// other timezones (as indicated by an offset).
-	//
-	// For example, "2017-01-15T01:30:15.01Z" encodes 15.01 seconds past 01:30 UTC on
-	// January 15, 2017.
-	//
-	// In JavaScript, one can convert a Date object to this format using the standard
-	// [toISOString()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)
-	// method. In Python, a standard `datetime.datetime` object can be converted to
-	// this format using
-	// [`strftime`](https://docs.python.org/2/library/time.html#time.strftime) with the
-	// time format spec '%Y-%m-%dT%H:%M:%S.%fZ'. Likewise, in Java, one can use the
-	// Joda Time's
-	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
-	// to obtain a formatter capable of generating timestamps in this format.
+	// Time when the status was last udpated.
 	UpdatedAt time.Time        `json:"updatedAt" format:"date-time"`
 	Version   string           `json:"version"`
 	JSON      runnerStatusJSON `json:"-"`
@@ -663,6 +591,8 @@ func (r runnerStatusJSON) RawJSON() string {
 type RunnerNewResponse struct {
 	Runner Runner `json:"runner,required"`
 	// deprecated, will be removed. Use exchange_token instead.
+	//
+	// Deprecated: deprecated
 	AccessToken string `json:"accessToken"`
 	// exchange_token is a one-time use token that should be exchanged by the runner
 	// for an access token, using the IdentityService.ExchangeToken rpc. The token
@@ -715,9 +645,11 @@ type RunnerUpdateResponse = interface{}
 type RunnerDeleteResponse = interface{}
 
 type RunnerCheckAuthenticationForHostResponse struct {
-	Authenticated     bool   `json:"authenticated"`
+	Authenticated bool `json:"authenticated"`
+	// Deprecated: deprecated
 	AuthenticationURL string `json:"authenticationUrl"`
-	PatSupported      bool   `json:"patSupported"`
+	// Deprecated: deprecated
+	PatSupported bool `json:"patSupported"`
 	// scm_id is the unique identifier of the SCM provider
 	ScmID string `json:"scmId"`
 	// scm_name is the human-readable name of the SCM provider (e.g., "GitHub",
@@ -815,6 +747,8 @@ func (r runnerCheckAuthenticationForHostResponseSupportsPatJSON) RawJSON() strin
 
 type RunnerNewRunnerTokenResponse struct {
 	// deprecated, will be removed. Use exchange_token instead.
+	//
+	// Deprecated: deprecated
 	AccessToken string `json:"accessToken"`
 	// exchange_token is a one-time use token that should be exchanged by the runner
 	// for an access token, using the IdentityService.ExchangeToken rpc. The token
@@ -897,13 +831,15 @@ func (r runnerParseContextURLResponseGitJSON) RawJSON() string {
 }
 
 type RunnerNewParams struct {
-	// RunnerKind represents the kind of a runner
+	// The runner's kind This field is optional and here for backwards-compatibility.
+	// Use the provider field instead. If provider is set, the runner's kind will be
+	// deduced from the provider. Only one of kind and provider must be set.
 	Kind param.Field[RunnerKind] `json:"kind"`
 	// The runner name for humans
 	Name param.Field[string] `json:"name"`
-	// RunnerProvider identifies the specific implementation type of a runner. Each
-	// provider maps to a specific kind of runner (local or remote), as specified below
-	// for each provider.
+	// The specific implementation type of the runner This field is optional for
+	// backwards compatibility but will be required in the future. When specified, kind
+	// must not be specified (will be deduced from provider)
 	Provider param.Field[RunnerProvider]  `json:"provider"`
 	Spec     param.Field[RunnerSpecParam] `json:"spec"`
 }
@@ -936,7 +872,15 @@ func (r RunnerUpdateParams) MarshalJSON() (data []byte, err error) {
 
 type RunnerUpdateParamsSpec struct {
 	Configuration param.Field[RunnerUpdateParamsSpecConfiguration] `json:"configuration"`
-	// RunnerPhase represents the phase a runner is in
+	// desired_phase can currently only be updated on local-configuration runners, to
+	// toggle whether local runners are allowed for running environments in the
+	// organization. Set to:
+	//
+	//   - ACTIVE to enable local runners.
+	//   - INACTIVE to disable all local runners. Existing local runners and their
+	//     environments will stop, and cannot be started again until the desired_phase is
+	//     set to ACTIVE. Use this carefully, as it will affect all users in the
+	//     organization who use local runners.
 	DesiredPhase param.Field[RunnerPhase] `json:"desiredPhase"`
 }
 
