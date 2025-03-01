@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1 (2025-03-01)
+
+Full Changelog: [v0.4.0...v0.4.1](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.4.0...v0.4.1)
+
+### Documentation
+
+* update URLs from stainlessapi.com to stainless.com ([#53](https://github.com/gitpod-io/gitpod-sdk-go/issues/53)) ([a5f0af7](https://github.com/gitpod-io/gitpod-sdk-go/commit/a5f0af754b7fb4ef5d967aa53ce3ad22648826be))
+
 ## 0.4.0 (2025-02-21)
 
 Full Changelog: [v0.3.2...v0.4.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.3.2...v0.4.0)
