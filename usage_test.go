@@ -27,6 +27,7 @@ func TestUsage(t *testing.T) {
 	response, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{})
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	t.Logf("%+v\n", response.OrganizationID)
 }
