@@ -29,14 +29,14 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		Kind:     gitpod.F(gitpod.RunnerKindUnspecified),
 		Name:     gitpod.F("Production Runner"),
-		Provider: gitpod.F(gitpod.RunnerProviderUnspecified),
+		Provider: gitpod.F(gitpod.RunnerProviderAwsEc2),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
 				AutoUpdate:     gitpod.F(true),
 				Region:         gitpod.F("us-west"),
-				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
 			}),
-			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.RunnerPhaseActive),
 		}),
 	})
 	if err != nil {
@@ -92,7 +92,7 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 		Spec: gitpod.F(gitpod.RunnerUpdateParamsSpec{
 			Configuration: gitpod.F(gitpod.RunnerUpdateParamsSpecConfiguration{
 				AutoUpdate:     gitpod.F(true),
-				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelLatest),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
@@ -125,7 +125,7 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.RunnerListParamsFilter{
 			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Kinds:      gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
-			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderUnspecified}),
+			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderAwsEc2}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
 			Token:    gitpod.F("token"),

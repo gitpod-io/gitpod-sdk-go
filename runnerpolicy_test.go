@@ -28,7 +28,7 @@ func TestRunnerPolicyNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.Policies.New(context.TODO(), gitpod.RunnerPolicyNewParams{
 		GroupID:  gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
-		Role:     gitpod.F(gitpod.RunnerRoleUnspecified),
+		Role:     gitpod.F(gitpod.RunnerRoleAdmin),
 		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
@@ -55,7 +55,7 @@ func TestRunnerPolicyUpdateWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.Policies.Update(context.TODO(), gitpod.RunnerPolicyUpdateParams{
 		GroupID:  gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
-		Role:     gitpod.F(gitpod.RunnerRoleUnspecified),
+		Role:     gitpod.F(gitpod.RunnerRoleUser),
 		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {

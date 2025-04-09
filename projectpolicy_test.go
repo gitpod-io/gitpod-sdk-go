@@ -29,7 +29,7 @@ func TestProjectPolicyNewWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.Policies.New(context.TODO(), gitpod.ProjectPolicyNewParams{
 		GroupID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Role:      gitpod.F(gitpod.ProjectRoleUnspecified),
+		Role:      gitpod.F(gitpod.ProjectRoleAdmin),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -56,7 +56,7 @@ func TestProjectPolicyUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.Policies.Update(context.TODO(), gitpod.ProjectPolicyUpdateParams{
 		GroupID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Role:      gitpod.F(gitpod.ProjectRoleUnspecified),
+		Role:      gitpod.F(gitpod.ProjectRoleEditor),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
