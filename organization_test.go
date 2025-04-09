@@ -115,7 +115,7 @@ func TestOrganizationListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(50)),
 		}),
-		Scope: gitpod.F(gitpod.ScopeUnspecified),
+		Scope: gitpod.F(gitpod.ScopeAll),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -249,7 +249,7 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		UserID:         gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
-		Role:           gitpod.F(shared.OrganizationRoleUnspecified),
+		Role:           gitpod.F(shared.OrganizationRoleMember),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
