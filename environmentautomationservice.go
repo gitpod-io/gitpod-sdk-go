@@ -577,6 +577,9 @@ type ServiceStatus struct {
 	FailureMessage string `json:"failureMessage"`
 	// log_url contains the URL at which the service logs can be accessed.
 	LogURL string `json:"logUrl"`
+	// output contains the output of the service. setting an output field to empty
+	// string will unset it.
+	Output map[string]string `json:"output"`
 	// phase is the current phase of the service.
 	Phase ServicePhase `json:"phase"`
 	// session is the current session of the service.
@@ -594,6 +597,7 @@ type ServiceStatus struct {
 type serviceStatusJSON struct {
 	FailureMessage apijson.Field
 	LogURL         apijson.Field
+	Output         apijson.Field
 	Phase          apijson.Field
 	Session        apijson.Field
 	StatusVersion  apijson.Field
@@ -738,10 +742,12 @@ func (r EnvironmentAutomationServiceUpdateParamsSpecCommands) MarshalJSON() (dat
 // client of this API you are not expected to provide this field. Updating this
 // field requires the `environmentservice:update_status` permission.
 type EnvironmentAutomationServiceUpdateParamsStatus struct {
-	FailureMessage param.Field[string]       `json:"failureMessage"`
-	LogURL         param.Field[string]       `json:"logUrl"`
-	Phase          param.Field[ServicePhase] `json:"phase"`
-	Session        param.Field[string]       `json:"session"`
+	FailureMessage param.Field[string] `json:"failureMessage"`
+	LogURL         param.Field[string] `json:"logUrl"`
+	// setting an output field to empty string will unset it.
+	Output  param.Field[map[string]string] `json:"output"`
+	Phase   param.Field[ServicePhase]      `json:"phase"`
+	Session param.Field[string]            `json:"session"`
 }
 
 func (r EnvironmentAutomationServiceUpdateParamsStatus) MarshalJSON() (data []byte, err error) {

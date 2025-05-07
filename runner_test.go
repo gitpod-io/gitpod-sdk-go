@@ -32,7 +32,14 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 		Provider: gitpod.F(gitpod.RunnerProviderAwsEc2),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
-				AutoUpdate:     gitpod.F(true),
+				AutoUpdate: gitpod.F(true),
+				LogLevel:   gitpod.F(gitpod.LogLevelUnspecified),
+				Metrics: gitpod.F(gitpod.MetricsConfigurationParam{
+					Enabled:  gitpod.F(true),
+					Password: gitpod.F("password"),
+					URL:      gitpod.F("url"),
+					Username: gitpod.F("username"),
+				}),
 				Region:         gitpod.F("us-west"),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
 			}),
@@ -91,7 +98,14 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Spec: gitpod.F(gitpod.RunnerUpdateParamsSpec{
 			Configuration: gitpod.F(gitpod.RunnerUpdateParamsSpecConfiguration{
-				AutoUpdate:     gitpod.F(true),
+				AutoUpdate: gitpod.F(true),
+				LogLevel:   gitpod.F(gitpod.LogLevelUnspecified),
+				Metrics: gitpod.F(gitpod.RunnerUpdateParamsSpecConfigurationMetrics{
+					Enabled:  gitpod.F(true),
+					Password: gitpod.F("password"),
+					URL:      gitpod.F("url"),
+					Username: gitpod.F("username"),
+				}),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelLatest),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),

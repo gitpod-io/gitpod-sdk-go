@@ -55,7 +55,8 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			}),
 			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
-				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+				DefaultDevcontainerImage: gitpod.F("defaultDevcontainerImage"),
+				DevcontainerFilePath:     gitpod.F("devcontainerFilePath"),
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
 					Repository: gitpod.F("https://example.com"),
 				}),
@@ -71,6 +72,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
+				ID:                             gitpod.F("id"),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				EnvironmentVariable:            gitpod.F("environmentVariable"),
 				FilePath:                       gitpod.F("filePath"),
@@ -254,6 +256,31 @@ func TestEnvironmentDeleteWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestEnvironmentNewEnvironmentToken(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Environments.NewEnvironmentToken(context.TODO(), gitpod.EnvironmentNewEnvironmentTokenParams{
+		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
@@ -296,7 +323,8 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			}),
 			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
-				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+				DefaultDevcontainerImage: gitpod.F("defaultDevcontainerImage"),
+				DevcontainerFilePath:     gitpod.F("devcontainerFilePath"),
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
 					Repository: gitpod.F("https://example.com"),
 				}),
@@ -312,6 +340,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
+				ID:                             gitpod.F("id"),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				EnvironmentVariable:            gitpod.F("environmentVariable"),
 				FilePath:                       gitpod.F("filePath"),

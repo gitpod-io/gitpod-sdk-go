@@ -138,8 +138,11 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 		Status: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsStatus{
 			FailureMessage: gitpod.F("failureMessage"),
 			LogURL:         gitpod.F("logUrl"),
-			Phase:          gitpod.F(gitpod.ServicePhaseUnspecified),
-			Session:        gitpod.F("session"),
+			Output: gitpod.F(map[string]string{
+				"foo": "string",
+			}),
+			Phase:   gitpod.F(gitpod.ServicePhaseUnspecified),
+			Session: gitpod.F("session"),
 		}),
 	})
 	if err != nil {

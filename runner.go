@@ -328,6 +328,70 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseCon
 	return
 }
 
+type LogLevel string
+
+const (
+	LogLevelUnspecified LogLevel = "LOG_LEVEL_UNSPECIFIED"
+	LogLevelDebug       LogLevel = "LOG_LEVEL_DEBUG"
+	LogLevelInfo        LogLevel = "LOG_LEVEL_INFO"
+	LogLevelWarn        LogLevel = "LOG_LEVEL_WARN"
+	LogLevelError       LogLevel = "LOG_LEVEL_ERROR"
+)
+
+func (r LogLevel) IsKnown() bool {
+	switch r {
+	case LogLevelUnspecified, LogLevelDebug, LogLevelInfo, LogLevelWarn, LogLevelError:
+		return true
+	}
+	return false
+}
+
+type MetricsConfiguration struct {
+	// enabled indicates whether the runner should collect metrics
+	Enabled bool `json:"enabled"`
+	// password is the password to use for the metrics collector
+	Password string `json:"password"`
+	// url is the URL of the metrics collector
+	URL string `json:"url"`
+	// username is the username to use for the metrics collector
+	Username string                   `json:"username"`
+	JSON     metricsConfigurationJSON `json:"-"`
+}
+
+// metricsConfigurationJSON contains the JSON metadata for the struct
+// [MetricsConfiguration]
+type metricsConfigurationJSON struct {
+	Enabled     apijson.Field
+	Password    apijson.Field
+	URL         apijson.Field
+	Username    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *MetricsConfiguration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r metricsConfigurationJSON) RawJSON() string {
+	return r.raw
+}
+
+type MetricsConfigurationParam struct {
+	// enabled indicates whether the runner should collect metrics
+	Enabled param.Field[bool] `json:"enabled"`
+	// password is the password to use for the metrics collector
+	Password param.Field[string] `json:"password"`
+	// url is the URL of the metrics collector
+	URL param.Field[string] `json:"url"`
+	// username is the username to use for the metrics collector
+	Username param.Field[string] `json:"username"`
+}
+
+func (r MetricsConfigurationParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type Runner struct {
 	// Time when the Runner was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
@@ -378,11 +442,14 @@ const (
 	RunnerCapabilityUnspecified               RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
 	RunnerCapabilityFetchLocalScmIntegrations RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
 	RunnerCapabilitySecretContainerRegistry   RunnerCapability = "RUNNER_CAPABILITY_SECRET_CONTAINER_REGISTRY"
+	RunnerCapabilityAgentExecution            RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION"
+	RunnerCapabilityAllowEnvTokenPopulation   RunnerCapability = "RUNNER_CAPABILITY_ALLOW_ENV_TOKEN_POPULATION"
+	RunnerCapabilityDefaultDevContainerImage  RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage:
 		return true
 	}
 	return false
@@ -391,6 +458,10 @@ func (r RunnerCapability) IsKnown() bool {
 type RunnerConfiguration struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate bool `json:"autoUpdate"`
+	// log_level is the log level for the runner
+	LogLevel LogLevel `json:"logLevel"`
+	// metrics contains configuration for the runner's metrics collection
+	Metrics MetricsConfiguration `json:"metrics"`
 	// Region to deploy the runner in, if applicable. This is mainly used for remote
 	// runners, and is only a hint. The runner may be deployed in a different region.
 	// See the runner's status for the actual region.
@@ -404,6 +475,8 @@ type RunnerConfiguration struct {
 // [RunnerConfiguration]
 type runnerConfigurationJSON struct {
 	AutoUpdate     apijson.Field
+	LogLevel       apijson.Field
+	Metrics        apijson.Field
 	Region         apijson.Field
 	ReleaseChannel apijson.Field
 	raw            string
@@ -421,6 +494,10 @@ func (r runnerConfigurationJSON) RawJSON() string {
 type RunnerConfigurationParam struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate param.Field[bool] `json:"autoUpdate"`
+	// log_level is the log level for the runner
+	LogLevel param.Field[LogLevel] `json:"logLevel"`
+	// metrics contains configuration for the runner's metrics collection
+	Metrics param.Field[MetricsConfigurationParam] `json:"metrics"`
 	// Region to deploy the runner in, if applicable. This is mainly used for remote
 	// runners, and is only a hint. The runner may be deployed in a different region.
 	// See the runner's status for the actual region.
@@ -775,9 +852,11 @@ func (r runnerNewRunnerTokenResponseJSON) RawJSON() string {
 }
 
 type RunnerParseContextURLResponse struct {
-	Git                RunnerParseContextURLResponseGit  `json:"git"`
-	OriginalContextURL string                            `json:"originalContextUrl"`
-	JSON               runnerParseContextURLResponseJSON `json:"-"`
+	Git                RunnerParseContextURLResponseGit `json:"git"`
+	OriginalContextURL string                           `json:"originalContextUrl"`
+	// project_ids is a list of projects to which the context URL belongs to.
+	ProjectIDs []string                          `json:"projectIds"`
+	JSON       runnerParseContextURLResponseJSON `json:"-"`
 }
 
 // runnerParseContextURLResponseJSON contains the JSON metadata for the struct
@@ -785,6 +864,7 @@ type RunnerParseContextURLResponse struct {
 type runnerParseContextURLResponseJSON struct {
 	Git                apijson.Field
 	OriginalContextURL apijson.Field
+	ProjectIDs         apijson.Field
 	raw                string
 	ExtraFields        map[string]apijson.Field
 }
@@ -891,11 +971,31 @@ func (r RunnerUpdateParamsSpec) MarshalJSON() (data []byte, err error) {
 type RunnerUpdateParamsSpecConfiguration struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate param.Field[bool] `json:"autoUpdate"`
+	// log_level is the log level for the runner
+	LogLevel param.Field[LogLevel] `json:"logLevel"`
+	// metrics contains configuration for the runner's metrics collection
+	Metrics param.Field[RunnerUpdateParamsSpecConfigurationMetrics] `json:"metrics"`
 	// The release channel the runner is on
 	ReleaseChannel param.Field[RunnerReleaseChannel] `json:"releaseChannel"`
 }
 
 func (r RunnerUpdateParamsSpecConfiguration) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// metrics contains configuration for the runner's metrics collection
+type RunnerUpdateParamsSpecConfigurationMetrics struct {
+	// enabled indicates whether the runner should collect metrics
+	Enabled param.Field[bool] `json:"enabled"`
+	// password is the password to use for the metrics collector
+	Password param.Field[string] `json:"password"`
+	// url is the URL of the metrics collector
+	URL param.Field[string] `json:"url"`
+	// username is the username to use for the metrics collector
+	Username param.Field[string] `json:"username"`
+}
+
+func (r RunnerUpdateParamsSpecConfigurationMetrics) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

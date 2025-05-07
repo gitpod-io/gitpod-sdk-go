@@ -165,18 +165,28 @@ func (r runnerConfigurationSchemaEnvironmentClassesDisplayJSON) RawJSON() string
 }
 
 type RunnerConfigurationSchemaEnvironmentClassesEnum struct {
-	Default string                                              `json:"default"`
-	Values  []string                                            `json:"values"`
-	JSON    runnerConfigurationSchemaEnvironmentClassesEnumJSON `json:"-"`
+	// deprecated, will be removed, use default_value instead
+	//
+	// Deprecated: deprecated
+	Default        string                                                         `json:"default"`
+	DefaultValue   RunnerConfigurationSchemaEnvironmentClassesEnumDefaultValue    `json:"defaultValue"`
+	PossibleValues []RunnerConfigurationSchemaEnvironmentClassesEnumPossibleValue `json:"possibleValues"`
+	// deprecated, will be removed, use possible_values instead
+	//
+	// Deprecated: deprecated
+	Values []string                                            `json:"values"`
+	JSON   runnerConfigurationSchemaEnvironmentClassesEnumJSON `json:"-"`
 }
 
 // runnerConfigurationSchemaEnvironmentClassesEnumJSON contains the JSON metadata
 // for the struct [RunnerConfigurationSchemaEnvironmentClassesEnum]
 type runnerConfigurationSchemaEnvironmentClassesEnumJSON struct {
-	Default     apijson.Field
-	Values      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Default        apijson.Field
+	DefaultValue   apijson.Field
+	PossibleValues apijson.Field
+	Values         apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *RunnerConfigurationSchemaEnvironmentClassesEnum) UnmarshalJSON(data []byte) (err error) {
@@ -184,6 +194,58 @@ func (r *RunnerConfigurationSchemaEnvironmentClassesEnum) UnmarshalJSON(data []b
 }
 
 func (r runnerConfigurationSchemaEnvironmentClassesEnumJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaEnvironmentClassesEnumDefaultValue struct {
+	Detail   string                                                          `json:"detail"`
+	Subtitle string                                                          `json:"subtitle"`
+	Title    string                                                          `json:"title"`
+	JSON     runnerConfigurationSchemaEnvironmentClassesEnumDefaultValueJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaEnvironmentClassesEnumDefaultValueJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationSchemaEnvironmentClassesEnumDefaultValue]
+type runnerConfigurationSchemaEnvironmentClassesEnumDefaultValueJSON struct {
+	Detail      apijson.Field
+	Subtitle    apijson.Field
+	Title       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaEnvironmentClassesEnumDefaultValue) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaEnvironmentClassesEnumDefaultValueJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaEnvironmentClassesEnumPossibleValue struct {
+	Detail   string                                                           `json:"detail"`
+	Subtitle string                                                           `json:"subtitle"`
+	Title    string                                                           `json:"title"`
+	JSON     runnerConfigurationSchemaEnvironmentClassesEnumPossibleValueJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaEnvironmentClassesEnumPossibleValueJSON contains the
+// JSON metadata for the struct
+// [RunnerConfigurationSchemaEnvironmentClassesEnumPossibleValue]
+type runnerConfigurationSchemaEnvironmentClassesEnumPossibleValueJSON struct {
+	Detail      apijson.Field
+	Subtitle    apijson.Field
+	Title       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaEnvironmentClassesEnumPossibleValue) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaEnvironmentClassesEnumPossibleValueJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -317,18 +379,28 @@ func (r runnerConfigurationSchemaRunnerConfigDisplayJSON) RawJSON() string {
 }
 
 type RunnerConfigurationSchemaRunnerConfigEnum struct {
-	Default string                                        `json:"default"`
-	Values  []string                                      `json:"values"`
-	JSON    runnerConfigurationSchemaRunnerConfigEnumJSON `json:"-"`
+	// deprecated, will be removed, use default_value instead
+	//
+	// Deprecated: deprecated
+	Default        string                                                   `json:"default"`
+	DefaultValue   RunnerConfigurationSchemaRunnerConfigEnumDefaultValue    `json:"defaultValue"`
+	PossibleValues []RunnerConfigurationSchemaRunnerConfigEnumPossibleValue `json:"possibleValues"`
+	// deprecated, will be removed, use possible_values instead
+	//
+	// Deprecated: deprecated
+	Values []string                                      `json:"values"`
+	JSON   runnerConfigurationSchemaRunnerConfigEnumJSON `json:"-"`
 }
 
 // runnerConfigurationSchemaRunnerConfigEnumJSON contains the JSON metadata for the
 // struct [RunnerConfigurationSchemaRunnerConfigEnum]
 type runnerConfigurationSchemaRunnerConfigEnumJSON struct {
-	Default     apijson.Field
-	Values      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Default        apijson.Field
+	DefaultValue   apijson.Field
+	PossibleValues apijson.Field
+	Values         apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *RunnerConfigurationSchemaRunnerConfigEnum) UnmarshalJSON(data []byte) (err error) {
@@ -336,6 +408,56 @@ func (r *RunnerConfigurationSchemaRunnerConfigEnum) UnmarshalJSON(data []byte) (
 }
 
 func (r runnerConfigurationSchemaRunnerConfigEnumJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaRunnerConfigEnumDefaultValue struct {
+	Detail   string                                                    `json:"detail"`
+	Subtitle string                                                    `json:"subtitle"`
+	Title    string                                                    `json:"title"`
+	JSON     runnerConfigurationSchemaRunnerConfigEnumDefaultValueJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaRunnerConfigEnumDefaultValueJSON contains the JSON
+// metadata for the struct [RunnerConfigurationSchemaRunnerConfigEnumDefaultValue]
+type runnerConfigurationSchemaRunnerConfigEnumDefaultValueJSON struct {
+	Detail      apijson.Field
+	Subtitle    apijson.Field
+	Title       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaRunnerConfigEnumDefaultValue) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaRunnerConfigEnumDefaultValueJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerConfigurationSchemaRunnerConfigEnumPossibleValue struct {
+	Detail   string                                                     `json:"detail"`
+	Subtitle string                                                     `json:"subtitle"`
+	Title    string                                                     `json:"title"`
+	JSON     runnerConfigurationSchemaRunnerConfigEnumPossibleValueJSON `json:"-"`
+}
+
+// runnerConfigurationSchemaRunnerConfigEnumPossibleValueJSON contains the JSON
+// metadata for the struct [RunnerConfigurationSchemaRunnerConfigEnumPossibleValue]
+type runnerConfigurationSchemaRunnerConfigEnumPossibleValueJSON struct {
+	Detail      apijson.Field
+	Subtitle    apijson.Field
+	Title       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerConfigurationSchemaRunnerConfigEnumPossibleValue) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerConfigurationSchemaRunnerConfigEnumPossibleValueJSON) RawJSON() string {
 	return r.raw
 }
 

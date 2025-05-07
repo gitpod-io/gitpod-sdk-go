@@ -86,25 +86,7 @@ func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...o
 	return
 }
 
-// Lists secrets with optional filtering.
-//
-// Use this method to:
-//
-// - View all project secrets
-// - Filter secrets by project
-//
-// ### Examples
-//
-// - List project secrets:
-//
-//	Shows all secrets for a project.
-//
-//	```yaml
-//	filter:
-//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
-//	pagination:
-//	  pageSize: 20
-//	```
+// ListSecrets
 func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.SecretsPage[Secret], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -122,25 +104,7 @@ func (r *SecretService) List(ctx context.Context, params SecretListParams, opts 
 	return res, nil
 }
 
-// Lists secrets with optional filtering.
-//
-// Use this method to:
-//
-// - View all project secrets
-// - Filter secrets by project
-//
-// ### Examples
-//
-// - List project secrets:
-//
-//	Shows all secrets for a project.
-//
-//	```yaml
-//	filter:
-//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
-//	pagination:
-//	  pageSize: 20
-//	```
+// ListSecrets
 func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListParams, opts ...option.RequestOption) *pagination.SecretsPageAutoPager[Secret] {
 	return pagination.NewSecretsPageAutoPager(r.List(ctx, params, opts...))
 }
@@ -318,8 +282,11 @@ type Secret struct {
 	FilePath string `json:"filePath"`
 	// Name of the secret for humans.
 	Name string `json:"name"`
-	// The Project ID this Secret belongs to
-	ProjectID string `json:"projectId" format:"uuid"`
+	// The Project ID this Secret belongs to Deprecated: use scope instead
+	//
+	// Deprecated: deprecated
+	ProjectID string      `json:"projectId" format:"uuid"`
+	Scope     SecretScope `json:"scope"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -422,6 +389,7 @@ type secretJSON struct {
 	FilePath                       apijson.Field
 	Name                           apijson.Field
 	ProjectID                      apijson.Field
+	Scope                          apijson.Field
 	UpdatedAt                      apijson.Field
 	raw                            string
 	ExtraFields                    map[string]apijson.Field
@@ -433,6 +401,41 @@ func (r *Secret) UnmarshalJSON(data []byte) (err error) {
 
 func (r secretJSON) RawJSON() string {
 	return r.raw
+}
+
+type SecretScope struct {
+	// project_id is the Project ID this Secret belongs to
+	ProjectID string `json:"projectId" format:"uuid"`
+	// user_id is the User ID this Secret belongs to
+	UserID string          `json:"userId" format:"uuid"`
+	JSON   secretScopeJSON `json:"-"`
+}
+
+// secretScopeJSON contains the JSON metadata for the struct [SecretScope]
+type secretScopeJSON struct {
+	ProjectID   apijson.Field
+	UserID      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretScope) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretScopeJSON) RawJSON() string {
+	return r.raw
+}
+
+type SecretScopeParam struct {
+	// project_id is the Project ID this Secret belongs to
+	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// user_id is the User ID this Secret belongs to
+	UserID param.Field[string] `json:"userId" format:"uuid"`
+}
+
+func (r SecretScopeParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type SecretNewResponse struct {
@@ -483,12 +486,7 @@ type SecretUpdateValueResponse = interface{}
 
 type SecretNewParams struct {
 	// secret will be mounted as a docker config in the environment VM, mount will have
-	// the docker registry host value must be a valid registry host (e.g.
-	// registry.docker.com, https://registry.docker.com, ghcr.io:5050):
-	//
-	// ```
-	// this.matches('^[a-zA-Z0-9.-/:]+(:[0-9]+)?$')
-	// ```
+	// the docker registry host
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
@@ -501,8 +499,10 @@ type SecretNewParams struct {
 	// ```
 	FilePath param.Field[string] `json:"filePath"`
 	Name     param.Field[string] `json:"name"`
-	// project_id is the ProjectID this Secret belongs to
-	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// project_id is the ProjectID this Secret belongs to Deprecated: use scope instead
+	ProjectID param.Field[string] `json:"projectId"`
+	// scope is the scope of the secret
+	Scope param.Field[SecretScopeParam] `json:"scope"`
 	// value is the plaintext value of the secret
 	Value param.Field[string] `json:"value"`
 }
@@ -533,7 +533,12 @@ func (r SecretListParams) URLQuery() (v url.Values) {
 
 type SecretListParamsFilter struct {
 	// project_ids filters the response to only Secrets used by these Project IDs
+	// Deprecated: use scope instead. Values in project_ids will be ignored.
+	//
+	// Deprecated: deprecated
 	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+	// scope is the scope of the secrets to list
+	Scope param.Field[SecretScopeParam] `json:"scope"`
 }
 
 func (r SecretListParamsFilter) MarshalJSON() (data []byte, err error) {
