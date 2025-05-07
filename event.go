@@ -179,11 +179,17 @@ const (
 	ResourceTypeSecret                  ResourceType = "RESOURCE_TYPE_SECRET"
 	ResourceTypeSSOConfig               ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
 	ResourceTypeDomainVerification      ResourceType = "RESOURCE_TYPE_DOMAIN_VERIFICATION"
+	ResourceTypeAgentExecution          ResourceType = "RESOURCE_TYPE_AGENT_EXECUTION"
+	ResourceTypeRunnerLlmIntegration    ResourceType = "RESOURCE_TYPE_RUNNER_LLM_INTEGRATION"
+	ResourceTypeAgent                   ResourceType = "RESOURCE_TYPE_AGENT"
+	ResourceTypeEnvironmentSession      ResourceType = "RESOURCE_TYPE_ENVIRONMENT_SESSION"
+	ResourceTypeUserSecret              ResourceType = "RESOURCE_TYPE_USER_SECRET"
+	ResourceTypeOrganizationPolicy      ResourceType = "RESOURCE_TYPE_ORGANIZATION_POLICY"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy:
 		return true
 	}
 	return false

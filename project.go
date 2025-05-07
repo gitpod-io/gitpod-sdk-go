@@ -428,8 +428,11 @@ type Project struct {
 	// initializer is the content initializer
 	Initializer EnvironmentInitializer `json:"initializer"`
 	Metadata    ProjectMetadata        `json:"metadata"`
-	UsedBy      ProjectUsedBy          `json:"usedBy"`
-	JSON        projectJSON            `json:"-"`
+	// technical_description is a detailed technical description of the project This
+	// field is not returned by default in GetProject or ListProjects responses
+	TechnicalDescription string        `json:"technicalDescription"`
+	UsedBy               ProjectUsedBy `json:"usedBy"`
+	JSON                 projectJSON   `json:"-"`
 }
 
 // projectJSON contains the JSON metadata for the struct [Project]
@@ -440,6 +443,7 @@ type projectJSON struct {
 	DevcontainerFilePath apijson.Field
 	Initializer          apijson.Field
 	Metadata             apijson.Field
+	TechnicalDescription apijson.Field
 	UsedBy               apijson.Field
 	raw                  string
 	ExtraFields          map[string]apijson.Field
@@ -828,6 +832,9 @@ type ProjectNewParams struct {
 	// ```
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
 	Name                 param.Field[string] `json:"name"`
+	// technical_description is a detailed technical description of the project This
+	// field is not returned by default in GetProject or ListProjects responses 8KB max
+	TechnicalDescription param.Field[string] `json:"technicalDescription"`
 }
 
 func (r ProjectNewParams) MarshalJSON() (data []byte, err error) {
@@ -864,6 +871,9 @@ type ProjectUpdateParams struct {
 	Name        param.Field[string]                      `json:"name"`
 	// project_id specifies the project identifier
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// technical_description is a detailed technical description of the project This
+	// field is not returned by default in GetProject or ListProjects responses 8KB max
+	TechnicalDescription param.Field[string] `json:"technicalDescription"`
 }
 
 func (r ProjectUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -871,8 +881,9 @@ func (r ProjectUpdateParams) MarshalJSON() (data []byte, err error) {
 }
 
 type ProjectListParams struct {
-	Token    param.Field[string] `query:"token"`
-	PageSize param.Field[int64]  `query:"pageSize"`
+	Token    param.Field[string]                  `query:"token"`
+	PageSize param.Field[int64]                   `query:"pageSize"`
+	Filter   param.Field[ProjectListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing organizations
 	Pagination param.Field[ProjectListParamsPagination] `json:"pagination"`
 }
@@ -887,6 +898,15 @@ func (r ProjectListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type ProjectListParamsFilter struct {
+	// project_ids filters the response to only projects with these IDs
+	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+}
+
+func (r ProjectListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // pagination contains the pagination options for listing organizations

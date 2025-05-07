@@ -54,6 +54,9 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 	_, err := client.Editors.List(context.TODO(), gitpod.EditorListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.EditorListParamsFilter{
+			AllowedByPolicy: gitpod.F(true),
+		}),
 		Pagination: gitpod.F(gitpod.EditorListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),

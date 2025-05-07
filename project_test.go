@@ -48,6 +48,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		AutomationsFilePath:  gitpod.F("automationsFilePath"),
 		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 		Name:                 gitpod.F("Web Application"),
+		TechnicalDescription: gitpod.F("technicalDescription"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -117,8 +118,9 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 				}),
 			}}),
 		}),
-		Name:      gitpod.F("x"),
-		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		Name:                 gitpod.F("x"),
+		ProjectID:            gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		TechnicalDescription: gitpod.F("technicalDescription"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -145,6 +147,9 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.List(context.TODO(), gitpod.ProjectListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.ProjectListParamsFilter{
+			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		}),
 		Pagination: gitpod.F(gitpod.ProjectListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),

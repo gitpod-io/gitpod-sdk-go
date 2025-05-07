@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
+func TestUserDotfileGetWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,32 +26,7 @@ func TestIdentityExchangeTokenWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Identity.ExchangeToken(context.TODO(), gitpod.IdentityExchangeTokenParams{
-		ExchangeToken: gitpod.F("exchange-token-value"),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestIdentityGetAuthenticatedIdentityWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Identity.GetAuthenticatedIdentity(context.TODO(), gitpod.IdentityGetAuthenticatedIdentityParams{
+	_, err := client.Users.Dotfiles.Get(context.TODO(), gitpod.UserDotfileGetParams{
 		Empty: gitpod.F(true),
 	})
 	if err != nil {
@@ -63,7 +38,7 @@ func TestIdentityGetAuthenticatedIdentityWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestIdentityGetIDTokenWithOptionalParams(t *testing.T) {
+func TestUserDotfileSetWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -76,9 +51,8 @@ func TestIdentityGetIDTokenWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Identity.GetIDToken(context.TODO(), gitpod.IdentityGetIDTokenParams{
-		Audience: gitpod.F([]string{"https://api.gitpod.io", "https://ws.gitpod.io"}),
-		Version:  gitpod.F(gitpod.IDTokenVersionUnspecified),
+	_, err := client.Users.Dotfiles.Set(context.TODO(), gitpod.UserDotfileSetParams{
+		Repository: gitpod.F("https://example.com"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -32,7 +32,11 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		FilePath:                       gitpod.F("filePath"),
 		Name:                           gitpod.F("DATABASE_URL"),
 		ProjectID:                      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Value:                          gitpod.F("postgresql://user:pass@localhost:5432/db"),
+		Scope: gitpod.F(gitpod.SecretScopeParam{
+			ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			UserID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		}),
+		Value: gitpod.F("postgresql://user:pass@localhost:5432/db"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -60,11 +64,15 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.SecretListParamsFilter{
-			ProjectIDs: gitpod.F([]string{"b0e12f6c-4c67-429d-a4a6-d9838b5da047"}),
+			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Scope: gitpod.F(gitpod.SecretScopeParam{
+				ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				UserID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			}),
 		}),
 		Pagination: gitpod.F(gitpod.SecretListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(20)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 	})
 	if err != nil {

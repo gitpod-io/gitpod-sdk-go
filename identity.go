@@ -116,6 +116,22 @@ func (r *IdentityService) GetIDToken(ctx context.Context, body IdentityGetIDToke
 	return
 }
 
+type IDTokenVersion string
+
+const (
+	IDTokenVersionUnspecified IDTokenVersion = "ID_TOKEN_VERSION_UNSPECIFIED"
+	IDTokenVersionV1          IDTokenVersion = "ID_TOKEN_VERSION_V1"
+	IDTokenVersionV2          IDTokenVersion = "ID_TOKEN_VERSION_V2"
+)
+
+func (r IDTokenVersion) IsKnown() bool {
+	switch r {
+	case IDTokenVersionUnspecified, IDTokenVersionV1, IDTokenVersionV2:
+		return true
+	}
+	return false
+}
+
 type IdentityExchangeTokenResponse struct {
 	// access_token is the new access token
 	AccessToken string                            `json:"accessToken"`
@@ -202,6 +218,8 @@ func (r IdentityGetAuthenticatedIdentityParams) MarshalJSON() (data []byte, err 
 
 type IdentityGetIDTokenParams struct {
 	Audience param.Field[[]string] `json:"audience"`
+	// version is the version of the ID token.
+	Version param.Field[IDTokenVersion] `json:"version"`
 }
 
 func (r IdentityGetIDTokenParams) MarshalJSON() (data []byte, err error) {

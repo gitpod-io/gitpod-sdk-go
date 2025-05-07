@@ -536,6 +536,9 @@ type TaskExecutionStatusStep struct {
 	// failure_message summarises why the step failed to operate. If this is non-empty
 	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
+	// output contains the output of the task execution. setting an output field to
+	// empty string will unset it.
+	Output map[string]string `json:"output"`
 	// phase is the current phase of the execution step
 	Phase TaskExecutionPhase          `json:"phase"`
 	JSON  taskExecutionStatusStepJSON `json:"-"`
@@ -546,6 +549,7 @@ type TaskExecutionStatusStep struct {
 type taskExecutionStatusStepJSON struct {
 	ID             apijson.Field
 	FailureMessage apijson.Field
+	Output         apijson.Field
 	Phase          apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field

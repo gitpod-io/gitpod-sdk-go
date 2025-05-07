@@ -27,6 +27,7 @@ type OrganizationService struct {
 	Options             []option.RequestOption
 	DomainVerifications *OrganizationDomainVerificationService
 	Invites             *OrganizationInviteService
+	Policies            *OrganizationPolicyService
 	SSOConfigurations   *OrganizationSSOConfigurationService
 }
 
@@ -38,6 +39,7 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 	r.Options = opts
 	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
+	r.Policies = NewOrganizationPolicyService(opts...)
 	r.SSOConfigurations = NewOrganizationSSOConfigurationService(opts...)
 	return
 }
@@ -141,85 +143,6 @@ func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdat
 	path := "gitpod.v1.OrganizationService/UpdateOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
-}
-
-// Lists all organizations the caller has access to with optional filtering.
-//
-// Use this method to:
-//
-// - View organizations you're a member of
-// - Browse all available organizations
-// - Paginate through organization results
-//
-// ### Examples
-//
-// - List member organizations:
-//
-//	Shows organizations where the caller is a member.
-//
-//	```yaml
-//	pagination:
-//	  pageSize: 20
-//	scope: SCOPE_MEMBER
-//	```
-//
-// - List all organizations:
-//
-//	Shows all organizations visible to the caller.
-//
-//	```yaml
-//	pagination:
-//	  pageSize: 50
-//	scope: SCOPE_ALL
-//	```
-func (r *OrganizationService) List(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) (res *pagination.OrganizationsPage[Organization], err error) {
-	var raw *http.Response
-	opts = append(r.Options[:], opts...)
-	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "gitpod.v1.OrganizationService/ListOrganizations"
-	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
-	if err != nil {
-		return nil, err
-	}
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-// Lists all organizations the caller has access to with optional filtering.
-//
-// Use this method to:
-//
-// - View organizations you're a member of
-// - Browse all available organizations
-// - Paginate through organization results
-//
-// ### Examples
-//
-// - List member organizations:
-//
-//	Shows organizations where the caller is a member.
-//
-//	```yaml
-//	pagination:
-//	  pageSize: 20
-//	scope: SCOPE_MEMBER
-//	```
-//
-// - List all organizations:
-//
-//	Shows all organizations visible to the caller.
-//
-//	```yaml
-//	pagination:
-//	  pageSize: 50
-//	scope: SCOPE_ALL
-//	```
-func (r *OrganizationService) ListAutoPaging(ctx context.Context, params OrganizationListParams, opts ...option.RequestOption) *pagination.OrganizationsPageAutoPager[Organization] {
-	return pagination.NewOrganizationsPageAutoPager(r.List(ctx, params, opts...))
 }
 
 // Permanently deletes an organization.
@@ -546,6 +469,8 @@ type Organization struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	Name      string    `json:"name,required"`
+	// The tier of the organization - free or enterprise
+	Tier OrganizationTier `json:"tier,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -644,6 +569,7 @@ type organizationJSON struct {
 	ID            apijson.Field
 	CreatedAt     apijson.Field
 	Name          apijson.Field
+	Tier          apijson.Field
 	UpdatedAt     apijson.Field
 	InviteDomains apijson.Field
 	raw           string
@@ -782,17 +708,17 @@ func (r organizationMemberJSON) RawJSON() string {
 	return r.raw
 }
 
-type Scope string
+type OrganizationTier string
 
 const (
-	ScopeUnspecified Scope = "SCOPE_UNSPECIFIED"
-	ScopeMember      Scope = "SCOPE_MEMBER"
-	ScopeAll         Scope = "SCOPE_ALL"
+	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
+	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
+	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
 )
 
-func (r Scope) IsKnown() bool {
+func (r OrganizationTier) IsKnown() bool {
 	switch r {
-	case ScopeUnspecified, ScopeMember, ScopeAll:
+	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise:
 		return true
 	}
 	return false
@@ -930,41 +856,6 @@ type OrganizationUpdateParams struct {
 }
 
 func (r OrganizationUpdateParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type OrganizationListParams struct {
-	Token    param.Field[string] `query:"token"`
-	PageSize param.Field[int64]  `query:"pageSize"`
-	// pagination contains the pagination options for listing organizations
-	Pagination param.Field[OrganizationListParamsPagination] `json:"pagination"`
-	// scope is the scope of the organizations to list
-	Scope param.Field[Scope] `json:"scope"`
-}
-
-func (r OrganizationListParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-// URLQuery serializes [OrganizationListParams]'s query parameters as `url.Values`.
-func (r OrganizationListParams) URLQuery() (v url.Values) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-// pagination contains the pagination options for listing organizations
-type OrganizationListParamsPagination struct {
-	// Token for the next set of results that was returned as next_token of a
-	// PaginationResponse
-	Token param.Field[string] `json:"token"`
-	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
-	// Maximum 100.
-	PageSize param.Field[int64] `json:"pageSize"`
-}
-
-func (r OrganizationListParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
