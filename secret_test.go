@@ -66,13 +66,13 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.SecretListParamsFilter{
 			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Scope: gitpod.F(gitpod.SecretScopeParam{
-				ProjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 				UserID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			}),
 		}),
 		Pagination: gitpod.F(gitpod.SecretListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(100)),
+			PageSize: gitpod.F(int64(20)),
 		}),
 	})
 	if err != nil {

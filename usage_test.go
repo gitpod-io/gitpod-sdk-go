@@ -35,7 +35,7 @@ func TestUsageListEnvironmentSessionsWithOptionalParams(t *testing.T) {
 				EndTime:   gitpod.F(time.Now()),
 				StartTime: gitpod.F(time.Now()),
 			}),
-			ProjectID: gitpod.F("projectId"),
+			ProjectID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		}),
 		Pagination: gitpod.F(gitpod.UsageListEnvironmentSessionsParamsPagination{
 			Token:    gitpod.F("token"),

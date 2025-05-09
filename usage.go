@@ -35,10 +35,33 @@ func NewUsageService(opts ...option.RequestOption) (r *UsageService) {
 	return
 }
 
-// Lists environment sessions within a specified date range.
+// Lists completed environment sessions within a specified date range.
 //
-// Returns a list of environment sessions that were active within the specified
-// date range.
+// Returns a list of environment sessions that were completed within the specified
+// date range. Currently running sessions are not included.
+//
+// Use this method to:
+//
+// - View environment sessions
+// - Filter by project
+// - Monitor session activity
+// - Create custom usage reports
+//
+// ### Example
+//
+// ```yaml
+// filter:
+//
+//	projectId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	dateRange:
+//	  startTime: "2024-01-01T00:00:00Z"
+//	  endTime: "2024-01-02T00:00:00Z"
+//
+// pagination:
+//
+//	pageSize: 100
+//
+// ```
 func (r *UsageService) ListEnvironmentSessions(ctx context.Context, params UsageListEnvironmentSessionsParams, opts ...option.RequestOption) (res *pagination.SessionsPage[EnvironmentSession], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -56,10 +79,33 @@ func (r *UsageService) ListEnvironmentSessions(ctx context.Context, params Usage
 	return res, nil
 }
 
-// Lists environment sessions within a specified date range.
+// Lists completed environment sessions within a specified date range.
 //
-// Returns a list of environment sessions that were active within the specified
-// date range.
+// Returns a list of environment sessions that were completed within the specified
+// date range. Currently running sessions are not included.
+//
+// Use this method to:
+//
+// - View environment sessions
+// - Filter by project
+// - Monitor session activity
+// - Create custom usage reports
+//
+// ### Example
+//
+// ```yaml
+// filter:
+//
+//	projectId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	dateRange:
+//	  startTime: "2024-01-01T00:00:00Z"
+//	  endTime: "2024-01-02T00:00:00Z"
+//
+// pagination:
+//
+//	pageSize: 100
+//
+// ```
 func (r *UsageService) ListEnvironmentSessionsAutoPaging(ctx context.Context, params UsageListEnvironmentSessionsParams, opts ...option.RequestOption) *pagination.SessionsPageAutoPager[EnvironmentSession] {
 	return pagination.NewSessionsPageAutoPager(r.ListEnvironmentSessions(ctx, params, opts...))
 }
@@ -73,13 +119,13 @@ type EnvironmentSession struct {
 	EnvironmentClassID string `json:"environmentClassId"`
 	// Environment ID associated with the session.
 	EnvironmentID string `json:"environmentId"`
-	// Project ID associated with the session.
+	// Project ID associated with the session (if available).
 	ProjectID string `json:"projectId"`
 	// Runner ID associated with the session.
 	RunnerID string `json:"runnerId"`
 	// Time when the session was stopped.
 	StoppedAt time.Time `json:"stoppedAt" format:"date-time"`
-	// User ID who created the session.
+	// User ID that created the session.
 	UserID string                 `json:"userId"`
 	JSON   environmentSessionJSON `json:"-"`
 }
