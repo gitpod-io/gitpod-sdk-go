@@ -557,6 +557,16 @@ Methods:
 - <code title="post /gitpod.v1.SecretService/GetSecretValue">client.Secrets.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecretService.GetValue">GetValue</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecretGetValueParams">SecretGetValueParams</a>) (<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecretGetValueResponse">SecretGetValueResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /gitpod.v1.SecretService/UpdateSecretValue">client.Secrets.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecretService.UpdateValue">UpdateValue</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecretUpdateValueParams">SecretUpdateValueParams</a>) (<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecretUpdateValueResponse">SecretUpdateValueResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+# Usage
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentSession">EnvironmentSession</a>
+
+Methods:
+
+- <code title="post /gitpod.v1.UsageService/ListEnvironmentSessions">client.Usage.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#UsageService.ListEnvironmentSessions">ListEnvironmentSessions</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#UsageListEnvironmentSessionsParams">UsageListEnvironmentSessionsParams</a>) (<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/packages/pagination#SessionsPage">SessionsPage</a>[<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentSession">EnvironmentSession</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Users
 
 Response Types:

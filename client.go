@@ -26,6 +26,7 @@ type Client struct {
 	Projects      *ProjectService
 	Runners       *RunnerService
 	Secrets       *SecretService
+	Usage         *UsageService
 	Users         *UserService
 }
 
@@ -61,6 +62,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Projects = NewProjectService(opts...)
 	r.Runners = NewRunnerService(opts...)
 	r.Secrets = NewSecretService(opts...)
+	r.Usage = NewUsageService(opts...)
 	r.Users = NewUserService(opts...)
 
 	return
