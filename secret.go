@@ -86,7 +86,38 @@ func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...o
 	return
 }
 
-// ListSecrets
+// Lists secrets
+//
+// Use this method to:
+//
+// - View all project secrets
+// - View all user secrets
+//
+// ### Examples
+//
+// - List project secrets:
+//
+//	Shows all secrets for a project.
+//
+//	```yaml
+//	filter:
+//	  scope:
+//	    projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List user secrets:
+//
+//	Shows all secrets for a user.
+//
+//	```yaml
+//	filter:
+//	  scope:
+//	    userId: "123e4567-e89b-12d3-a456-426614174000"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.SecretsPage[Secret], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -104,7 +135,38 @@ func (r *SecretService) List(ctx context.Context, params SecretListParams, opts 
 	return res, nil
 }
 
-// ListSecrets
+// Lists secrets
+//
+// Use this method to:
+//
+// - View all project secrets
+// - View all user secrets
+//
+// ### Examples
+//
+// - List project secrets:
+//
+//	Shows all secrets for a project.
+//
+//	```yaml
+//	filter:
+//	  scope:
+//	    projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - List user secrets:
+//
+//	Shows all secrets for a user.
+//
+//	```yaml
+//	filter:
+//	  scope:
+//	    userId: "123e4567-e89b-12d3-a456-426614174000"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListParams, opts ...option.RequestOption) *pagination.SecretsPageAutoPager[Secret] {
 	return pagination.NewSecretsPageAutoPager(r.List(ctx, params, opts...))
 }

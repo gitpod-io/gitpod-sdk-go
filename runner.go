@@ -458,6 +458,10 @@ func (r RunnerCapability) IsKnown() bool {
 type RunnerConfiguration struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate bool `json:"autoUpdate"`
+	// devcontainer_image_cache_enabled controls whether the devcontainer build cache
+	// is enabled for this runner. Only takes effect on supported runners, currently
+	// only AWS EC2 runners.
+	DevcontainerImageCacheEnabled bool `json:"devcontainerImageCacheEnabled"`
 	// log_level is the log level for the runner
 	LogLevel LogLevel `json:"logLevel"`
 	// metrics contains configuration for the runner's metrics collection
@@ -474,13 +478,14 @@ type RunnerConfiguration struct {
 // runnerConfigurationJSON contains the JSON metadata for the struct
 // [RunnerConfiguration]
 type runnerConfigurationJSON struct {
-	AutoUpdate     apijson.Field
-	LogLevel       apijson.Field
-	Metrics        apijson.Field
-	Region         apijson.Field
-	ReleaseChannel apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	AutoUpdate                    apijson.Field
+	DevcontainerImageCacheEnabled apijson.Field
+	LogLevel                      apijson.Field
+	Metrics                       apijson.Field
+	Region                        apijson.Field
+	ReleaseChannel                apijson.Field
+	raw                           string
+	ExtraFields                   map[string]apijson.Field
 }
 
 func (r *RunnerConfiguration) UnmarshalJSON(data []byte) (err error) {
@@ -494,6 +499,10 @@ func (r runnerConfigurationJSON) RawJSON() string {
 type RunnerConfigurationParam struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate param.Field[bool] `json:"autoUpdate"`
+	// devcontainer_image_cache_enabled controls whether the devcontainer build cache
+	// is enabled for this runner. Only takes effect on supported runners, currently
+	// only AWS EC2 runners.
+	DevcontainerImageCacheEnabled param.Field[bool] `json:"devcontainerImageCacheEnabled"`
 	// log_level is the log level for the runner
 	LogLevel param.Field[LogLevel] `json:"logLevel"`
 	// metrics contains configuration for the runner's metrics collection
@@ -971,6 +980,9 @@ func (r RunnerUpdateParamsSpec) MarshalJSON() (data []byte, err error) {
 type RunnerUpdateParamsSpecConfiguration struct {
 	// auto_update indicates whether the runner should automatically update itself.
 	AutoUpdate param.Field[bool] `json:"autoUpdate"`
+	// devcontainer_image_cache_enabled controls whether the shared devcontainer build
+	// cache is enabled for this runner.
+	DevcontainerImageCacheEnabled param.Field[bool] `json:"devcontainerImageCacheEnabled"`
 	// log_level is the log level for the runner
 	LogLevel param.Field[LogLevel] `json:"logLevel"`
 	// metrics contains configuration for the runner's metrics collection
