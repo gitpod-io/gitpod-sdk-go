@@ -35,16 +35,16 @@ func NewUsageService(opts ...option.RequestOption) (r *UsageService) {
 	return
 }
 
-// Lists completed environment sessions within a specified date range.
+// Lists completed environment runtime records within a specified date range.
 //
-// Returns a list of environment sessions that were completed within the specified
-// date range. Currently running sessions are not included.
+// Returns a list of environment runtime records that were completed within the
+// specified date range. Records of currently running environments are not
+// included.
 //
 // Use this method to:
 //
-// - View environment sessions
+// - View environment runtime records
 // - Filter by project
-// - Monitor session activity
 // - Create custom usage reports
 //
 // ### Example
@@ -62,11 +62,11 @@ func NewUsageService(opts ...option.RequestOption) (r *UsageService) {
 //	pageSize: 100
 //
 // ```
-func (r *UsageService) ListEnvironmentSessions(ctx context.Context, params UsageListEnvironmentSessionsParams, opts ...option.RequestOption) (res *pagination.SessionsPage[EnvironmentSession], err error) {
+func (r *UsageService) ListEnvironmentRuntimeRecords(ctx context.Context, params UsageListEnvironmentRuntimeRecordsParams, opts ...option.RequestOption) (res *pagination.RecordsPage[EnvironmentUsageRecord], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "gitpod.v1.UsageService/ListEnvironmentSessions"
+	path := "gitpod.v1.UsageService/ListEnvironmentUsageRecords"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
 	if err != nil {
 		return nil, err
@@ -79,16 +79,16 @@ func (r *UsageService) ListEnvironmentSessions(ctx context.Context, params Usage
 	return res, nil
 }
 
-// Lists completed environment sessions within a specified date range.
+// Lists completed environment runtime records within a specified date range.
 //
-// Returns a list of environment sessions that were completed within the specified
-// date range. Currently running sessions are not included.
+// Returns a list of environment runtime records that were completed within the
+// specified date range. Records of currently running environments are not
+// included.
 //
 // Use this method to:
 //
-// - View environment sessions
+// - View environment runtime records
 // - Filter by project
-// - Monitor session activity
 // - Create custom usage reports
 //
 // ### Example
@@ -106,33 +106,35 @@ func (r *UsageService) ListEnvironmentSessions(ctx context.Context, params Usage
 //	pageSize: 100
 //
 // ```
-func (r *UsageService) ListEnvironmentSessionsAutoPaging(ctx context.Context, params UsageListEnvironmentSessionsParams, opts ...option.RequestOption) *pagination.SessionsPageAutoPager[EnvironmentSession] {
-	return pagination.NewSessionsPageAutoPager(r.ListEnvironmentSessions(ctx, params, opts...))
+func (r *UsageService) ListEnvironmentRuntimeRecordsAutoPaging(ctx context.Context, params UsageListEnvironmentRuntimeRecordsParams, opts ...option.RequestOption) *pagination.RecordsPageAutoPager[EnvironmentUsageRecord] {
+	return pagination.NewRecordsPageAutoPager(r.ListEnvironmentRuntimeRecords(ctx, params, opts...))
 }
 
-type EnvironmentSession struct {
-	// Environment session ID.
+// EnvironmentUsageRecord represents a record of an environment from start to stop.
+type EnvironmentUsageRecord struct {
+	// Environment usage record ID.
 	ID string `json:"id"`
-	// Time when the session was created.
+	// Time when the environment was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
-	// Environment class ID associated with the session.
+	// Environment class ID associated with the record.
 	EnvironmentClassID string `json:"environmentClassId"`
-	// Environment ID associated with the session.
+	// Environment ID associated with the record.
 	EnvironmentID string `json:"environmentId"`
-	// Project ID associated with the session (if available).
+	// Project ID associated with the environment (if available).
 	ProjectID string `json:"projectId"`
-	// Runner ID associated with the session.
+	// Runner ID associated with the environment.
 	RunnerID string `json:"runnerId"`
-	// Time when the session was stopped.
+	// Time when the environment was stopped.
 	StoppedAt time.Time `json:"stoppedAt" format:"date-time"`
-	// User ID that created the session.
-	UserID string                 `json:"userId"`
-	JSON   environmentSessionJSON `json:"-"`
+	// User ID is the ID of the user who created the environment associated with the
+	// record.
+	UserID string                     `json:"userId"`
+	JSON   environmentUsageRecordJSON `json:"-"`
 }
 
-// environmentSessionJSON contains the JSON metadata for the struct
-// [EnvironmentSession]
-type environmentSessionJSON struct {
+// environmentUsageRecordJSON contains the JSON metadata for the struct
+// [EnvironmentUsageRecord]
+type environmentUsageRecordJSON struct {
 	ID                 apijson.Field
 	CreatedAt          apijson.Field
 	EnvironmentClassID apijson.Field
@@ -145,30 +147,30 @@ type environmentSessionJSON struct {
 	ExtraFields        map[string]apijson.Field
 }
 
-func (r *EnvironmentSession) UnmarshalJSON(data []byte) (err error) {
+func (r *EnvironmentUsageRecord) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r environmentSessionJSON) RawJSON() string {
+func (r environmentUsageRecordJSON) RawJSON() string {
 	return r.raw
 }
 
-type UsageListEnvironmentSessionsParams struct {
+type UsageListEnvironmentRuntimeRecordsParams struct {
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
 	// Filter options.
-	Filter param.Field[UsageListEnvironmentSessionsParamsFilter] `json:"filter"`
+	Filter param.Field[UsageListEnvironmentRuntimeRecordsParamsFilter] `json:"filter"`
 	// Pagination options.
-	Pagination param.Field[UsageListEnvironmentSessionsParamsPagination] `json:"pagination"`
+	Pagination param.Field[UsageListEnvironmentRuntimeRecordsParamsPagination] `json:"pagination"`
 }
 
-func (r UsageListEnvironmentSessionsParams) MarshalJSON() (data []byte, err error) {
+func (r UsageListEnvironmentRuntimeRecordsParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// URLQuery serializes [UsageListEnvironmentSessionsParams]'s query parameters as
-// `url.Values`.
-func (r UsageListEnvironmentSessionsParams) URLQuery() (v url.Values) {
+// URLQuery serializes [UsageListEnvironmentRuntimeRecordsParams]'s query
+// parameters as `url.Values`.
+func (r UsageListEnvironmentRuntimeRecordsParams) URLQuery() (v url.Values) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -176,31 +178,31 @@ func (r UsageListEnvironmentSessionsParams) URLQuery() (v url.Values) {
 }
 
 // Filter options.
-type UsageListEnvironmentSessionsParamsFilter struct {
-	// Date range to query sessions within.
-	DateRange param.Field[UsageListEnvironmentSessionsParamsFilterDateRange] `json:"dateRange,required"`
-	// Optional project ID to filter sessions by.
+type UsageListEnvironmentRuntimeRecordsParamsFilter struct {
+	// Date range to query runtime records within.
+	DateRange param.Field[UsageListEnvironmentRuntimeRecordsParamsFilterDateRange] `json:"dateRange,required"`
+	// Optional project ID to filter runtime records by.
 	ProjectID param.Field[string] `json:"projectId"`
 }
 
-func (r UsageListEnvironmentSessionsParamsFilter) MarshalJSON() (data []byte, err error) {
+func (r UsageListEnvironmentRuntimeRecordsParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// Date range to query sessions within.
-type UsageListEnvironmentSessionsParamsFilterDateRange struct {
+// Date range to query runtime records within.
+type UsageListEnvironmentRuntimeRecordsParamsFilterDateRange struct {
 	// End time of the date range (exclusive).
 	EndTime param.Field[time.Time] `json:"endTime,required" format:"date-time"`
 	// Start time of the date range (inclusive).
 	StartTime param.Field[time.Time] `json:"startTime,required" format:"date-time"`
 }
 
-func (r UsageListEnvironmentSessionsParamsFilterDateRange) MarshalJSON() (data []byte, err error) {
+func (r UsageListEnvironmentRuntimeRecordsParamsFilterDateRange) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
 // Pagination options.
-type UsageListEnvironmentSessionsParamsPagination struct {
+type UsageListEnvironmentRuntimeRecordsParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
 	// PaginationResponse
 	Token param.Field[string] `json:"token"`
@@ -209,6 +211,6 @@ type UsageListEnvironmentSessionsParamsPagination struct {
 	PageSize param.Field[int64] `json:"pageSize"`
 }
 
-func (r UsageListEnvironmentSessionsParamsPagination) MarshalJSON() (data []byte, err error) {
+func (r UsageListEnvironmentRuntimeRecordsParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

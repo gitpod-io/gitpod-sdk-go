@@ -328,6 +328,30 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseCon
 	return
 }
 
+type GatewayInfo struct {
+	// Gateway represents a system gateway that provides access to services
+	Gateway shared.Gateway `json:"gateway"`
+	// latency is the round-trip time of the runner to the gateway in milliseconds.
+	Latency string          `json:"latency" format:"regex"`
+	JSON    gatewayInfoJSON `json:"-"`
+}
+
+// gatewayInfoJSON contains the JSON metadata for the struct [GatewayInfo]
+type gatewayInfoJSON struct {
+	Gateway     apijson.Field
+	Latency     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GatewayInfo) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r gatewayInfoJSON) RawJSON() string {
+	return r.raw
+}
+
 type LogLevel string
 
 const (
@@ -568,11 +592,12 @@ const (
 	RunnerProviderAwsEc2      RunnerProvider = "RUNNER_PROVIDER_AWS_EC2"
 	RunnerProviderLinuxHost   RunnerProvider = "RUNNER_PROVIDER_LINUX_HOST"
 	RunnerProviderDesktopMac  RunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
+	RunnerProviderManaged     RunnerProvider = "RUNNER_PROVIDER_MANAGED"
 )
 
 func (r RunnerProvider) IsKnown() bool {
 	switch r {
-	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac:
+	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged:
 		return true
 	}
 	return false
@@ -636,7 +661,9 @@ type RunnerStatus struct {
 	AdditionalInfo []shared.FieldValue `json:"additionalInfo"`
 	// capabilities is a list of capabilities the runner supports.
 	Capabilities []RunnerCapability `json:"capabilities"`
-	LogURL       string             `json:"logUrl"`
+	// gateway_info is information about the gateway to which the runner is connected.
+	GatewayInfo GatewayInfo `json:"gatewayInfo"`
+	LogURL      string      `json:"logUrl"`
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
@@ -645,7 +672,7 @@ type RunnerStatus struct {
 	// region is the region the runner is running in, if applicable.
 	Region        string `json:"region"`
 	SystemDetails string `json:"systemDetails"`
-	// Time when the status was last udpated.
+	// Time when the status was last updated.
 	UpdatedAt time.Time        `json:"updatedAt" format:"date-time"`
 	Version   string           `json:"version"`
 	JSON      runnerStatusJSON `json:"-"`
@@ -655,6 +682,7 @@ type RunnerStatus struct {
 type runnerStatusJSON struct {
 	AdditionalInfo apijson.Field
 	Capabilities   apijson.Field
+	GatewayInfo    apijson.Field
 	LogURL         apijson.Field
 	Message        apijson.Field
 	Phase          apijson.Field
@@ -929,8 +957,11 @@ type RunnerNewParams struct {
 	// The specific implementation type of the runner This field is optional for
 	// backwards compatibility but will be required in the future. When specified, kind
 	// must not be specified (will be deduced from provider)
-	Provider param.Field[RunnerProvider]  `json:"provider"`
-	Spec     param.Field[RunnerSpecParam] `json:"spec"`
+	Provider param.Field[RunnerProvider] `json:"provider"`
+	// The runner manager id specifies the runner manager for the managed runner. This
+	// field is mandatory for managed runners, otheriwse should not be set.
+	RunnerManagerID param.Field[string]          `json:"runnerManagerId" format:"uuid"`
+	Spec            param.Field[RunnerSpecParam] `json:"spec"`
 }
 
 func (r RunnerNewParams) MarshalJSON() (data []byte, err error) {

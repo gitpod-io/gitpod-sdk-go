@@ -121,6 +121,9 @@ type OrganizationPolicies struct {
 	MembersRequireProjects bool `json:"membersRequireProjects,required"`
 	// organization_id is the ID of the organization
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	// port_sharing_disabled controls whether port sharing is disabled in the
+	// organization
+	PortSharingDisabled bool `json:"portSharingDisabled,required"`
 	// maximum_environment_timeout controls the maximum timeout allowed for
 	// environments in seconds. 0 means no limit (never). Minimum duration is 30
 	// minutes.
@@ -140,6 +143,7 @@ type organizationPoliciesJSON struct {
 	MembersCreateProjects             apijson.Field
 	MembersRequireProjects            apijson.Field
 	OrganizationID                    apijson.Field
+	PortSharingDisabled               apijson.Field
 	MaximumEnvironmentTimeout         apijson.Field
 	raw                               string
 	ExtraFields                       map[string]apijson.Field
@@ -215,6 +219,9 @@ type OrganizationPolicyUpdateParams struct {
 	// members_require_projects controls whether environments can only be created from
 	// projects by non-admin users
 	MembersRequireProjects param.Field[bool] `json:"membersRequireProjects"`
+	// port_sharing_disabled controls whether port sharing is disabled in the
+	// organization
+	PortSharingDisabled param.Field[bool] `json:"portSharingDisabled"`
 }
 
 func (r OrganizationPolicyUpdateParams) MarshalJSON() (data []byte, err error) {

@@ -7,14 +7,13 @@ import (
 	"errors"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestUsageListEnvironmentRuntimeRecordsWithOptionalParams(t *testing.T) {
+func TestGatewayListWithOptionalParams(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -27,17 +26,10 @@ func TestUsageListEnvironmentRuntimeRecordsWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Usage.ListEnvironmentRuntimeRecords(context.TODO(), gitpod.UsageListEnvironmentRuntimeRecordsParams{
+	_, err := client.Gateways.List(context.TODO(), gitpod.GatewayListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Filter: gitpod.F(gitpod.UsageListEnvironmentRuntimeRecordsParamsFilter{
-			DateRange: gitpod.F(gitpod.UsageListEnvironmentRuntimeRecordsParamsFilterDateRange{
-				EndTime:   gitpod.F(time.Now()),
-				StartTime: gitpod.F(time.Now()),
-			}),
-			ProjectID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		}),
-		Pagination: gitpod.F(gitpod.UsageListEnvironmentRuntimeRecordsParamsPagination{
+		Pagination: gitpod.F(gitpod.GatewayListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),

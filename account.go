@@ -120,6 +120,30 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 	return
 }
 
+// Lists organizations that the currently authenticated account can join.
+//
+// Use this method to:
+//
+// - Discover organizations associated with the account's email domain.
+// - Allow users to join existing organizations.
+// - Display potential organizations during onboarding.
+//
+// ### Examples
+//
+// - List joinable organizations:
+//
+//	Retrieves a list of organizations the account can join.
+//
+//	```yaml
+//	{}
+//	```
+func (r *AccountService) ListJoinableOrganizations(ctx context.Context, params AccountListJoinableOrganizationsParams, opts ...option.RequestOption) (res *AccountListJoinableOrganizationsResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.AccountService/ListJoinableOrganizations"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
 // Lists available login providers with optional filtering.
 //
 // Use this method to:
@@ -380,8 +404,11 @@ type Account struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt   time.Time              `json:"updatedAt,required" format:"date-time"`
-	AvatarURL   string                 `json:"avatarUrl"`
+	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	AvatarURL string    `json:"avatarUrl"`
+	// joinables is deprecated. Use ListJoinableOrganizations instead.
+	//
+	// Deprecated: deprecated
 	Joinables   []JoinableOrganization `json:"joinables"`
 	Memberships []AccountMembership    `json:"memberships"`
 	// organization_id is the ID of the organization the account is owned by if it's
@@ -552,6 +579,27 @@ func (r accountGetSSOLoginURLResponseJSON) RawJSON() string {
 	return r.raw
 }
 
+type AccountListJoinableOrganizationsResponse struct {
+	JoinableOrganizations []JoinableOrganization                       `json:"joinableOrganizations"`
+	JSON                  accountListJoinableOrganizationsResponseJSON `json:"-"`
+}
+
+// accountListJoinableOrganizationsResponseJSON contains the JSON metadata for the
+// struct [AccountListJoinableOrganizationsResponse]
+type accountListJoinableOrganizationsResponseJSON struct {
+	JoinableOrganizations apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *AccountListJoinableOrganizationsResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountListJoinableOrganizationsResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountGetParams struct {
 	Empty param.Field[bool] `json:"empty"`
 }
@@ -577,6 +625,25 @@ type AccountGetSSOLoginURLParams struct {
 
 func (r AccountGetSSOLoginURLParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type AccountListJoinableOrganizationsParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	Empty    param.Field[bool]   `json:"empty"`
+}
+
+func (r AccountListJoinableOrganizationsParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// URLQuery serializes [AccountListJoinableOrganizationsParams]'s query parameters
+// as `url.Values`.
+func (r AccountListJoinableOrganizationsParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type AccountListLoginProvidersParams struct {

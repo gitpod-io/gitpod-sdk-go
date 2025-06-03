@@ -186,6 +186,9 @@ type RunnerConfigurationValidateParamsScmIntegration struct {
 	// id is the unique identifier of the SCM integration
 	ID   param.Field[string] `json:"id"`
 	Host param.Field[string] `json:"host"`
+	// issuer_url can be set to override the authentication provider URL, if it doesn't
+	// match the SCM host.
+	IssuerURL param.Field[string] `json:"issuerUrl"`
 	// oauth_client_id is the OAuth app's client ID, if OAuth is configured. If
 	// configured, oauth_client_secret must also be set.
 	OAuthClientID param.Field[string] `json:"oauthClientId"`

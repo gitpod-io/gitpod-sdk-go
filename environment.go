@@ -464,6 +464,22 @@ func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParam
 	return
 }
 
+// Unarchives an environment.
+//
+// ### Examples
+//
+// - Unarchive an environment:
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
+func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnarchiveParams, opts ...option.RequestOption) (res *EnvironmentUnarchiveResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/UnarchiveEnvironment"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Admission level describes who can access an environment instance and its ports.
 type AdmissionLevel string
 
@@ -565,6 +581,9 @@ type EnvironmentMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
+	// Time when the Environment was archived. If not set, the environment is not
+	// archived.
+	ArchivedAt time.Time `json:"archivedAt" format:"date-time"`
 	// Time when the Environment was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
@@ -591,6 +610,7 @@ type EnvironmentMetadata struct {
 // [EnvironmentMetadata]
 type environmentMetadataJSON struct {
 	Annotations        apijson.Field
+	ArchivedAt         apijson.Field
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
 	LastStartedAt      apijson.Field
@@ -1956,6 +1976,8 @@ type EnvironmentStartResponse = interface{}
 
 type EnvironmentStopResponse = interface{}
 
+type EnvironmentUnarchiveResponse = interface{}
+
 type EnvironmentNewParams struct {
 	// spec is the configuration of the environment that's required for the to start
 	// the environment
@@ -2111,6 +2133,8 @@ func (r EnvironmentListParams) URLQuery() (v url.Values) {
 }
 
 type EnvironmentListParamsFilter struct {
+	// archival_status filters the response based on environment archive status
+	ArchivalStatus param.Field[EnvironmentListParamsFilterArchivalStatus] `json:"archivalStatus"`
 	// creator_ids filters the response to only Environments created by specified
 	// members
 	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
@@ -2129,6 +2153,24 @@ type EnvironmentListParamsFilter struct {
 
 func (r EnvironmentListParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// archival_status filters the response based on environment archive status
+type EnvironmentListParamsFilterArchivalStatus string
+
+const (
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusUnspecified EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_UNSPECIFIED"
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusActive      EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_ACTIVE"
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusArchived    EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_ARCHIVED"
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusAll         EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_ALL"
+)
+
+func (r EnvironmentListParamsFilterArchivalStatus) IsKnown() bool {
+	switch r {
+	case EnvironmentListParamsFilterArchivalStatusArchivalStatusUnspecified, EnvironmentListParamsFilterArchivalStatusArchivalStatusActive, EnvironmentListParamsFilterArchivalStatusArchivalStatusArchived, EnvironmentListParamsFilterArchivalStatusArchivalStatusAll:
+		return true
+	}
+	return false
 }
 
 // pagination contains the pagination options for listing environments
@@ -2223,5 +2265,16 @@ type EnvironmentStopParams struct {
 }
 
 func (r EnvironmentStopParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentUnarchiveParams struct {
+	// environment_id specifies the environment to unarchive.
+	//
+	// +required
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+}
+
+func (r EnvironmentUnarchiveParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
