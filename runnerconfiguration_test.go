@@ -43,6 +43,7 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 		ScmIntegration: gitpod.F(gitpod.RunnerConfigurationValidateParamsScmIntegration{
 			ID:                         gitpod.F("integration-id"),
 			Host:                       gitpod.F("github.com"),
+			IssuerURL:                  gitpod.F("issuerUrl"),
 			OAuthClientID:              gitpod.F("client_id"),
 			OAuthEncryptedClientSecret: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
 			OAuthPlaintextClientSecret: gitpod.F("client_secret"),

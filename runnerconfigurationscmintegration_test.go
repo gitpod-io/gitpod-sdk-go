@@ -28,6 +28,7 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.New(context.TODO(), gitpod.RunnerConfigurationScmIntegrationNewParams{
 		Host:                       gitpod.F("github.com"),
+		IssuerURL:                  gitpod.F("issuerUrl"),
 		OAuthClientID:              gitpod.F("client_id"),
 		OAuthPlaintextClientSecret: gitpod.F("client_secret"),
 		Pat:                        gitpod.F(true),
@@ -83,6 +84,7 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 	)
 	_, err := client.Runners.Configurations.ScmIntegrations.Update(context.TODO(), gitpod.RunnerConfigurationScmIntegrationUpdateParams{
 		ID:                         gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		IssuerURL:                  gitpod.F("issuerUrl"),
 		OAuthClientID:              gitpod.F("new_client_id"),
 		OAuthPlaintextClientSecret: gitpod.F("new_client_secret"),
 		Pat:                        gitpod.F(true),

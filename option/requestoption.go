@@ -182,7 +182,6 @@ func WithJSONSet(key string, value interface{}) RequestOption {
 			if err != nil {
 				return err
 			}
-			return nil
 		} else {
 			return fmt.Errorf("cannot use WithJSONSet on a body that is not serialized as *bytes.Buffer")
 		}
@@ -263,7 +262,7 @@ func WithRequestTimeout(dur time.Duration) RequestOption {
 // environment to be the "production" environment. An environment specifies which base URL
 // to use by default.
 func WithEnvironmentProduction() RequestOption {
-	return WithBaseURL("https://app.gitpod.io/api/")
+	return requestconfig.WithDefaultBaseURL("https://app.gitpod.io/api/")
 }
 
 // WithBearerToken returns a RequestOption that sets the client setting "bearer_token".

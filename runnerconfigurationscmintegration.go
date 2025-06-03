@@ -235,8 +235,13 @@ type ScmIntegrationOAuthConfig struct {
 	ClientID string `json:"clientId"`
 	// encrypted_client_secret is the OAuth app's secret encrypted with the runner's
 	// public key.
-	EncryptedClientSecret string                        `json:"encryptedClientSecret" format:"byte"`
-	JSON                  scmIntegrationOAuthConfigJSON `json:"-"`
+	EncryptedClientSecret string `json:"encryptedClientSecret" format:"byte"`
+	// issuer_url is used to override the authentication provider URL, if it doesn't
+	// match the SCM host.
+	//
+	// +optional if not set, this account is owned by the installation.
+	IssuerURL string                        `json:"issuerUrl"`
+	JSON      scmIntegrationOAuthConfigJSON `json:"-"`
 }
 
 // scmIntegrationOAuthConfigJSON contains the JSON metadata for the struct
@@ -244,6 +249,7 @@ type ScmIntegrationOAuthConfig struct {
 type scmIntegrationOAuthConfigJSON struct {
 	ClientID              apijson.Field
 	EncryptedClientSecret apijson.Field
+	IssuerURL             apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
@@ -305,6 +311,9 @@ type RunnerConfigurationScmIntegrationDeleteResponse = interface{}
 
 type RunnerConfigurationScmIntegrationNewParams struct {
 	Host param.Field[string] `json:"host"`
+	// issuer_url can be set to override the authentication provider URL, if it doesn't
+	// match the SCM host.
+	IssuerURL param.Field[string] `json:"issuerUrl"`
 	// oauth_client_id is the OAuth app's client ID, if OAuth is configured. If
 	// configured, oauth_plaintext_client_secret must also be set.
 	OAuthClientID param.Field[string] `json:"oauthClientId"`
@@ -332,6 +341,9 @@ func (r RunnerConfigurationScmIntegrationGetParams) MarshalJSON() (data []byte, 
 
 type RunnerConfigurationScmIntegrationUpdateParams struct {
 	ID param.Field[string] `json:"id" format:"uuid"`
+	// issuer_url can be set to override the authentication provider URL, if it doesn't
+	// match the SCM host.
+	IssuerURL param.Field[string] `json:"issuerUrl"`
 	// oauth_client_id can be set to update the OAuth app's client ID. If an empty
 	// string is set, the OAuth configuration will be removed (regardless of whether a
 	// client secret is set), and any existing Host Authentication Tokens for the SCM

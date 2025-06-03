@@ -20,6 +20,7 @@ type Client struct {
 	Editors       *EditorService
 	Environments  *EnvironmentService
 	Events        *EventService
+	Gateways      *GatewayService
 	Groups        *GroupService
 	Identity      *IdentityService
 	Organizations *OrganizationService
@@ -56,6 +57,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Events = NewEventService(opts...)
+	r.Gateways = NewGatewayService(opts...)
 	r.Groups = NewGroupService(opts...)
 	r.Identity = NewIdentityService(opts...)
 	r.Organizations = NewOrganizationService(opts...)

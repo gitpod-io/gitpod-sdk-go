@@ -62,6 +62,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		MaximumRunningEnvironmentsPerUser: gitpod.F("5"),
 		MembersCreateProjects:             gitpod.F(true),
 		MembersRequireProjects:            gitpod.F(true),
+		PortSharingDisabled:               gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

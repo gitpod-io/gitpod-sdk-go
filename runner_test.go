@@ -27,9 +27,10 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-		Kind:     gitpod.F(gitpod.RunnerKindUnspecified),
-		Name:     gitpod.F("Production Runner"),
-		Provider: gitpod.F(gitpod.RunnerProviderAwsEc2),
+		Kind:            gitpod.F(gitpod.RunnerKindUnspecified),
+		Name:            gitpod.F("Production Runner"),
+		Provider:        gitpod.F(gitpod.RunnerProviderAwsEc2),
+		RunnerManagerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
 				AutoUpdate:                    gitpod.F(true),
