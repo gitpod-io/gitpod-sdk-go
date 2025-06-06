@@ -2001,12 +2001,21 @@ type EnvironmentUpdateParams struct {
 	// environment_id specifies which environment should be updated.
 	//
 	// +required
-	EnvironmentID param.Field[string]                      `json:"environmentId" format:"uuid"`
-	Metadata      param.Field[interface{}]                 `json:"metadata"`
-	Spec          param.Field[EnvironmentUpdateParamsSpec] `json:"spec"`
+	EnvironmentID param.Field[string]                          `json:"environmentId" format:"uuid"`
+	Metadata      param.Field[EnvironmentUpdateParamsMetadata] `json:"metadata"`
+	Spec          param.Field[EnvironmentUpdateParamsSpec]     `json:"spec"`
 }
 
 func (r EnvironmentUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentUpdateParamsMetadata struct {
+	// name is the user-defined display name of the environment
+	Name param.Field[string] `json:"name"`
+}
+
+func (r EnvironmentUpdateParamsMetadata) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
