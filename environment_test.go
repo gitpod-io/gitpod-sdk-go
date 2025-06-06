@@ -141,7 +141,9 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Environments.Update(context.TODO(), gitpod.EnvironmentUpdateParams{
 		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
-		Metadata:      gitpod.F[any](map[string]interface{}{}),
+		Metadata: gitpod.F(gitpod.EnvironmentUpdateParamsMetadata{
+			Name: gitpod.F("name"),
+		}),
 		Spec: gitpod.F(gitpod.EnvironmentUpdateParamsSpec{
 			AutomationsFile: gitpod.F(gitpod.EnvironmentUpdateParamsSpecAutomationsFile{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
