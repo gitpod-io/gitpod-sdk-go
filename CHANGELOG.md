@@ -1,5 +1,52 @@
 # Changelog
 
+## 0.5.0 (2025-06-06)
+
+Full Changelog: [v0.4.0...v0.5.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.4.0...v0.5.0)
+
+### Features
+
+* **api:** manual updates ([04616ff](https://github.com/gitpod-io/gitpod-sdk-go/commit/04616fff8d30f184d182f2f446c9d91ee82b896b))
+* **api:** manual updates ([ccca7e5](https://github.com/gitpod-io/gitpod-sdk-go/commit/ccca7e5f582b1cb79fa8f18111ac2d59f3c8f42e))
+* **api:** manual updates ([60b3e5e](https://github.com/gitpod-io/gitpod-sdk-go/commit/60b3e5e20df48bbb2e6d544ccbd266bf418eea7c))
+* **api:** manual updates ([3ecd0c4](https://github.com/gitpod-io/gitpod-sdk-go/commit/3ecd0c4894b471a99b52da94d98ee4b1c12cde30))
+* **api:** manual updates ([77f5109](https://github.com/gitpod-io/gitpod-sdk-go/commit/77f510928da90a197e8e556203677aa1a5838b9b))
+* **client:** add support for reading base URL from environment variable ([e074cd4](https://github.com/gitpod-io/gitpod-sdk-go/commit/e074cd4d1977e7d9c861c9a08a5e8fd0b182d944))
+* **client:** allow custom baseurls without trailing slash ([#55](https://github.com/gitpod-io/gitpod-sdk-go/issues/55)) ([20b4808](https://github.com/gitpod-io/gitpod-sdk-go/commit/20b480853025ee9b5402ae5a361010c7de9eabdc))
+* **client:** improve default client options support ([#57](https://github.com/gitpod-io/gitpod-sdk-go/issues/57)) ([0cb0d29](https://github.com/gitpod-io/gitpod-sdk-go/commit/0cb0d293a64defd394978cd2b4da6cb006753a69))
+* **client:** support custom http clients ([#65](https://github.com/gitpod-io/gitpod-sdk-go/issues/65)) ([ba2780f](https://github.com/gitpod-io/gitpod-sdk-go/commit/ba2780f5173f3e569527a24e9151e258e90df509))
+
+
+### Bug Fixes
+
+* **client:** return error on bad custom url instead of panic ([#64](https://github.com/gitpod-io/gitpod-sdk-go/issues/64)) ([656a0d1](https://github.com/gitpod-io/gitpod-sdk-go/commit/656a0d137cfa42afa6d540d80d306d254f4841aa))
+* **client:** unmarshal stream events into fresh memory ([#63](https://github.com/gitpod-io/gitpod-sdk-go/issues/63)) ([9cf0811](https://github.com/gitpod-io/gitpod-sdk-go/commit/9cf08112fe7b5e702311882b79f167956b09753f))
+* handle empty bodies in WithJSONSet ([6155e91](https://github.com/gitpod-io/gitpod-sdk-go/commit/6155e915016da00b885ed17f2452e0b48e1e4fd6))
+* **pagination:** handle errors when applying options ([8853449](https://github.com/gitpod-io/gitpod-sdk-go/commit/8853449c7377b7d2976647e4f84598513394b4ab))
+* **test:** return early after test failure ([#61](https://github.com/gitpod-io/gitpod-sdk-go/issues/61)) ([0295d21](https://github.com/gitpod-io/gitpod-sdk-go/commit/0295d214d2934e8d4789883255885d3e5ea474c9))
+
+
+### Chores
+
+* add request options to client tests ([#60](https://github.com/gitpod-io/gitpod-sdk-go/issues/60)) ([b575336](https://github.com/gitpod-io/gitpod-sdk-go/commit/b5753364f5bc6c5617205b2145ade577bc43ac72))
+* **ci:** add timeout thresholds for CI jobs ([41d7ceb](https://github.com/gitpod-io/gitpod-sdk-go/commit/41d7cebf060b9a6d6f432d2caa6a82032ca3408c))
+* **ci:** only use depot for staging repos ([9fbbeb1](https://github.com/gitpod-io/gitpod-sdk-go/commit/9fbbeb1fd88a3dc49943ef661c1d1c39da956fa2))
+* **docs:** document pre-request options ([f2e2e2e](https://github.com/gitpod-io/gitpod-sdk-go/commit/f2e2e2e6286c2641387a0fc11b7ada23d8afc9fc))
+* **docs:** improve security documentation ([#59](https://github.com/gitpod-io/gitpod-sdk-go/issues/59)) ([2d3d9e7](https://github.com/gitpod-io/gitpod-sdk-go/commit/2d3d9e7bdb95db8579085db1a23fa7f558b3ab2b))
+* fix typos ([#62](https://github.com/gitpod-io/gitpod-sdk-go/issues/62)) ([2ab745f](https://github.com/gitpod-io/gitpod-sdk-go/commit/2ab745f9136f7c6f4528f05e26c1c22a4b15b959))
+* **internal:** codegen related update ([a14dae0](https://github.com/gitpod-io/gitpod-sdk-go/commit/a14dae09ffdfec9ef7e1cb3c4b0c3ead27b14e14))
+* **internal:** codegen related update ([#56](https://github.com/gitpod-io/gitpod-sdk-go/issues/56)) ([dc521f6](https://github.com/gitpod-io/gitpod-sdk-go/commit/dc521f608d7475d2d98f64fe118433450ab5b2af))
+* **internal:** expand CI branch coverage ([7d00669](https://github.com/gitpod-io/gitpod-sdk-go/commit/7d00669f67ba5d7007feceb6f25863de34a237df))
+* **internal:** reduce CI branch coverage ([3b674ac](https://github.com/gitpod-io/gitpod-sdk-go/commit/3b674ac888efc38b3713547841770b6c77af2ac8))
+* **internal:** remove extra empty newlines ([#58](https://github.com/gitpod-io/gitpod-sdk-go/issues/58)) ([80ff63b](https://github.com/gitpod-io/gitpod-sdk-go/commit/80ff63b57f6df81750f4acaee91003902d2ddae6))
+* **tests:** improve enum examples ([#66](https://github.com/gitpod-io/gitpod-sdk-go/issues/66)) ([359070f](https://github.com/gitpod-io/gitpod-sdk-go/commit/359070f05052c648ae75a806ddd037c8eb28dbe7))
+
+
+### Documentation
+
+* update documentation links to be more uniform ([df86410](https://github.com/gitpod-io/gitpod-sdk-go/commit/df86410ba6bf256e7dc7ebd8b41fc5e15d762fa0))
+* update URLs from stainlessapi.com to stainless.com ([#53](https://github.com/gitpod-io/gitpod-sdk-go/issues/53)) ([a5f0af7](https://github.com/gitpod-io/gitpod-sdk-go/commit/a5f0af754b7fb4ef5d967aa53ce3ad22648826be))
+
 ## 0.4.0 (2025-02-21)
 
 Full Changelog: [v0.3.2...v0.4.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.3.2...v0.4.0)
