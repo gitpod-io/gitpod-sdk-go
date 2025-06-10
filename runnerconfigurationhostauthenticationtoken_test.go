@@ -33,7 +33,7 @@ func TestRunnerConfigurationHostAuthenticationTokenNewWithOptionalParams(t *test
 		Host:         gitpod.F("github.com"),
 		RefreshToken: gitpod.F("ghr_xxxxxxxxxxxx"),
 		RunnerID:     gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		Source:       gitpod.F(gitpod.HostAuthenticationTokenSourceUnspecified),
+		Source:       gitpod.F(gitpod.HostAuthenticationTokenSourceOAuth),
 		UserID:       gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 	})
 	if err != nil {

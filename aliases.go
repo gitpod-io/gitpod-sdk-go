@@ -55,6 +55,11 @@ type FieldValue = shared.FieldValue
 // This is an alias to an internal type.
 type FieldValueParam = shared.FieldValueParam
 
+// Gateway represents a system gateway that provides access to services
+//
+// This is an alias to an internal type.
+type Gateway = shared.Gateway
+
 // This is an alias to an internal type.
 type OrganizationRole = shared.OrganizationRole
 
@@ -87,6 +92,9 @@ const PrincipalEnvironment = shared.PrincipalEnvironment
 
 // This is an alias to an internal value.
 const PrincipalServiceAccount = shared.PrincipalServiceAccount
+
+// This is an alias to an internal value.
+const PrincipalRunnerManager = shared.PrincipalRunnerManager
 
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn

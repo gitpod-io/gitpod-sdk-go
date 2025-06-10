@@ -20,25 +20,36 @@ type Client struct {
 	Editors       *EditorService
 	Environments  *EnvironmentService
 	Events        *EventService
+	Gateways      *GatewayService
 	Groups        *GroupService
 	Identity      *IdentityService
 	Organizations *OrganizationService
 	Projects      *ProjectService
 	Runners       *RunnerService
 	Secrets       *SecretService
+	Usage         *UsageService
 	Users         *UserService
 }
 
-// NewClient generates a new client with the default option read from the
-// environment (GITPOD_API_KEY). The option passed in as arguments are applied
-// after these default arguments, and all option will be passed down to the
-// services and requests that this client makes.
-func NewClient(opts ...option.RequestOption) (r *Client) {
+// DefaultClientOptions read from the environment (GITPOD_API_KEY,
+// GITPOD_BASE_URL). This should be used to initialize new clients.
+func DefaultClientOptions() []option.RequestOption {
 	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
+	if o, ok := os.LookupEnv("GITPOD_BASE_URL"); ok {
+		defaults = append(defaults, option.WithBaseURL(o))
+	}
 	if o, ok := os.LookupEnv("GITPOD_API_KEY"); ok {
 		defaults = append(defaults, option.WithBearerToken(o))
 	}
-	opts = append(defaults, opts...)
+	return defaults
+}
+
+// NewClient generates a new client with the default option read from the
+// environment (GITPOD_API_KEY, GITPOD_BASE_URL). The option passed in as arguments
+// are applied after these default arguments, and all option will be passed down to
+// the services and requests that this client makes.
+func NewClient(opts ...option.RequestOption) (r *Client) {
+	opts = append(DefaultClientOptions(), opts...)
 
 	r = &Client{Options: opts}
 
@@ -46,12 +57,14 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Events = NewEventService(opts...)
+	r.Gateways = NewGatewayService(opts...)
 	r.Groups = NewGroupService(opts...)
 	r.Identity = NewIdentityService(opts...)
 	r.Organizations = NewOrganizationService(opts...)
 	r.Projects = NewProjectService(opts...)
 	r.Runners = NewRunnerService(opts...)
 	r.Secrets = NewSecretService(opts...)
+	r.Usage = NewUsageService(opts...)
 	r.Users = NewUserService(opts...)
 
 	return

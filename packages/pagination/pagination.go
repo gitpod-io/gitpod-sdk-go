@@ -65,7 +65,10 @@ func (r *DomainVerificationsPage[T]) GetNextPage() (res *DomainVerificationsPage
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -183,7 +186,10 @@ func (r *EditorsPage[T]) GetNextPage() (res *EditorsPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -301,7 +307,10 @@ func (r *EntriesPage[T]) GetNextPage() (res *EntriesPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -420,7 +429,10 @@ func (r *EnvironmentClassesPage[T]) GetNextPage() (res *EnvironmentClassesPage[T
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -539,7 +551,10 @@ func (r *EnvironmentsPage[T]) GetNextPage() (res *EnvironmentsPage[T], err error
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -603,6 +618,127 @@ func (r *EnvironmentsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type GatewaysPagePagination struct {
+	NextToken string                     `json:"nextToken"`
+	JSON      gatewaysPagePaginationJSON `json:"-"`
+}
+
+// gatewaysPagePaginationJSON contains the JSON metadata for the struct
+// [GatewaysPagePagination]
+type gatewaysPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GatewaysPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r gatewaysPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type GatewaysPage[T any] struct {
+	Gateways   []T                    `json:"gateways"`
+	Pagination GatewaysPagePagination `json:"pagination"`
+	JSON       gatewaysPageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// gatewaysPageJSON contains the JSON metadata for the struct [GatewaysPage[T]]
+type gatewaysPageJSON struct {
+	Gateways    apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GatewaysPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r gatewaysPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *GatewaysPage[T]) GetNextPage() (res *GatewaysPage[T], err error) {
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *GatewaysPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &GatewaysPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type GatewaysPageAutoPager[T any] struct {
+	page *GatewaysPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewGatewaysPageAutoPager[T any](page *GatewaysPage[T], err error) *GatewaysPageAutoPager[T] {
+	return &GatewaysPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *GatewaysPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Gateways) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Gateways) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Gateways) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Gateways[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *GatewaysPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *GatewaysPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *GatewaysPageAutoPager[T]) Index() int {
+	return r.run
+}
+
 type GroupsPagePagination struct {
 	NextToken string                   `json:"nextToken"`
 	JSON      groupsPagePaginationJSON `json:"-"`
@@ -657,7 +793,10 @@ func (r *GroupsPage[T]) GetNextPage() (res *GroupsPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -776,7 +915,10 @@ func (r *IntegrationsPage[T]) GetNextPage() (res *IntegrationsPage[T], err error
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -895,7 +1037,10 @@ func (r *LoginProvidersPage[T]) GetNextPage() (res *LoginProvidersPage[T], err e
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1013,7 +1158,10 @@ func (r *MembersPage[T]) GetNextPage() (res *MembersPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1077,125 +1225,6 @@ func (r *MembersPageAutoPager[T]) Index() int {
 	return r.run
 }
 
-type OrganizationsPagePagination struct {
-	NextToken string                          `json:"nextToken"`
-	JSON      organizationsPagePaginationJSON `json:"-"`
-}
-
-// organizationsPagePaginationJSON contains the JSON metadata for the struct
-// [OrganizationsPagePagination]
-type organizationsPagePaginationJSON struct {
-	NextToken   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *OrganizationsPagePagination) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationsPagePaginationJSON) RawJSON() string {
-	return r.raw
-}
-
-type OrganizationsPage[T any] struct {
-	Organizations []T                         `json:"organizations"`
-	Pagination    OrganizationsPagePagination `json:"pagination"`
-	JSON          organizationsPageJSON       `json:"-"`
-	cfg           *requestconfig.RequestConfig
-	res           *http.Response
-}
-
-// organizationsPageJSON contains the JSON metadata for the struct
-// [OrganizationsPage[T]]
-type organizationsPageJSON struct {
-	Organizations apijson.Field
-	Pagination    apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *OrganizationsPage[T]) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r organizationsPageJSON) RawJSON() string {
-	return r.raw
-}
-
-// GetNextPage returns the next page as defined by this pagination style. When
-// there is no next page, this function will return a 'nil' for the page value, but
-// will not return an error
-func (r *OrganizationsPage[T]) GetNextPage() (res *OrganizationsPage[T], err error) {
-	next := r.Pagination.NextToken
-	if len(next) == 0 {
-		return nil, nil
-	}
-	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
-	var raw *http.Response
-	cfg.ResponseInto = &raw
-	cfg.ResponseBodyInto = &res
-	err = cfg.Execute()
-	if err != nil {
-		return nil, err
-	}
-	res.SetPageConfig(cfg, raw)
-	return res, nil
-}
-
-func (r *OrganizationsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
-	if r == nil {
-		r = &OrganizationsPage[T]{}
-	}
-	r.cfg = cfg
-	r.res = res
-}
-
-type OrganizationsPageAutoPager[T any] struct {
-	page *OrganizationsPage[T]
-	cur  T
-	idx  int
-	run  int
-	err  error
-}
-
-func NewOrganizationsPageAutoPager[T any](page *OrganizationsPage[T], err error) *OrganizationsPageAutoPager[T] {
-	return &OrganizationsPageAutoPager[T]{
-		page: page,
-		err:  err,
-	}
-}
-
-func (r *OrganizationsPageAutoPager[T]) Next() bool {
-	if r.page == nil || len(r.page.Organizations) == 0 {
-		return false
-	}
-	if r.idx >= len(r.page.Organizations) {
-		r.idx = 0
-		r.page, r.err = r.page.GetNextPage()
-		if r.err != nil || r.page == nil || len(r.page.Organizations) == 0 {
-			return false
-		}
-	}
-	r.cur = r.page.Organizations[r.idx]
-	r.run += 1
-	r.idx += 1
-	return true
-}
-
-func (r *OrganizationsPageAutoPager[T]) Current() T {
-	return r.cur
-}
-
-func (r *OrganizationsPageAutoPager[T]) Err() error {
-	return r.err
-}
-
-func (r *OrganizationsPageAutoPager[T]) Index() int {
-	return r.run
-}
-
 type PersonalAccessTokensPagePagination struct {
 	NextToken string                                 `json:"nextToken"`
 	JSON      personalAccessTokensPagePaginationJSON `json:"-"`
@@ -1251,7 +1280,10 @@ func (r *PersonalAccessTokensPage[T]) GetNextPage() (res *PersonalAccessTokensPa
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1369,7 +1401,10 @@ func (r *PoliciesPage[T]) GetNextPage() (res *PoliciesPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1487,7 +1522,10 @@ func (r *ProjectsPage[T]) GetNextPage() (res *ProjectsPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1551,6 +1589,127 @@ func (r *ProjectsPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type RecordsPagePagination struct {
+	NextToken string                    `json:"nextToken"`
+	JSON      recordsPagePaginationJSON `json:"-"`
+}
+
+// recordsPagePaginationJSON contains the JSON metadata for the struct
+// [RecordsPagePagination]
+type recordsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RecordsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r recordsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type RecordsPage[T any] struct {
+	Pagination RecordsPagePagination `json:"pagination"`
+	Records    []T                   `json:"records"`
+	JSON       recordsPageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// recordsPageJSON contains the JSON metadata for the struct [RecordsPage[T]]
+type recordsPageJSON struct {
+	Pagination  apijson.Field
+	Records     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RecordsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r recordsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *RecordsPage[T]) GetNextPage() (res *RecordsPage[T], err error) {
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *RecordsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &RecordsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type RecordsPageAutoPager[T any] struct {
+	page *RecordsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewRecordsPageAutoPager[T any](page *RecordsPage[T], err error) *RecordsPageAutoPager[T] {
+	return &RecordsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *RecordsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Records) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Records) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Records) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Records[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *RecordsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *RecordsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *RecordsPageAutoPager[T]) Index() int {
+	return r.run
+}
+
 type RunnersPagePagination struct {
 	NextToken string                    `json:"nextToken"`
 	JSON      runnersPagePaginationJSON `json:"-"`
@@ -1605,7 +1764,10 @@ func (r *RunnersPage[T]) GetNextPage() (res *RunnersPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1723,7 +1885,10 @@ func (r *SecretsPage[T]) GetNextPage() (res *SecretsPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1841,7 +2006,10 @@ func (r *ServicesPage[T]) GetNextPage() (res *ServicesPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -1960,7 +2128,10 @@ func (r *SSOConfigurationsPage[T]) GetNextPage() (res *SSOConfigurationsPage[T],
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -2079,7 +2250,10 @@ func (r *TaskExecutionsPage[T]) GetNextPage() (res *TaskExecutionsPage[T], err e
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -2197,7 +2371,10 @@ func (r *TasksPage[T]) GetNextPage() (res *TasksPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res
@@ -2315,7 +2492,10 @@ func (r *TokensPage[T]) GetNextPage() (res *TokensPage[T], err error) {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	cfg.Apply(option.WithQuery("token", next))
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw
 	cfg.ResponseBodyInto = &res

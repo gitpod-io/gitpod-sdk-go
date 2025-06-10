@@ -57,7 +57,8 @@ func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...o
 	return
 }
 
-// Lists all available code editors.
+// Lists all available code editors, optionally filtered to those allowed in an
+// organization.
 //
 // Use this method to:
 //
@@ -76,6 +77,18 @@ func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...o
 //	pagination:
 //	  pageSize: 20
 //	```
+//
+// - List editors available to the organization:
+//
+//	Shows all available editors that are allowed by the policies enforced in the
+//	organization with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	filter:
+//	  allowedByPolicy: true
+//	```
 func (r *EditorService) List(ctx context.Context, params EditorListParams, opts ...option.RequestOption) (res *pagination.EditorsPage[Editor], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -93,7 +106,8 @@ func (r *EditorService) List(ctx context.Context, params EditorListParams, opts 
 	return res, nil
 }
 
-// Lists all available code editors.
+// Lists all available code editors, optionally filtered to those allowed in an
+// organization.
 //
 // Use this method to:
 //
@@ -111,6 +125,18 @@ func (r *EditorService) List(ctx context.Context, params EditorListParams, opts 
 //	```yaml
 //	pagination:
 //	  pageSize: 20
+//	```
+//
+// - List editors available to the organization:
+//
+//	Shows all available editors that are allowed by the policies enforced in the
+//	organization with pagination.
+//
+//	```yaml
+//	pagination:
+//	  pageSize: 20
+//	filter:
+//	  allowedByPolicy: true
 //	```
 func (r *EditorService) ListAutoPaging(ctx context.Context, params EditorListParams, opts ...option.RequestOption) *pagination.EditorsPageAutoPager[Editor] {
 	return pagination.NewEditorsPageAutoPager(r.List(ctx, params, opts...))
@@ -231,6 +257,8 @@ func (r EditorGetParams) MarshalJSON() (data []byte, err error) {
 type EditorListParams struct {
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
+	// filter contains the filter options for listing editors
+	Filter param.Field[EditorListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing environments
 	Pagination param.Field[EditorListParamsPagination] `json:"pagination"`
 }
@@ -245,6 +273,17 @@ func (r EditorListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// filter contains the filter options for listing editors
+type EditorListParamsFilter struct {
+	// allowed_by_policy filters the response to only editors that are allowed by the
+	// policies enforced in the organization
+	AllowedByPolicy param.Field[bool] `json:"allowedByPolicy"`
+}
+
+func (r EditorListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // pagination contains the pagination options for listing environments

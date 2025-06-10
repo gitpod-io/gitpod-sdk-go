@@ -95,37 +95,6 @@ func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationListWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Organizations.List(context.TODO(), gitpod.OrganizationListParams{
-		Token:    gitpod.F("token"),
-		PageSize: gitpod.F(int64(0)),
-		Pagination: gitpod.F(gitpod.OrganizationListParamsPagination{
-			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(50)),
-		}),
-		Scope: gitpod.F(gitpod.ScopeUnspecified),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
 func TestOrganizationDelete(t *testing.T) {
 	t.Skip("skipped: tests are disabled for the time being")
 	baseURL := "http://localhost:4010"
@@ -249,7 +218,7 @@ func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
 	_, err := client.Organizations.SetRole(context.TODO(), gitpod.OrganizationSetRoleParams{
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		UserID:         gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
-		Role:           gitpod.F(shared.OrganizationRoleUnspecified),
+		Role:           gitpod.F(shared.OrganizationRoleMember),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

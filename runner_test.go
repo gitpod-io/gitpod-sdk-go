@@ -27,16 +27,25 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
-		Kind:     gitpod.F(gitpod.RunnerKindUnspecified),
-		Name:     gitpod.F("Production Runner"),
-		Provider: gitpod.F(gitpod.RunnerProviderUnspecified),
+		Kind:            gitpod.F(gitpod.RunnerKindUnspecified),
+		Name:            gitpod.F("Production Runner"),
+		Provider:        gitpod.F(gitpod.RunnerProviderAwsEc2),
+		RunnerManagerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
-				AutoUpdate:     gitpod.F(true),
+				AutoUpdate:                    gitpod.F(true),
+				DevcontainerImageCacheEnabled: gitpod.F(true),
+				LogLevel:                      gitpod.F(gitpod.LogLevelUnspecified),
+				Metrics: gitpod.F(gitpod.MetricsConfigurationParam{
+					Enabled:  gitpod.F(true),
+					Password: gitpod.F("password"),
+					URL:      gitpod.F("url"),
+					Username: gitpod.F("username"),
+				}),
 				Region:         gitpod.F("us-west"),
-				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
 			}),
-			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
+			DesiredPhase: gitpod.F(gitpod.RunnerPhaseActive),
 		}),
 	})
 	if err != nil {
@@ -91,8 +100,16 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Spec: gitpod.F(gitpod.RunnerUpdateParamsSpec{
 			Configuration: gitpod.F(gitpod.RunnerUpdateParamsSpecConfiguration{
-				AutoUpdate:     gitpod.F(true),
-				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelUnspecified),
+				AutoUpdate:                    gitpod.F(true),
+				DevcontainerImageCacheEnabled: gitpod.F(true),
+				LogLevel:                      gitpod.F(gitpod.LogLevelUnspecified),
+				Metrics: gitpod.F(gitpod.RunnerUpdateParamsSpecConfigurationMetrics{
+					Enabled:  gitpod.F(true),
+					Password: gitpod.F("password"),
+					URL:      gitpod.F("url"),
+					Username: gitpod.F("username"),
+				}),
+				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelLatest),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
@@ -125,7 +142,7 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.RunnerListParamsFilter{
 			CreatorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Kinds:      gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
-			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderUnspecified}),
+			Providers:  gitpod.F([]gitpod.RunnerProvider{gitpod.RunnerProviderAwsEc2}),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerListParamsPagination{
 			Token:    gitpod.F("token"),

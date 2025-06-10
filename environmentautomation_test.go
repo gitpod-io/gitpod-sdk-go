@@ -44,7 +44,7 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 							Image:       gitpod.F("x"),
 						}),
 					}),
-					TriggeredBy: gitpod.F([]gitpod.AutomationsFileServicesTriggeredBy{gitpod.AutomationsFileServicesTriggeredByManual}),
+					TriggeredBy: gitpod.F([]gitpod.AutomationsFileServicesTriggeredBy{gitpod.AutomationsFileServicesTriggeredByPostDevcontainerStart}),
 				},
 			}),
 			Tasks: gitpod.F(map[string]gitpod.AutomationsFileTaskParam{
@@ -59,7 +59,7 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 							Image:       gitpod.F("x"),
 						}),
 					}),
-					TriggeredBy: gitpod.F([]gitpod.AutomationsFileTasksTriggeredBy{gitpod.AutomationsFileTasksTriggeredByManual}),
+					TriggeredBy: gitpod.F([]gitpod.AutomationsFileTasksTriggeredBy{gitpod.AutomationsFileTasksTriggeredByPostEnvironmentStart}),
 				},
 			}),
 		}),

@@ -318,6 +318,27 @@ func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteP
 	return
 }
 
+// Creates an access token for the environment.
+//
+// Generated tokens are valid for one hour and provide environment-specific access
+// permissions. The token is scoped to a specific environment.
+//
+// ### Examples
+//
+// - Generate environment token:
+//
+//	Creates a temporary access token for accessing an environment.
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
+func (r *EnvironmentService) NewEnvironmentToken(ctx context.Context, body EnvironmentNewEnvironmentTokenParams, opts ...option.RequestOption) (res *EnvironmentNewEnvironmentTokenResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/CreateEnvironmentAccessToken"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Creates an environment from an existing project configuration and starts it.
 //
 // This method uses project settings as defaults but allows overriding specific
@@ -443,6 +464,22 @@ func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParam
 	return
 }
 
+// Unarchives an environment.
+//
+// ### Examples
+//
+// - Unarchive an environment:
+//
+//	```yaml
+//	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
+//	```
+func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnarchiveParams, opts ...option.RequestOption) (res *EnvironmentUnarchiveResponse, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "gitpod.v1.EnvironmentService/UnarchiveEnvironment"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Admission level describes who can access an environment instance and its ports.
 type AdmissionLevel string
 
@@ -544,6 +581,9 @@ type EnvironmentMetadata struct {
 	// annotations are key/value pairs that gets attached to the environment.
 	// +internal - not yet implemented
 	Annotations map[string]string `json:"annotations"`
+	// Time when the Environment was archived. If not set, the environment is not
+	// archived.
+	ArchivedAt time.Time `json:"archivedAt" format:"date-time"`
 	// Time when the Environment was created.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the environment
@@ -570,6 +610,7 @@ type EnvironmentMetadata struct {
 // [EnvironmentMetadata]
 type environmentMetadataJSON struct {
 	Annotations        apijson.Field
+	ArchivedAt         apijson.Field
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
 	LastStartedAt      apijson.Field
@@ -731,6 +772,9 @@ func (r environmentSpecContentJSON) RawJSON() string {
 
 // devcontainer is the devcontainer spec of the environment
 type EnvironmentSpecDevcontainer struct {
+	// default_devcontainer_image is the default image that is used to start the
+	// devcontainer if no devcontainer config file is found
+	DefaultDevcontainerImage string `json:"defaultDevcontainerImage"`
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -747,11 +791,12 @@ type EnvironmentSpecDevcontainer struct {
 // environmentSpecDevcontainerJSON contains the JSON metadata for the struct
 // [EnvironmentSpecDevcontainer]
 type environmentSpecDevcontainerJSON struct {
-	DevcontainerFilePath apijson.Field
-	Dotfiles             apijson.Field
-	Session              apijson.Field
-	raw                  string
-	ExtraFields          map[string]apijson.Field
+	DefaultDevcontainerImage apijson.Field
+	DevcontainerFilePath     apijson.Field
+	Dotfiles                 apijson.Field
+	Session                  apijson.Field
+	raw                      string
+	ExtraFields              map[string]apijson.Field
 }
 
 func (r *EnvironmentSpecDevcontainer) UnmarshalJSON(data []byte) (err error) {
@@ -839,6 +884,8 @@ func (r environmentSpecPortJSON) RawJSON() string {
 }
 
 type EnvironmentSpecSecret struct {
+	// id is the unique identifier of the secret.
+	ID string `json:"id"`
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
@@ -861,6 +908,7 @@ type EnvironmentSpecSecret struct {
 // environmentSpecSecretJSON contains the JSON metadata for the struct
 // [EnvironmentSpecSecret]
 type environmentSpecSecretJSON struct {
+	ID                             apijson.Field
 	ContainerRegistryBasicAuthHost apijson.Field
 	EnvironmentVariable            apijson.Field
 	FilePath                       apijson.Field
@@ -997,6 +1045,9 @@ func (r EnvironmentSpecContentParam) MarshalJSON() (data []byte, err error) {
 
 // devcontainer is the devcontainer spec of the environment
 type EnvironmentSpecDevcontainerParam struct {
+	// default_devcontainer_image is the default image that is used to start the
+	// devcontainer if no devcontainer config file is found
+	DefaultDevcontainerImage param.Field[string] `json:"defaultDevcontainerImage"`
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -1048,6 +1099,8 @@ func (r EnvironmentSpecPortParam) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentSpecSecretParam struct {
+	// id is the unique identifier of the secret.
+	ID param.Field[string] `json:"id"`
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
@@ -1176,8 +1229,11 @@ type EnvironmentStatusAutomationsFile struct {
 	Phase EnvironmentStatusAutomationsFilePhase `json:"phase"`
 	// session is the automations file session that is currently applied in the
 	// environment.
-	Session string                               `json:"session"`
-	JSON    environmentStatusAutomationsFileJSON `json:"-"`
+	Session string `json:"session"`
+	// warning_message contains warnings, e.g. when no triggers are defined in the
+	// automations file.
+	WarningMessage string                               `json:"warningMessage"`
+	JSON           environmentStatusAutomationsFileJSON `json:"-"`
 }
 
 // environmentStatusAutomationsFileJSON contains the JSON metadata for the struct
@@ -1188,6 +1244,7 @@ type environmentStatusAutomationsFileJSON struct {
 	FailureMessage          apijson.Field
 	Phase                   apijson.Field
 	Session                 apijson.Field
+	WarningMessage          apijson.Field
 	raw                     string
 	ExtraFields             map[string]apijson.Field
 }
@@ -1700,6 +1757,8 @@ func (r EnvironmentStatusRunnerAckStatusCode) IsKnown() bool {
 }
 
 type EnvironmentStatusSecret struct {
+	// id is the unique identifier of the secret.
+	ID string `json:"id"`
 	// failure_message contains the reason the secret failed to be materialize.
 	FailureMessage string                        `json:"failureMessage"`
 	Phase          EnvironmentStatusSecretsPhase `json:"phase"`
@@ -1715,6 +1774,7 @@ type EnvironmentStatusSecret struct {
 // environmentStatusSecretJSON contains the JSON metadata for the struct
 // [EnvironmentStatusSecret]
 type environmentStatusSecretJSON struct {
+	ID             apijson.Field
 	FailureMessage apijson.Field
 	Phase          apijson.Field
 	SecretName     apijson.Field
@@ -1844,6 +1904,28 @@ type EnvironmentUpdateResponse = interface{}
 
 type EnvironmentDeleteResponse = interface{}
 
+type EnvironmentNewEnvironmentTokenResponse struct {
+	// access_token is the token that can be used for environment authentication
+	AccessToken string                                     `json:"accessToken,required"`
+	JSON        environmentNewEnvironmentTokenResponseJSON `json:"-"`
+}
+
+// environmentNewEnvironmentTokenResponseJSON contains the JSON metadata for the
+// struct [EnvironmentNewEnvironmentTokenResponse]
+type environmentNewEnvironmentTokenResponseJSON struct {
+	AccessToken apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentNewEnvironmentTokenResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentNewEnvironmentTokenResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type EnvironmentNewFromProjectResponse struct {
 	// +resource get environment
 	Environment Environment                           `json:"environment,required"`
@@ -1894,6 +1976,8 @@ type EnvironmentStartResponse = interface{}
 
 type EnvironmentStopResponse = interface{}
 
+type EnvironmentUnarchiveResponse = interface{}
+
 type EnvironmentNewParams struct {
 	// spec is the configuration of the environment that's required for the to start
 	// the environment
@@ -1917,12 +2001,21 @@ type EnvironmentUpdateParams struct {
 	// environment_id specifies which environment should be updated.
 	//
 	// +required
-	EnvironmentID param.Field[string]                      `json:"environmentId" format:"uuid"`
-	Metadata      param.Field[interface{}]                 `json:"metadata"`
-	Spec          param.Field[EnvironmentUpdateParamsSpec] `json:"spec"`
+	EnvironmentID param.Field[string]                          `json:"environmentId" format:"uuid"`
+	Metadata      param.Field[EnvironmentUpdateParamsMetadata] `json:"metadata"`
+	Spec          param.Field[EnvironmentUpdateParamsSpec]     `json:"spec"`
 }
 
 func (r EnvironmentUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentUpdateParamsMetadata struct {
+	// name is the user-defined display name of the environment
+	Name param.Field[string] `json:"name"`
+}
+
+func (r EnvironmentUpdateParamsMetadata) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -2049,6 +2142,8 @@ func (r EnvironmentListParams) URLQuery() (v url.Values) {
 }
 
 type EnvironmentListParamsFilter struct {
+	// archival_status filters the response based on environment archive status
+	ArchivalStatus param.Field[EnvironmentListParamsFilterArchivalStatus] `json:"archivalStatus"`
 	// creator_ids filters the response to only Environments created by specified
 	// members
 	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
@@ -2067,6 +2162,24 @@ type EnvironmentListParamsFilter struct {
 
 func (r EnvironmentListParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// archival_status filters the response based on environment archive status
+type EnvironmentListParamsFilterArchivalStatus string
+
+const (
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusUnspecified EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_UNSPECIFIED"
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusActive      EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_ACTIVE"
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusArchived    EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_ARCHIVED"
+	EnvironmentListParamsFilterArchivalStatusArchivalStatusAll         EnvironmentListParamsFilterArchivalStatus = "ARCHIVAL_STATUS_ALL"
+)
+
+func (r EnvironmentListParamsFilterArchivalStatus) IsKnown() bool {
+	switch r {
+	case EnvironmentListParamsFilterArchivalStatusArchivalStatusUnspecified, EnvironmentListParamsFilterArchivalStatusArchivalStatusActive, EnvironmentListParamsFilterArchivalStatusArchivalStatusArchived, EnvironmentListParamsFilterArchivalStatusArchivalStatusAll:
+		return true
+	}
+	return false
 }
 
 // pagination contains the pagination options for listing environments
@@ -2096,6 +2209,16 @@ type EnvironmentDeleteParams struct {
 }
 
 func (r EnvironmentDeleteParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentNewEnvironmentTokenParams struct {
+	// environment_id specifies the environment for which the access token should be
+	// created.
+	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
+}
+
+func (r EnvironmentNewEnvironmentTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -2151,5 +2274,16 @@ type EnvironmentStopParams struct {
 }
 
 func (r EnvironmentStopParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type EnvironmentUnarchiveParams struct {
+	// environment_id specifies the environment to unarchive.
+	//
+	// +required
+	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
+}
+
+func (r EnvironmentUnarchiveParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

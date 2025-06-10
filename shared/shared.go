@@ -143,6 +143,35 @@ func (r FieldValueParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Gateway represents a system gateway that provides access to services
+type Gateway struct {
+	// name is the human-readable name of the gateway. name is unique across all
+	// gateways.
+	Name string `json:"name,required"`
+	// url of the gateway
+	URL string `json:"url,required"`
+	// region is the geographical region where the gateway is located
+	Region string      `json:"region"`
+	JSON   gatewayJSON `json:"-"`
+}
+
+// gatewayJSON contains the JSON metadata for the struct [Gateway]
+type gatewayJSON struct {
+	Name        apijson.Field
+	URL         apijson.Field
+	Region      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *Gateway) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r gatewayJSON) RawJSON() string {
+	return r.raw
+}
+
 type OrganizationRole string
 
 const (
@@ -168,11 +197,12 @@ const (
 	PrincipalRunner         Principal = "PRINCIPAL_RUNNER"
 	PrincipalEnvironment    Principal = "PRINCIPAL_ENVIRONMENT"
 	PrincipalServiceAccount Principal = "PRINCIPAL_SERVICE_ACCOUNT"
+	PrincipalRunnerManager  Principal = "PRINCIPAL_RUNNER_MANAGER"
 )
 
 func (r Principal) IsKnown() bool {
 	switch r {
-	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount:
+	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager:
 		return true
 	}
 	return false
@@ -536,6 +566,9 @@ type TaskExecutionStatusStep struct {
 	// failure_message summarises why the step failed to operate. If this is non-empty
 	// the step has failed to operate and will likely transition to a failed state.
 	FailureMessage string `json:"failureMessage"`
+	// output contains the output of the task execution. setting an output field to
+	// empty string will unset it.
+	Output map[string]string `json:"output"`
 	// phase is the current phase of the execution step
 	Phase TaskExecutionPhase          `json:"phase"`
 	JSON  taskExecutionStatusStepJSON `json:"-"`
@@ -546,6 +579,7 @@ type TaskExecutionStatusStep struct {
 type taskExecutionStatusStepJSON struct {
 	ID             apijson.Field
 	FailureMessage apijson.Field
+	Output         apijson.Field
 	Phase          apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field

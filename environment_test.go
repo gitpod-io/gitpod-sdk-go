@@ -55,7 +55,8 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			}),
 			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
-				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+				DefaultDevcontainerImage: gitpod.F("defaultDevcontainerImage"),
+				DevcontainerFilePath:     gitpod.F("devcontainerFilePath"),
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
 					Repository: gitpod.F("https://example.com"),
 				}),
@@ -71,6 +72,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
+				ID:                             gitpod.F("id"),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				EnvironmentVariable:            gitpod.F("environmentVariable"),
 				FilePath:                       gitpod.F("filePath"),
@@ -139,7 +141,9 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Environments.Update(context.TODO(), gitpod.EnvironmentUpdateParams{
 		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
-		Metadata:      gitpod.F[any](map[string]interface{}{}),
+		Metadata: gitpod.F(gitpod.EnvironmentUpdateParamsMetadata{
+			Name: gitpod.F("name"),
+		}),
 		Spec: gitpod.F(gitpod.EnvironmentUpdateParamsSpec{
 			AutomationsFile: gitpod.F(gitpod.EnvironmentUpdateParamsSpecAutomationsFile{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
@@ -208,11 +212,12 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentListParamsFilter{
-			CreatorIDs:   gitpod.F([]string{"f53d2330-3795-4c5d-a1f3-453121af9c60"}),
-			ProjectIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			RunnerIDs:    gitpod.F([]string{"e6aa9c54-89d3-42c1-ac31-bd8d8f1concentrate"}),
-			RunnerKinds:  gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
-			StatusPhases: gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseUnspecified}),
+			ArchivalStatus: gitpod.F(gitpod.EnvironmentListParamsFilterArchivalStatusArchivalStatusUnspecified),
+			CreatorIDs:     gitpod.F([]string{"f53d2330-3795-4c5d-a1f3-453121af9c60"}),
+			ProjectIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerIDs:      gitpod.F([]string{"e6aa9c54-89d3-42c1-ac31-bd8d8f1concentrate"}),
+			RunnerKinds:    gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			StatusPhases:   gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentListParamsPagination{
 			Token:    gitpod.F("token"),
@@ -244,6 +249,31 @@ func TestEnvironmentDeleteWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.Delete(context.TODO(), gitpod.EnvironmentDeleteParams{
 		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 		Force:         gitpod.F(false),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestEnvironmentNewEnvironmentToken(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Environments.NewEnvironmentToken(context.TODO(), gitpod.EnvironmentNewEnvironmentTokenParams{
+		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -296,7 +326,8 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			}),
 			DesiredPhase: gitpod.F(gitpod.EnvironmentPhaseUnspecified),
 			Devcontainer: gitpod.F(gitpod.EnvironmentSpecDevcontainerParam{
-				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
+				DefaultDevcontainerImage: gitpod.F("defaultDevcontainerImage"),
+				DevcontainerFilePath:     gitpod.F("devcontainerFilePath"),
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
 					Repository: gitpod.F("https://example.com"),
 				}),
@@ -312,6 +343,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Port:      gitpod.F(int64(1)),
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
+				ID:                             gitpod.F("id"),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				EnvironmentVariable:            gitpod.F("environmentVariable"),
 				FilePath:                       gitpod.F("filePath"),
@@ -433,6 +465,31 @@ func TestEnvironmentStopWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Stop(context.TODO(), gitpod.EnvironmentStopParams{
+		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestEnvironmentUnarchiveWithOptionalParams(t *testing.T) {
+	t.Skip("skipped: tests are disabled for the time being")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Environments.Unarchive(context.TODO(), gitpod.EnvironmentUnarchiveParams{
 		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
