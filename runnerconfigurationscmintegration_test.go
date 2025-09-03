@@ -14,7 +14,7 @@ import (
 )
 
 func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -45,7 +45,7 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -70,7 +70,7 @@ func TestRunnerConfigurationScmIntegrationGetWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -99,7 +99,7 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 }
 
 func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -132,7 +132,7 @@ func TestRunnerConfigurationScmIntegrationListWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerConfigurationScmIntegrationDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("skipped: tests are disabled for the time being")
+	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
