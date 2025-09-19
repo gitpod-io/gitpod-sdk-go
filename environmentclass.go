@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -55,7 +56,7 @@ func NewEnvironmentClassService(opts ...option.RequestOption) (r *EnvironmentCla
 //	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *EnvironmentClassService) List(ctx context.Context, params EnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironmentClasses"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)

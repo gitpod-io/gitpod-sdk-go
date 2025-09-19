@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -55,7 +56,7 @@ func NewAccountService(opts ...option.RequestOption) (r *AccountService) {
 //	{}
 //	```
 func (r *AccountService) Get(ctx context.Context, body AccountGetParams, opts ...option.RequestOption) (res *AccountGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/GetAccount"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -81,7 +82,7 @@ func (r *AccountService) Get(ctx context.Context, body AccountGetParams, opts ..
 //	accountId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 //	```
 func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, opts ...option.RequestOption) (res *AccountDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/DeleteAccount"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -114,7 +115,7 @@ func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, o
 //	returnTo: "https://gitpod.io/workspaces"
 //	```
 func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOLoginURLParams, opts ...option.RequestOption) (res *AccountGetSSOLoginURLResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/GetSSOLoginURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -138,7 +139,7 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 //	{}
 //	```
 func (r *AccountService) ListJoinableOrganizations(ctx context.Context, params AccountListJoinableOrganizationsParams, opts ...option.RequestOption) (res *AccountListJoinableOrganizationsResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/ListJoinableOrganizations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
@@ -175,7 +176,7 @@ func (r *AccountService) ListJoinableOrganizations(ctx context.Context, params A
 //	```
 func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) (res *pagination.LoginProvidersPage[LoginProvider], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.AccountService/ListLoginProviders"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)

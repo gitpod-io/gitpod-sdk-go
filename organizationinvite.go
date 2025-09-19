@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -50,7 +51,7 @@ func NewOrganizationInviteService(opts ...option.RequestOption) (r *Organization
 //	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *OrganizationInviteService) New(ctx context.Context, body OrganizationInviteNewParams, opts ...option.RequestOption) (res *OrganizationInviteNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateOrganizationInvite"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -58,7 +59,7 @@ func (r *OrganizationInviteService) New(ctx context.Context, body OrganizationIn
 
 // GetOrganizationInvite
 func (r *OrganizationInviteService) Get(ctx context.Context, body OrganizationInviteGetParams, opts ...option.RequestOption) (res *OrganizationInviteGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInvite"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -83,7 +84,7 @@ func (r *OrganizationInviteService) Get(ctx context.Context, body OrganizationIn
 //	inviteId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationInviteService) GetSummary(ctx context.Context, body OrganizationInviteGetSummaryParams, opts ...option.RequestOption) (res *OrganizationInviteGetSummaryResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

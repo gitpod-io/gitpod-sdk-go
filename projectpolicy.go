@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -54,7 +55,7 @@ func NewProjectPolicyService(opts ...option.RequestOption) (r *ProjectPolicyServ
 //	role: PROJECT_ROLE_ADMIN
 //	```
 func (r *ProjectPolicyService) New(ctx context.Context, body ProjectPolicyNewParams, opts ...option.RequestOption) (res *ProjectPolicyNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjectPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -80,7 +81,7 @@ func (r *ProjectPolicyService) New(ctx context.Context, body ProjectPolicyNewPar
 //	role: PROJECT_ROLE_EDITOR
 //	```
 func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpdateParams, opts ...option.RequestOption) (res *ProjectPolicyUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProjectPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -107,7 +108,7 @@ func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpd
 //	```
 func (r *ProjectPolicyService) List(ctx context.Context, params ProjectPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[ProjectPolicy], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.ProjectService/ListProjectPolicies"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -164,7 +165,7 @@ func (r *ProjectPolicyService) ListAutoPaging(ctx context.Context, params Projec
 //	groupId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 //	```
 func (r *ProjectPolicyService) Delete(ctx context.Context, body ProjectPolicyDeleteParams, opts ...option.RequestOption) (res *ProjectPolicyDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProjectPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

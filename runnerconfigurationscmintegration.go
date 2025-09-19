@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -56,7 +57,7 @@ func NewRunnerConfigurationScmIntegrationService(opts ...option.RequestOption) (
 //	oauthPlaintextClientSecret: "client_secret"
 //	```
 func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body RunnerConfigurationScmIntegrationNewParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -80,7 +81,7 @@ func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body RunnerConfigurationScmIntegrationGetParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -106,7 +107,7 @@ func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body
 //	oauthPlaintextClientSecret: "new_client_secret"
 //	```
 func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, body RunnerConfigurationScmIntegrationUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -134,7 +135,7 @@ func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, b
 //	```
 func (r *RunnerConfigurationScmIntegrationService) List(ctx context.Context, params RunnerConfigurationScmIntegrationListParams, opts ...option.RequestOption) (res *pagination.IntegrationsPage[ScmIntegration], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListSCMIntegrations"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -191,7 +192,7 @@ func (r *RunnerConfigurationScmIntegrationService) ListAutoPaging(ctx context.Co
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerConfigurationScmIntegrationService) Delete(ctx context.Context, body RunnerConfigurationScmIntegrationDeleteParams, opts ...option.RequestOption) (res *RunnerConfigurationScmIntegrationDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -71,7 +72,7 @@ func NewEnvironmentAutomationService(opts ...option.RequestOption) (r *Environme
 //	        - postEnvironmentStart
 //	```
 func (r *EnvironmentAutomationService) Upsert(ctx context.Context, body EnvironmentAutomationUpsertParams, opts ...option.RequestOption) (res *EnvironmentAutomationUpsertResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/UpsertAutomationsFile"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

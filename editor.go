@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -51,7 +52,7 @@ func NewEditorService(opts ...option.RequestOption) (r *EditorService) {
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...option.RequestOption) (res *EditorGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EditorService/GetEditor"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -91,7 +92,7 @@ func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...o
 //	```
 func (r *EditorService) List(ctx context.Context, params EditorListParams, opts ...option.RequestOption) (res *pagination.EditorsPage[Editor], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EditorService/ListEditors"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -163,7 +164,7 @@ func (r *EditorService) ListAutoPaging(ctx context.Context, params EditorListPar
 //	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *EditorService) ResolveURL(ctx context.Context, body EditorResolveURLParams, opts ...option.RequestOption) (res *EditorResolveURLResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EditorService/ResolveEditorURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

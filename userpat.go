@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -58,7 +59,7 @@ func NewUserPatService(opts ...option.RequestOption) (r *UserPatService) {
 //	```
 func (r *UserPatService) List(ctx context.Context, params UserPatListParams, opts ...option.RequestOption) (res *pagination.PersonalAccessTokensPage[PersonalAccessToken], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.UserService/ListPersonalAccessTokens"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -115,7 +116,7 @@ func (r *UserPatService) ListAutoPaging(ctx context.Context, params UserPatListP
 //	personalAccessTokenId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, opts ...option.RequestOption) (res *UserPatDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -139,7 +140,7 @@ func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, o
 //	personalAccessTokenId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *UserPatService) Get(ctx context.Context, body UserPatGetParams, opts ...option.RequestOption) (res *UserPatGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetPersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -49,7 +50,7 @@ func NewRunnerConfigurationSchemaService(opts ...option.RequestOption) (r *Runne
 //	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerConfigurationSchemaService) Get(ctx context.Context, body RunnerConfigurationSchemaGetParams, opts ...option.RequestOption) (res *RunnerConfigurationSchemaGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

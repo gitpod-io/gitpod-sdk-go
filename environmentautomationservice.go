@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -83,7 +84,7 @@ func NewEnvironmentAutomationServiceService(opts ...option.RequestOption) (r *En
 //	      image: "redis:7"
 //	```
 func (r *EnvironmentAutomationServiceService) New(ctx context.Context, body EnvironmentAutomationServiceNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -108,7 +109,7 @@ func (r *EnvironmentAutomationServiceService) New(ctx context.Context, body Envi
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, body EnvironmentAutomationServiceGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/GetService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -150,7 +151,7 @@ func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, body Envi
 //	      - manual: true
 //	```
 func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body EnvironmentAutomationServiceUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -189,7 +190,7 @@ func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body E
 //	```
 func (r *EnvironmentAutomationServiceService) List(ctx context.Context, params EnvironmentAutomationServiceListParams, opts ...option.RequestOption) (res *pagination.ServicesPage[Service], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListServices"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -268,7 +269,7 @@ func (r *EnvironmentAutomationServiceService) ListAutoPaging(ctx context.Context
 //	force: true
 //	```
 func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body EnvironmentAutomationServiceDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -294,7 +295,7 @@ func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body E
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body EnvironmentAutomationServiceStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStartResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StartService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -320,7 +321,7 @@ func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body En
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body EnvironmentAutomationServiceStopParams, opts ...option.RequestOption) (res *EnvironmentAutomationServiceStopResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StopService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -50,7 +51,7 @@ func NewIdentityService(opts ...option.RequestOption) (r *IdentityService) {
 //	exchangeToken: "exchange-token-value"
 //	```
 func (r *IdentityService) ExchangeToken(ctx context.Context, body IdentityExchangeTokenParams, opts ...option.RequestOption) (res *IdentityExchangeTokenResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.IdentityService/ExchangeToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -75,7 +76,7 @@ func (r *IdentityService) ExchangeToken(ctx context.Context, body IdentityExchan
 //	{}
 //	```
 func (r *IdentityService) GetAuthenticatedIdentity(ctx context.Context, body IdentityGetAuthenticatedIdentityParams, opts ...option.RequestOption) (res *IdentityGetAuthenticatedIdentityResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.IdentityService/GetAuthenticatedIdentity"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -110,7 +111,7 @@ func (r *IdentityService) GetAuthenticatedIdentity(ctx context.Context, body Ide
 //	  - "https://ws.gitpod.io"
 //	```
 func (r *IdentityService) GetIDToken(ctx context.Context, body IdentityGetIDTokenParams, opts ...option.RequestOption) (res *IdentityGetIDTokenResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.IdentityService/GetIDToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

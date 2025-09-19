@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -49,7 +50,7 @@ func NewOrganizationPolicyService(opts ...option.RequestOption) (r *Organization
 //	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *OrganizationPolicyService) Get(ctx context.Context, body OrganizationPolicyGetParams, opts ...option.RequestOption) (res *OrganizationPolicyGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganizationPolicies"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -89,7 +90,7 @@ func (r *OrganizationPolicyService) Get(ctx context.Context, body OrganizationPo
 //	maximumEnvironmentsPerUser: "20"
 //	```
 func (r *OrganizationPolicyService) Update(ctx context.Context, body OrganizationPolicyUpdateParams, opts ...option.RequestOption) (res *OrganizationPolicyUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateOrganizationPolicies"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -80,7 +81,7 @@ func NewSecretService(opts ...option.RequestOption) (r *SecretService) {
 //	containerRegistryBasicAuthHost: "https://registry.example.com"
 //	```
 func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...option.RequestOption) (res *SecretNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/CreateSecret"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -120,7 +121,7 @@ func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...o
 //	```
 func (r *SecretService) List(ctx context.Context, params SecretListParams, opts ...option.RequestOption) (res *pagination.SecretsPage[Secret], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.SecretService/ListSecrets"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -188,7 +189,7 @@ func (r *SecretService) ListAutoPaging(ctx context.Context, params SecretListPar
 //	secretId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *SecretService) Delete(ctx context.Context, body SecretDeleteParams, opts ...option.RequestOption) (res *SecretDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/DeleteSecret"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -212,7 +213,7 @@ func (r *SecretService) Delete(ctx context.Context, body SecretDeleteParams, opt
 //	secretId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *SecretService) GetValue(ctx context.Context, body SecretGetValueParams, opts ...option.RequestOption) (res *SecretGetValueResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/GetSecretValue"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -236,7 +237,7 @@ func (r *SecretService) GetValue(ctx context.Context, body SecretGetValueParams,
 //	value: "new-secret-value"
 //	```
 func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueParams, opts ...option.RequestOption) (res *SecretUpdateValueResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/UpdateSecretValue"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

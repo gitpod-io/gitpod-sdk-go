@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -69,7 +70,7 @@ func NewOrganizationSSOConfigurationService(opts ...option.RequestOption) (r *Or
 //	emailDomain: "acme-corp.com"
 //	```
 func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body OrganizationSSOConfigurationNewParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -93,7 +94,7 @@ func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body Orga
 //	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body OrganizationSSOConfigurationGetParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -130,7 +131,7 @@ func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body Orga
 //	state: SSO_CONFIGURATION_STATE_ACTIVE
 //	```
 func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body OrganizationSSOConfigurationUpdateParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -169,7 +170,7 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 //	```
 func (r *OrganizationSSOConfigurationService) List(ctx context.Context, params OrganizationSSOConfigurationListParams, opts ...option.RequestOption) (res *pagination.SSOConfigurationsPage[SSOConfiguration], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListSSOConfigurations"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -237,7 +238,7 @@ func (r *OrganizationSSOConfigurationService) ListAutoPaging(ctx context.Context
 //	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body OrganizationSSOConfigurationDeleteParams, opts ...option.RequestOption) (res *OrganizationSSOConfigurationDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
