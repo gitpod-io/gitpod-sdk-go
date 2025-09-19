@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -81,7 +82,7 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 //	    autoUpdate: true
 //	```
 func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...option.RequestOption) (res *RunnerNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -106,7 +107,7 @@ func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...o
 //	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...option.RequestOption) (res *RunnerGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/GetRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -136,7 +137,7 @@ func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...o
 //	    autoUpdate: true
 //	```
 func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opts ...option.RequestOption) (res *RunnerUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/UpdateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -174,7 +175,7 @@ func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opt
 //	```
 func (r *RunnerService) List(ctx context.Context, params RunnerListParams, opts ...option.RequestOption) (res *pagination.RunnersPage[Runner], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerService/ListRunners"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -241,7 +242,7 @@ func (r *RunnerService) ListAutoPaging(ctx context.Context, params RunnerListPar
 //	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opts ...option.RequestOption) (res *RunnerDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/DeleteRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -265,7 +266,7 @@ func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opt
 //	host: "github.com"
 //	```
 func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body RunnerCheckAuthenticationForHostParams, opts ...option.RequestOption) (res *RunnerCheckAuthenticationForHostResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CheckAuthenticationForHost"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -291,7 +292,7 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 //	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunnerTokenParams, opts ...option.RequestOption) (res *RunnerNewRunnerTokenResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -322,7 +323,7 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 //	contextUrl: "https://github.com/org/repo/tree/main"
 //	```
 func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseContextURLParams, opts ...option.RequestOption) (res *RunnerParseContextURLResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

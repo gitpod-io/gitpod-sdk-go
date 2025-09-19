@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -64,7 +65,7 @@ func NewUsageService(opts ...option.RequestOption) (r *UsageService) {
 // ```
 func (r *UsageService) ListEnvironmentRuntimeRecords(ctx context.Context, params UsageListEnvironmentRuntimeRecordsParams, opts ...option.RequestOption) (res *pagination.RecordsPage[EnvironmentUsageRecord], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.UsageService/ListEnvironmentUsageRecords"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)

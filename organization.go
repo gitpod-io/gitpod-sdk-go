@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -74,7 +75,7 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 //	inviteAccountsWithMatchingDomain: true
 //	```
 func (r *OrganizationService) New(ctx context.Context, body OrganizationNewParams, opts ...option.RequestOption) (res *OrganizationNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -98,7 +99,7 @@ func (r *OrganizationService) New(ctx context.Context, body OrganizationNewParam
 //	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *OrganizationService) Get(ctx context.Context, body OrganizationGetParams, opts ...option.RequestOption) (res *OrganizationGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -139,7 +140,7 @@ func (r *OrganizationService) Get(ctx context.Context, body OrganizationGetParam
 //	  domains: []
 //	```
 func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdateParams, opts ...option.RequestOption) (res *OrganizationUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -163,7 +164,7 @@ func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdat
 //	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *OrganizationService) Delete(ctx context.Context, body OrganizationDeleteParams, opts ...option.RequestOption) (res *OrganizationDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -196,7 +197,7 @@ func (r *OrganizationService) Delete(ctx context.Context, body OrganizationDelet
 //	inviteId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationService) Join(ctx context.Context, body OrganizationJoinParams, opts ...option.RequestOption) (res *OrganizationJoinResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/JoinOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -223,7 +224,7 @@ func (r *OrganizationService) Join(ctx context.Context, body OrganizationJoinPar
 //
 // Note: Ensure all projects and resources are transferred before leaving.
 func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveParams, opts ...option.RequestOption) (res *OrganizationLeaveResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/LeaveOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -261,7 +262,7 @@ func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveP
 //	```
 func (r *OrganizationService) ListMembers(ctx context.Context, params OrganizationListMembersParams, opts ...option.RequestOption) (res *pagination.MembersPage[OrganizationMember], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListMembers"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -341,7 +342,7 @@ func (r *OrganizationService) ListMembersAutoPaging(ctx context.Context, params 
 //	role: ORGANIZATION_ROLE_MEMBER
 //	```
 func (r *OrganizationService) SetRole(ctx context.Context, body OrganizationSetRoleParams, opts ...option.RequestOption) (res *OrganizationSetRoleResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/SetRole"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

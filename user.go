@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -56,7 +57,7 @@ func NewUserService(opts ...option.RequestOption) (r *UserService) {
 //	{}
 //	```
 func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuthenticatedUserParams, opts ...option.RequestOption) (res *UserGetAuthenticatedUserResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -90,7 +91,7 @@ func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuth
 //	suspended: false
 //	```
 func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedParams, opts ...option.RequestOption) (res *UserSetSuspendedResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/SetSuspended"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

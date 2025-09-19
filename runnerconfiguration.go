@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -64,7 +65,7 @@ func NewRunnerConfigurationService(opts ...option.RequestOption) (r *RunnerConfi
 //	  oauthPlaintextClientSecret: "client_secret"
 //	```
 func (r *RunnerConfigurationService) Validate(ctx context.Context, body RunnerConfigurationValidateParams, opts ...option.RequestOption) (res *RunnerConfigurationValidateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

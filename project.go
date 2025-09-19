@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -79,7 +80,7 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 //	automationsFilePath: ".gitpod/automations.yaml"
 //	```
 func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ...option.RequestOption) (res *ProjectNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -103,7 +104,7 @@ func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ..
 //	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ...option.RequestOption) (res *ProjectGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/GetProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -139,7 +140,7 @@ func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ..
 //	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, opts ...option.RequestOption) (res *ProjectUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -165,7 +166,7 @@ func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, o
 //	```
 func (r *ProjectService) List(ctx context.Context, params ProjectListParams, opts ...option.RequestOption) (res *pagination.ProjectsPage[Project], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.ProjectService/ListProjects"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -220,7 +221,7 @@ func (r *ProjectService) ListAutoPaging(ctx context.Context, params ProjectListP
 //	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	```
 func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, opts ...option.RequestOption) (res *ProjectDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -245,7 +246,7 @@ func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, o
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *ProjectService) NewFromEnvironment(ctx context.Context, body ProjectNewFromEnvironmentParams, opts ...option.RequestOption) (res *ProjectNewFromEnvironmentResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
