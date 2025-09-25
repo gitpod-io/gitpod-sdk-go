@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.6.0 (2025-09-25)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.5.0...v0.6.0)
+
+### Features
+
+* **api:** gitpod -&gt; ona ([552d759](https://github.com/gitpod-io/gitpod-sdk-go/commit/552d759cc37edb71984b3a8d8dc740e999fa42a4))
+* **client:** add debug log helper ([80b9e2b](https://github.com/gitpod-io/gitpod-sdk-go/commit/80b9e2b14e06850bda8d96cb4bdbcc611d9684d8))
+* **client:** support optional json html escaping ([1b5fe8d](https://github.com/gitpod-io/gitpod-sdk-go/commit/1b5fe8d71198d7c27d346ced65b1a5916c1ca5f8))
+
+
+### Bug Fixes
+
+* bugfix for setting JSON keys with special characters ([8cb7fa5](https://github.com/gitpod-io/gitpod-sdk-go/commit/8cb7fa5e315ee8407b030c7203e95b66003d9473))
+* **client:** process custom base url ahead of time ([aa5fbb8](https://github.com/gitpod-io/gitpod-sdk-go/commit/aa5fbb87c9b247fbe9ca6d74f72ccbd775d295b6))
+* don't try to deserialize as json when ResponseBodyInto is []byte ([52bb01f](https://github.com/gitpod-io/gitpod-sdk-go/commit/52bb01f2bc2aae5736c292faf09d98a515be2a08))
+* **pagination:** check if page data is empty in GetNextPage ([8d9d6fb](https://github.com/gitpod-io/gitpod-sdk-go/commit/8d9d6fb9ca5a3913d0400620dd18686290f8e57d))
+* use slices.Concat instead of sometimes modifying r.Options ([083789f](https://github.com/gitpod-io/gitpod-sdk-go/commit/083789f37af9f36fe39d0e45cb9e0ed087cf54cf))
+
+
+### Chores
+
+* bump minimum go version to 1.22 ([92bbcb3](https://github.com/gitpod-io/gitpod-sdk-go/commit/92bbcb34c44340cfc9eb20416ac7f9c565462299))
+* **ci:** enable for pull requests ([2c731e3](https://github.com/gitpod-io/gitpod-sdk-go/commit/2c731e32d19595c013749cea2a7a8c50603aa0a4))
+* **ci:** only run for pushes and fork pull requests ([5214c86](https://github.com/gitpod-io/gitpod-sdk-go/commit/5214c8625e015da0f06ab2f817c96a31346475ec))
+* do not install brew dependencies in ./scripts/bootstrap by default ([99dff1a](https://github.com/gitpod-io/gitpod-sdk-go/commit/99dff1a321df7284bf84be3b4639ddbbbba3f588))
+* **internal:** fix lint script for tests ([076dd1d](https://github.com/gitpod-io/gitpod-sdk-go/commit/076dd1d2cef96adf0c5b21e4413387307f52971d))
+* **internal:** update comment in script ([b55d442](https://github.com/gitpod-io/gitpod-sdk-go/commit/b55d44229d14d7bc61b3bf18ed181689b280dfc8))
+* lint tests ([1bba107](https://github.com/gitpod-io/gitpod-sdk-go/commit/1bba1075657651b1ac7b261bbd9c2fcd3fc08fdd))
+* lint tests in subpackages ([7c466c2](https://github.com/gitpod-io/gitpod-sdk-go/commit/7c466c272c807ecda01497bd3565408e973cc177))
+* update @stainless-api/prism-cli to v5.15.0 ([b8acf38](https://github.com/gitpod-io/gitpod-sdk-go/commit/b8acf385df0d9b2ca8d2cf65635b6a2ab437e9c7))
+* update more docs for 1.22 ([d1761ab](https://github.com/gitpod-io/gitpod-sdk-go/commit/d1761aba3bc28977b3227bcdf8161099feeee04d))
+
 ## 0.5.0 (2025-06-06)
 
 Full Changelog: [v0.4.0...v0.5.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.4.0...v0.5.0)
