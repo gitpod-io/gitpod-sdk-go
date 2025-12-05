@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -79,7 +80,7 @@ func NewEnvironmentAutomationTaskService(opts ...option.RequestOption) (r *Envir
 //	dependsOn: ["d2c94c27-3b76-4a42-b88c-95a85e392c68"]
 //	```
 func (r *EnvironmentAutomationTaskService) New(ctx context.Context, body EnvironmentAutomationTaskNewParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -103,7 +104,7 @@ func (r *EnvironmentAutomationTaskService) New(ctx context.Context, body Environ
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EnvironmentAutomationTaskService) Get(ctx context.Context, body EnvironmentAutomationTaskGetParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -142,7 +143,7 @@ func (r *EnvironmentAutomationTaskService) Get(ctx context.Context, body Environ
 //	      - postEnvironmentStart: true
 //	```
 func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, body EnvironmentAutomationTaskUpdateParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -181,7 +182,7 @@ func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, body Envi
 //	```
 func (r *EnvironmentAutomationTaskService) List(ctx context.Context, params EnvironmentAutomationTaskListParams, opts ...option.RequestOption) (res *pagination.TasksPage[shared.Task], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentAutomationService/ListTasks"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -249,7 +250,7 @@ func (r *EnvironmentAutomationTaskService) ListAutoPaging(ctx context.Context, p
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EnvironmentAutomationTaskService) Delete(ctx context.Context, body EnvironmentAutomationTaskDeleteParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -274,7 +275,7 @@ func (r *EnvironmentAutomationTaskService) Delete(ctx context.Context, body Envi
 //	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *EnvironmentAutomationTaskService) Start(ctx context.Context, body EnvironmentAutomationTaskStartParams, opts ...option.RequestOption) (res *EnvironmentAutomationTaskStartResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StartTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

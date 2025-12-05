@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -54,7 +55,7 @@ func NewRunnerPolicyService(opts ...option.RequestOption) (r *RunnerPolicyServic
 //	role: RUNNER_ROLE_ADMIN
 //	```
 func (r *RunnerPolicyService) New(ctx context.Context, body RunnerPolicyNewParams, opts ...option.RequestOption) (res *RunnerPolicyNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -80,7 +81,7 @@ func (r *RunnerPolicyService) New(ctx context.Context, body RunnerPolicyNewParam
 //	role: RUNNER_ROLE_USER
 //	```
 func (r *RunnerPolicyService) Update(ctx context.Context, body RunnerPolicyUpdateParams, opts ...option.RequestOption) (res *RunnerPolicyUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/UpdateRunnerPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -107,7 +108,7 @@ func (r *RunnerPolicyService) Update(ctx context.Context, body RunnerPolicyUpdat
 //	```
 func (r *RunnerPolicyService) List(ctx context.Context, params RunnerPolicyListParams, opts ...option.RequestOption) (res *pagination.PoliciesPage[RunnerPolicy], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerService/ListRunnerPolicies"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -164,7 +165,7 @@ func (r *RunnerPolicyService) ListAutoPaging(ctx context.Context, params RunnerP
 //	groupId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
 //	```
 func (r *RunnerPolicyService) Delete(ctx context.Context, body RunnerPolicyDeleteParams, opts ...option.RequestOption) (res *RunnerPolicyDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/DeleteRunnerPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

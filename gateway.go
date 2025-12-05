@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -38,7 +39,7 @@ func NewGatewayService(opts ...option.RequestOption) (r *GatewayService) {
 // ListGateways
 func (r *GatewayService) List(ctx context.Context, params GatewayListParams, opts ...option.RequestOption) (res *pagination.GatewaysPage[shared.Gateway], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.GatewayService/ListGateways"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)

@@ -60,6 +60,9 @@ func (r domainVerificationsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *DomainVerificationsPage[T]) GetNextPage() (res *DomainVerificationsPage[T], err error) {
+	if len(r.DomainVerifications) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -181,6 +184,9 @@ func (r editorsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EditorsPage[T]) GetNextPage() (res *EditorsPage[T], err error) {
+	if len(r.Editors) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -302,6 +308,9 @@ func (r entriesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EntriesPage[T]) GetNextPage() (res *EntriesPage[T], err error) {
+	if len(r.Entries) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -424,6 +433,9 @@ func (r environmentClassesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EnvironmentClassesPage[T]) GetNextPage() (res *EnvironmentClassesPage[T], err error) {
+	if len(r.EnvironmentClasses) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -546,6 +558,9 @@ func (r environmentsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *EnvironmentsPage[T]) GetNextPage() (res *EnvironmentsPage[T], err error) {
+	if len(r.Environments) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -667,6 +682,9 @@ func (r gatewaysPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *GatewaysPage[T]) GetNextPage() (res *GatewaysPage[T], err error) {
+	if len(r.Gateways) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -788,6 +806,9 @@ func (r groupsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *GroupsPage[T]) GetNextPage() (res *GroupsPage[T], err error) {
+	if len(r.Groups) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -910,6 +931,9 @@ func (r integrationsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *IntegrationsPage[T]) GetNextPage() (res *IntegrationsPage[T], err error) {
+	if len(r.Integrations) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1032,6 +1056,9 @@ func (r loginProvidersPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *LoginProvidersPage[T]) GetNextPage() (res *LoginProvidersPage[T], err error) {
+	if len(r.LoginProviders) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1153,6 +1180,9 @@ func (r membersPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *MembersPage[T]) GetNextPage() (res *MembersPage[T], err error) {
+	if len(r.Members) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1275,6 +1305,9 @@ func (r personalAccessTokensPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *PersonalAccessTokensPage[T]) GetNextPage() (res *PersonalAccessTokensPage[T], err error) {
+	if len(r.PersonalAccessTokens) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1396,6 +1429,9 @@ func (r policiesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *PoliciesPage[T]) GetNextPage() (res *PoliciesPage[T], err error) {
+	if len(r.Policies) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1517,6 +1553,9 @@ func (r projectsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *ProjectsPage[T]) GetNextPage() (res *ProjectsPage[T], err error) {
+	if len(r.Projects) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1638,6 +1677,9 @@ func (r recordsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *RecordsPage[T]) GetNextPage() (res *RecordsPage[T], err error) {
+	if len(r.Records) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1759,6 +1801,9 @@ func (r runnersPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *RunnersPage[T]) GetNextPage() (res *RunnersPage[T], err error) {
+	if len(r.Runners) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -1880,6 +1925,9 @@ func (r secretsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *SecretsPage[T]) GetNextPage() (res *SecretsPage[T], err error) {
+	if len(r.Secrets) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -2001,6 +2049,9 @@ func (r servicesPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *ServicesPage[T]) GetNextPage() (res *ServicesPage[T], err error) {
+	if len(r.Services) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -2123,6 +2174,9 @@ func (r ssoConfigurationsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *SSOConfigurationsPage[T]) GetNextPage() (res *SSOConfigurationsPage[T], err error) {
+	if len(r.SSOConfigurations) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -2245,6 +2299,9 @@ func (r taskExecutionsPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *TaskExecutionsPage[T]) GetNextPage() (res *TaskExecutionsPage[T], err error) {
+	if len(r.TaskExecutions) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -2366,6 +2423,9 @@ func (r tasksPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *TasksPage[T]) GetNextPage() (res *TasksPage[T], err error) {
+	if len(r.Tasks) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil
@@ -2487,6 +2547,9 @@ func (r tokensPageJSON) RawJSON() string {
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
 func (r *TokensPage[T]) GetNextPage() (res *TokensPage[T], err error) {
+	if len(r.Tokens) == 0 {
+		return nil, nil
+	}
 	next := r.Pagination.NextToken
 	if len(next) == 0 {
 		return nil, nil

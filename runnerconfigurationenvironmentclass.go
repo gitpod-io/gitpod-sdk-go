@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apiquery"
@@ -61,7 +62,7 @@ func NewRunnerConfigurationEnvironmentClassService(opts ...option.RequestOption)
 //	    value: "16384"
 //	```
 func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, body RunnerConfigurationEnvironmentClassNewParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -85,7 +86,7 @@ func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, bo
 //	environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, body RunnerConfigurationEnvironmentClassGetParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -112,7 +113,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, bo
 //	enabled: true
 //	```
 func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context, body RunnerConfigurationEnvironmentClassUpdateParams, opts ...option.RequestOption) (res *RunnerConfigurationEnvironmentClassUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -151,7 +152,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 //	buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 func (r *RunnerConfigurationEnvironmentClassService) List(ctx context.Context, params RunnerConfigurationEnvironmentClassListParams, opts ...option.RequestOption) (res *pagination.EnvironmentClassesPage[shared.EnvironmentClass], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerConfigurationService/ListEnvironmentClasses"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)

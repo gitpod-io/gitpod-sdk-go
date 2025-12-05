@@ -5,6 +5,7 @@ package gitpod
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
@@ -47,7 +48,7 @@ func NewUserDotfileService(opts ...option.RequestOption) (r *UserDotfileService)
 //	{}
 //	```
 func (r *UserDotfileService) Get(ctx context.Context, body UserDotfileGetParams, opts ...option.RequestOption) (res *UserDotfileGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetDotfilesConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -78,7 +79,7 @@ func (r *UserDotfileService) Get(ctx context.Context, body UserDotfileGetParams,
 //	{}
 //	```
 func (r *UserDotfileService) Set(ctx context.Context, body UserDotfileSetParams, opts ...option.RequestOption) (res *UserDotfileSetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/SetDotfilesConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -64,7 +65,7 @@ func NewOrganizationDomainVerificationService(opts ...option.RequestOption) (r *
 //	domain: "acme-subsidiary.com"
 //	```
 func (r *OrganizationDomainVerificationService) New(ctx context.Context, body OrganizationDomainVerificationNewParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateDomainVerification"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -88,7 +89,7 @@ func (r *OrganizationDomainVerificationService) New(ctx context.Context, body Or
 //	domainVerificationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationDomainVerificationService) Get(ctx context.Context, body OrganizationDomainVerificationGetParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetDomainVerification"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -127,7 +128,7 @@ func (r *OrganizationDomainVerificationService) Get(ctx context.Context, body Or
 //	```
 func (r *OrganizationDomainVerificationService) List(ctx context.Context, params OrganizationDomainVerificationListParams, opts ...option.RequestOption) (res *pagination.DomainVerificationsPage[DomainVerification], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.OrganizationService/ListDomainVerifications"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -195,7 +196,7 @@ func (r *OrganizationDomainVerificationService) ListAutoPaging(ctx context.Conte
 //	domainVerificationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationDomainVerificationService) Delete(ctx context.Context, body OrganizationDomainVerificationDeleteParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteDomainVerification"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -219,7 +220,7 @@ func (r *OrganizationDomainVerificationService) Delete(ctx context.Context, body
 //	domainVerificationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 func (r *OrganizationDomainVerificationService) Verify(ctx context.Context, body OrganizationDomainVerificationVerifyParams, opts ...option.RequestOption) (res *OrganizationDomainVerificationVerifyResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/VerifyDomain"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

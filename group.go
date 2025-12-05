@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -66,7 +67,7 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 //	```
 func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.GroupsPage[Group], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.GroupService/ListGroups"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)

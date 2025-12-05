@@ -6,6 +6,7 @@ import (
 	"context"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/apijson"
@@ -102,7 +103,7 @@ func NewEnvironmentService(opts ...option.RequestOption) (r *EnvironmentService)
 //	      name: "Web App"
 //	```
 func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams, opts ...option.RequestOption) (res *EnvironmentNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -129,7 +130,7 @@ func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams,
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams, opts ...option.RequestOption) (res *EnvironmentGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -186,7 +187,7 @@ func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams,
 // Note: Machine class changes require stopping the environment and creating a new
 // one.
 func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateParams, opts ...option.RequestOption) (res *EnvironmentUpdateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/UpdateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -231,7 +232,7 @@ func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateP
 //	```
 func (r *EnvironmentService) List(ctx context.Context, params EnvironmentListParams, opts ...option.RequestOption) (res *pagination.EnvironmentsPage[Environment], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.EnvironmentService/ListEnvironments"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
@@ -312,7 +313,7 @@ func (r *EnvironmentService) ListAutoPaging(ctx context.Context, params Environm
 //	force: true
 //	```
 func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteParams, opts ...option.RequestOption) (res *EnvironmentDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/DeleteEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -333,7 +334,7 @@ func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteP
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *EnvironmentService) NewEnvironmentToken(ctx context.Context, body EnvironmentNewEnvironmentTokenParams, opts ...option.RequestOption) (res *EnvironmentNewEnvironmentTokenResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -370,7 +371,7 @@ func (r *EnvironmentService) NewEnvironmentToken(ctx context.Context, body Envir
 //	    disconnected: "14400s" # 4 hours in seconds
 //	```
 func (r *EnvironmentService) NewFromProject(ctx context.Context, body EnvironmentNewFromProjectParams, opts ...option.RequestOption) (res *EnvironmentNewFromProjectResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentFromProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -391,7 +392,7 @@ func (r *EnvironmentService) NewFromProject(ctx context.Context, body Environmen
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *EnvironmentService) NewLogsToken(ctx context.Context, body EnvironmentNewLogsTokenParams, opts ...option.RequestOption) (res *EnvironmentNewLogsTokenResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentLogsToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -415,7 +416,7 @@ func (r *EnvironmentService) NewLogsToken(ctx context.Context, body EnvironmentN
 //	  timestamp: "2025-02-12T14:30:00Z"
 //	```
 func (r *EnvironmentService) MarkActive(ctx context.Context, body EnvironmentMarkActiveParams, opts ...option.RequestOption) (res *EnvironmentMarkActiveResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/MarkEnvironmentActive"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -437,7 +438,7 @@ func (r *EnvironmentService) MarkActive(ctx context.Context, body EnvironmentMar
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartParams, opts ...option.RequestOption) (res *EnvironmentStartResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/StartEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -458,7 +459,7 @@ func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartPar
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParams, opts ...option.RequestOption) (res *EnvironmentStopResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/StopEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -474,7 +475,7 @@ func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParam
 //	environmentId: "07e03a28-65a5-4d98-b532-8ea67b188048"
 //	```
 func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnarchiveParams, opts ...option.RequestOption) (res *EnvironmentUnarchiveResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/UnarchiveEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
