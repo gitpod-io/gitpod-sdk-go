@@ -398,8 +398,9 @@ func (r EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy) MarshalJSON() 
 }
 
 type EnvironmentAutomationTaskUpdateParamsSpec struct {
-	Command param.Field[string]             `json:"command"`
-	RunsOn  param.Field[shared.RunsOnParam] `json:"runsOn"`
+	Command param.Field[string]                                `json:"command"`
+	Env     param.Field[[]shared.EnvironmentVariableItemParam] `json:"env"`
+	RunsOn  param.Field[shared.RunsOnParam]                    `json:"runsOn"`
 }
 
 func (r EnvironmentAutomationTaskUpdateParamsSpec) MarshalJSON() (data []byte, err error) {

@@ -27,18 +27,34 @@ const ErrorCodeUnavailable = apierror.ErrorCodeUnavailable
 const ErrorCodeDataLoss = apierror.ErrorCodeDataLoss
 const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
 
-// An AutomationTrigger represents a trigger for an automation action. The
+// An AutomationTrigger represents a trigger for an automation action. The `manual`
+// field shows a start button in the UI for manually triggering the automation. The
+// `post_machine_start` field indicates that the automation should be triggered
+// after the machine has started, before the devcontainer is ready. This is used
+// for machine-level services like security agents that need to start early. The
 // `post_environment_start` field indicates that the automation should be triggered
-// after the environment has started. The `post_devcontainer_start` field indicates
-// that the automation should be triggered after the dev container has started.
+// after the environment has started (devcontainer ready). The
+// `post_devcontainer_start` field indicates that the automation should be
+// triggered after the dev container has started. The `prebuild` field starts the
+// automation during a prebuild of an environment. This phase does not have user
+// secrets available. Note: The prebuild trigger can only be used with tasks, not
+// services.
 //
 // This is an alias to an internal type.
 type AutomationTrigger = shared.AutomationTrigger
 
-// An AutomationTrigger represents a trigger for an automation action. The
+// An AutomationTrigger represents a trigger for an automation action. The `manual`
+// field shows a start button in the UI for manually triggering the automation. The
+// `post_machine_start` field indicates that the automation should be triggered
+// after the machine has started, before the devcontainer is ready. This is used
+// for machine-level services like security agents that need to start early. The
 // `post_environment_start` field indicates that the automation should be triggered
-// after the environment has started. The `post_devcontainer_start` field indicates
-// that the automation should be triggered after the dev container has started.
+// after the environment has started (devcontainer ready). The
+// `post_devcontainer_start` field indicates that the automation should be
+// triggered after the dev container has started. The `prebuild` field starts the
+// automation during a prebuild of an environment. This phase does not have user
+// secrets available. Note: The prebuild trigger can only be used with tasks, not
+// services.
 //
 // This is an alias to an internal type.
 type AutomationTriggerParam = shared.AutomationTriggerParam
@@ -48,6 +64,28 @@ type EnvironmentClass = shared.EnvironmentClass
 
 // This is an alias to an internal type.
 type EnvironmentClassParam = shared.EnvironmentClassParam
+
+// EnvironmentVariableItem represents an environment variable that can be set
+// either from a literal value or from a secret reference.
+//
+// This is an alias to an internal type.
+type EnvironmentVariableItem = shared.EnvironmentVariableItem
+
+// EnvironmentVariableItem represents an environment variable that can be set
+// either from a literal value or from a secret reference.
+//
+// This is an alias to an internal type.
+type EnvironmentVariableItemParam = shared.EnvironmentVariableItemParam
+
+// EnvironmentVariableSource specifies a source for an environment variable value.
+//
+// This is an alias to an internal type.
+type EnvironmentVariableSource = shared.EnvironmentVariableSource
+
+// EnvironmentVariableSource specifies a source for an environment variable value.
+//
+// This is an alias to an internal type.
+type EnvironmentVariableSourceParam = shared.EnvironmentVariableSourceParam
 
 // This is an alias to an internal type.
 type FieldValue = shared.FieldValue
@@ -96,6 +134,144 @@ const PrincipalServiceAccount = shared.PrincipalServiceAccount
 // This is an alias to an internal value.
 const PrincipalRunnerManager = shared.PrincipalRunnerManager
 
+// This is an alias to an internal value.
+const PrincipalAgentExecution = shared.PrincipalAgentExecution
+
+// This is an alias to an internal type.
+type ProjectEnvironmentClass = shared.ProjectEnvironmentClass
+
+// This is an alias to an internal type.
+type ProjectEnvironmentClassParam = shared.ProjectEnvironmentClassParam
+
+// This is an alias to an internal type.
+type ResourceType = shared.ResourceType
+
+// This is an alias to an internal value.
+const ResourceTypeUnspecified = shared.ResourceTypeUnspecified
+
+// This is an alias to an internal value.
+const ResourceTypeEnvironment = shared.ResourceTypeEnvironment
+
+// This is an alias to an internal value.
+const ResourceTypeRunner = shared.ResourceTypeRunner
+
+// This is an alias to an internal value.
+const ResourceTypeProject = shared.ResourceTypeProject
+
+// This is an alias to an internal value.
+const ResourceTypeTask = shared.ResourceTypeTask
+
+// This is an alias to an internal value.
+const ResourceTypeTaskExecution = shared.ResourceTypeTaskExecution
+
+// This is an alias to an internal value.
+const ResourceTypeService = shared.ResourceTypeService
+
+// This is an alias to an internal value.
+const ResourceTypeOrganization = shared.ResourceTypeOrganization
+
+// This is an alias to an internal value.
+const ResourceTypeUser = shared.ResourceTypeUser
+
+// This is an alias to an internal value.
+const ResourceTypeEnvironmentClass = shared.ResourceTypeEnvironmentClass
+
+// This is an alias to an internal value.
+const ResourceTypeRunnerScmIntegration = shared.ResourceTypeRunnerScmIntegration
+
+// This is an alias to an internal value.
+const ResourceTypeHostAuthenticationToken = shared.ResourceTypeHostAuthenticationToken
+
+// This is an alias to an internal value.
+const ResourceTypeGroup = shared.ResourceTypeGroup
+
+// This is an alias to an internal value.
+const ResourceTypePersonalAccessToken = shared.ResourceTypePersonalAccessToken
+
+// This is an alias to an internal value.
+const ResourceTypeUserPreference = shared.ResourceTypeUserPreference
+
+// This is an alias to an internal value.
+const ResourceTypeServiceAccount = shared.ResourceTypeServiceAccount
+
+// This is an alias to an internal value.
+const ResourceTypeSecret = shared.ResourceTypeSecret
+
+// This is an alias to an internal value.
+const ResourceTypeSSOConfig = shared.ResourceTypeSSOConfig
+
+// This is an alias to an internal value.
+const ResourceTypeDomainVerification = shared.ResourceTypeDomainVerification
+
+// This is an alias to an internal value.
+const ResourceTypeAgentExecution = shared.ResourceTypeAgentExecution
+
+// This is an alias to an internal value.
+const ResourceTypeRunnerLlmIntegration = shared.ResourceTypeRunnerLlmIntegration
+
+// This is an alias to an internal value.
+const ResourceTypeAgent = shared.ResourceTypeAgent
+
+// This is an alias to an internal value.
+const ResourceTypeEnvironmentSession = shared.ResourceTypeEnvironmentSession
+
+// This is an alias to an internal value.
+const ResourceTypeUserSecret = shared.ResourceTypeUserSecret
+
+// This is an alias to an internal value.
+const ResourceTypeOrganizationPolicy = shared.ResourceTypeOrganizationPolicy
+
+// This is an alias to an internal value.
+const ResourceTypeOrganizationSecret = shared.ResourceTypeOrganizationSecret
+
+// This is an alias to an internal value.
+const ResourceTypeProjectEnvironmentClass = shared.ResourceTypeProjectEnvironmentClass
+
+// This is an alias to an internal value.
+const ResourceTypeBilling = shared.ResourceTypeBilling
+
+// This is an alias to an internal value.
+const ResourceTypePrompt = shared.ResourceTypePrompt
+
+// This is an alias to an internal value.
+const ResourceTypeCoupon = shared.ResourceTypeCoupon
+
+// This is an alias to an internal value.
+const ResourceTypeCouponRedemption = shared.ResourceTypeCouponRedemption
+
+// This is an alias to an internal value.
+const ResourceTypeAccount = shared.ResourceTypeAccount
+
+// This is an alias to an internal value.
+const ResourceTypeIntegration = shared.ResourceTypeIntegration
+
+// This is an alias to an internal value.
+const ResourceTypeWorkflow = shared.ResourceTypeWorkflow
+
+// This is an alias to an internal value.
+const ResourceTypeWorkflowExecution = shared.ResourceTypeWorkflowExecution
+
+// This is an alias to an internal value.
+const ResourceTypeWorkflowExecutionAction = shared.ResourceTypeWorkflowExecutionAction
+
+// This is an alias to an internal value.
+const ResourceTypeSnapshot = shared.ResourceTypeSnapshot
+
+// This is an alias to an internal value.
+const ResourceTypePrebuild = shared.ResourceTypePrebuild
+
+// This is an alias to an internal value.
+const ResourceTypeOrganizationLlmIntegration = shared.ResourceTypeOrganizationLlmIntegration
+
+// This is an alias to an internal value.
+const ResourceTypeCustomDomain = shared.ResourceTypeCustomDomain
+
+// This is an alias to an internal value.
+const ResourceTypeRoleAssignmentChanged = shared.ResourceTypeRoleAssignmentChanged
+
+// This is an alias to an internal value.
+const ResourceTypeGroupMembershipChanged = shared.ResourceTypeGroupMembershipChanged
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
@@ -107,6 +283,16 @@ type RunsOnParam = shared.RunsOnParam
 
 // This is an alias to an internal type.
 type RunsOnDockerParam = shared.RunsOnDockerParam
+
+// SecretRef references a secret by its ID.
+//
+// This is an alias to an internal type.
+type SecretRef = shared.SecretRef
+
+// SecretRef references a secret by its ID.
+//
+// This is an alias to an internal type.
+type SecretRefParam = shared.SecretRefParam
 
 // This is an alias to an internal type.
 type Subject = shared.Subject

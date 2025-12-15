@@ -9,14 +9,24 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 )
 
-// An AutomationTrigger represents a trigger for an automation action. The
+// An AutomationTrigger represents a trigger for an automation action. The `manual`
+// field shows a start button in the UI for manually triggering the automation. The
+// `post_machine_start` field indicates that the automation should be triggered
+// after the machine has started, before the devcontainer is ready. This is used
+// for machine-level services like security agents that need to start early. The
 // `post_environment_start` field indicates that the automation should be triggered
-// after the environment has started. The `post_devcontainer_start` field indicates
-// that the automation should be triggered after the dev container has started.
+// after the environment has started (devcontainer ready). The
+// `post_devcontainer_start` field indicates that the automation should be
+// triggered after the dev container has started. The `prebuild` field starts the
+// automation during a prebuild of an environment. This phase does not have user
+// secrets available. Note: The prebuild trigger can only be used with tasks, not
+// services.
 type AutomationTrigger struct {
 	Manual                bool                  `json:"manual"`
 	PostDevcontainerStart bool                  `json:"postDevcontainerStart"`
 	PostEnvironmentStart  bool                  `json:"postEnvironmentStart"`
+	PostMachineStart      bool                  `json:"postMachineStart"`
+	Prebuild              bool                  `json:"prebuild"`
 	JSON                  automationTriggerJSON `json:"-"`
 }
 
@@ -26,6 +36,8 @@ type automationTriggerJSON struct {
 	Manual                apijson.Field
 	PostDevcontainerStart apijson.Field
 	PostEnvironmentStart  apijson.Field
+	PostMachineStart      apijson.Field
+	Prebuild              apijson.Field
 	raw                   string
 	ExtraFields           map[string]apijson.Field
 }
@@ -38,14 +50,24 @@ func (r automationTriggerJSON) RawJSON() string {
 	return r.raw
 }
 
-// An AutomationTrigger represents a trigger for an automation action. The
+// An AutomationTrigger represents a trigger for an automation action. The `manual`
+// field shows a start button in the UI for manually triggering the automation. The
+// `post_machine_start` field indicates that the automation should be triggered
+// after the machine has started, before the devcontainer is ready. This is used
+// for machine-level services like security agents that need to start early. The
 // `post_environment_start` field indicates that the automation should be triggered
-// after the environment has started. The `post_devcontainer_start` field indicates
-// that the automation should be triggered after the dev container has started.
+// after the environment has started (devcontainer ready). The
+// `post_devcontainer_start` field indicates that the automation should be
+// triggered after the dev container has started. The `prebuild` field starts the
+// automation during a prebuild of an environment. This phase does not have user
+// secrets available. Note: The prebuild trigger can only be used with tasks, not
+// services.
 type AutomationTriggerParam struct {
 	Manual                param.Field[bool] `json:"manual"`
 	PostDevcontainerStart param.Field[bool] `json:"postDevcontainerStart"`
 	PostEnvironmentStart  param.Field[bool] `json:"postEnvironmentStart"`
+	PostMachineStart      param.Field[bool] `json:"postMachineStart"`
+	Prebuild              param.Field[bool] `json:"prebuild"`
 }
 
 func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
@@ -109,6 +131,84 @@ type EnvironmentClassParam struct {
 }
 
 func (r EnvironmentClassParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// EnvironmentVariableItem represents an environment variable that can be set
+// either from a literal value or from a secret reference.
+type EnvironmentVariableItem struct {
+	// name is the environment variable name.
+	Name string `json:"name"`
+	// value is a literal string value.
+	Value string `json:"value"`
+	// value_from specifies a source for the value.
+	ValueFrom EnvironmentVariableSource   `json:"valueFrom"`
+	JSON      environmentVariableItemJSON `json:"-"`
+}
+
+// environmentVariableItemJSON contains the JSON metadata for the struct
+// [EnvironmentVariableItem]
+type environmentVariableItemJSON struct {
+	Name        apijson.Field
+	Value       apijson.Field
+	ValueFrom   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentVariableItem) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentVariableItemJSON) RawJSON() string {
+	return r.raw
+}
+
+// EnvironmentVariableItem represents an environment variable that can be set
+// either from a literal value or from a secret reference.
+type EnvironmentVariableItemParam struct {
+	// name is the environment variable name.
+	Name param.Field[string] `json:"name"`
+	// value is a literal string value.
+	Value param.Field[string] `json:"value"`
+	// value_from specifies a source for the value.
+	ValueFrom param.Field[EnvironmentVariableSourceParam] `json:"valueFrom"`
+}
+
+func (r EnvironmentVariableItemParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// EnvironmentVariableSource specifies a source for an environment variable value.
+type EnvironmentVariableSource struct {
+	// secret_ref references a secret by ID.
+	SecretRef SecretRef                     `json:"secretRef,required"`
+	JSON      environmentVariableSourceJSON `json:"-"`
+}
+
+// environmentVariableSourceJSON contains the JSON metadata for the struct
+// [EnvironmentVariableSource]
+type environmentVariableSourceJSON struct {
+	SecretRef   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentVariableSource) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentVariableSourceJSON) RawJSON() string {
+	return r.raw
+}
+
+// EnvironmentVariableSource specifies a source for an environment variable value.
+type EnvironmentVariableSourceParam struct {
+	// secret_ref references a secret by ID.
+	SecretRef param.Field[SecretRefParam] `json:"secretRef,required"`
+}
+
+func (r EnvironmentVariableSourceParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -198,24 +298,126 @@ const (
 	PrincipalEnvironment    Principal = "PRINCIPAL_ENVIRONMENT"
 	PrincipalServiceAccount Principal = "PRINCIPAL_SERVICE_ACCOUNT"
 	PrincipalRunnerManager  Principal = "PRINCIPAL_RUNNER_MANAGER"
+	PrincipalAgentExecution Principal = "PRINCIPAL_AGENT_EXECUTION"
 )
 
 func (r Principal) IsKnown() bool {
 	switch r {
-	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager:
+	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager, PrincipalAgentExecution:
+		return true
+	}
+	return false
+}
+
+type ProjectEnvironmentClass struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
+	// Use a local runner for the user
+	LocalRunner bool `json:"localRunner"`
+	// order is the priority of this entry
+	Order int64                       `json:"order"`
+	JSON  projectEnvironmentClassJSON `json:"-"`
+}
+
+// projectEnvironmentClassJSON contains the JSON metadata for the struct
+// [ProjectEnvironmentClass]
+type projectEnvironmentClassJSON struct {
+	EnvironmentClassID apijson.Field
+	LocalRunner        apijson.Field
+	Order              apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *ProjectEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectEnvironmentClassParam struct {
+	// Use a fixed environment class on a given Runner. This cannot be a local runner's
+	// environment class.
+	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
+	// Use a local runner for the user
+	LocalRunner param.Field[bool] `json:"localRunner"`
+	// order is the priority of this entry
+	Order param.Field[int64] `json:"order"`
+}
+
+func (r ProjectEnvironmentClassParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ResourceType string
+
+const (
+	ResourceTypeUnspecified                ResourceType = "RESOURCE_TYPE_UNSPECIFIED"
+	ResourceTypeEnvironment                ResourceType = "RESOURCE_TYPE_ENVIRONMENT"
+	ResourceTypeRunner                     ResourceType = "RESOURCE_TYPE_RUNNER"
+	ResourceTypeProject                    ResourceType = "RESOURCE_TYPE_PROJECT"
+	ResourceTypeTask                       ResourceType = "RESOURCE_TYPE_TASK"
+	ResourceTypeTaskExecution              ResourceType = "RESOURCE_TYPE_TASK_EXECUTION"
+	ResourceTypeService                    ResourceType = "RESOURCE_TYPE_SERVICE"
+	ResourceTypeOrganization               ResourceType = "RESOURCE_TYPE_ORGANIZATION"
+	ResourceTypeUser                       ResourceType = "RESOURCE_TYPE_USER"
+	ResourceTypeEnvironmentClass           ResourceType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
+	ResourceTypeRunnerScmIntegration       ResourceType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
+	ResourceTypeHostAuthenticationToken    ResourceType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
+	ResourceTypeGroup                      ResourceType = "RESOURCE_TYPE_GROUP"
+	ResourceTypePersonalAccessToken        ResourceType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
+	ResourceTypeUserPreference             ResourceType = "RESOURCE_TYPE_USER_PREFERENCE"
+	ResourceTypeServiceAccount             ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
+	ResourceTypeSecret                     ResourceType = "RESOURCE_TYPE_SECRET"
+	ResourceTypeSSOConfig                  ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
+	ResourceTypeDomainVerification         ResourceType = "RESOURCE_TYPE_DOMAIN_VERIFICATION"
+	ResourceTypeAgentExecution             ResourceType = "RESOURCE_TYPE_AGENT_EXECUTION"
+	ResourceTypeRunnerLlmIntegration       ResourceType = "RESOURCE_TYPE_RUNNER_LLM_INTEGRATION"
+	ResourceTypeAgent                      ResourceType = "RESOURCE_TYPE_AGENT"
+	ResourceTypeEnvironmentSession         ResourceType = "RESOURCE_TYPE_ENVIRONMENT_SESSION"
+	ResourceTypeUserSecret                 ResourceType = "RESOURCE_TYPE_USER_SECRET"
+	ResourceTypeOrganizationPolicy         ResourceType = "RESOURCE_TYPE_ORGANIZATION_POLICY"
+	ResourceTypeOrganizationSecret         ResourceType = "RESOURCE_TYPE_ORGANIZATION_SECRET"
+	ResourceTypeProjectEnvironmentClass    ResourceType = "RESOURCE_TYPE_PROJECT_ENVIRONMENT_CLASS"
+	ResourceTypeBilling                    ResourceType = "RESOURCE_TYPE_BILLING"
+	ResourceTypePrompt                     ResourceType = "RESOURCE_TYPE_PROMPT"
+	ResourceTypeCoupon                     ResourceType = "RESOURCE_TYPE_COUPON"
+	ResourceTypeCouponRedemption           ResourceType = "RESOURCE_TYPE_COUPON_REDEMPTION"
+	ResourceTypeAccount                    ResourceType = "RESOURCE_TYPE_ACCOUNT"
+	ResourceTypeIntegration                ResourceType = "RESOURCE_TYPE_INTEGRATION"
+	ResourceTypeWorkflow                   ResourceType = "RESOURCE_TYPE_WORKFLOW"
+	ResourceTypeWorkflowExecution          ResourceType = "RESOURCE_TYPE_WORKFLOW_EXECUTION"
+	ResourceTypeWorkflowExecutionAction    ResourceType = "RESOURCE_TYPE_WORKFLOW_EXECUTION_ACTION"
+	ResourceTypeSnapshot                   ResourceType = "RESOURCE_TYPE_SNAPSHOT"
+	ResourceTypePrebuild                   ResourceType = "RESOURCE_TYPE_PREBUILD"
+	ResourceTypeOrganizationLlmIntegration ResourceType = "RESOURCE_TYPE_ORGANIZATION_LLM_INTEGRATION"
+	ResourceTypeCustomDomain               ResourceType = "RESOURCE_TYPE_CUSTOM_DOMAIN"
+	ResourceTypeRoleAssignmentChanged      ResourceType = "RESOURCE_TYPE_ROLE_ASSIGNMENT_CHANGED"
+	ResourceTypeGroupMembershipChanged     ResourceType = "RESOURCE_TYPE_GROUP_MEMBERSHIP_CHANGED"
+)
+
+func (r ResourceType) IsKnown() bool {
+	switch r {
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged:
 		return true
 	}
 	return false
 }
 
 type RunsOn struct {
-	Docker RunsOnDocker `json:"docker,required"`
-	JSON   runsOnJSON   `json:"-"`
+	Docker RunsOnDocker `json:"docker"`
+	// Machine runs the service/task directly on the VM/machine level.
+	Machine interface{} `json:"machine"`
+	JSON    runsOnJSON  `json:"-"`
 }
 
 // runsOnJSON contains the JSON metadata for the struct [RunsOn]
 type runsOnJSON struct {
 	Docker      apijson.Field
+	Machine     apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -251,7 +453,9 @@ func (r runsOnDockerJSON) RawJSON() string {
 }
 
 type RunsOnParam struct {
-	Docker param.Field[RunsOnDockerParam] `json:"docker,required"`
+	Docker param.Field[RunsOnDockerParam] `json:"docker"`
+	// Machine runs the service/task directly on the VM/machine level.
+	Machine param.Field[interface{}] `json:"machine"`
 }
 
 func (r RunsOnParam) MarshalJSON() (data []byte, err error) {
@@ -267,9 +471,41 @@ func (r RunsOnDockerParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// SecretRef references a secret by its ID.
+type SecretRef struct {
+	// id is the UUID of the secret to reference.
+	ID   string        `json:"id" format:"uuid"`
+	JSON secretRefJSON `json:"-"`
+}
+
+// secretRefJSON contains the JSON metadata for the struct [SecretRef]
+type secretRefJSON struct {
+	ID          apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretRef) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretRefJSON) RawJSON() string {
+	return r.raw
+}
+
+// SecretRef references a secret by its ID.
+type SecretRefParam struct {
+	// id is the UUID of the secret to reference.
+	ID param.Field[string] `json:"id" format:"uuid"`
+}
+
+func (r SecretRefParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type Subject struct {
 	// id is the UUID of the subject
-	ID string `json:"id"`
+	ID string `json:"id" format:"uuid"`
 	// Principal is the principal of the subject
 	Principal Principal   `json:"principal"`
 	JSON      subjectJSON `json:"-"`
@@ -293,7 +529,7 @@ func (r subjectJSON) RawJSON() string {
 
 type SubjectParam struct {
 	// id is the UUID of the subject
-	ID param.Field[string] `json:"id"`
+	ID param.Field[string] `json:"id" format:"uuid"`
 	// Principal is the principal of the subject
 	Principal param.Field[Principal] `json:"principal"`
 }
@@ -661,6 +897,8 @@ func (r TaskMetadataParam) MarshalJSON() (data []byte, err error) {
 type TaskSpec struct {
 	// command contains the command the task should execute
 	Command string `json:"command"`
+	// env specifies environment variables for the task.
+	Env []EnvironmentVariableItem `json:"env"`
 	// runs_on specifies the environment the task should run on.
 	RunsOn RunsOn       `json:"runsOn"`
 	JSON   taskSpecJSON `json:"-"`
@@ -669,6 +907,7 @@ type TaskSpec struct {
 // taskSpecJSON contains the JSON metadata for the struct [TaskSpec]
 type taskSpecJSON struct {
 	Command     apijson.Field
+	Env         apijson.Field
 	RunsOn      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -685,6 +924,8 @@ func (r taskSpecJSON) RawJSON() string {
 type TaskSpecParam struct {
 	// command contains the command the task should execute
 	Command param.Field[string] `json:"command"`
+	// env specifies environment variables for the task.
+	Env param.Field[[]EnvironmentVariableItemParam] `json:"env"`
 	// runs_on specifies the environment the task should run on.
 	RunsOn param.Field[RunsOnParam] `json:"runsOn"`
 }

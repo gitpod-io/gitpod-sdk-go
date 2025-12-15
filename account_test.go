@@ -38,7 +38,7 @@ func TestAccountGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAccountDelete(t *testing.T) {
+func TestAccountDeleteWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -53,6 +53,7 @@ func TestAccountDelete(t *testing.T) {
 	)
 	_, err := client.Accounts.Delete(context.TODO(), gitpod.AccountDeleteParams{
 		AccountID: gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+		Reason:    gitpod.F("reason"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -105,7 +106,10 @@ func TestAccountListJoinableOrganizationsWithOptionalParams(t *testing.T) {
 	_, err := client.Accounts.ListJoinableOrganizations(context.TODO(), gitpod.AccountListJoinableOrganizationsParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Empty:    gitpod.F(true),
+		Pagination: gitpod.F(gitpod.AccountListJoinableOrganizationsParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -133,12 +137,45 @@ func TestAccountListLoginProvidersWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.AccountListLoginProvidersParamsFilter{
+			Email:    gitpod.F("email"),
 			InviteID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 		Pagination: gitpod.F(gitpod.AccountListLoginProvidersParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestAccountListSSOLoginsWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Accounts.ListSSOLogins(context.TODO(), gitpod.AccountListSSOLoginsParams{
+		Email:    gitpod.F("dev@stainless.com"),
+		Token:    gitpod.F("token"),
+		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.AccountListSSOLoginsParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
+		ReturnTo: gitpod.F("https://example.com"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

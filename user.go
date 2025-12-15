@@ -38,6 +38,15 @@ func NewUserService(opts ...option.RequestOption) (r *UserService) {
 	return
 }
 
+// Deletes a user. If the User comes from an organization's SSO provider, the
+// Account will also be deleted.
+func (r *UserService) DeleteUser(ctx context.Context, body UserDeleteUserParams, opts ...option.RequestOption) (res *UserDeleteUserResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.UserService/DeleteUser"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Gets information about the currently authenticated user.
 //
 // Use this method to:
@@ -59,6 +68,30 @@ func NewUserService(opts ...option.RequestOption) (r *UserService) {
 func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuthenticatedUserParams, opts ...option.RequestOption) (res *UserGetAuthenticatedUserResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Gets basic information about a specific user by their ID.
+//
+// Use this method to:
+//
+// - Retrieve user profile information
+// - Get user details for display purposes
+// - Fetch user metadata for administrative tasks
+//
+// ### Examples
+//
+// - Get user by ID:
+//
+//	Retrieves basic user information by user ID.
+//
+//	```yaml
+//	userId: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	```
+func (r *UserService) GetUser(ctx context.Context, body UserGetUserParams, opts ...option.RequestOption) (res *UserGetUserResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.UserService/GetUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -104,6 +137,8 @@ type User struct {
 	AvatarURL string `json:"avatarUrl"`
 	// created_at is the creation time
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
+	// email is the user's email address
+	Email string `json:"email"`
 	// name is the full name of the user
 	Name string `json:"name"`
 	// organization_id is the id of the organization this account is owned by.
@@ -120,6 +155,7 @@ type userJSON struct {
 	ID             apijson.Field
 	AvatarURL      apijson.Field
 	CreatedAt      apijson.Field
+	Email          apijson.Field
 	Name           apijson.Field
 	OrganizationID apijson.Field
 	Status         apijson.Field
@@ -134,6 +170,8 @@ func (r *User) UnmarshalJSON(data []byte) (err error) {
 func (r userJSON) RawJSON() string {
 	return r.raw
 }
+
+type UserDeleteUserResponse = interface{}
 
 type UserGetAuthenticatedUserResponse struct {
 	User User                                 `json:"user,required"`
@@ -156,13 +194,50 @@ func (r userGetAuthenticatedUserResponseJSON) RawJSON() string {
 	return r.raw
 }
 
+type UserGetUserResponse struct {
+	User User                    `json:"user,required"`
+	JSON userGetUserResponseJSON `json:"-"`
+}
+
+// userGetUserResponseJSON contains the JSON metadata for the struct
+// [UserGetUserResponse]
+type userGetUserResponseJSON struct {
+	User        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *UserGetUserResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r userGetUserResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type UserSetSuspendedResponse = interface{}
+
+type UserDeleteUserParams struct {
+	UserID param.Field[string] `json:"userId" format:"uuid"`
+}
+
+func (r UserDeleteUserParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
 
 type UserGetAuthenticatedUserParams struct {
 	Empty param.Field[bool] `json:"empty"`
 }
 
 func (r UserGetAuthenticatedUserParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type UserGetUserParams struct {
+	UserID param.Field[string] `json:"userId" format:"uuid"`
+}
+
+func (r UserGetUserParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

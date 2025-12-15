@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestSecretNewWithOptionalParams(t *testing.T) {
+func TestPrebuildNewWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,19 +26,14 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.New(context.TODO(), gitpod.SecretNewParams{
-		APIOnly:                        gitpod.F(true),
-		ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
-		EnvironmentVariable:            gitpod.F(true),
-		FilePath:                       gitpod.F("filePath"),
-		Name:                           gitpod.F("DATABASE_URL"),
-		ProjectID:                      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Scope: gitpod.F(gitpod.SecretScopeParam{
-			OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			ProjectID:      gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.Prebuilds.New(context.TODO(), gitpod.PrebuildNewParams{
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		Spec: gitpod.F(gitpod.PrebuildSpecParam{
+			DesiredPhase: gitpod.F(gitpod.PrebuildPhaseUnspecified),
+			SpecVersion:  gitpod.F("specVersion"),
+			Timeout:      gitpod.F("3600s"),
 		}),
-		Value: gitpod.F("postgresql://user:pass@localhost:5432/db"),
+		EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -49,7 +44,7 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretListWithOptionalParams(t *testing.T) {
+func TestPrebuildGet(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -62,20 +57,41 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.List(context.TODO(), gitpod.SecretListParams{
+	_, err := client.Prebuilds.Get(context.TODO(), gitpod.PrebuildGetParams{
+		PrebuildID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestPrebuildListWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Prebuilds.List(context.TODO(), gitpod.PrebuildListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Filter: gitpod.F(gitpod.SecretListParamsFilter{
+		Filter: gitpod.F(gitpod.PrebuildListParamsFilter{
+			Phases:     gitpod.F([]gitpod.PrebuildPhase{gitpod.PrebuildPhaseUnspecified}),
 			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Scope: gitpod.F(gitpod.SecretScopeParam{
-				OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				ProjectID:      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-				UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			}),
 		}),
-		Pagination: gitpod.F(gitpod.SecretListParamsPagination{
+		Pagination: gitpod.F(gitpod.PrebuildListParamsPagination{
 			Token:    gitpod.F("token"),
-			PageSize: gitpod.F(int64(20)),
+			PageSize: gitpod.F(int64(100)),
 		}),
 	})
 	if err != nil {
@@ -87,7 +103,7 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretDeleteWithOptionalParams(t *testing.T) {
+func TestPrebuildDelete(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -100,8 +116,8 @@ func TestSecretDeleteWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.Delete(context.TODO(), gitpod.SecretDeleteParams{
-		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	_, err := client.Prebuilds.Delete(context.TODO(), gitpod.PrebuildDeleteParams{
+		PrebuildID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -112,7 +128,7 @@ func TestSecretDeleteWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretGetValueWithOptionalParams(t *testing.T) {
+func TestPrebuildCancel(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -125,8 +141,8 @@ func TestSecretGetValueWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.GetValue(context.TODO(), gitpod.SecretGetValueParams{
-		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	_, err := client.Prebuilds.Cancel(context.TODO(), gitpod.PrebuildCancelParams{
+		PrebuildID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -137,7 +153,7 @@ func TestSecretGetValueWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretUpdateValueWithOptionalParams(t *testing.T) {
+func TestPrebuildNewLogsToken(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -150,9 +166,8 @@ func TestSecretUpdateValueWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.UpdateValue(context.TODO(), gitpod.SecretUpdateValueParams{
-		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		Value:    gitpod.F("new-secret-value"),
+	_, err := client.Prebuilds.NewLogsToken(context.TODO(), gitpod.PrebuildNewLogsTokenParams{
+		PrebuildID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
