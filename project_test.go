@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestProjectNewWithOptionalParams(t *testing.T) {
@@ -27,10 +28,6 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Projects.New(context.TODO(), gitpod.ProjectNewParams{
-		EnvironmentClass: gitpod.F(gitpod.ProjectEnvironmentClassParam{
-			EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-			LocalRunner:        gitpod.F(true),
-		}),
 		Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
 			Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
 				ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
@@ -48,6 +45,21 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 		AutomationsFilePath:  gitpod.F("automationsFilePath"),
 		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 		Name:                 gitpod.F("Web Application"),
+		PrebuildConfiguration: gitpod.F(gitpod.ProjectPrebuildConfigurationParam{
+			Enabled:               gitpod.F(true),
+			EnableJetbrainsWarmup: gitpod.F(true),
+			EnvironmentClassIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Executor: gitpod.F(shared.SubjectParam{
+				ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Principal: gitpod.F(shared.PrincipalUnspecified),
+			}),
+			Timeout: gitpod.F("+9125115.360s"),
+			Trigger: gitpod.F(gitpod.ProjectPrebuildConfigurationTriggerParam{
+				DailySchedule: gitpod.F(gitpod.ProjectPrebuildConfigurationTriggerDailyScheduleParam{
+					HourUtc: gitpod.F(int64(23)),
+				}),
+			}),
+		}),
 		TechnicalDescription: gitpod.F("technicalDescription"),
 	})
 	if err != nil {
@@ -100,10 +112,6 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Projects.Update(context.TODO(), gitpod.ProjectUpdateParams{
 		AutomationsFilePath:  gitpod.F("automationsFilePath"),
 		DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
-		EnvironmentClass: gitpod.F(gitpod.ProjectEnvironmentClassParam{
-			EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-			LocalRunner:        gitpod.F(true),
-		}),
 		Initializer: gitpod.F(gitpod.EnvironmentInitializerParam{
 			Specs: gitpod.F([]gitpod.EnvironmentInitializerSpecParam{{
 				ContextURL: gitpod.F(gitpod.EnvironmentInitializerSpecsContextURLParam{
@@ -118,7 +126,22 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 				}),
 			}}),
 		}),
-		Name:                 gitpod.F("x"),
+		Name: gitpod.F("x"),
+		PrebuildConfiguration: gitpod.F(gitpod.ProjectPrebuildConfigurationParam{
+			Enabled:               gitpod.F(true),
+			EnableJetbrainsWarmup: gitpod.F(true),
+			EnvironmentClassIDs:   gitpod.F([]string{"b0e12f6c-4c67-429d-a4a6-d9838b5da041"}),
+			Executor: gitpod.F(shared.SubjectParam{
+				ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Principal: gitpod.F(shared.PrincipalUnspecified),
+			}),
+			Timeout: gitpod.F("3600s"),
+			Trigger: gitpod.F(gitpod.ProjectPrebuildConfigurationTriggerParam{
+				DailySchedule: gitpod.F(gitpod.ProjectPrebuildConfigurationTriggerDailyScheduleParam{
+					HourUtc: gitpod.F(int64(2)),
+				}),
+			}),
+		}),
 		ProjectID:            gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		TechnicalDescription: gitpod.F("technicalDescription"),
 	})
@@ -149,6 +172,8 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.ProjectListParamsFilter{
 			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Search:     gitpod.F("search"),
 		}),
 		Pagination: gitpod.F(gitpod.ProjectListParamsPagination{
 			Token:    gitpod.F("token"),

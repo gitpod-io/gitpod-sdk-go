@@ -38,11 +38,13 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 					}),
 					Description: gitpod.F("Development web server"),
 					Name:        gitpod.F("Web Server"),
+					Role:        gitpod.F(gitpod.AutomationsFileServicesRoleEmpty),
 					RunsOn: gitpod.F(shared.RunsOnParam{
 						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
+						Machine: gitpod.F[any](map[string]interface{}{}),
 					}),
 					TriggeredBy: gitpod.F([]gitpod.AutomationsFileServicesTriggeredBy{gitpod.AutomationsFileServicesTriggeredByPostDevcontainerStart}),
 				},
@@ -58,6 +60,7 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
+						Machine: gitpod.F[any](map[string]interface{}{}),
 					}),
 					TriggeredBy: gitpod.F([]gitpod.AutomationsFileTasksTriggeredBy{gitpod.AutomationsFileTasksTriggeredByPostEnvironmentStart}),
 				},

@@ -206,6 +206,11 @@ type RunnerConfigurationValidateParamsScmIntegration struct {
 	// scm_id references the scm_id in the runner's configuration schema that this
 	// integration is for
 	ScmID param.Field[string] `json:"scmId"`
+	// virtual_directory is the virtual directory path for Azure DevOps Server (e.g.,
+	// "/tfs"). This field is only used for Azure DevOps Server SCM integrations and
+	// should be empty for other SCM types. Azure DevOps Server APIs work without
+	// collection when PAT scope is 'All accessible organizations'.
+	VirtualDirectory param.Field[string] `json:"virtualDirectory"`
 }
 
 func (r RunnerConfigurationValidateParamsScmIntegration) MarshalJSON() (data []byte, err error) {

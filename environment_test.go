@@ -12,6 +12,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestEnvironmentNewWithOptionalParams(t *testing.T) {
@@ -33,6 +34,13 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
+				TriggerFilter: gitpod.F([]shared.AutomationTriggerParam{{
+					Manual:                gitpod.F(true),
+					PostDevcontainerStart: gitpod.F(true),
+					PostEnvironmentStart:  gitpod.F(true),
+					PostMachineStart:      gitpod.F(true),
+					Prebuild:              gitpod.F(true),
+				}}),
 			}),
 			Content: gitpod.F(gitpod.EnvironmentSpecContentParam{
 				GitEmail:    gitpod.F("gitEmail"),
@@ -60,7 +68,8 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
 					Repository: gitpod.F("https://example.com"),
 				}),
-				Session: gitpod.F("session"),
+				LifecycleStage: gitpod.F(gitpod.EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified),
+				Session:        gitpod.F("session"),
 			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
@@ -69,10 +78,12 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			Ports: gitpod.F([]gitpod.EnvironmentSpecPortParam{{
 				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
+				Port:      gitpod.F(int64(1024)),
+				Protocol:  gitpod.F(gitpod.EnvironmentSpecPortsProtocolProtocolUnspecified),
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
 				ID:                             gitpod.F("id"),
+				APIOnly:                        gitpod.F(true),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				EnvironmentVariable:            gitpod.F("environmentVariable"),
 				FilePath:                       gitpod.F("filePath"),
@@ -90,6 +101,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			Timeout: gitpod.F(gitpod.EnvironmentSpecTimeoutParam{
 				Disconnected: gitpod.F("+9125115.360s"),
 			}),
+			WorkflowActionID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 	})
 	if err != nil {
@@ -175,7 +187,8 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 			Ports: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecPort{{
 				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
+				Port:      gitpod.F(int64(1024)),
+				Protocol:  gitpod.F(gitpod.EnvironmentUpdateParamsSpecPortsProtocolProtocolUnspecified),
 			}}),
 			SSHPublicKeys: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecSSHPublicKey{{
 				ID:    gitpod.F("0194b7c1-c954-718d-91a4-9a742aa5fc11"),
@@ -213,8 +226,10 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.EnvironmentListParamsFilter{
 			ArchivalStatus: gitpod.F(gitpod.EnvironmentListParamsFilterArchivalStatusArchivalStatusUnspecified),
+			CreatedBefore:  gitpod.F(time.Now()),
 			CreatorIDs:     gitpod.F([]string{"f53d2330-3795-4c5d-a1f3-453121af9c60"}),
 			ProjectIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Roles:          gitpod.F([]gitpod.EnvironmentRole{gitpod.EnvironmentRoleUnspecified}),
 			RunnerIDs:      gitpod.F([]string{"e6aa9c54-89d3-42c1-ac31-bd8d8f1concentrate"}),
 			RunnerKinds:    gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
 			StatusPhases:   gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseUnspecified}),
@@ -304,6 +319,13 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
+				TriggerFilter: gitpod.F([]shared.AutomationTriggerParam{{
+					Manual:                gitpod.F(true),
+					PostDevcontainerStart: gitpod.F(true),
+					PostEnvironmentStart:  gitpod.F(true),
+					PostMachineStart:      gitpod.F(true),
+					Prebuild:              gitpod.F(true),
+				}}),
 			}),
 			Content: gitpod.F(gitpod.EnvironmentSpecContentParam{
 				GitEmail:    gitpod.F("gitEmail"),
@@ -331,7 +353,8 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				Dotfiles: gitpod.F(gitpod.EnvironmentSpecDevcontainerDotfilesParam{
 					Repository: gitpod.F("https://example.com"),
 				}),
-				Session: gitpod.F("session"),
+				LifecycleStage: gitpod.F(gitpod.EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified),
+				Session:        gitpod.F("session"),
 			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
@@ -340,10 +363,12 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			Ports: gitpod.F([]gitpod.EnvironmentSpecPortParam{{
 				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 				Name:      gitpod.F("x"),
-				Port:      gitpod.F(int64(1)),
+				Port:      gitpod.F(int64(1024)),
+				Protocol:  gitpod.F(gitpod.EnvironmentSpecPortsProtocolProtocolUnspecified),
 			}}),
 			Secrets: gitpod.F([]gitpod.EnvironmentSpecSecretParam{{
 				ID:                             gitpod.F("id"),
+				APIOnly:                        gitpod.F(true),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				EnvironmentVariable:            gitpod.F("environmentVariable"),
 				FilePath:                       gitpod.F("filePath"),
@@ -361,6 +386,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			Timeout: gitpod.F(gitpod.EnvironmentSpecTimeoutParam{
 				Disconnected: gitpod.F("14400s"),
 			}),
+			WorkflowActionID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 	})
 	if err != nil {

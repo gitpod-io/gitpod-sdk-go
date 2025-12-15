@@ -18,13 +18,16 @@ import (
 type Client struct {
 	Options       []option.RequestOption
 	Accounts      *AccountService
+	Agents        *AgentService
 	Editors       *EditorService
 	Environments  *EnvironmentService
+	Errors        *ErrorService
 	Events        *EventService
 	Gateways      *GatewayService
 	Groups        *GroupService
 	Identity      *IdentityService
 	Organizations *OrganizationService
+	Prebuilds     *PrebuildService
 	Projects      *ProjectService
 	Runners       *RunnerService
 	Secrets       *SecretService
@@ -55,13 +58,16 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r = &Client{Options: opts}
 
 	r.Accounts = NewAccountService(opts...)
+	r.Agents = NewAgentService(opts...)
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
+	r.Errors = NewErrorService(opts...)
 	r.Events = NewEventService(opts...)
 	r.Gateways = NewGatewayService(opts...)
 	r.Groups = NewGroupService(opts...)
 	r.Identity = NewIdentityService(opts...)
 	r.Organizations = NewOrganizationService(opts...)
+	r.Prebuilds = NewPrebuildService(opts...)
 	r.Projects = NewProjectService(opts...)
 	r.Runners = NewRunnerService(opts...)
 	r.Secrets = NewSecretService(opts...)

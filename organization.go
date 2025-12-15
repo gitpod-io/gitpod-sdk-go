@@ -26,6 +26,7 @@ import (
 // the [NewOrganizationService] method instead.
 type OrganizationService struct {
 	Options             []option.RequestOption
+	CustomDomains       *OrganizationCustomDomainService
 	DomainVerifications *OrganizationDomainVerificationService
 	Invites             *OrganizationInviteService
 	Policies            *OrganizationPolicyService
@@ -38,6 +39,7 @@ type OrganizationService struct {
 func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationService) {
 	r = &OrganizationService{}
 	r.Options = opts
+	r.CustomDomains = NewOrganizationCustomDomainService(opts...)
 	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
 	r.Policies = NewOrganizationPolicyService(opts...)
@@ -470,7 +472,7 @@ type Organization struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	Name      string    `json:"name,required"`
-	// The tier of the organization - free or enterprise
+	// The tier of the organization - free, enterprise or core
 	Tier OrganizationTier `json:"tier,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -715,11 +717,13 @@ const (
 	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
 	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
 	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
+	OrganizationTierCore        OrganizationTier = "ORGANIZATION_TIER_CORE"
+	OrganizationTierFreeOna     OrganizationTier = "ORGANIZATION_TIER_FREE_ONA"
 )
 
 func (r OrganizationTier) IsKnown() bool {
 	switch r {
-	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise:
+	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise, OrganizationTierCore, OrganizationTierFreeOna:
 		return true
 	}
 	return false
@@ -890,9 +894,10 @@ func (r OrganizationLeaveParams) MarshalJSON() (data []byte, err error) {
 
 type OrganizationListMembersParams struct {
 	// organization_id is the ID of the organization to list members for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
-	Token          param.Field[string] `query:"token"`
-	PageSize       param.Field[int64]  `query:"pageSize"`
+	OrganizationID param.Field[string]                              `json:"organizationId,required" format:"uuid"`
+	Token          param.Field[string]                              `query:"token"`
+	PageSize       param.Field[int64]                               `query:"pageSize"`
+	Filter         param.Field[OrganizationListMembersParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing members
 	Pagination param.Field[OrganizationListMembersParamsPagination] `json:"pagination"`
 }
@@ -908,6 +913,15 @@ func (r OrganizationListMembersParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+type OrganizationListMembersParamsFilter struct {
+	// search performs case-insensitive search across member name and email
+	Search param.Field[string] `json:"search"`
+}
+
+func (r OrganizationListMembersParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // pagination contains the pagination options for listing members

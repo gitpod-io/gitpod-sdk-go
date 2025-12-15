@@ -49,6 +49,7 @@ func TestRunnerConfigurationValidateWithOptionalParams(t *testing.T) {
 			OAuthPlaintextClientSecret: gitpod.F("client_secret"),
 			Pat:                        gitpod.F(true),
 			ScmID:                      gitpod.F("github"),
+			VirtualDirectory:           gitpod.F("virtualDirectory"),
 		}),
 	})
 	if err != nil {

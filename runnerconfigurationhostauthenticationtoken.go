@@ -15,6 +15,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 	"github.com/gitpod-io/gitpod-sdk-go/packages/pagination"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 // RunnerConfigurationHostAuthenticationTokenService contains methods and other
@@ -311,25 +312,40 @@ type HostAuthenticationToken struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	ExpiresAt time.Time                     `json:"expiresAt" format:"date-time"`
-	Host      string                        `json:"host"`
-	RunnerID  string                        `json:"runnerId"`
-	Source    HostAuthenticationTokenSource `json:"source"`
-	UserID    string                        `json:"userId"`
-	JSON      hostAuthenticationTokenJSON   `json:"-"`
+	ExpiresAt time.Time `json:"expiresAt" format:"date-time"`
+	Host      string    `json:"host"`
+	// links to integration instance
+	IntegrationID string `json:"integrationId"`
+	RunnerID      string `json:"runnerId"`
+	// token permissions
+	Scopes []string `json:"scopes"`
+	// auth_type
+	Source HostAuthenticationTokenSource `json:"source"`
+	// Subject identifies the principal (user or service account) for the token Note:
+	// actual token and refresh_token values are retrieved via
+	// GetHostAuthenticationTokenValue API
+	Subject shared.Subject `json:"subject"`
+	// Deprecated: Use principal_id and principal_type instead principal (user)
+	//
+	// Deprecated: deprecated
+	UserID string                      `json:"userId"`
+	JSON   hostAuthenticationTokenJSON `json:"-"`
 }
 
 // hostAuthenticationTokenJSON contains the JSON metadata for the struct
 // [HostAuthenticationToken]
 type hostAuthenticationTokenJSON struct {
-	ID          apijson.Field
-	ExpiresAt   apijson.Field
-	Host        apijson.Field
-	RunnerID    apijson.Field
-	Source      apijson.Field
-	UserID      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID            apijson.Field
+	ExpiresAt     apijson.Field
+	Host          apijson.Field
+	IntegrationID apijson.Field
+	RunnerID      apijson.Field
+	Scopes        apijson.Field
+	Source        apijson.Field
+	Subject       apijson.Field
+	UserID        apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
 }
 
 func (r *HostAuthenticationToken) UnmarshalJSON(data []byte) (err error) {
@@ -403,6 +419,7 @@ type RunnerConfigurationHostAuthenticationTokenUpdateResponse = interface{}
 type RunnerConfigurationHostAuthenticationTokenDeleteResponse = interface{}
 
 type RunnerConfigurationHostAuthenticationTokenNewParams struct {
+	// stored encrypted, retrieved via GetHostAuthenticationTokenValue
 	Token param.Field[string] `json:"token"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
@@ -492,12 +509,19 @@ type RunnerConfigurationHostAuthenticationTokenNewParams struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	ExpiresAt    param.Field[time.Time]                     `json:"expiresAt" format:"date-time"`
-	Host         param.Field[string]                        `json:"host"`
-	RefreshToken param.Field[string]                        `json:"refreshToken"`
-	RunnerID     param.Field[string]                        `json:"runnerId" format:"uuid"`
-	Source       param.Field[HostAuthenticationTokenSource] `json:"source"`
-	UserID       param.Field[string]                        `json:"userId" format:"uuid"`
+	ExpiresAt     param.Field[time.Time] `json:"expiresAt" format:"date-time"`
+	Host          param.Field[string]    `json:"host"`
+	IntegrationID param.Field[string]    `json:"integrationId" format:"uuid"`
+	// stored encrypted, retrieved via GetHostAuthenticationTokenValue
+	RefreshToken param.Field[string] `json:"refreshToken"`
+	RunnerID     param.Field[string] `json:"runnerId" format:"uuid"`
+	// Maximum 100 scopes allowed (101 for validation purposes)
+	Scopes param.Field[[]string]                      `json:"scopes"`
+	Source param.Field[HostAuthenticationTokenSource] `json:"source"`
+	// Subject identifies the principal (user or service account) for the token
+	Subject param.Field[shared.SubjectParam] `json:"subject"`
+	// Deprecated: Use principal_id and principal_type instead
+	UserID param.Field[string] `json:"userId" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenNewParams) MarshalJSON() (data []byte, err error) {
@@ -605,6 +629,7 @@ type RunnerConfigurationHostAuthenticationTokenUpdateParams struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	ExpiresAt    param.Field[time.Time] `json:"expiresAt" format:"date-time"`
 	RefreshToken param.Field[string]    `json:"refreshToken"`
+	Scopes       param.Field[[]string]  `json:"scopes"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -633,7 +658,12 @@ func (r RunnerConfigurationHostAuthenticationTokenListParams) URLQuery() (v url.
 
 type RunnerConfigurationHostAuthenticationTokenListParamsFilter struct {
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
-	UserID   param.Field[string] `json:"userId" format:"uuid"`
+	// Filter by subject (user or service account)
+	SubjectID param.Field[string] `json:"subjectId" format:"uuid"`
+	// Deprecated: Use principal_id instead
+	//
+	// Deprecated: deprecated
+	UserID param.Field[string] `json:"userId" format:"uuid"`
 }
 
 func (r RunnerConfigurationHostAuthenticationTokenListParamsFilter) MarshalJSON() (data []byte, err error) {

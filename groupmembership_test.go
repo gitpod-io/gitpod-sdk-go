@@ -11,9 +11,10 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
-func TestEditorGet(t *testing.T) {
+func TestGroupMembershipNewWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,8 +27,12 @@ func TestEditorGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
-		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	_, err := client.Groups.Memberships.New(context.TODO(), gitpod.GroupMembershipNewParams{
+		GroupID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Subject: gitpod.F(shared.SubjectParam{
+			ID:        gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+			Principal: gitpod.F(shared.PrincipalUser),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -38,7 +43,7 @@ func TestEditorGet(t *testing.T) {
 	}
 }
 
-func TestEditorListWithOptionalParams(t *testing.T) {
+func TestGroupMembershipListWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -51,13 +56,11 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Editors.List(context.TODO(), gitpod.EditorListParams{
+	_, err := client.Groups.Memberships.List(context.TODO(), gitpod.GroupMembershipListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Filter: gitpod.F(gitpod.EditorListParamsFilter{
-			AllowedByPolicy: gitpod.F(true),
-		}),
-		Pagination: gitpod.F(gitpod.EditorListParamsPagination{
+		GroupID:  gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Pagination: gitpod.F(gitpod.GroupMembershipListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
@@ -71,7 +74,7 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEditorResolveURLWithOptionalParams(t *testing.T) {
+func TestGroupMembershipDeleteWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -84,11 +87,8 @@ func TestEditorResolveURLWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Editors.ResolveURL(context.TODO(), gitpod.EditorResolveURLParams{
-		EditorID:       gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		EnvironmentID:  gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
-		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Version:        gitpod.F("version"),
+	_, err := client.Groups.Memberships.Delete(context.TODO(), gitpod.GroupMembershipDeleteParams{
+		MembershipID: gitpod.F("a1b2c3d4-5678-90ab-cdef-1234567890ab"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

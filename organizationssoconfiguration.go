@@ -273,9 +273,11 @@ type SSOConfiguration struct {
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims map[string]string `json:"claims"`
 	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID    string               `json:"clientId"`
-	EmailDomain string               `json:"emailDomain"`
-	JSON        ssoConfigurationJSON `json:"-"`
+	ClientID     string               `json:"clientId"`
+	DisplayName  string               `json:"displayName"`
+	EmailDomain  string               `json:"emailDomain"`
+	EmailDomains []string             `json:"emailDomains"`
+	JSON         ssoConfigurationJSON `json:"-"`
 }
 
 // ssoConfigurationJSON contains the JSON metadata for the struct
@@ -288,7 +290,9 @@ type ssoConfigurationJSON struct {
 	State          apijson.Field
 	Claims         apijson.Field
 	ClientID       apijson.Field
+	DisplayName    apijson.Field
 	EmailDomain    apijson.Field
+	EmailDomains   apijson.Field
 	raw            string
 	ExtraFields    map[string]apijson.Field
 }
@@ -370,11 +374,13 @@ type OrganizationSSOConfigurationNewParams struct {
 	ClientID param.Field[string] `json:"clientId,required"`
 	// client_secret is the client secret of the OIDC application set on the IdP
 	ClientSecret param.Field[string] `json:"clientSecret,required"`
-	// email_domain is the domain that is allowed to sign in to the organization
-	EmailDomain param.Field[string] `json:"emailDomain,required"`
 	// issuer_url is the URL of the IdP issuer
 	IssuerURL      param.Field[string] `json:"issuerUrl,required" format:"uri"`
 	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	DisplayName    param.Field[string] `json:"displayName"`
+	// email_domain is the domain that is allowed to sign in to the organization
+	EmailDomain  param.Field[string]   `json:"emailDomain"`
+	EmailDomains param.Field[[]string] `json:"emailDomains"`
 }
 
 func (r OrganizationSSOConfigurationNewParams) MarshalJSON() (data []byte, err error) {
@@ -398,8 +404,10 @@ type OrganizationSSOConfigurationUpdateParams struct {
 	// client_id is the client ID of the SSO provider
 	ClientID param.Field[string] `json:"clientId"`
 	// client_secret is the client secret of the SSO provider
-	ClientSecret param.Field[string] `json:"clientSecret"`
-	EmailDomain  param.Field[string] `json:"emailDomain"`
+	ClientSecret param.Field[string]   `json:"clientSecret"`
+	DisplayName  param.Field[string]   `json:"displayName"`
+	EmailDomain  param.Field[string]   `json:"emailDomain"`
+	EmailDomains param.Field[[]string] `json:"emailDomains"`
 	// issuer_url is the URL of the IdP issuer
 	IssuerURL param.Field[string] `json:"issuerUrl" format:"uri"`
 	// state is the state of the SSO configuration

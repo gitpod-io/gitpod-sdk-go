@@ -138,11 +138,42 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 //	```yaml
 //	{}
 //	```
-func (r *AccountService) ListJoinableOrganizations(ctx context.Context, params AccountListJoinableOrganizationsParams, opts ...option.RequestOption) (res *AccountListJoinableOrganizationsResponse, err error) {
+func (r *AccountService) ListJoinableOrganizations(ctx context.Context, params AccountListJoinableOrganizationsParams, opts ...option.RequestOption) (res *pagination.JoinableOrganizationsPage[JoinableOrganization], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.AccountService/ListJoinableOrganizations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Lists organizations that the currently authenticated account can join.
+//
+// Use this method to:
+//
+// - Discover organizations associated with the account's email domain.
+// - Allow users to join existing organizations.
+// - Display potential organizations during onboarding.
+//
+// ### Examples
+//
+// - List joinable organizations:
+//
+//	Retrieves a list of organizations the account can join.
+//
+//	```yaml
+//	{}
+//	```
+func (r *AccountService) ListJoinableOrganizationsAutoPaging(ctx context.Context, params AccountListJoinableOrganizationsParams, opts ...option.RequestOption) *pagination.JoinableOrganizationsPageAutoPager[JoinableOrganization] {
+	return pagination.NewJoinableOrganizationsPageAutoPager(r.ListJoinableOrganizations(ctx, params, opts...))
 }
 
 // Lists available login providers with optional filtering.
@@ -222,6 +253,29 @@ func (r *AccountService) ListLoginProviders(ctx context.Context, params AccountL
 //	```
 func (r *AccountService) ListLoginProvidersAutoPaging(ctx context.Context, params AccountListLoginProvidersParams, opts ...option.RequestOption) *pagination.LoginProvidersPageAutoPager[LoginProvider] {
 	return pagination.NewLoginProvidersPageAutoPager(r.ListLoginProviders(ctx, params, opts...))
+}
+
+// ListSSOLogins
+func (r *AccountService) ListSSOLogins(ctx context.Context, params AccountListSSOLoginsParams, opts ...option.RequestOption) (res *pagination.LoginsPage[AccountListSSOLoginsResponse], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	path := "gitpod.v1.AccountService/ListSSOLogins"
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// ListSSOLogins
+func (r *AccountService) ListSSOLoginsAutoPaging(ctx context.Context, params AccountListSSOLoginsParams, opts ...option.RequestOption) *pagination.LoginsPageAutoPager[AccountListSSOLoginsResponse] {
+	return pagination.NewLoginsPageAutoPager(r.ListSSOLogins(ctx, params, opts...))
 }
 
 type Account struct {
@@ -580,24 +634,29 @@ func (r accountGetSSOLoginURLResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-type AccountListJoinableOrganizationsResponse struct {
-	JoinableOrganizations []JoinableOrganization                       `json:"joinableOrganizations"`
-	JSON                  accountListJoinableOrganizationsResponseJSON `json:"-"`
+type AccountListSSOLoginsResponse struct {
+	// provider is the provider used by this login method, e.g. "github", "google",
+	// "custom"
+	DisplayName string `json:"displayName,required"`
+	// login_url is the URL to redirect the user to for SSO login
+	LoginURL string                           `json:"loginUrl,required"`
+	JSON     accountListSSOLoginsResponseJSON `json:"-"`
 }
 
-// accountListJoinableOrganizationsResponseJSON contains the JSON metadata for the
-// struct [AccountListJoinableOrganizationsResponse]
-type accountListJoinableOrganizationsResponseJSON struct {
-	JoinableOrganizations apijson.Field
-	raw                   string
-	ExtraFields           map[string]apijson.Field
+// accountListSSOLoginsResponseJSON contains the JSON metadata for the struct
+// [AccountListSSOLoginsResponse]
+type accountListSSOLoginsResponseJSON struct {
+	DisplayName apijson.Field
+	LoginURL    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
 }
 
-func (r *AccountListJoinableOrganizationsResponse) UnmarshalJSON(data []byte) (err error) {
+func (r *AccountListSSOLoginsResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r accountListJoinableOrganizationsResponseJSON) RawJSON() string {
+func (r accountListSSOLoginsResponseJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -611,6 +670,8 @@ func (r AccountGetParams) MarshalJSON() (data []byte, err error) {
 
 type AccountDeleteParams struct {
 	AccountID param.Field[string] `json:"accountId,required" format:"uuid"`
+	// reason is an optional field for the reason for account deletion
+	Reason param.Field[string] `json:"reason"`
 }
 
 func (r AccountDeleteParams) MarshalJSON() (data []byte, err error) {
@@ -631,7 +692,8 @@ func (r AccountGetSSOLoginURLParams) MarshalJSON() (data []byte, err error) {
 type AccountListJoinableOrganizationsParams struct {
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
-	Empty    param.Field[bool]   `json:"empty"`
+	// pagination contains the pagination options for listing joinable organizations
+	Pagination param.Field[AccountListJoinableOrganizationsParamsPagination] `json:"pagination"`
 }
 
 func (r AccountListJoinableOrganizationsParams) MarshalJSON() (data []byte, err error) {
@@ -645,6 +707,20 @@ func (r AccountListJoinableOrganizationsParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// pagination contains the pagination options for listing joinable organizations
+type AccountListJoinableOrganizationsParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
+}
+
+func (r AccountListJoinableOrganizationsParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type AccountListLoginProvidersParams struct {
@@ -671,6 +747,8 @@ func (r AccountListLoginProvidersParams) URLQuery() (v url.Values) {
 
 // filter contains the filter options for listing login methods
 type AccountListLoginProvidersParamsFilter struct {
+	// email is the email address to filter SSO providers by
+	Email param.Field[string] `json:"email"`
 	// invite_id is the ID of the invite URL the user wants to login with
 	InviteID param.Field[string] `json:"inviteId" format:"uuid"`
 }
@@ -690,5 +768,43 @@ type AccountListLoginProvidersParamsPagination struct {
 }
 
 func (r AccountListLoginProvidersParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AccountListSSOLoginsParams struct {
+	// email is the email the user wants to login with
+	Email    param.Field[string] `json:"email,required" format:"email"`
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// pagination contains the pagination options for listing SSO logins
+	Pagination param.Field[AccountListSSOLoginsParamsPagination] `json:"pagination"`
+	// return_to is the URL the user will be redirected to after login
+	ReturnTo param.Field[string] `json:"returnTo" format:"uri"`
+}
+
+func (r AccountListSSOLoginsParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// URLQuery serializes [AccountListSSOLoginsParams]'s query parameters as
+// `url.Values`.
+func (r AccountListSSOLoginsParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// pagination contains the pagination options for listing SSO logins
+type AccountListSSOLoginsParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
+}
+
+func (r AccountListSSOLoginsParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
