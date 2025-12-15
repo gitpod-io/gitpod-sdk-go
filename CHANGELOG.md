@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.1 (2025-12-06)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.6.0...v0.6.1)
+
+### Bug Fixes
+
+* **mcp:** correct code tool API endpoint ([e94dac8](https://github.com/gitpod-io/gitpod-sdk-go/commit/e94dac8aeb3a3704d65044e7a9c7d7aa865c02a0))
+* rename param to avoid collision ([230f5ad](https://github.com/gitpod-io/gitpod-sdk-go/commit/230f5adf57fa28e012fe769b611f3ad81ba283ba))
+
+
+### Chores
+
+* elide duplicate aliases ([515de72](https://github.com/gitpod-io/gitpod-sdk-go/commit/515de72284fc4276378d364665da670a92d6e756))
+* **internal:** codegen related update ([7e15eec](https://github.com/gitpod-io/gitpod-sdk-go/commit/7e15eec605c407c7fe6db51625a3b2ab5da9447a))
+
 ## 0.6.0 (2025-09-25)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.5.0...v0.6.0)
