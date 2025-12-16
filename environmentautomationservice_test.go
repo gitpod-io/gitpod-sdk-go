@@ -33,16 +33,19 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 		Metadata: gitpod.F(gitpod.ServiceMetadataParam{
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(shared.SubjectParam{
-				ID:        gitpod.F("id"),
+				ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 				Principal: gitpod.F(shared.PrincipalUnspecified),
 			}),
 			Description: gitpod.F("Runs the development web server"),
 			Name:        gitpod.F("Web Server"),
 			Reference:   gitpod.F("web-server"),
+			Role:        gitpod.F(gitpod.ServiceRoleUnspecified),
 			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
 				Manual:                gitpod.F(true),
 				PostDevcontainerStart: gitpod.F(true),
 				PostEnvironmentStart:  gitpod.F(true),
+				PostMachineStart:      gitpod.F(true),
+				Prebuild:              gitpod.F(true),
 			}}),
 		}),
 		Spec: gitpod.F(gitpod.ServiceSpecParam{
@@ -52,11 +55,21 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 				Stop:  gitpod.F("stop"),
 			}),
 			DesiredPhase: gitpod.F(gitpod.ServicePhaseUnspecified),
+			Env: gitpod.F([]shared.EnvironmentVariableItemParam{{
+				Name:  gitpod.F("x"),
+				Value: gitpod.F("value"),
+				ValueFrom: gitpod.F(shared.EnvironmentVariableSourceParam{
+					SecretRef: gitpod.F(shared.SecretRefParam{
+						ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+					}),
+				}),
+			}}),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
+				Machine: gitpod.F[any](map[string]interface{}{}),
 			}),
 			Session:     gitpod.F("session"),
 			SpecVersion: gitpod.F("specVersion"),
@@ -114,11 +127,14 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 		Metadata: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsMetadata{
 			Description: gitpod.F("description"),
 			Name:        gitpod.F("x"),
+			Role:        gitpod.F(gitpod.ServiceRoleUnspecified),
 			TriggeredBy: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsMetadataTriggeredBy{
 				Trigger: gitpod.F([]shared.AutomationTriggerParam{{
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),
+					PostMachineStart:      gitpod.F(true),
+					Prebuild:              gitpod.F(true),
 				}}),
 			}),
 		}),
@@ -128,11 +144,21 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 				Start: gitpod.F("npm run start:dev"),
 				Stop:  gitpod.F("stop"),
 			}),
+			Env: gitpod.F([]shared.EnvironmentVariableItemParam{{
+				Name:  gitpod.F("x"),
+				Value: gitpod.F("value"),
+				ValueFrom: gitpod.F(shared.EnvironmentVariableSourceParam{
+					SecretRef: gitpod.F(shared.SecretRefParam{
+						ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+					}),
+				}),
+			}}),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
+				Machine: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 		Status: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsStatus{
@@ -173,6 +199,7 @@ func TestEnvironmentAutomationServiceListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsFilter{
 			EnvironmentIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			References:     gitpod.F([]string{"web-server", "database"}),
+			Roles:          gitpod.F([]gitpod.ServiceRole{gitpod.ServiceRoleUnspecified}),
 			ServiceIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentAutomationServiceListParamsPagination{

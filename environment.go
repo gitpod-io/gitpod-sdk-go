@@ -599,9 +599,14 @@ type EnvironmentMetadata struct {
 	// original_context_url is the normalized URL from which the environment was
 	// created
 	OriginalContextURL string `json:"originalContextUrl"`
+	// prebuild_id is the ID of the prebuild this environment was created from. Only
+	// set if the environment was created from a prebuild.
+	PrebuildID string `json:"prebuildId,nullable" format:"uuid"`
 	// If the Environment was started from a project, the project_id will reference the
 	// project.
 	ProjectID string `json:"projectId"`
+	// role is the role of the environment
+	Role EnvironmentRole `json:"role"`
 	// Runner is the ID of the runner that runs this environment.
 	RunnerID string                  `json:"runnerId"`
 	JSON     environmentMetadataJSON `json:"-"`
@@ -618,7 +623,9 @@ type environmentMetadataJSON struct {
 	Name               apijson.Field
 	OrganizationID     apijson.Field
 	OriginalContextURL apijson.Field
+	PrebuildID         apijson.Field
 	ProjectID          apijson.Field
+	Role               apijson.Field
 	RunnerID           apijson.Field
 	raw                string
 	ExtraFields        map[string]apijson.Field
@@ -654,6 +661,24 @@ func (r EnvironmentPhase) IsKnown() bool {
 	return false
 }
 
+// EnvironmentRole represents the role of an environment
+type EnvironmentRole string
+
+const (
+	EnvironmentRoleUnspecified EnvironmentRole = "ENVIRONMENT_ROLE_UNSPECIFIED"
+	EnvironmentRoleDefault     EnvironmentRole = "ENVIRONMENT_ROLE_DEFAULT"
+	EnvironmentRolePrebuild    EnvironmentRole = "ENVIRONMENT_ROLE_PREBUILD"
+	EnvironmentRoleWorkflow    EnvironmentRole = "ENVIRONMENT_ROLE_WORKFLOW"
+)
+
+func (r EnvironmentRole) IsKnown() bool {
+	switch r {
+	case EnvironmentRoleUnspecified, EnvironmentRoleDefault, EnvironmentRolePrebuild, EnvironmentRoleWorkflow:
+		return true
+	}
+	return false
+}
+
 // EnvironmentSpec specifies the configuration of an environment for an environment
 // start
 type EnvironmentSpec struct {
@@ -669,7 +694,7 @@ type EnvironmentSpec struct {
 	Devcontainer EnvironmentSpecDevcontainer `json:"devcontainer"`
 	// machine is the machine spec of the environment
 	Machine EnvironmentSpecMachine `json:"machine"`
-	// ports is the set of ports which ought to be exposed to the internet
+	// ports is the set of ports which ought to be exposed to your network
 	Ports []EnvironmentSpecPort `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
 	Secrets []EnvironmentSpecSecret `json:"secrets"`
@@ -681,24 +706,28 @@ type EnvironmentSpec struct {
 	SSHPublicKeys []EnvironmentSpecSSHPublicKey `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
 	Timeout EnvironmentSpecTimeout `json:"timeout"`
-	JSON    environmentSpecJSON    `json:"-"`
+	// workflow_action_id is an optional reference to the workflow execution action
+	// that created this environment. Used for tracking and event correlation.
+	WorkflowActionID string              `json:"workflowActionId,nullable" format:"uuid"`
+	JSON             environmentSpecJSON `json:"-"`
 }
 
 // environmentSpecJSON contains the JSON metadata for the struct [EnvironmentSpec]
 type environmentSpecJSON struct {
-	Admission       apijson.Field
-	AutomationsFile apijson.Field
-	Content         apijson.Field
-	DesiredPhase    apijson.Field
-	Devcontainer    apijson.Field
-	Machine         apijson.Field
-	Ports           apijson.Field
-	Secrets         apijson.Field
-	SpecVersion     apijson.Field
-	SSHPublicKeys   apijson.Field
-	Timeout         apijson.Field
-	raw             string
-	ExtraFields     map[string]apijson.Field
+	Admission        apijson.Field
+	AutomationsFile  apijson.Field
+	Content          apijson.Field
+	DesiredPhase     apijson.Field
+	Devcontainer     apijson.Field
+	Machine          apijson.Field
+	Ports            apijson.Field
+	Secrets          apijson.Field
+	SpecVersion      apijson.Field
+	SSHPublicKeys    apijson.Field
+	Timeout          apijson.Field
+	WorkflowActionID apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *EnvironmentSpec) UnmarshalJSON(data []byte) (err error) {
@@ -718,9 +747,13 @@ type EnvironmentSpecAutomationsFile struct {
 	// ```
 	// this.matches('^$|^[^/].*')
 	// ```
-	AutomationsFilePath string                             `json:"automationsFilePath"`
-	Session             string                             `json:"session"`
-	JSON                environmentSpecAutomationsFileJSON `json:"-"`
+	AutomationsFilePath string `json:"automationsFilePath"`
+	Session             string `json:"session"`
+	// trigger_filter specifies which automation triggers should execute. When set,
+	// only automations matching these triggers will run. If empty/unset, all triggers
+	// are evaluated normally.
+	TriggerFilter []shared.AutomationTrigger         `json:"triggerFilter"`
+	JSON          environmentSpecAutomationsFileJSON `json:"-"`
 }
 
 // environmentSpecAutomationsFileJSON contains the JSON metadata for the struct
@@ -728,6 +761,7 @@ type EnvironmentSpecAutomationsFile struct {
 type environmentSpecAutomationsFileJSON struct {
 	AutomationsFilePath apijson.Field
 	Session             apijson.Field
+	TriggerFilter       apijson.Field
 	raw                 string
 	ExtraFields         map[string]apijson.Field
 }
@@ -785,8 +819,11 @@ type EnvironmentSpecDevcontainer struct {
 	DevcontainerFilePath string `json:"devcontainerFilePath"`
 	// Experimental: dotfiles is the dotfiles configuration of the devcontainer
 	Dotfiles EnvironmentSpecDevcontainerDotfiles `json:"dotfiles"`
-	Session  string                              `json:"session"`
-	JSON     environmentSpecDevcontainerJSON     `json:"-"`
+	// lifecycle_stage controls which devcontainer lifecycle commands are executed.
+	// Defaults to FULL if not specified.
+	LifecycleStage EnvironmentSpecDevcontainerLifecycleStage `json:"lifecycleStage"`
+	Session        string                                    `json:"session"`
+	JSON           environmentSpecDevcontainerJSON           `json:"-"`
 }
 
 // environmentSpecDevcontainerJSON contains the JSON metadata for the struct
@@ -795,6 +832,7 @@ type environmentSpecDevcontainerJSON struct {
 	DefaultDevcontainerImage apijson.Field
 	DevcontainerFilePath     apijson.Field
 	Dotfiles                 apijson.Field
+	LifecycleStage           apijson.Field
 	Session                  apijson.Field
 	raw                      string
 	ExtraFields              map[string]apijson.Field
@@ -831,6 +869,24 @@ func (r environmentSpecDevcontainerDotfilesJSON) RawJSON() string {
 	return r.raw
 }
 
+// lifecycle_stage controls which devcontainer lifecycle commands are executed.
+// Defaults to FULL if not specified.
+type EnvironmentSpecDevcontainerLifecycleStage string
+
+const (
+	EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified EnvironmentSpecDevcontainerLifecycleStage = "LIFECYCLE_STAGE_UNSPECIFIED"
+	EnvironmentSpecDevcontainerLifecycleStageLifecycleStageFull        EnvironmentSpecDevcontainerLifecycleStage = "LIFECYCLE_STAGE_FULL"
+	EnvironmentSpecDevcontainerLifecycleStageLifecycleStagePrebuild    EnvironmentSpecDevcontainerLifecycleStage = "LIFECYCLE_STAGE_PREBUILD"
+)
+
+func (r EnvironmentSpecDevcontainerLifecycleStage) IsKnown() bool {
+	switch r {
+	case EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified, EnvironmentSpecDevcontainerLifecycleStageLifecycleStageFull, EnvironmentSpecDevcontainerLifecycleStageLifecycleStagePrebuild:
+		return true
+	}
+	return false
+}
+
 // machine is the machine spec of the environment
 type EnvironmentSpecMachine struct {
 	// Class denotes the class of the environment we ought to start
@@ -862,8 +918,12 @@ type EnvironmentSpecPort struct {
 	// name of this port
 	Name string `json:"name"`
 	// port number
-	Port int64                   `json:"port"`
-	JSON environmentSpecPortJSON `json:"-"`
+	Port int64 `json:"port"`
+	// protocol for communication (Gateway proxy → user environment service). this
+	// setting only affects the protocol used between Gateway and user environment
+	// services.
+	Protocol EnvironmentSpecPortsProtocol `json:"protocol"`
+	JSON     environmentSpecPortJSON      `json:"-"`
 }
 
 // environmentSpecPortJSON contains the JSON metadata for the struct
@@ -872,6 +932,7 @@ type environmentSpecPortJSON struct {
 	Admission   apijson.Field
 	Name        apijson.Field
 	Port        apijson.Field
+	Protocol    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -884,9 +945,31 @@ func (r environmentSpecPortJSON) RawJSON() string {
 	return r.raw
 }
 
+// protocol for communication (Gateway proxy → user environment service). this
+// setting only affects the protocol used between Gateway and user environment
+// services.
+type EnvironmentSpecPortsProtocol string
+
+const (
+	EnvironmentSpecPortsProtocolProtocolUnspecified EnvironmentSpecPortsProtocol = "PROTOCOL_UNSPECIFIED"
+	EnvironmentSpecPortsProtocolProtocolHTTP        EnvironmentSpecPortsProtocol = "PROTOCOL_HTTP"
+	EnvironmentSpecPortsProtocolProtocolHTTPS       EnvironmentSpecPortsProtocol = "PROTOCOL_HTTPS"
+)
+
+func (r EnvironmentSpecPortsProtocol) IsKnown() bool {
+	switch r {
+	case EnvironmentSpecPortsProtocolProtocolUnspecified, EnvironmentSpecPortsProtocolProtocolHTTP, EnvironmentSpecPortsProtocolProtocolHTTPS:
+		return true
+	}
+	return false
+}
+
 type EnvironmentSpecSecret struct {
 	// id is the unique identifier of the secret.
 	ID string `json:"id"`
+	// api_only indicates the secret is only available via API/CLI. These secrets are
+	// resolved but NOT automatically injected into services or devcontainers.
+	APIOnly bool `json:"apiOnly"`
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
@@ -910,6 +993,7 @@ type EnvironmentSpecSecret struct {
 // [EnvironmentSpecSecret]
 type environmentSpecSecretJSON struct {
 	ID                             apijson.Field
+	APIOnly                        apijson.Field
 	ContainerRegistryBasicAuthHost apijson.Field
 	EnvironmentVariable            apijson.Field
 	FilePath                       apijson.Field
@@ -994,7 +1078,7 @@ type EnvironmentSpecParam struct {
 	Devcontainer param.Field[EnvironmentSpecDevcontainerParam] `json:"devcontainer"`
 	// machine is the machine spec of the environment
 	Machine param.Field[EnvironmentSpecMachineParam] `json:"machine"`
-	// ports is the set of ports which ought to be exposed to the internet
+	// ports is the set of ports which ought to be exposed to your network
 	Ports param.Field[[]EnvironmentSpecPortParam] `json:"ports"`
 	// secrets are confidential data that is mounted into the environment
 	Secrets param.Field[[]EnvironmentSpecSecretParam] `json:"secrets"`
@@ -1006,6 +1090,9 @@ type EnvironmentSpecParam struct {
 	SSHPublicKeys param.Field[[]EnvironmentSpecSSHPublicKeyParam] `json:"sshPublicKeys"`
 	// Timeout configures the environment timeout
 	Timeout param.Field[EnvironmentSpecTimeoutParam] `json:"timeout"`
+	// workflow_action_id is an optional reference to the workflow execution action
+	// that created this environment. Used for tracking and event correlation.
+	WorkflowActionID param.Field[string] `json:"workflowActionId" format:"uuid"`
 }
 
 func (r EnvironmentSpecParam) MarshalJSON() (data []byte, err error) {
@@ -1023,6 +1110,10 @@ type EnvironmentSpecAutomationsFileParam struct {
 	// ```
 	AutomationsFilePath param.Field[string] `json:"automationsFilePath"`
 	Session             param.Field[string] `json:"session"`
+	// trigger_filter specifies which automation triggers should execute. When set,
+	// only automations matching these triggers will run. If empty/unset, all triggers
+	// are evaluated normally.
+	TriggerFilter param.Field[[]shared.AutomationTriggerParam] `json:"triggerFilter"`
 }
 
 func (r EnvironmentSpecAutomationsFileParam) MarshalJSON() (data []byte, err error) {
@@ -1058,7 +1149,10 @@ type EnvironmentSpecDevcontainerParam struct {
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
 	// Experimental: dotfiles is the dotfiles configuration of the devcontainer
 	Dotfiles param.Field[EnvironmentSpecDevcontainerDotfilesParam] `json:"dotfiles"`
-	Session  param.Field[string]                                   `json:"session"`
+	// lifecycle_stage controls which devcontainer lifecycle commands are executed.
+	// Defaults to FULL if not specified.
+	LifecycleStage param.Field[EnvironmentSpecDevcontainerLifecycleStage] `json:"lifecycleStage"`
+	Session        param.Field[string]                                    `json:"session"`
 }
 
 func (r EnvironmentSpecDevcontainerParam) MarshalJSON() (data []byte, err error) {
@@ -1093,6 +1187,10 @@ type EnvironmentSpecPortParam struct {
 	Name param.Field[string] `json:"name"`
 	// port number
 	Port param.Field[int64] `json:"port"`
+	// protocol for communication (Gateway proxy → user environment service). this
+	// setting only affects the protocol used between Gateway and user environment
+	// services.
+	Protocol param.Field[EnvironmentSpecPortsProtocol] `json:"protocol"`
 }
 
 func (r EnvironmentSpecPortParam) MarshalJSON() (data []byte, err error) {
@@ -1102,6 +1200,9 @@ func (r EnvironmentSpecPortParam) MarshalJSON() (data []byte, err error) {
 type EnvironmentSpecSecretParam struct {
 	// id is the unique identifier of the secret.
 	ID param.Field[string] `json:"id"`
+	// api_only indicates the secret is only available via API/CLI. These secrets are
+	// resolved but NOT automatically injected into services or devcontainers.
+	APIOnly param.Field[bool] `json:"apiOnly"`
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
@@ -1287,11 +1388,12 @@ const (
 	EnvironmentStatusAutomationsFilePhaseContentPhaseReady        EnvironmentStatusAutomationsFilePhase = "CONTENT_PHASE_READY"
 	EnvironmentStatusAutomationsFilePhaseContentPhaseUpdating     EnvironmentStatusAutomationsFilePhase = "CONTENT_PHASE_UPDATING"
 	EnvironmentStatusAutomationsFilePhaseContentPhaseFailed       EnvironmentStatusAutomationsFilePhase = "CONTENT_PHASE_FAILED"
+	EnvironmentStatusAutomationsFilePhaseContentPhaseUnavailable  EnvironmentStatusAutomationsFilePhase = "CONTENT_PHASE_UNAVAILABLE"
 )
 
 func (r EnvironmentStatusAutomationsFilePhase) IsKnown() bool {
 	switch r {
-	case EnvironmentStatusAutomationsFilePhaseContentPhaseUnspecified, EnvironmentStatusAutomationsFilePhaseContentPhaseCreating, EnvironmentStatusAutomationsFilePhaseContentPhaseInitializing, EnvironmentStatusAutomationsFilePhaseContentPhaseReady, EnvironmentStatusAutomationsFilePhaseContentPhaseUpdating, EnvironmentStatusAutomationsFilePhaseContentPhaseFailed:
+	case EnvironmentStatusAutomationsFilePhaseContentPhaseUnspecified, EnvironmentStatusAutomationsFilePhaseContentPhaseCreating, EnvironmentStatusAutomationsFilePhaseContentPhaseInitializing, EnvironmentStatusAutomationsFilePhaseContentPhaseReady, EnvironmentStatusAutomationsFilePhaseContentPhaseUpdating, EnvironmentStatusAutomationsFilePhaseContentPhaseFailed, EnvironmentStatusAutomationsFilePhaseContentPhaseUnavailable:
 		return true
 	}
 	return false
@@ -1440,11 +1542,12 @@ const (
 	EnvironmentStatusContentPhaseContentPhaseReady        EnvironmentStatusContentPhase = "CONTENT_PHASE_READY"
 	EnvironmentStatusContentPhaseContentPhaseUpdating     EnvironmentStatusContentPhase = "CONTENT_PHASE_UPDATING"
 	EnvironmentStatusContentPhaseContentPhaseFailed       EnvironmentStatusContentPhase = "CONTENT_PHASE_FAILED"
+	EnvironmentStatusContentPhaseContentPhaseUnavailable  EnvironmentStatusContentPhase = "CONTENT_PHASE_UNAVAILABLE"
 )
 
 func (r EnvironmentStatusContentPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentStatusContentPhaseContentPhaseUnspecified, EnvironmentStatusContentPhaseContentPhaseCreating, EnvironmentStatusContentPhaseContentPhaseInitializing, EnvironmentStatusContentPhaseContentPhaseReady, EnvironmentStatusContentPhaseContentPhaseUpdating, EnvironmentStatusContentPhaseContentPhaseFailed:
+	case EnvironmentStatusContentPhaseContentPhaseUnspecified, EnvironmentStatusContentPhaseContentPhaseCreating, EnvironmentStatusContentPhaseContentPhaseInitializing, EnvironmentStatusContentPhaseContentPhaseReady, EnvironmentStatusContentPhaseContentPhaseUpdating, EnvironmentStatusContentPhaseContentPhaseFailed, EnvironmentStatusContentPhaseContentPhaseUnavailable:
 		return true
 	}
 	return false
@@ -1555,21 +1658,28 @@ func (r EnvironmentStatusDevcontainerPhase) IsKnown() bool {
 // field is only set if the environment is running.
 type EnvironmentStatusEnvironmentURLs struct {
 	// logs is the URL at which the environment logs can be accessed.
-	Logs  string                                 `json:"logs"`
+	Logs string `json:"logs"`
+	// ops is the URL at which the environment ops service can be accessed.
+	Ops   string                                 `json:"ops"`
 	Ports []EnvironmentStatusEnvironmentURLsPort `json:"ports"`
 	// SSH is the URL at which the environment can be accessed via SSH.
-	SSH  EnvironmentStatusEnvironmentURLsSSH  `json:"ssh"`
-	JSON environmentStatusEnvironmentURLsJSON `json:"-"`
+	SSH EnvironmentStatusEnvironmentURLsSSH `json:"ssh"`
+	// support_bundle is the URL at which the environment support bundle can be
+	// accessed.
+	SupportBundle string                               `json:"supportBundle"`
+	JSON          environmentStatusEnvironmentURLsJSON `json:"-"`
 }
 
 // environmentStatusEnvironmentURLsJSON contains the JSON metadata for the struct
 // [EnvironmentStatusEnvironmentURLs]
 type environmentStatusEnvironmentURLsJSON struct {
-	Logs        apijson.Field
-	Ports       apijson.Field
-	SSH         apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Logs          apijson.Field
+	Ops           apijson.Field
+	Ports         apijson.Field
+	SSH           apijson.Field
+	SupportBundle apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
 }
 
 func (r *EnvironmentStatusEnvironmentURLs) UnmarshalJSON(data []byte) (err error) {
@@ -1691,6 +1801,7 @@ func (r EnvironmentStatusMachinePhase) IsKnown() bool {
 
 // versions contains the versions of components in the machine.
 type EnvironmentStatusMachineVersions struct {
+	AmiID             string                               `json:"amiId"`
 	SupervisorCommit  string                               `json:"supervisorCommit"`
 	SupervisorVersion string                               `json:"supervisorVersion"`
 	JSON              environmentStatusMachineVersionsJSON `json:"-"`
@@ -1699,6 +1810,7 @@ type EnvironmentStatusMachineVersions struct {
 // environmentStatusMachineVersionsJSON contains the JSON metadata for the struct
 // [EnvironmentStatusMachineVersions]
 type environmentStatusMachineVersionsJSON struct {
+	AmiID             apijson.Field
 	SupervisorCommit  apijson.Field
 	SupervisorVersion apijson.Field
 	raw               string
@@ -1802,11 +1914,12 @@ const (
 	EnvironmentStatusSecretsPhaseContentPhaseReady        EnvironmentStatusSecretsPhase = "CONTENT_PHASE_READY"
 	EnvironmentStatusSecretsPhaseContentPhaseUpdating     EnvironmentStatusSecretsPhase = "CONTENT_PHASE_UPDATING"
 	EnvironmentStatusSecretsPhaseContentPhaseFailed       EnvironmentStatusSecretsPhase = "CONTENT_PHASE_FAILED"
+	EnvironmentStatusSecretsPhaseContentPhaseUnavailable  EnvironmentStatusSecretsPhase = "CONTENT_PHASE_UNAVAILABLE"
 )
 
 func (r EnvironmentStatusSecretsPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentStatusSecretsPhaseContentPhaseUnspecified, EnvironmentStatusSecretsPhaseContentPhaseCreating, EnvironmentStatusSecretsPhaseContentPhaseInitializing, EnvironmentStatusSecretsPhaseContentPhaseReady, EnvironmentStatusSecretsPhaseContentPhaseUpdating, EnvironmentStatusSecretsPhaseContentPhaseFailed:
+	case EnvironmentStatusSecretsPhaseContentPhaseUnspecified, EnvironmentStatusSecretsPhaseContentPhaseCreating, EnvironmentStatusSecretsPhaseContentPhaseInitializing, EnvironmentStatusSecretsPhaseContentPhaseReady, EnvironmentStatusSecretsPhaseContentPhaseUpdating, EnvironmentStatusSecretsPhaseContentPhaseFailed, EnvironmentStatusSecretsPhaseContentPhaseUnavailable:
 		return true
 	}
 	return false
@@ -1847,11 +1960,12 @@ const (
 	EnvironmentStatusSSHPublicKeysPhaseContentPhaseReady        EnvironmentStatusSSHPublicKeysPhase = "CONTENT_PHASE_READY"
 	EnvironmentStatusSSHPublicKeysPhaseContentPhaseUpdating     EnvironmentStatusSSHPublicKeysPhase = "CONTENT_PHASE_UPDATING"
 	EnvironmentStatusSSHPublicKeysPhaseContentPhaseFailed       EnvironmentStatusSSHPublicKeysPhase = "CONTENT_PHASE_FAILED"
+	EnvironmentStatusSSHPublicKeysPhaseContentPhaseUnavailable  EnvironmentStatusSSHPublicKeysPhase = "CONTENT_PHASE_UNAVAILABLE"
 )
 
 func (r EnvironmentStatusSSHPublicKeysPhase) IsKnown() bool {
 	switch r {
-	case EnvironmentStatusSSHPublicKeysPhaseContentPhaseUnspecified, EnvironmentStatusSSHPublicKeysPhaseContentPhaseCreating, EnvironmentStatusSSHPublicKeysPhaseContentPhaseInitializing, EnvironmentStatusSSHPublicKeysPhaseContentPhaseReady, EnvironmentStatusSSHPublicKeysPhaseContentPhaseUpdating, EnvironmentStatusSSHPublicKeysPhaseContentPhaseFailed:
+	case EnvironmentStatusSSHPublicKeysPhaseContentPhaseUnspecified, EnvironmentStatusSSHPublicKeysPhaseContentPhaseCreating, EnvironmentStatusSSHPublicKeysPhaseContentPhaseInitializing, EnvironmentStatusSSHPublicKeysPhaseContentPhaseReady, EnvironmentStatusSSHPublicKeysPhaseContentPhaseUpdating, EnvironmentStatusSSHPublicKeysPhaseContentPhaseFailed, EnvironmentStatusSSHPublicKeysPhaseContentPhaseUnavailable:
 		return true
 	}
 	return false
@@ -2093,10 +2207,33 @@ type EnvironmentUpdateParamsSpecPort struct {
 	Name param.Field[string] `json:"name"`
 	// port number
 	Port param.Field[int64] `json:"port"`
+	// protocol for communication (Gateway proxy → user environment service). this
+	// setting only affects the protocol used between Gateway and user environment
+	// services.
+	Protocol param.Field[EnvironmentUpdateParamsSpecPortsProtocol] `json:"protocol"`
 }
 
 func (r EnvironmentUpdateParamsSpecPort) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// protocol for communication (Gateway proxy → user environment service). this
+// setting only affects the protocol used between Gateway and user environment
+// services.
+type EnvironmentUpdateParamsSpecPortsProtocol string
+
+const (
+	EnvironmentUpdateParamsSpecPortsProtocolProtocolUnspecified EnvironmentUpdateParamsSpecPortsProtocol = "PROTOCOL_UNSPECIFIED"
+	EnvironmentUpdateParamsSpecPortsProtocolProtocolHTTP        EnvironmentUpdateParamsSpecPortsProtocol = "PROTOCOL_HTTP"
+	EnvironmentUpdateParamsSpecPortsProtocolProtocolHTTPS       EnvironmentUpdateParamsSpecPortsProtocol = "PROTOCOL_HTTPS"
+)
+
+func (r EnvironmentUpdateParamsSpecPortsProtocol) IsKnown() bool {
+	switch r {
+	case EnvironmentUpdateParamsSpecPortsProtocolProtocolUnspecified, EnvironmentUpdateParamsSpecPortsProtocolProtocolHTTP, EnvironmentUpdateParamsSpecPortsProtocolProtocolHTTPS:
+		return true
+	}
+	return false
 }
 
 type EnvironmentUpdateParamsSpecSSHPublicKey struct {
@@ -2145,12 +2282,16 @@ func (r EnvironmentListParams) URLQuery() (v url.Values) {
 type EnvironmentListParamsFilter struct {
 	// archival_status filters the response based on environment archive status
 	ArchivalStatus param.Field[EnvironmentListParamsFilterArchivalStatus] `json:"archivalStatus"`
+	// created_before filters environments created before this timestamp
+	CreatedBefore param.Field[time.Time] `json:"createdBefore" format:"date-time"`
 	// creator_ids filters the response to only Environments created by specified
 	// members
 	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
 	// project_ids filters the response to only Environments associated with the
 	// specified projects
 	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+	// roles filters the response to only Environments with the specified roles
+	Roles param.Field[[]EnvironmentRole] `json:"roles"`
 	// runner_ids filters the response to only Environments running on these Runner IDs
 	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
 	// runner_kinds filters the response to only Environments running on these Runner

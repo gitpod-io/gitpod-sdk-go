@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestOrganizationSSOConfigurationNew(t *testing.T) {
+func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -29,9 +29,11 @@ func TestOrganizationSSOConfigurationNew(t *testing.T) {
 	_, err := client.Organizations.SSOConfigurations.New(context.TODO(), gitpod.OrganizationSSOConfigurationNewParams{
 		ClientID:       gitpod.F("012345678-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com"),
 		ClientSecret:   gitpod.F("GOCSPX-abcdefghijklmnopqrstuvwxyz123456"),
-		EmailDomain:    gitpod.F("acme-corp.com"),
 		IssuerURL:      gitpod.F("https://accounts.google.com"),
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		DisplayName:    gitpod.F("displayName"),
+		EmailDomain:    gitpod.F("acme-corp.com"),
+		EmailDomains:   gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -87,7 +89,9 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 		}),
 		ClientID:     gitpod.F("new-client-id"),
 		ClientSecret: gitpod.F("new-client-secret"),
+		DisplayName:  gitpod.F("displayName"),
 		EmailDomain:  gitpod.F("xxxx"),
+		EmailDomains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
 		IssuerURL:    gitpod.F("https://example.com"),
 		State:        gitpod.F(gitpod.SSOConfigurationStateUnspecified),
 	})

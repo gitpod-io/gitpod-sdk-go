@@ -52,17 +52,41 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.Policies.Update(context.TODO(), gitpod.OrganizationPolicyUpdateParams{
-		OrganizationID:                    gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		AllowedEditorIDs:                  gitpod.F([]string{"string"}),
-		AllowLocalRunners:                 gitpod.F(true),
-		DefaultEditorID:                   gitpod.F("defaultEditorId"),
-		DefaultEnvironmentImage:           gitpod.F("defaultEnvironmentImage"),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		AgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsAgentPolicy{
+			CommandDenyList:  gitpod.F([]string{"string"}),
+			McpDisabled:      gitpod.F(true),
+			ScmToolsDisabled: gitpod.F(true),
+		}),
+		AllowedEditorIDs:                gitpod.F([]string{"string"}),
+		AllowLocalRunners:               gitpod.F(true),
+		DefaultEditorID:                 gitpod.F("defaultEditorId"),
+		DefaultEnvironmentImage:         gitpod.F("defaultEnvironmentImage"),
+		DeleteArchivedEnvironmentsAfter: gitpod.F("+9125115.360s"),
+		EditorVersionRestrictions: gitpod.F(map[string]gitpod.OrganizationPolicyUpdateParamsEditorVersionRestrictions{
+			"foo": {
+				AllowedVersions: gitpod.F([]string{"string"}),
+			},
+		}),
+		MaximumEnvironmentLifetime:        gitpod.F("+9125115.360s"),
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
 		MaximumEnvironmentTimeout:         gitpod.F("3600s"),
 		MaximumRunningEnvironmentsPerUser: gitpod.F("5"),
 		MembersCreateProjects:             gitpod.F(true),
 		MembersRequireProjects:            gitpod.F(true),
 		PortSharingDisabled:               gitpod.F(true),
+		RequireCustomDomainAccess:         gitpod.F(true),
+		SecurityAgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicy{
+			Crowdstrike: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicyCrowdstrike{
+				AdditionalOptions: gitpod.F(map[string]string{
+					"foo": "string",
+				}),
+				CidSecretID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Enabled:     gitpod.F(true),
+				Image:       gitpod.F("image"),
+				Tags:        gitpod.F("tags"),
+			}),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

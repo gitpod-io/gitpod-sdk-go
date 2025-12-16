@@ -34,7 +34,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 		Metadata: gitpod.F(shared.TaskMetadataParam{
 			CreatedAt: gitpod.F(time.Now()),
 			Creator: gitpod.F(shared.SubjectParam{
-				ID:        gitpod.F("id"),
+				ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 				Principal: gitpod.F(shared.PrincipalUnspecified),
 			}),
 			Description: gitpod.F("Builds the project artifacts"),
@@ -44,15 +44,27 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 				Manual:                gitpod.F(true),
 				PostDevcontainerStart: gitpod.F(true),
 				PostEnvironmentStart:  gitpod.F(true),
+				PostMachineStart:      gitpod.F(true),
+				Prebuild:              gitpod.F(true),
 			}}),
 		}),
 		Spec: gitpod.F(shared.TaskSpecParam{
 			Command: gitpod.F("npm run build"),
+			Env: gitpod.F([]shared.EnvironmentVariableItemParam{{
+				Name:  gitpod.F("x"),
+				Value: gitpod.F("value"),
+				ValueFrom: gitpod.F(shared.EnvironmentVariableSourceParam{
+					SecretRef: gitpod.F(shared.SecretRefParam{
+						ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+					}),
+				}),
+			}}),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
+				Machine: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 	})
@@ -114,16 +126,28 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),
+					PostMachineStart:      gitpod.F(true),
+					Prebuild:              gitpod.F(true),
 				}}),
 			}),
 		}),
 		Spec: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsSpec{
 			Command: gitpod.F("npm run test:coverage"),
+			Env: gitpod.F([]shared.EnvironmentVariableItemParam{{
+				Name:  gitpod.F("x"),
+				Value: gitpod.F("value"),
+				ValueFrom: gitpod.F(shared.EnvironmentVariableSourceParam{
+					SecretRef: gitpod.F(shared.SecretRefParam{
+						ID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+					}),
+				}),
+			}}),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
+				Machine: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 	})

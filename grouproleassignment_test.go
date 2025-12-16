@@ -11,9 +11,10 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
-func TestEditorGet(t *testing.T) {
+func TestGroupRoleAssignmentNewWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,8 +27,11 @@ func TestEditorGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Editors.Get(context.TODO(), gitpod.EditorGetParams{
-		ID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	_, err := client.Groups.RoleAssignments.New(context.TODO(), gitpod.GroupRoleAssignmentNewParams{
+		GroupID:      gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		ResourceID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+		ResourceRole: gitpod.F(gitpod.ResourceRoleRunnerAdmin),
+		ResourceType: gitpod.F(shared.ResourceTypeRunner),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -38,7 +42,7 @@ func TestEditorGet(t *testing.T) {
 	}
 }
 
-func TestEditorListWithOptionalParams(t *testing.T) {
+func TestGroupRoleAssignmentListWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -51,13 +55,16 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Editors.List(context.TODO(), gitpod.EditorListParams{
+	_, err := client.Groups.RoleAssignments.List(context.TODO(), gitpod.GroupRoleAssignmentListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Filter: gitpod.F(gitpod.EditorListParamsFilter{
-			AllowedByPolicy: gitpod.F(true),
+		Filter: gitpod.F(gitpod.GroupRoleAssignmentListParamsFilter{
+			GroupID:       gitpod.F("groupId"),
+			ResourceRoles: gitpod.F([]gitpod.ResourceRole{gitpod.ResourceRoleUnspecified}),
+			ResourceTypes: gitpod.F([]shared.ResourceType{shared.ResourceTypeRunner}),
+			UserID:        gitpod.F("userId"),
 		}),
-		Pagination: gitpod.F(gitpod.EditorListParamsPagination{
+		Pagination: gitpod.F(gitpod.GroupRoleAssignmentListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
@@ -71,7 +78,7 @@ func TestEditorListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEditorResolveURLWithOptionalParams(t *testing.T) {
+func TestGroupRoleAssignmentDeleteWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -84,11 +91,8 @@ func TestEditorResolveURLWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Editors.ResolveURL(context.TODO(), gitpod.EditorResolveURLParams{
-		EditorID:       gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		EnvironmentID:  gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
-		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Version:        gitpod.F("version"),
+	_, err := client.Groups.RoleAssignments.Delete(context.TODO(), gitpod.GroupRoleAssignmentDeleteParams{
+		AssignmentID: gitpod.F("a1b2c3d4-5678-90ab-cdef-1234567890ab"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

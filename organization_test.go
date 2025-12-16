@@ -188,6 +188,9 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.OrganizationListMembersParamsFilter{
+			Search: gitpod.F("search"),
+		}),
 		Pagination: gitpod.F(gitpod.OrganizationListMembersParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),

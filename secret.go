@@ -245,6 +245,8 @@ func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueP
 
 type Secret struct {
 	ID string `json:"id" format:"uuid"`
+	// api_only indicates the secret is only available via API/CLI
+	APIOnly bool `json:"apiOnly"`
 	// secret will be mounted as a registry secret
 	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost" format:"uri"`
 	// A Timestamp represents a point in time independent of any time zone or local
@@ -445,6 +447,7 @@ type Secret struct {
 // secretJSON contains the JSON metadata for the struct [Secret]
 type secretJSON struct {
 	ID                             apijson.Field
+	APIOnly                        apijson.Field
 	ContainerRegistryBasicAuthHost apijson.Field
 	CreatedAt                      apijson.Field
 	Creator                        apijson.Field
@@ -467,6 +470,8 @@ func (r secretJSON) RawJSON() string {
 }
 
 type SecretScope struct {
+	// organization_id is the Organization ID this Secret belongs to
+	OrganizationID string `json:"organizationId" format:"uuid"`
 	// project_id is the Project ID this Secret belongs to
 	ProjectID string `json:"projectId" format:"uuid"`
 	// user_id is the User ID this Secret belongs to
@@ -476,10 +481,11 @@ type SecretScope struct {
 
 // secretScopeJSON contains the JSON metadata for the struct [SecretScope]
 type secretScopeJSON struct {
-	ProjectID   apijson.Field
-	UserID      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	OrganizationID apijson.Field
+	ProjectID      apijson.Field
+	UserID         apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *SecretScope) UnmarshalJSON(data []byte) (err error) {
@@ -491,6 +497,8 @@ func (r secretScopeJSON) RawJSON() string {
 }
 
 type SecretScopeParam struct {
+	// organization_id is the Organization ID this Secret belongs to
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// project_id is the Project ID this Secret belongs to
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
 	// user_id is the User ID this Secret belongs to
@@ -548,6 +556,10 @@ func (r secretGetValueResponseJSON) RawJSON() string {
 type SecretUpdateValueResponse = interface{}
 
 type SecretNewParams struct {
+	// api_only indicates the secret is only available via API/CLI. These secrets are
+	// NOT automatically injected into services or devcontainers. Useful for secrets
+	// that should only be consumed programmatically (e.g., by security agents).
+	APIOnly param.Field[bool] `json:"apiOnly"`
 	// secret will be mounted as a docker config in the environment VM, mount will have
 	// the docker registry host
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`

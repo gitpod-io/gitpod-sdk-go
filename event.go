@@ -158,44 +158,6 @@ func (r ResourceOperation) IsKnown() bool {
 	return false
 }
 
-type ResourceType string
-
-const (
-	ResourceTypeUnspecified             ResourceType = "RESOURCE_TYPE_UNSPECIFIED"
-	ResourceTypeEnvironment             ResourceType = "RESOURCE_TYPE_ENVIRONMENT"
-	ResourceTypeRunner                  ResourceType = "RESOURCE_TYPE_RUNNER"
-	ResourceTypeProject                 ResourceType = "RESOURCE_TYPE_PROJECT"
-	ResourceTypeTask                    ResourceType = "RESOURCE_TYPE_TASK"
-	ResourceTypeTaskExecution           ResourceType = "RESOURCE_TYPE_TASK_EXECUTION"
-	ResourceTypeService                 ResourceType = "RESOURCE_TYPE_SERVICE"
-	ResourceTypeOrganization            ResourceType = "RESOURCE_TYPE_ORGANIZATION"
-	ResourceTypeUser                    ResourceType = "RESOURCE_TYPE_USER"
-	ResourceTypeEnvironmentClass        ResourceType = "RESOURCE_TYPE_ENVIRONMENT_CLASS"
-	ResourceTypeRunnerScmIntegration    ResourceType = "RESOURCE_TYPE_RUNNER_SCM_INTEGRATION"
-	ResourceTypeHostAuthenticationToken ResourceType = "RESOURCE_TYPE_HOST_AUTHENTICATION_TOKEN"
-	ResourceTypeGroup                   ResourceType = "RESOURCE_TYPE_GROUP"
-	ResourceTypePersonalAccessToken     ResourceType = "RESOURCE_TYPE_PERSONAL_ACCESS_TOKEN"
-	ResourceTypeUserPreference          ResourceType = "RESOURCE_TYPE_USER_PREFERENCE"
-	ResourceTypeServiceAccount          ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT"
-	ResourceTypeSecret                  ResourceType = "RESOURCE_TYPE_SECRET"
-	ResourceTypeSSOConfig               ResourceType = "RESOURCE_TYPE_SSO_CONFIG"
-	ResourceTypeDomainVerification      ResourceType = "RESOURCE_TYPE_DOMAIN_VERIFICATION"
-	ResourceTypeAgentExecution          ResourceType = "RESOURCE_TYPE_AGENT_EXECUTION"
-	ResourceTypeRunnerLlmIntegration    ResourceType = "RESOURCE_TYPE_RUNNER_LLM_INTEGRATION"
-	ResourceTypeAgent                   ResourceType = "RESOURCE_TYPE_AGENT"
-	ResourceTypeEnvironmentSession      ResourceType = "RESOURCE_TYPE_ENVIRONMENT_SESSION"
-	ResourceTypeUserSecret              ResourceType = "RESOURCE_TYPE_USER_SECRET"
-	ResourceTypeOrganizationPolicy      ResourceType = "RESOURCE_TYPE_ORGANIZATION_POLICY"
-)
-
-func (r ResourceType) IsKnown() bool {
-	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy:
-		return true
-	}
-	return false
-}
-
 type EventListResponse struct {
 	ID             string           `json:"id"`
 	Action         string           `json:"action"`
@@ -291,7 +253,7 @@ type EventListResponse struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt   time.Time             `json:"createdAt" format:"date-time"`
 	SubjectID   string                `json:"subjectId"`
-	SubjectType ResourceType          `json:"subjectType"`
+	SubjectType shared.ResourceType   `json:"subjectType"`
 	JSON        eventListResponseJSON `json:"-"`
 }
 
@@ -320,7 +282,7 @@ func (r eventListResponseJSON) RawJSON() string {
 type EventWatchResponse struct {
 	Operation    ResourceOperation      `json:"operation"`
 	ResourceID   string                 `json:"resourceId" format:"uuid"`
-	ResourceType ResourceType           `json:"resourceType"`
+	ResourceType shared.ResourceType    `json:"resourceType"`
 	JSON         eventWatchResponseJSON `json:"-"`
 }
 
@@ -363,10 +325,10 @@ func (r EventListParams) URLQuery() (v url.Values) {
 }
 
 type EventListParamsFilter struct {
-	ActorIDs        param.Field[[]string]           `json:"actorIds" format:"uuid"`
-	ActorPrincipals param.Field[[]shared.Principal] `json:"actorPrincipals"`
-	SubjectIDs      param.Field[[]string]           `json:"subjectIds" format:"uuid"`
-	SubjectTypes    param.Field[[]ResourceType]     `json:"subjectTypes"`
+	ActorIDs        param.Field[[]string]              `json:"actorIds" format:"uuid"`
+	ActorPrincipals param.Field[[]shared.Principal]    `json:"actorPrincipals"`
+	SubjectIDs      param.Field[[]string]              `json:"subjectIds" format:"uuid"`
+	SubjectTypes    param.Field[[]shared.ResourceType] `json:"subjectTypes"`
 }
 
 func (r EventListParamsFilter) MarshalJSON() (data []byte, err error) {

@@ -95,6 +95,7 @@ type AutomationsFileServiceParam struct {
 	Commands    param.Field[AutomationsFileServicesCommandsParam] `json:"commands"`
 	Description param.Field[string]                               `json:"description"`
 	Name        param.Field[string]                               `json:"name"`
+	Role        param.Field[AutomationsFileServicesRole]          `json:"role"`
 	RunsOn      param.Field[shared.RunsOnParam]                   `json:"runsOn"`
 	TriggeredBy param.Field[[]AutomationsFileServicesTriggeredBy] `json:"triggeredBy"`
 }
@@ -127,6 +128,23 @@ type AutomationsFileServicesCommandsParam struct {
 
 func (r AutomationsFileServicesCommandsParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type AutomationsFileServicesRole string
+
+const (
+	AutomationsFileServicesRoleEmpty   AutomationsFileServicesRole = ""
+	AutomationsFileServicesRoleDefault AutomationsFileServicesRole = "default"
+	AutomationsFileServicesRoleEditor  AutomationsFileServicesRole = "editor"
+	AutomationsFileServicesRoleAIAgent AutomationsFileServicesRole = "ai-agent"
+)
+
+func (r AutomationsFileServicesRole) IsKnown() bool {
+	switch r {
+	case AutomationsFileServicesRoleEmpty, AutomationsFileServicesRoleDefault, AutomationsFileServicesRoleEditor, AutomationsFileServicesRoleAIAgent:
+		return true
+	}
+	return false
 }
 
 type AutomationsFileServicesTriggeredBy string
@@ -164,11 +182,12 @@ const (
 	AutomationsFileTasksTriggeredByManual                AutomationsFileTasksTriggeredBy = "manual"
 	AutomationsFileTasksTriggeredByPostEnvironmentStart  AutomationsFileTasksTriggeredBy = "postEnvironmentStart"
 	AutomationsFileTasksTriggeredByPostDevcontainerStart AutomationsFileTasksTriggeredBy = "postDevcontainerStart"
+	AutomationsFileTasksTriggeredByPrebuild              AutomationsFileTasksTriggeredBy = "prebuild"
 )
 
 func (r AutomationsFileTasksTriggeredBy) IsKnown() bool {
 	switch r {
-	case AutomationsFileTasksTriggeredByManual, AutomationsFileTasksTriggeredByPostEnvironmentStart, AutomationsFileTasksTriggeredByPostDevcontainerStart:
+	case AutomationsFileTasksTriggeredByManual, AutomationsFileTasksTriggeredByPostEnvironmentStart, AutomationsFileTasksTriggeredByPostDevcontainerStart, AutomationsFileTasksTriggeredByPrebuild:
 		return true
 	}
 	return false

@@ -171,14 +171,16 @@ func (r *EditorService) ResolveURL(ctx context.Context, body EditorResolveURLPar
 }
 
 type Editor struct {
-	ID                       string     `json:"id,required" format:"uuid"`
-	InstallationInstructions string     `json:"installationInstructions,required"`
-	Name                     string     `json:"name,required"`
-	URLTemplate              string     `json:"urlTemplate,required"`
-	Alias                    string     `json:"alias"`
-	IconURL                  string     `json:"iconUrl"`
-	ShortDescription         string     `json:"shortDescription"`
-	JSON                     editorJSON `json:"-"`
+	ID                       string `json:"id,required" format:"uuid"`
+	InstallationInstructions string `json:"installationInstructions,required"`
+	Name                     string `json:"name,required"`
+	URLTemplate              string `json:"urlTemplate,required"`
+	Alias                    string `json:"alias"`
+	IconURL                  string `json:"iconUrl"`
+	ShortDescription         string `json:"shortDescription"`
+	// versions contains the list of available versions for this editor
+	Versions []EditorVersion `json:"versions"`
+	JSON     editorJSON      `json:"-"`
 }
 
 // editorJSON contains the JSON metadata for the struct [Editor]
@@ -190,6 +192,7 @@ type editorJSON struct {
 	Alias                    apijson.Field
 	IconURL                  apijson.Field
 	ShortDescription         apijson.Field
+	Versions                 apijson.Field
 	raw                      string
 	ExtraFields              map[string]apijson.Field
 }
@@ -199,6 +202,27 @@ func (r *Editor) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r editorJSON) RawJSON() string {
+	return r.raw
+}
+
+type EditorVersion struct {
+	// version is the version string of the editor Examples for JetBrains: 2025.2
+	Version string            `json:"version,required"`
+	JSON    editorVersionJSON `json:"-"`
+}
+
+// editorVersionJSON contains the JSON metadata for the struct [EditorVersion]
+type editorVersionJSON struct {
+	Version     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EditorVersion) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r editorVersionJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -308,6 +332,11 @@ type EditorResolveURLParams struct {
 	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
 	// organizationId is the ID of the organization to resolve the URL for
 	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	// version is the editor version to use If not provided, the latest version will be
+	// installed
+	//
+	// Examples for JetBrains: 2025.2
+	Version param.Field[string] `json:"version"`
 }
 
 func (r EditorResolveURLParams) MarshalJSON() (data []byte, err error) {

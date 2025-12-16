@@ -34,6 +34,7 @@ func TestRunnerConfigurationScmIntegrationNewWithOptionalParams(t *testing.T) {
 		Pat:                        gitpod.F(true),
 		RunnerID:                   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		ScmID:                      gitpod.F("github"),
+		VirtualDirectory:           gitpod.F("virtualDirectory"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -88,6 +89,7 @@ func TestRunnerConfigurationScmIntegrationUpdateWithOptionalParams(t *testing.T)
 		OAuthClientID:              gitpod.F("new_client_id"),
 		OAuthPlaintextClientSecret: gitpod.F("new_client_secret"),
 		Pat:                        gitpod.F(true),
+		VirtualDirectory:           gitpod.F("virtualDirectory"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

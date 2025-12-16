@@ -46,6 +46,7 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseActive),
+			Variant:      gitpod.F(gitpod.RunnerVariantUnspecified),
 		}),
 	})
 	if err != nil {
@@ -210,6 +211,31 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestRunnerNewLogsTokenWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Runners.NewLogsToken(context.TODO(), gitpod.RunnerNewLogsTokenParams{
+		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
@@ -251,6 +277,39 @@ func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 	_, err := client.Runners.ParseContextURL(context.TODO(), gitpod.RunnerParseContextURLParams{
 		ContextURL: gitpod.F("https://github.com/org/repo/tree/main"),
 		RunnerID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestRunnerSearchRepositoriesWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Runners.SearchRepositories(context.TODO(), gitpod.RunnerSearchRepositoriesParams{
+		Limit: gitpod.F(int64(1)),
+		Pagination: gitpod.F(gitpod.RunnerSearchRepositoriesParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
+		RunnerID:     gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		ScmHost:      gitpod.F("scmHost"),
+		SearchMode:   gitpod.F(gitpod.SearchModeUnspecified),
+		SearchString: gitpod.F("searchString"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

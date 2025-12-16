@@ -371,6 +371,8 @@ type ServiceMetadata struct {
 	// the environment. It is used to express dependencies between services, and to
 	// identify the service in user interactions (e.g. the CLI).
 	Reference string `json:"reference"`
+	// role specifies the intended role or purpose of the service.
+	Role ServiceRole `json:"role"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy []shared.AutomationTrigger `json:"triggeredBy"`
 	JSON        serviceMetadataJSON        `json:"-"`
@@ -383,6 +385,7 @@ type serviceMetadataJSON struct {
 	Description apijson.Field
 	Name        apijson.Field
 	Reference   apijson.Field
+	Role        apijson.Field
 	TriggeredBy apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -412,6 +415,8 @@ type ServiceMetadataParam struct {
 	// the environment. It is used to express dependencies between services, and to
 	// identify the service in user interactions (e.g. the CLI).
 	Reference param.Field[string] `json:"reference"`
+	// role specifies the intended role or purpose of the service.
+	Role param.Field[ServiceRole] `json:"role"`
 	// triggered_by is a list of trigger that start the service.
 	TriggeredBy param.Field[[]shared.AutomationTriggerParam] `json:"triggeredBy"`
 }
@@ -440,6 +445,24 @@ func (r ServicePhase) IsKnown() bool {
 	return false
 }
 
+type ServiceRole string
+
+const (
+	ServiceRoleUnspecified   ServiceRole = "SERVICE_ROLE_UNSPECIFIED"
+	ServiceRoleDefault       ServiceRole = "SERVICE_ROLE_DEFAULT"
+	ServiceRoleEditor        ServiceRole = "SERVICE_ROLE_EDITOR"
+	ServiceRoleAIAgent       ServiceRole = "SERVICE_ROLE_AI_AGENT"
+	ServiceRoleSecurityAgent ServiceRole = "SERVICE_ROLE_SECURITY_AGENT"
+)
+
+func (r ServiceRole) IsKnown() bool {
+	switch r {
+	case ServiceRoleUnspecified, ServiceRoleDefault, ServiceRoleEditor, ServiceRoleAIAgent, ServiceRoleSecurityAgent:
+		return true
+	}
+	return false
+}
+
 type ServiceSpec struct {
 	// commands contains the commands to start, stop and check the readiness of the
 	// service
@@ -447,6 +470,8 @@ type ServiceSpec struct {
 	// desired_phase is the phase the service should be in. Used to start or stop the
 	// service.
 	DesiredPhase ServicePhase `json:"desiredPhase"`
+	// env specifies environment variables for the service.
+	Env []shared.EnvironmentVariableItem `json:"env"`
 	// runs_on specifies the environment the service should run on.
 	RunsOn shared.RunsOn `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
@@ -463,6 +488,7 @@ type ServiceSpec struct {
 type serviceSpecJSON struct {
 	Commands     apijson.Field
 	DesiredPhase apijson.Field
+	Env          apijson.Field
 	RunsOn       apijson.Field
 	Session      apijson.Field
 	SpecVersion  apijson.Field
@@ -528,6 +554,8 @@ type ServiceSpecParam struct {
 	// desired_phase is the phase the service should be in. Used to start or stop the
 	// service.
 	DesiredPhase param.Field[ServicePhase] `json:"desiredPhase"`
+	// env specifies environment variables for the service.
+	Env param.Field[[]shared.EnvironmentVariableItemParam] `json:"env"`
 	// runs_on specifies the environment the service should run on.
 	RunsOn param.Field[shared.RunsOnParam] `json:"runsOn"`
 	// session should be changed to trigger a restart of the service. If a service
@@ -702,6 +730,7 @@ func (r EnvironmentAutomationServiceUpdateParams) MarshalJSON() (data []byte, er
 type EnvironmentAutomationServiceUpdateParamsMetadata struct {
 	Description param.Field[string]                                                      `json:"description"`
 	Name        param.Field[string]                                                      `json:"name"`
+	Role        param.Field[ServiceRole]                                                 `json:"role"`
 	TriggeredBy param.Field[EnvironmentAutomationServiceUpdateParamsMetadataTriggeredBy] `json:"triggeredBy"`
 }
 
@@ -722,6 +751,7 @@ func (r EnvironmentAutomationServiceUpdateParamsMetadataTriggeredBy) MarshalJSON
 // it must be stopped first.
 type EnvironmentAutomationServiceUpdateParamsSpec struct {
 	Commands param.Field[EnvironmentAutomationServiceUpdateParamsSpecCommands] `json:"commands"`
+	Env      param.Field[[]shared.EnvironmentVariableItemParam]                `json:"env"`
 	RunsOn   param.Field[shared.RunsOnParam]                                   `json:"runsOn"`
 }
 
@@ -783,6 +813,8 @@ type EnvironmentAutomationServiceListParamsFilter struct {
 	EnvironmentIDs param.Field[[]string] `json:"environmentIds" format:"uuid"`
 	// references filters the response to only services with these references
 	References param.Field[[]string] `json:"references"`
+	// roles filters the response to only services with these roles
+	Roles param.Field[[]ServiceRole] `json:"roles"`
 	// service_ids filters the response to only services with these IDs
 	ServiceIDs param.Field[[]string] `json:"serviceIds" format:"uuid"`
 }

@@ -24,7 +24,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewGroupService] method instead.
 type GroupService struct {
-	Options []option.RequestOption
+	Options         []option.RequestOption
+	Memberships     *GroupMembershipService
+	RoleAssignments *GroupRoleAssignmentService
 }
 
 // NewGroupService generates a new service that applies the given options to each
@@ -33,6 +35,96 @@ type GroupService struct {
 func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 	r = &GroupService{}
 	r.Options = opts
+	r.Memberships = NewGroupMembershipService(opts...)
+	r.RoleAssignments = NewGroupRoleAssignmentService(opts...)
+	return
+}
+
+// Creates a new group within an organization.
+//
+// Use this method to:
+//
+// - Create teams for access control
+// - Organize users by department or function
+// - Set up role-based access groups
+//
+// ### Examples
+//
+// - Create a basic group:
+//
+//	Creates a group with name and description.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	name: "Backend Team"
+//	description: "Backend engineering team"
+//	```
+//
+// ### Authorization
+//
+// Requires `org:admin` role on the organization.
+func (r *GroupService) New(ctx context.Context, body GroupNewParams, opts ...option.RequestOption) (res *GroupNewResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.GroupService/CreateGroup"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Gets information about a specific group.
+//
+// Use this method to:
+//
+// - Retrieve group details and metadata
+// - Check group configuration
+// - View member count
+//
+// ### Examples
+//
+// - Get group details:
+//
+//	Retrieves information about a specific group.
+//
+//	```yaml
+//	groupId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
+//
+// ### Authorization
+//
+// All organization members can view group information (transparency model).
+func (r *GroupService) Get(ctx context.Context, body GroupGetParams, opts ...option.RequestOption) (res *GroupGetResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.GroupService/GetGroup"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Updates group information.
+//
+// Use this method to:
+//
+// - Rename a group
+// - Update group description
+//
+// ### Examples
+//
+// - Update group name:
+//
+//	Changes the name of an existing group.
+//
+//	```yaml
+//	groupId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	name: "Platform Team"
+//	description: "Platform engineering team"
+//	```
+//
+// ### Authorization
+//
+// Requires `org:admin` permission on the organization or `group:admin` permission
+// on the specific group.
+func (r *GroupService) Update(ctx context.Context, body GroupUpdateParams, opts ...option.RequestOption) (res *GroupUpdateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.GroupService/UpdateGroup"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -40,7 +132,7 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 //
 // Use this method to:
 //
-// - View all groups
+// - View all groups in an organization
 // - Check group memberships
 // - Monitor group configurations
 // - Audit group access
@@ -65,6 +157,10 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 //	  pageSize: 50
 //	  token: "next-page-token-from-previous-response"
 //	```
+//
+// ### Authorization
+//
+// All organization members can list groups (transparency model).
 func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ...option.RequestOption) (res *pagination.GroupsPage[Group], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -86,7 +182,7 @@ func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ..
 //
 // Use this method to:
 //
-// - View all groups
+// - View all groups in an organization
 // - Check group memberships
 // - Monitor group configurations
 // - Audit group access
@@ -111,8 +207,41 @@ func (r *GroupService) List(ctx context.Context, params GroupListParams, opts ..
 //	  pageSize: 50
 //	  token: "next-page-token-from-previous-response"
 //	```
+//
+// ### Authorization
+//
+// All organization members can list groups (transparency model).
 func (r *GroupService) ListAutoPaging(ctx context.Context, params GroupListParams, opts ...option.RequestOption) *pagination.GroupsPageAutoPager[Group] {
 	return pagination.NewGroupsPageAutoPager(r.List(ctx, params, opts...))
+}
+
+// Deletes a group and removes all its resource assignments.
+//
+// When a group is deleted, all resource assignments revert to org-level scope.
+//
+// Use this method to:
+//
+// - Remove unused groups
+// - Clean up after team reorganization
+//
+// ### Examples
+//
+// - Delete a group:
+//
+//	Permanently removes a group.
+//
+//	```yaml
+//	groupId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
+//
+// ### Authorization
+//
+// Requires `org:admin` role on the organization.
+func (r *GroupService) Delete(ctx context.Context, body GroupDeleteParams, opts ...option.RequestOption) (res *GroupDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.GroupService/DeleteGroup"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
 }
 
 type Group struct {
@@ -205,9 +334,12 @@ type Group struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt      time.Time `json:"createdAt" format:"date-time"`
-	Name           string    `json:"name"`
-	OrganizationID string    `json:"organizationId" format:"uuid"`
+	CreatedAt   time.Time `json:"createdAt" format:"date-time"`
+	Description string    `json:"description"`
+	// member_count is the total number of members in this group
+	MemberCount    int64  `json:"memberCount"`
+	Name           string `json:"name"`
+	OrganizationID string `json:"organizationId" format:"uuid"`
 	// system_managed indicates that this group is created by the system automatically
 	SystemManaged bool `json:"systemManaged"`
 	// A Timestamp represents a point in time independent of any time zone or local
@@ -306,6 +438,8 @@ type Group struct {
 type groupJSON struct {
 	ID             apijson.Field
 	CreatedAt      apijson.Field
+	Description    apijson.Field
+	MemberCount    apijson.Field
 	Name           apijson.Field
 	OrganizationID apijson.Field
 	SystemManaged  apijson.Field
@@ -320,6 +454,99 @@ func (r *Group) UnmarshalJSON(data []byte) (err error) {
 
 func (r groupJSON) RawJSON() string {
 	return r.raw
+}
+
+type GroupNewResponse struct {
+	Group Group                `json:"group"`
+	JSON  groupNewResponseJSON `json:"-"`
+}
+
+// groupNewResponseJSON contains the JSON metadata for the struct
+// [GroupNewResponse]
+type groupNewResponseJSON struct {
+	Group       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GroupNewResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r groupNewResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type GroupGetResponse struct {
+	Group Group                `json:"group"`
+	JSON  groupGetResponseJSON `json:"-"`
+}
+
+// groupGetResponseJSON contains the JSON metadata for the struct
+// [GroupGetResponse]
+type groupGetResponseJSON struct {
+	Group       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GroupGetResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r groupGetResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type GroupUpdateResponse struct {
+	Group Group                   `json:"group"`
+	JSON  groupUpdateResponseJSON `json:"-"`
+}
+
+// groupUpdateResponseJSON contains the JSON metadata for the struct
+// [GroupUpdateResponse]
+type groupUpdateResponseJSON struct {
+	Group       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GroupUpdateResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r groupUpdateResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type GroupDeleteResponse = interface{}
+
+type GroupNewParams struct {
+	Description    param.Field[string] `json:"description"`
+	Name           param.Field[string] `json:"name"`
+	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
+}
+
+func (r GroupNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type GroupGetParams struct {
+	GroupID param.Field[string] `json:"groupId" format:"uuid"`
+}
+
+func (r GroupGetParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type GroupUpdateParams struct {
+	Description param.Field[string] `json:"description"`
+	GroupID     param.Field[string] `json:"groupId" format:"uuid"`
+	Name        param.Field[string] `json:"name"`
+}
+
+func (r GroupUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type GroupListParams struct {
@@ -352,5 +579,13 @@ type GroupListParamsPagination struct {
 }
 
 func (r GroupListParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type GroupDeleteParams struct {
+	GroupID param.Field[string] `json:"groupId" format:"uuid"`
+}
+
+func (r GroupDeleteParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

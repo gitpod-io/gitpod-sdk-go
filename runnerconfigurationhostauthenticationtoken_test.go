@@ -12,6 +12,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestRunnerConfigurationHostAuthenticationTokenNewWithOptionalParams(t *testing.T) {
@@ -28,13 +29,19 @@ func TestRunnerConfigurationHostAuthenticationTokenNewWithOptionalParams(t *test
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Runners.Configurations.HostAuthenticationTokens.New(context.TODO(), gitpod.RunnerConfigurationHostAuthenticationTokenNewParams{
-		Token:        gitpod.F("gho_xxxxxxxxxxxx"),
-		ExpiresAt:    gitpod.F(time.Now()),
-		Host:         gitpod.F("github.com"),
-		RefreshToken: gitpod.F("ghr_xxxxxxxxxxxx"),
-		RunnerID:     gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		Source:       gitpod.F(gitpod.HostAuthenticationTokenSourceOAuth),
-		UserID:       gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+		Token:         gitpod.F("gho_xxxxxxxxxxxx"),
+		ExpiresAt:     gitpod.F(time.Now()),
+		Host:          gitpod.F("github.com"),
+		IntegrationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		RefreshToken:  gitpod.F("ghr_xxxxxxxxxxxx"),
+		RunnerID:      gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Scopes:        gitpod.F([]string{"string"}),
+		Source:        gitpod.F(gitpod.HostAuthenticationTokenSourceOAuth),
+		Subject: gitpod.F(shared.SubjectParam{
+			ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			Principal: gitpod.F(shared.PrincipalUnspecified),
+		}),
+		UserID: gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -88,6 +95,7 @@ func TestRunnerConfigurationHostAuthenticationTokenUpdateWithOptionalParams(t *t
 		Token:        gitpod.F("gho_xxxxxxxxxxxx"),
 		ExpiresAt:    gitpod.F(time.Now()),
 		RefreshToken: gitpod.F("ghr_xxxxxxxxxxxx"),
+		Scopes:       gitpod.F([]string{"string"}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -115,8 +123,9 @@ func TestRunnerConfigurationHostAuthenticationTokenListWithOptionalParams(t *tes
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsFilter{
-			RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-			UserID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			RunnerID:  gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+			SubjectID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			UserID:    gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 		Pagination: gitpod.F(gitpod.RunnerConfigurationHostAuthenticationTokenListParamsPagination{
 			Token:    gitpod.F("token"),

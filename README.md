@@ -2,7 +2,7 @@
 
 <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go"><img src="https://pkg.go.dev/badge/github.com/gitpod-io/gitpod-sdk-go.svg" alt="Go Reference"></a>
 
-The Gitpod Go library provides convenient access to the [Gitpod REST API](https://docs.ona.com)
+The Gitpod Go library provides convenient access to the [Gitpod REST API](https://docs.gitpod.io)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
@@ -24,7 +24,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/gitpod-io/gitpod-sdk-go@v0.6.1'
+go get -u 'github.com/gitpod-io/gitpod-sdk-go@v0.7.0'
 ```
 
 <!-- x-release-please-end -->

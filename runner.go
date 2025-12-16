@@ -272,6 +272,26 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 	return
 }
 
+// Creates an access token for runner logs and debug information.
+//
+// Generated tokens are valid for one hour and provide runner-specific access
+// permissions. The token is scoped to a specific runner and can be used to access
+// support bundles.
+//
+// ### Examples
+//
+// - Generate runner logs token:
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
+func (r *RunnerService) NewLogsToken(ctx context.Context, body RunnerNewLogsTokenParams, opts ...option.RequestOption) (res *RunnerNewLogsTokenResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.RunnerService/CreateRunnerLogsToken"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Creates a new authentication token for a runner.
 //
 // Use this method to:
@@ -325,6 +345,43 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseContextURLParams, opts ...option.RequestOption) (res *RunnerParseContextURLResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Searches for repositories across all authenticated SCM hosts.
+//
+// Use this method to:
+//
+// - List available repositories
+// - Search repositories by name or content
+// - Discover repositories for environment creation
+//
+// Returns repositories from all authenticated SCM hosts in natural sort order. If
+// no repositories are found, returns an empty list.
+//
+// ### Examples
+//
+// - List all repositories:
+//
+//	Returns up to 25 repositories from all authenticated hosts.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
+//
+// - Search repositories:
+//
+//	Searches for repositories matching the query across all hosts.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	searchString: "my-project"
+//	limit: 10
+//	```
+func (r *RunnerService) SearchRepositories(ctx context.Context, body RunnerSearchRepositoriesParams, opts ...option.RequestOption) (res *RunnerSearchRepositoriesResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.RunnerService/SearchRepositories"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -429,6 +486,9 @@ type Runner struct {
 	// The runner's provider
 	Provider RunnerProvider `json:"provider"`
 	RunnerID string         `json:"runnerId"`
+	// The runner manager id specifies the runner manager for the managed runner. This
+	// field is only set for managed runners.
+	RunnerManagerID string `json:"runnerManagerId" format:"uuid"`
 	// The runner's specification
 	Spec RunnerSpec `json:"spec"`
 	// The runner's status
@@ -440,17 +500,18 @@ type Runner struct {
 
 // runnerJSON contains the JSON metadata for the struct [Runner]
 type runnerJSON struct {
-	CreatedAt   apijson.Field
-	Creator     apijson.Field
-	Kind        apijson.Field
-	Name        apijson.Field
-	Provider    apijson.Field
-	RunnerID    apijson.Field
-	Spec        apijson.Field
-	Status      apijson.Field
-	UpdatedAt   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	CreatedAt       apijson.Field
+	Creator         apijson.Field
+	Kind            apijson.Field
+	Name            apijson.Field
+	Provider        apijson.Field
+	RunnerID        apijson.Field
+	RunnerManagerID apijson.Field
+	Spec            apijson.Field
+	Status          apijson.Field
+	UpdatedAt       apijson.Field
+	raw             string
+	ExtraFields     map[string]apijson.Field
 }
 
 func (r *Runner) UnmarshalJSON(data []byte) (err error) {
@@ -470,11 +531,12 @@ const (
 	RunnerCapabilityAgentExecution            RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION"
 	RunnerCapabilityAllowEnvTokenPopulation   RunnerCapability = "RUNNER_CAPABILITY_ALLOW_ENV_TOKEN_POPULATION"
 	RunnerCapabilityDefaultDevContainerImage  RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
+	RunnerCapabilityEnvironmentSnapshot       RunnerCapability = "RUNNER_CAPABILITY_ENVIRONMENT_SNAPSHOT"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot:
 		return true
 	}
 	return false
@@ -485,7 +547,7 @@ type RunnerConfiguration struct {
 	AutoUpdate bool `json:"autoUpdate"`
 	// devcontainer_image_cache_enabled controls whether the devcontainer build cache
 	// is enabled for this runner. Only takes effect on supported runners, currently
-	// only AWS EC2 runners.
+	// only AWS EC2 and Gitpod-managed runners.
 	DevcontainerImageCacheEnabled bool `json:"devcontainerImageCacheEnabled"`
 	// log_level is the log level for the runner
 	LogLevel LogLevel `json:"logLevel"`
@@ -526,7 +588,7 @@ type RunnerConfigurationParam struct {
 	AutoUpdate param.Field[bool] `json:"autoUpdate"`
 	// devcontainer_image_cache_enabled controls whether the devcontainer build cache
 	// is enabled for this runner. Only takes effect on supported runners, currently
-	// only AWS EC2 runners.
+	// only AWS EC2 and Gitpod-managed runners.
 	DevcontainerImageCacheEnabled param.Field[bool] `json:"devcontainerImageCacheEnabled"`
 	// log_level is the log level for the runner
 	LogLevel param.Field[LogLevel] `json:"logLevel"`
@@ -594,11 +656,12 @@ const (
 	RunnerProviderLinuxHost   RunnerProvider = "RUNNER_PROVIDER_LINUX_HOST"
 	RunnerProviderDesktopMac  RunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
 	RunnerProviderManaged     RunnerProvider = "RUNNER_PROVIDER_MANAGED"
+	RunnerProviderGcp         RunnerProvider = "RUNNER_PROVIDER_GCP"
 )
 
 func (r RunnerProvider) IsKnown() bool {
 	switch r {
-	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged:
+	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged, RunnerProviderGcp:
 		return true
 	}
 	return false
@@ -624,14 +687,17 @@ type RunnerSpec struct {
 	// The runner's configuration
 	Configuration RunnerConfiguration `json:"configuration"`
 	// RunnerPhase represents the phase a runner is in
-	DesiredPhase RunnerPhase    `json:"desiredPhase"`
-	JSON         runnerSpecJSON `json:"-"`
+	DesiredPhase RunnerPhase `json:"desiredPhase"`
+	// The runner's variant
+	Variant RunnerVariant  `json:"variant"`
+	JSON    runnerSpecJSON `json:"-"`
 }
 
 // runnerSpecJSON contains the JSON metadata for the struct [RunnerSpec]
 type runnerSpecJSON struct {
 	Configuration apijson.Field
 	DesiredPhase  apijson.Field
+	Variant       apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
 }
@@ -649,6 +715,8 @@ type RunnerSpecParam struct {
 	Configuration param.Field[RunnerConfigurationParam] `json:"configuration"`
 	// RunnerPhase represents the phase a runner is in
 	DesiredPhase param.Field[RunnerPhase] `json:"desiredPhase"`
+	// The runner's variant
+	Variant param.Field[RunnerVariant] `json:"variant"`
 }
 
 func (r RunnerSpecParam) MarshalJSON() (data []byte, err error) {
@@ -664,15 +732,23 @@ type RunnerStatus struct {
 	Capabilities []RunnerCapability `json:"capabilities"`
 	// gateway_info is information about the gateway to which the runner is connected.
 	GatewayInfo GatewayInfo `json:"gatewayInfo"`
-	LogURL      string      `json:"logUrl"`
+	// llm_url is the URL of the LLM service to which the runner is connected.
+	LlmURL string `json:"llmUrl"`
+	LogURL string `json:"logUrl"`
 	// The runner's reported message which is shown to users. This message adds more
 	// context to the runner's phase.
 	Message string `json:"message"`
 	// The runner's reported phase
 	Phase RunnerPhase `json:"phase"`
+	// public_key is the runner's public key used for encryption (32 bytes)
+	PublicKey string `json:"publicKey" format:"byte"`
 	// region is the region the runner is running in, if applicable.
-	Region        string `json:"region"`
-	SystemDetails string `json:"systemDetails"`
+	Region string `json:"region"`
+	// support_bundle_url is the URL at which the runner support bundle can be
+	// accessed. This URL provides access to pprof profiles and other debug
+	// information. Only available for standalone runners.
+	SupportBundleURL string `json:"supportBundleUrl"`
+	SystemDetails    string `json:"systemDetails"`
 	// Time when the status was last updated.
 	UpdatedAt time.Time        `json:"updatedAt" format:"date-time"`
 	Version   string           `json:"version"`
@@ -681,18 +757,21 @@ type RunnerStatus struct {
 
 // runnerStatusJSON contains the JSON metadata for the struct [RunnerStatus]
 type runnerStatusJSON struct {
-	AdditionalInfo apijson.Field
-	Capabilities   apijson.Field
-	GatewayInfo    apijson.Field
-	LogURL         apijson.Field
-	Message        apijson.Field
-	Phase          apijson.Field
-	Region         apijson.Field
-	SystemDetails  apijson.Field
-	UpdatedAt      apijson.Field
-	Version        apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	AdditionalInfo   apijson.Field
+	Capabilities     apijson.Field
+	GatewayInfo      apijson.Field
+	LlmURL           apijson.Field
+	LogURL           apijson.Field
+	Message          apijson.Field
+	Phase            apijson.Field
+	PublicKey        apijson.Field
+	Region           apijson.Field
+	SupportBundleURL apijson.Field
+	SystemDetails    apijson.Field
+	UpdatedAt        apijson.Field
+	Version          apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *RunnerStatus) UnmarshalJSON(data []byte) (err error) {
@@ -701,6 +780,38 @@ func (r *RunnerStatus) UnmarshalJSON(data []byte) (err error) {
 
 func (r runnerStatusJSON) RawJSON() string {
 	return r.raw
+}
+
+type RunnerVariant string
+
+const (
+	RunnerVariantUnspecified RunnerVariant = "RUNNER_VARIANT_UNSPECIFIED"
+	RunnerVariantStandard    RunnerVariant = "RUNNER_VARIANT_STANDARD"
+	RunnerVariantEnterprise  RunnerVariant = "RUNNER_VARIANT_ENTERPRISE"
+)
+
+func (r RunnerVariant) IsKnown() bool {
+	switch r {
+	case RunnerVariantUnspecified, RunnerVariantStandard, RunnerVariantEnterprise:
+		return true
+	}
+	return false
+}
+
+type SearchMode string
+
+const (
+	SearchModeUnspecified SearchMode = "SEARCH_MODE_UNSPECIFIED"
+	SearchModeKeyword     SearchMode = "SEARCH_MODE_KEYWORD"
+	SearchModeNative      SearchMode = "SEARCH_MODE_NATIVE"
+)
+
+func (r SearchMode) IsKnown() bool {
+	switch r {
+	case SearchModeUnspecified, SearchModeKeyword, SearchModeNative:
+		return true
+	}
+	return false
 }
 
 type RunnerNewResponse struct {
@@ -860,6 +971,29 @@ func (r runnerCheckAuthenticationForHostResponseSupportsPatJSON) RawJSON() strin
 	return r.raw
 }
 
+type RunnerNewLogsTokenResponse struct {
+	// access_token is the token that can be used to access the logs and support bundle
+	// of the runner
+	AccessToken string                         `json:"accessToken,required"`
+	JSON        runnerNewLogsTokenResponseJSON `json:"-"`
+}
+
+// runnerNewLogsTokenResponseJSON contains the JSON metadata for the struct
+// [RunnerNewLogsTokenResponse]
+type runnerNewLogsTokenResponseJSON struct {
+	AccessToken apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerNewLogsTokenResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerNewLogsTokenResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type RunnerNewRunnerTokenResponse struct {
 	// deprecated, will be removed. Use exchange_token instead.
 	//
@@ -890,19 +1024,35 @@ func (r runnerNewRunnerTokenResponseJSON) RawJSON() string {
 }
 
 type RunnerParseContextURLResponse struct {
-	Git                RunnerParseContextURLResponseGit `json:"git"`
-	OriginalContextURL string                           `json:"originalContextUrl"`
+	Git                RunnerParseContextURLResponseGit   `json:"git"`
+	Issue              RunnerParseContextURLResponseIssue `json:"issue"`
+	OriginalContextURL string                             `json:"originalContextUrl"`
+	// Deprecated: Use top-level PullRequest message instead
+	//
+	// Deprecated: deprecated
+	Pr RunnerParseContextURLResponsePr `json:"pr"`
 	// project_ids is a list of projects to which the context URL belongs to.
-	ProjectIDs []string                          `json:"projectIds"`
-	JSON       runnerParseContextURLResponseJSON `json:"-"`
+	ProjectIDs []string `json:"projectIds"`
+	// PullRequest represents pull request metadata from source control systems. This
+	// message is used across workflow triggers, executions, and agent contexts to
+	// maintain consistent PR information throughout the system.
+	PullRequest RunnerParseContextURLResponsePullRequest `json:"pullRequest"`
+	// scm_id is the unique identifier of the SCM provider (e.g., "github", "gitlab",
+	// "bitbucket")
+	ScmID string                            `json:"scmId"`
+	JSON  runnerParseContextURLResponseJSON `json:"-"`
 }
 
 // runnerParseContextURLResponseJSON contains the JSON metadata for the struct
 // [RunnerParseContextURLResponse]
 type runnerParseContextURLResponseJSON struct {
 	Git                apijson.Field
+	Issue              apijson.Field
 	OriginalContextURL apijson.Field
+	Pr                 apijson.Field
 	ProjectIDs         apijson.Field
+	PullRequest        apijson.Field
+	ScmID              apijson.Field
 	raw                string
 	ExtraFields        map[string]apijson.Field
 }
@@ -922,6 +1072,7 @@ type RunnerParseContextURLResponseGit struct {
 	Host              string                               `json:"host"`
 	Owner             string                               `json:"owner"`
 	Repo              string                               `json:"repo"`
+	Tag               string                               `json:"tag"`
 	UpstreamRemoteURL string                               `json:"upstreamRemoteUrl"`
 	JSON              runnerParseContextURLResponseGitJSON `json:"-"`
 }
@@ -935,6 +1086,7 @@ type runnerParseContextURLResponseGitJSON struct {
 	Host              apijson.Field
 	Owner             apijson.Field
 	Repo              apijson.Field
+	Tag               apijson.Field
 	UpstreamRemoteURL apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
@@ -945,6 +1097,208 @@ func (r *RunnerParseContextURLResponseGit) UnmarshalJSON(data []byte) (err error
 }
 
 func (r runnerParseContextURLResponseGitJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerParseContextURLResponseIssue struct {
+	// id is the source system's ID of this issue, e.g. BNFRD-6100
+	ID    string                                 `json:"id"`
+	Title string                                 `json:"title"`
+	JSON  runnerParseContextURLResponseIssueJSON `json:"-"`
+}
+
+// runnerParseContextURLResponseIssueJSON contains the JSON metadata for the struct
+// [RunnerParseContextURLResponseIssue]
+type runnerParseContextURLResponseIssueJSON struct {
+	ID          apijson.Field
+	Title       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerParseContextURLResponseIssue) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerParseContextURLResponseIssueJSON) RawJSON() string {
+	return r.raw
+}
+
+// Deprecated: Use top-level PullRequest message instead
+//
+// Deprecated: deprecated
+type RunnerParseContextURLResponsePr struct {
+	ID         string                              `json:"id"`
+	FromBranch string                              `json:"fromBranch"`
+	Title      string                              `json:"title"`
+	ToBranch   string                              `json:"toBranch"`
+	JSON       runnerParseContextURLResponsePrJSON `json:"-"`
+}
+
+// runnerParseContextURLResponsePrJSON contains the JSON metadata for the struct
+// [RunnerParseContextURLResponsePr]
+type runnerParseContextURLResponsePrJSON struct {
+	ID          apijson.Field
+	FromBranch  apijson.Field
+	Title       apijson.Field
+	ToBranch    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerParseContextURLResponsePr) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerParseContextURLResponsePrJSON) RawJSON() string {
+	return r.raw
+}
+
+// PullRequest represents pull request metadata from source control systems. This
+// message is used across workflow triggers, executions, and agent contexts to
+// maintain consistent PR information throughout the system.
+type RunnerParseContextURLResponsePullRequest struct {
+	// Unique identifier from the source system (e.g., "123" for GitHub PR #123)
+	ID string `json:"id"`
+	// Author name as provided by the SCM system
+	Author string `json:"author"`
+	// Source branch name (the branch being merged from)
+	FromBranch string `json:"fromBranch"`
+	// Repository information
+	Repository RunnerParseContextURLResponsePullRequestRepository `json:"repository"`
+	// Pull request title
+	Title string `json:"title"`
+	// Target branch name (the branch being merged into)
+	ToBranch string `json:"toBranch"`
+	// Pull request URL (e.g., "https://github.com/owner/repo/pull/123")
+	URL  string                                       `json:"url"`
+	JSON runnerParseContextURLResponsePullRequestJSON `json:"-"`
+}
+
+// runnerParseContextURLResponsePullRequestJSON contains the JSON metadata for the
+// struct [RunnerParseContextURLResponsePullRequest]
+type runnerParseContextURLResponsePullRequestJSON struct {
+	ID          apijson.Field
+	Author      apijson.Field
+	FromBranch  apijson.Field
+	Repository  apijson.Field
+	Title       apijson.Field
+	ToBranch    apijson.Field
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerParseContextURLResponsePullRequest) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerParseContextURLResponsePullRequestJSON) RawJSON() string {
+	return r.raw
+}
+
+// Repository information
+type RunnerParseContextURLResponsePullRequestRepository struct {
+	CloneURL string                                                 `json:"cloneUrl"`
+	Host     string                                                 `json:"host"`
+	Name     string                                                 `json:"name"`
+	Owner    string                                                 `json:"owner"`
+	JSON     runnerParseContextURLResponsePullRequestRepositoryJSON `json:"-"`
+}
+
+// runnerParseContextURLResponsePullRequestRepositoryJSON contains the JSON
+// metadata for the struct [RunnerParseContextURLResponsePullRequestRepository]
+type runnerParseContextURLResponsePullRequestRepositoryJSON struct {
+	CloneURL    apijson.Field
+	Host        apijson.Field
+	Name        apijson.Field
+	Owner       apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerParseContextURLResponsePullRequestRepository) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerParseContextURLResponsePullRequestRepositoryJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerSearchRepositoriesResponse struct {
+	// Last page in the responses
+	LastPage int64 `json:"lastPage"`
+	// Pagination information for the response
+	Pagination RunnerSearchRepositoriesResponsePagination `json:"pagination"`
+	// List of repositories matching the search criteria
+	Repositories []RunnerSearchRepositoriesResponseRepository `json:"repositories"`
+	JSON         runnerSearchRepositoriesResponseJSON         `json:"-"`
+}
+
+// runnerSearchRepositoriesResponseJSON contains the JSON metadata for the struct
+// [RunnerSearchRepositoriesResponse]
+type runnerSearchRepositoriesResponseJSON struct {
+	LastPage     apijson.Field
+	Pagination   apijson.Field
+	Repositories apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *RunnerSearchRepositoriesResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerSearchRepositoriesResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+// Pagination information for the response
+type RunnerSearchRepositoriesResponsePagination struct {
+	// Token passed for retrieving the next set of results. Empty if there are no more
+	// results
+	NextToken string                                         `json:"nextToken"`
+	JSON      runnerSearchRepositoriesResponsePaginationJSON `json:"-"`
+}
+
+// runnerSearchRepositoriesResponsePaginationJSON contains the JSON metadata for
+// the struct [RunnerSearchRepositoriesResponsePagination]
+type runnerSearchRepositoriesResponsePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerSearchRepositoriesResponsePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerSearchRepositoriesResponsePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerSearchRepositoriesResponseRepository struct {
+	// Repository name (e.g., "my-project")
+	Name string `json:"name"`
+	// Repository URL (e.g., "https://github.com/owner/my-project")
+	URL  string                                         `json:"url"`
+	JSON runnerSearchRepositoriesResponseRepositoryJSON `json:"-"`
+}
+
+// runnerSearchRepositoriesResponseRepositoryJSON contains the JSON metadata for
+// the struct [RunnerSearchRepositoriesResponseRepository]
+type runnerSearchRepositoriesResponseRepositoryJSON struct {
+	Name        apijson.Field
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerSearchRepositoriesResponseRepository) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerSearchRepositoriesResponseRepositoryJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1112,6 +1466,17 @@ func (r RunnerCheckAuthenticationForHostParams) MarshalJSON() (data []byte, err 
 	return apijson.MarshalRoot(r)
 }
 
+type RunnerNewLogsTokenParams struct {
+	// runner_id specifies the runner for which the logs token should be created.
+	//
+	// +required
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+}
+
+func (r RunnerNewLogsTokenParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type RunnerNewRunnerTokenParams struct {
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 }
@@ -1126,5 +1491,38 @@ type RunnerParseContextURLParams struct {
 }
 
 func (r RunnerParseContextURLParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type RunnerSearchRepositoriesParams struct {
+	// Maximum number of repositories to return. Default: 25, Maximum: 100 Deprecated:
+	// Use pagination.page_size instead
+	Limit param.Field[int64] `json:"limit"`
+	// Pagination parameters for repository search
+	Pagination param.Field[RunnerSearchRepositoriesParamsPagination] `json:"pagination"`
+	RunnerID   param.Field[string]                                   `json:"runnerId" format:"uuid"`
+	// The SCM's host to retrieve repositories from
+	ScmHost param.Field[string] `json:"scmHost"`
+	// Search mode determines how search_string is interpreted
+	SearchMode param.Field[SearchMode] `json:"searchMode"`
+	// Search query - interpretation depends on search_mode
+	SearchString param.Field[string] `json:"searchString"`
+}
+
+func (r RunnerSearchRepositoriesParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Pagination parameters for repository search
+type RunnerSearchRepositoriesParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
+}
+
+func (r RunnerSearchRepositoriesParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

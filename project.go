@@ -25,8 +25,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewProjectService] method instead.
 type ProjectService struct {
-	Options  []option.RequestOption
-	Policies *ProjectPolicyService
+	Options           []option.RequestOption
+	EnvironmentClases *ProjectEnvironmentClaseService
+	Policies          *ProjectPolicyService
 }
 
 // NewProjectService generates a new service that applies the given options to each
@@ -35,6 +36,7 @@ type ProjectService struct {
 func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 	r = &ProjectService{}
 	r.Options = opts
+	r.EnvironmentClases = NewProjectEnvironmentClaseService(opts...)
 	r.Policies = NewProjectPolicyService(opts...)
 	return
 }
@@ -56,8 +58,6 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 //
 //	```yaml
 //	name: "Web Application"
-//	environmentClass:
-//	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	initializer:
 //	  specs:
 //	    - git:
@@ -70,8 +70,6 @@ func NewProjectService(opts ...option.RequestOption) (r *ProjectService) {
 //
 //	```yaml
 //	name: "Backend Service"
-//	environmentClass:
-//	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	initializer:
 //	  specs:
 //	    - git:
@@ -118,6 +116,7 @@ func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ..
 // - Update environment class
 // - Change project name
 // - Configure initializers
+// - Configure prebuild settings
 //
 // ### Examples
 //
@@ -130,14 +129,20 @@ func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ..
 //	name: "New Project Name"
 //	```
 //
-// - Update environment class:
+// - Enable prebuilds with daily schedule:
 //
-//	Changes the project's environment class.
+//	Configures prebuilds to run daily at 2 AM UTC.
 //
 //	```yaml
 //	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
-//	environmentClass:
-//	  environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	prebuildConfiguration:
+//	  enabled: true
+//	  environmentClassIds:
+//	    - "b0e12f6c-4c67-429d-a4a6-d9838b5da041"
+//	  timeout: "3600s"
+//	  trigger:
+//	    dailySchedule:
+//	      hourUtc: 2
 //	```
 func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, opts ...option.RequestOption) (res *ProjectUpdateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -362,11 +367,12 @@ const (
 	EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteCommit EnvironmentInitializerSpecsGitTargetMode = "CLONE_TARGET_MODE_REMOTE_COMMIT"
 	EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteBranch EnvironmentInitializerSpecsGitTargetMode = "CLONE_TARGET_MODE_REMOTE_BRANCH"
 	EnvironmentInitializerSpecsGitTargetModeCloneTargetModeLocalBranch  EnvironmentInitializerSpecsGitTargetMode = "CLONE_TARGET_MODE_LOCAL_BRANCH"
+	EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteTag    EnvironmentInitializerSpecsGitTargetMode = "CLONE_TARGET_MODE_REMOTE_TAG"
 )
 
 func (r EnvironmentInitializerSpecsGitTargetMode) IsKnown() bool {
 	switch r {
-	case EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteHead, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteCommit, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteBranch, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeLocalBranch:
+	case EnvironmentInitializerSpecsGitTargetModeCloneTargetModeUnspecified, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteHead, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteCommit, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteBranch, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeLocalBranch, EnvironmentInitializerSpecsGitTargetModeCloneTargetModeRemoteTag:
 		return true
 	}
 	return false
@@ -417,18 +423,28 @@ func (r EnvironmentInitializerSpecsGitParam) MarshalJSON() (data []byte, err err
 }
 
 type Project struct {
-	EnvironmentClass ProjectEnvironmentClass `json:"environmentClass,required"`
+	// Use `environment_classes` instead.
+	//
+	// Deprecated: deprecated
+	EnvironmentClass shared.ProjectEnvironmentClass `json:"environmentClass,required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root
 	AutomationsFilePath string `json:"automationsFilePath"`
+	// desired_phase is the desired phase of the project When set to DELETED, the
+	// project is pending deletion
+	DesiredPhase ProjectPhase `json:"desiredPhase"`
 	// devcontainer_file_path is the path to the devcontainer file relative to the repo
 	// root
 	DevcontainerFilePath string `json:"devcontainerFilePath"`
+	// environment_classes is the list of environment classes for the project
+	EnvironmentClasses []shared.ProjectEnvironmentClass `json:"environmentClasses"`
 	// initializer is the content initializer
 	Initializer EnvironmentInitializer `json:"initializer"`
 	Metadata    ProjectMetadata        `json:"metadata"`
+	// prebuild_configuration defines how prebuilds are created for this project.
+	PrebuildConfiguration ProjectPrebuildConfiguration `json:"prebuildConfiguration"`
 	// technical_description is a detailed technical description of the project This
 	// field is not returned by default in GetProject or ListProjects responses
 	TechnicalDescription string        `json:"technicalDescription"`
@@ -438,16 +454,19 @@ type Project struct {
 
 // projectJSON contains the JSON metadata for the struct [Project]
 type projectJSON struct {
-	EnvironmentClass     apijson.Field
-	ID                   apijson.Field
-	AutomationsFilePath  apijson.Field
-	DevcontainerFilePath apijson.Field
-	Initializer          apijson.Field
-	Metadata             apijson.Field
-	TechnicalDescription apijson.Field
-	UsedBy               apijson.Field
-	raw                  string
-	ExtraFields          map[string]apijson.Field
+	EnvironmentClass      apijson.Field
+	ID                    apijson.Field
+	AutomationsFilePath   apijson.Field
+	DesiredPhase          apijson.Field
+	DevcontainerFilePath  apijson.Field
+	EnvironmentClasses    apijson.Field
+	Initializer           apijson.Field
+	Metadata              apijson.Field
+	PrebuildConfiguration apijson.Field
+	TechnicalDescription  apijson.Field
+	UsedBy                apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *Project) UnmarshalJSON(data []byte) (err error) {
@@ -481,44 +500,6 @@ func (r *ProjectUsedBy) UnmarshalJSON(data []byte) (err error) {
 
 func (r projectUsedByJSON) RawJSON() string {
 	return r.raw
-}
-
-type ProjectEnvironmentClass struct {
-	// Use a fixed environment class on a given Runner. This cannot be a local runner's
-	// environment class.
-	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
-	// Use a local runner for the user
-	LocalRunner bool                        `json:"localRunner"`
-	JSON        projectEnvironmentClassJSON `json:"-"`
-}
-
-// projectEnvironmentClassJSON contains the JSON metadata for the struct
-// [ProjectEnvironmentClass]
-type projectEnvironmentClassJSON struct {
-	EnvironmentClassID apijson.Field
-	LocalRunner        apijson.Field
-	raw                string
-	ExtraFields        map[string]apijson.Field
-}
-
-func (r *ProjectEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r projectEnvironmentClassJSON) RawJSON() string {
-	return r.raw
-}
-
-type ProjectEnvironmentClassParam struct {
-	// Use a fixed environment class on a given Runner. This cannot be a local runner's
-	// environment class.
-	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
-	// Use a local runner for the user
-	LocalRunner param.Field[bool] `json:"localRunner"`
-}
-
-func (r ProjectEnvironmentClassParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
 }
 
 type ProjectMetadata struct {
@@ -728,6 +709,168 @@ func (r projectMetadataJSON) RawJSON() string {
 	return r.raw
 }
 
+type ProjectPhase string
+
+const (
+	ProjectPhaseUnspecified ProjectPhase = "PROJECT_PHASE_UNSPECIFIED"
+	ProjectPhaseActive      ProjectPhase = "PROJECT_PHASE_ACTIVE"
+	ProjectPhaseDeleted     ProjectPhase = "PROJECT_PHASE_DELETED"
+)
+
+func (r ProjectPhase) IsKnown() bool {
+	switch r {
+	case ProjectPhaseUnspecified, ProjectPhaseActive, ProjectPhaseDeleted:
+		return true
+	}
+	return false
+}
+
+// ProjectPrebuildConfiguration defines how prebuilds are created for a project.
+// Prebuilds create environment snapshots that enable faster environment startup
+// times.
+type ProjectPrebuildConfiguration struct {
+	// enabled controls whether prebuilds are created for this project. When disabled,
+	// no automatic prebuilds will be triggered.
+	Enabled bool `json:"enabled"`
+	// enable_jetbrains_warmup controls whether JetBrains IDE warmup runs during
+	// prebuilds.
+	EnableJetbrainsWarmup bool `json:"enableJetbrainsWarmup"`
+	// environment_class_ids specifies which environment classes should have prebuilds
+	// created. If empty, no prebuilds are created.
+	EnvironmentClassIDs []string `json:"environmentClassIds" format:"uuid"`
+	// executor specifies who runs prebuilds for this project. The executor's SCM
+	// credentials are used to clone the repository. If not set, defaults to the
+	// project creator.
+	Executor shared.Subject `json:"executor"`
+	// timeout is the maximum duration allowed for a prebuild to complete. If not
+	// specified, defaults to 1 hour. Must be between 5 minutes and 2 hours.
+	Timeout string `json:"timeout" format:"regex"`
+	// trigger defines when prebuilds should be created.
+	Trigger ProjectPrebuildConfigurationTrigger `json:"trigger"`
+	JSON    projectPrebuildConfigurationJSON    `json:"-"`
+}
+
+// projectPrebuildConfigurationJSON contains the JSON metadata for the struct
+// [ProjectPrebuildConfiguration]
+type projectPrebuildConfigurationJSON struct {
+	Enabled               apijson.Field
+	EnableJetbrainsWarmup apijson.Field
+	EnvironmentClassIDs   apijson.Field
+	Executor              apijson.Field
+	Timeout               apijson.Field
+	Trigger               apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *ProjectPrebuildConfiguration) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectPrebuildConfigurationJSON) RawJSON() string {
+	return r.raw
+}
+
+// trigger defines when prebuilds should be created.
+type ProjectPrebuildConfigurationTrigger struct {
+	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+	// actual start time may vary slightly to distribute system load.
+	DailySchedule ProjectPrebuildConfigurationTriggerDailySchedule `json:"dailySchedule,required"`
+	JSON          projectPrebuildConfigurationTriggerJSON          `json:"-"`
+}
+
+// projectPrebuildConfigurationTriggerJSON contains the JSON metadata for the
+// struct [ProjectPrebuildConfigurationTrigger]
+type projectPrebuildConfigurationTriggerJSON struct {
+	DailySchedule apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *ProjectPrebuildConfigurationTrigger) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectPrebuildConfigurationTriggerJSON) RawJSON() string {
+	return r.raw
+}
+
+// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+// actual start time may vary slightly to distribute system load.
+type ProjectPrebuildConfigurationTriggerDailySchedule struct {
+	// hour_utc is the hour of day (0-23) in UTC when the prebuild should start. The
+	// actual start time may be adjusted by a few minutes to balance system load.
+	HourUtc int64                                                `json:"hourUtc"`
+	JSON    projectPrebuildConfigurationTriggerDailyScheduleJSON `json:"-"`
+}
+
+// projectPrebuildConfigurationTriggerDailyScheduleJSON contains the JSON metadata
+// for the struct [ProjectPrebuildConfigurationTriggerDailySchedule]
+type projectPrebuildConfigurationTriggerDailyScheduleJSON struct {
+	HourUtc     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectPrebuildConfigurationTriggerDailySchedule) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectPrebuildConfigurationTriggerDailyScheduleJSON) RawJSON() string {
+	return r.raw
+}
+
+// ProjectPrebuildConfiguration defines how prebuilds are created for a project.
+// Prebuilds create environment snapshots that enable faster environment startup
+// times.
+type ProjectPrebuildConfigurationParam struct {
+	// enabled controls whether prebuilds are created for this project. When disabled,
+	// no automatic prebuilds will be triggered.
+	Enabled param.Field[bool] `json:"enabled"`
+	// enable_jetbrains_warmup controls whether JetBrains IDE warmup runs during
+	// prebuilds.
+	EnableJetbrainsWarmup param.Field[bool] `json:"enableJetbrainsWarmup"`
+	// environment_class_ids specifies which environment classes should have prebuilds
+	// created. If empty, no prebuilds are created.
+	EnvironmentClassIDs param.Field[[]string] `json:"environmentClassIds" format:"uuid"`
+	// executor specifies who runs prebuilds for this project. The executor's SCM
+	// credentials are used to clone the repository. If not set, defaults to the
+	// project creator.
+	Executor param.Field[shared.SubjectParam] `json:"executor"`
+	// timeout is the maximum duration allowed for a prebuild to complete. If not
+	// specified, defaults to 1 hour. Must be between 5 minutes and 2 hours.
+	Timeout param.Field[string] `json:"timeout" format:"regex"`
+	// trigger defines when prebuilds should be created.
+	Trigger param.Field[ProjectPrebuildConfigurationTriggerParam] `json:"trigger"`
+}
+
+func (r ProjectPrebuildConfigurationParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// trigger defines when prebuilds should be created.
+type ProjectPrebuildConfigurationTriggerParam struct {
+	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+	// actual start time may vary slightly to distribute system load.
+	DailySchedule param.Field[ProjectPrebuildConfigurationTriggerDailyScheduleParam] `json:"dailySchedule,required"`
+}
+
+func (r ProjectPrebuildConfigurationTriggerParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+// actual start time may vary slightly to distribute system load.
+type ProjectPrebuildConfigurationTriggerDailyScheduleParam struct {
+	// hour_utc is the hour of day (0-23) in UTC when the prebuild should start. The
+	// actual start time may be adjusted by a few minutes to balance system load.
+	HourUtc param.Field[int64] `json:"hourUtc"`
+}
+
+func (r ProjectPrebuildConfigurationTriggerDailyScheduleParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type ProjectNewResponse struct {
 	Project Project                `json:"project"`
 	JSON    projectNewResponseJSON `json:"-"`
@@ -815,7 +958,6 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 }
 
 type ProjectNewParams struct {
-	EnvironmentClass param.Field[ProjectEnvironmentClassParam] `json:"environmentClass,required"`
 	// initializer is the content initializer
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -833,6 +975,9 @@ type ProjectNewParams struct {
 	// ```
 	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
 	Name                 param.Field[string] `json:"name"`
+	// prebuild_configuration defines how prebuilds are created for this project. If
+	// not set, prebuilds are disabled for the project.
+	PrebuildConfiguration param.Field[ProjectPrebuildConfigurationParam] `json:"prebuildConfiguration"`
 	// technical_description is a detailed technical description of the project This
 	// field is not returned by default in GetProject or ListProjects responses 8KB max
 	TechnicalDescription param.Field[string] `json:"technicalDescription"`
@@ -865,11 +1010,14 @@ type ProjectUpdateParams struct {
 	// ```
 	// this.matches('^$|^[^/].*')
 	// ```
-	DevcontainerFilePath param.Field[string]                       `json:"devcontainerFilePath"`
-	EnvironmentClass     param.Field[ProjectEnvironmentClassParam] `json:"environmentClass"`
+	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
 	// initializer is the content initializer
 	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer"`
 	Name        param.Field[string]                      `json:"name"`
+	// prebuild_configuration defines how prebuilds are created for this project. If
+	// not provided, the existing prebuild configuration is not modified. To disable
+	// prebuilds, set enabled to false.
+	PrebuildConfiguration param.Field[ProjectPrebuildConfigurationParam] `json:"prebuildConfiguration"`
 	// project_id specifies the project identifier
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
 	// technical_description is a detailed technical description of the project This
@@ -904,6 +1052,12 @@ func (r ProjectListParams) URLQuery() (v url.Values) {
 type ProjectListParamsFilter struct {
 	// project_ids filters the response to only projects with these IDs
 	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+	// runner_ids filters the response to only projects that use environment classes
+	// from these runners
+	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
+	// search performs case-insensitive search across project name, project ID, and
+	// repository name
+	Search param.Field[string] `json:"search"`
 }
 
 func (r ProjectListParamsFilter) MarshalJSON() (data []byte, err error) {

@@ -207,20 +207,26 @@ type ScmIntegration struct {
 	RunnerID string                    `json:"runnerId"`
 	// scm_id references the scm_id in the runner's configuration schema that this
 	// integration is for
-	ScmID string             `json:"scmId"`
-	JSON  scmIntegrationJSON `json:"-"`
+	ScmID string `json:"scmId"`
+	// virtual_directory is the virtual directory path for Azure DevOps Server (e.g.,
+	// "/tfs"). This field is only used for Azure DevOps Server SCM integrations and
+	// should be empty for other SCM types. Azure DevOps Server APIs work without
+	// collection when PAT scope is 'All accessible organizations'.
+	VirtualDirectory string             `json:"virtualDirectory,nullable"`
+	JSON             scmIntegrationJSON `json:"-"`
 }
 
 // scmIntegrationJSON contains the JSON metadata for the struct [ScmIntegration]
 type scmIntegrationJSON struct {
-	ID          apijson.Field
-	Host        apijson.Field
-	OAuth       apijson.Field
-	Pat         apijson.Field
-	RunnerID    apijson.Field
-	ScmID       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	ID               apijson.Field
+	Host             apijson.Field
+	OAuth            apijson.Field
+	Pat              apijson.Field
+	RunnerID         apijson.Field
+	ScmID            apijson.Field
+	VirtualDirectory apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *ScmIntegration) UnmarshalJSON(data []byte) (err error) {
@@ -326,6 +332,11 @@ type RunnerConfigurationScmIntegrationNewParams struct {
 	// scm_id references the scm_id in the runner's configuration schema that this
 	// integration is for
 	ScmID param.Field[string] `json:"scmId"`
+	// virtual_directory is the virtual directory path for Azure DevOps Server (e.g.,
+	// "/tfs"). This field is only used for Azure DevOps Server SCM integrations and
+	// should be empty for other SCM types. Azure DevOps Server APIs work without
+	// collection when PAT scope is 'All accessible organizations'.
+	VirtualDirectory param.Field[string] `json:"virtualDirectory"`
 }
 
 func (r RunnerConfigurationScmIntegrationNewParams) MarshalJSON() (data []byte, err error) {
@@ -362,6 +373,11 @@ type RunnerConfigurationScmIntegrationUpdateParams struct {
 	// This might lead to users being unable to access their repositories until they
 	// re-authenticate.
 	Pat param.Field[bool] `json:"pat"`
+	// virtual_directory is the virtual directory path for Azure DevOps Server (e.g.,
+	// "/tfs"). This field is only used for Azure DevOps Server SCM integrations and
+	// should be empty for other SCM types. Azure DevOps Server APIs work without
+	// collection when PAT scope is 'All accessible organizations'.
+	VirtualDirectory param.Field[string] `json:"virtualDirectory"`
 }
 
 func (r RunnerConfigurationScmIntegrationUpdateParams) MarshalJSON() (data []byte, err error) {
