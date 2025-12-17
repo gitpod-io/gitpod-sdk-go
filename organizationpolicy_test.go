@@ -54,9 +54,10 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Organizations.Policies.Update(context.TODO(), gitpod.OrganizationPolicyUpdateParams{
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		AgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsAgentPolicy{
-			CommandDenyList:  gitpod.F([]string{"string"}),
-			McpDisabled:      gitpod.F(true),
-			ScmToolsDisabled: gitpod.F(true),
+			CommandDenyList:        gitpod.F([]string{"string"}),
+			McpDisabled:            gitpod.F(true),
+			ScmToolsAllowedGroupID: gitpod.F("scmToolsAllowedGroupId"),
+			ScmToolsDisabled:       gitpod.F(true),
 		}),
 		AllowedEditorIDs:                gitpod.F([]string{"string"}),
 		AllowLocalRunners:               gitpod.F(true),

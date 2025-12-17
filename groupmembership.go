@@ -67,6 +67,36 @@ func (r *GroupMembershipService) New(ctx context.Context, body GroupMembershipNe
 	return
 }
 
+// Gets a specific membership by group ID and subject.
+//
+// Use this method to:
+//
+// - Check if a user or service account is a member of a group
+// - Verify group membership for access control
+//
+// ### Examples
+//
+// - Check user membership:
+//
+//	Checks if a user is a member of a specific group.
+//
+//	```yaml
+//	groupId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	subject:
+//	  id: "f53d2330-3795-4c5d-a1f3-453121af9c60"
+//	  principal: PRINCIPAL_USER
+//	```
+//
+// ### Authorization
+//
+// All organization members can check group membership (transparency model).
+func (r *GroupMembershipService) Get(ctx context.Context, body GroupMembershipGetParams, opts ...option.RequestOption) (res *GroupMembershipGetResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.GroupService/GetMembership"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Lists all memberships of a group.
 //
 // Use this method to:
@@ -216,6 +246,28 @@ func (r groupMembershipNewResponseJSON) RawJSON() string {
 	return r.raw
 }
 
+type GroupMembershipGetResponse struct {
+	// The membership if found, nil if subject is not a member
+	Member GroupMembership                `json:"member"`
+	JSON   groupMembershipGetResponseJSON `json:"-"`
+}
+
+// groupMembershipGetResponseJSON contains the JSON metadata for the struct
+// [GroupMembershipGetResponse]
+type groupMembershipGetResponseJSON struct {
+	Member      apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *GroupMembershipGetResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r groupMembershipGetResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type GroupMembershipDeleteResponse = interface{}
 
 type GroupMembershipNewParams struct {
@@ -225,6 +277,16 @@ type GroupMembershipNewParams struct {
 }
 
 func (r GroupMembershipNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type GroupMembershipGetParams struct {
+	// Subject to check membership for
+	Subject param.Field[shared.SubjectParam] `json:"subject,required"`
+	GroupID param.Field[string]              `json:"groupId" format:"uuid"`
+}
+
+func (r GroupMembershipGetParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

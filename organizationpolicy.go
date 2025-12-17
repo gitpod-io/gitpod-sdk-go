@@ -106,17 +106,21 @@ type AgentPolicy struct {
 	McpDisabled bool `json:"mcpDisabled,required"`
 	// scm_tools_disabled controls whether SCM (Source Control Management) tools are
 	// disabled for agents
-	ScmToolsDisabled bool            `json:"scmToolsDisabled,required"`
-	JSON             agentPolicyJSON `json:"-"`
+	ScmToolsDisabled bool `json:"scmToolsDisabled,required"`
+	// scm_tools_allowed_group_id restricts SCM tools access to members of this group.
+	// Empty means no restriction (all users can use SCM tools if not disabled).
+	ScmToolsAllowedGroupID string          `json:"scmToolsAllowedGroupId"`
+	JSON                   agentPolicyJSON `json:"-"`
 }
 
 // agentPolicyJSON contains the JSON metadata for the struct [AgentPolicy]
 type agentPolicyJSON struct {
-	CommandDenyList  apijson.Field
-	McpDisabled      apijson.Field
-	ScmToolsDisabled apijson.Field
-	raw              string
-	ExtraFields      map[string]apijson.Field
+	CommandDenyList        apijson.Field
+	McpDisabled            apijson.Field
+	ScmToolsDisabled       apijson.Field
+	ScmToolsAllowedGroupID apijson.Field
+	raw                    string
+	ExtraFields            map[string]apijson.Field
 }
 
 func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
@@ -401,6 +405,9 @@ type OrganizationPolicyUpdateParamsAgentPolicy struct {
 	// mcp_disabled controls whether MCP (Model Context Protocol) is disabled for
 	// agents
 	McpDisabled param.Field[bool] `json:"mcpDisabled"`
+	// scm_tools_allowed_group_id restricts SCM tools access to members of this group.
+	// Empty means no restriction (all users can use SCM tools if not disabled).
+	ScmToolsAllowedGroupID param.Field[string] `json:"scmToolsAllowedGroupId"`
 	// scm_tools_disabled controls whether SCM (Source Control Management) tools are
 	// disabled for agents
 	ScmToolsDisabled param.Field[bool] `json:"scmToolsDisabled"`
