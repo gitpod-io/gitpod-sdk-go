@@ -1055,6 +1055,9 @@ type ProjectListParamsFilter struct {
 	// runner_ids filters the response to only projects that use environment classes
 	// from these runners
 	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
+	// runner_kinds filters the response to only projects that use environment classes
+	// from runners of these kinds
+	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
 	// search performs case-insensitive search across project name, project ID, and
 	// repository name
 	Search param.Field[string] `json:"search"`
