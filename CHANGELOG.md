@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.8.0 (2025-12-19)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* **agent:** add group-based SCM tools access control ([02a3ac4](https://github.com/gitpod-io/gitpod-sdk-go/commit/02a3ac402e5b07ea0efffaf6a35ea3740b800211))
+
+
+### Bug Fixes
+
+* skip usage tests that don't work with Prism ([2e9de50](https://github.com/gitpod-io/gitpod-sdk-go/commit/2e9de50431b0d2ab64db8b7bbba3c83aedc7d74b))
+
+
+### Chores
+
+* pin GitHub Actions to SHA ([af1d69c](https://github.com/gitpod-io/gitpod-sdk-go/commit/af1d69c695071e89c7ede111953b510914b6dff0))
+
 ## 0.7.0 (2025-12-15)
 
 Full Changelog: [v0.6.1...v0.7.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.6.1...v0.7.0)
