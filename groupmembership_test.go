@@ -43,6 +43,35 @@ func TestGroupMembershipNewWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestGroupMembershipGetWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Groups.Memberships.Get(context.TODO(), gitpod.GroupMembershipGetParams{
+		Subject: gitpod.F(shared.SubjectParam{
+			ID:        gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
+			Principal: gitpod.F(shared.PrincipalUser),
+		}),
+		GroupID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestGroupMembershipListWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"

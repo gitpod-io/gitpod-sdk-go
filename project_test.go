@@ -171,9 +171,10 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.ProjectListParamsFilter{
-			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			RunnerIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Search:     gitpod.F("search"),
+			ProjectIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerKinds: gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			Search:      gitpod.F("search"),
 		}),
 		Pagination: gitpod.F(gitpod.ProjectListParamsPagination{
 			Token:    gitpod.F("token"),
