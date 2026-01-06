@@ -56,6 +56,7 @@ func TestAgentNewPromptWithOptionalParams(t *testing.T) {
 		Command:     gitpod.F("command"),
 		Description: gitpod.F("x"),
 		IsCommand:   gitpod.F(true),
+		IsSkill:     gitpod.F(true),
 		IsTemplate:  gitpod.F(true),
 		Name:        gitpod.F("x"),
 		Prompt:      gitpod.F("x"),
@@ -177,6 +178,7 @@ func TestAgentListPromptsWithOptionalParams(t *testing.T) {
 			Command:       gitpod.F("command"),
 			CommandPrefix: gitpod.F("commandPrefix"),
 			IsCommand:     gitpod.F(true),
+			IsSkill:       gitpod.F(true),
 			IsTemplate:    gitpod.F(true),
 		}),
 		Pagination: gitpod.F(gitpod.AgentListPromptsParamsPagination{
@@ -372,6 +374,7 @@ func TestAgentUpdatePromptWithOptionalParams(t *testing.T) {
 		Spec: gitpod.F(gitpod.AgentUpdatePromptParamsSpec{
 			Command:    gitpod.F("command"),
 			IsCommand:  gitpod.F(true),
+			IsSkill:    gitpod.F(true),
 			IsTemplate: gitpod.F(true),
 			Prompt:     gitpod.F("prompt"),
 		}),
