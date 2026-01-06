@@ -369,6 +369,11 @@ type PrebuildStatus struct {
 	// references the environment logs. After completion, this may reference archived
 	// logs.
 	LogURL string `json:"logUrl" format:"uri"`
+	// snapshot_completion_percentage is the progress of snapshot creation (0-100).
+	// Only populated when phase is SNAPSHOTTING and progress is available from the
+	// cloud provider. This value may update infrequently or remain at 0 depending on
+	// the provider.
+	SnapshotCompletionPercentage int64 `json:"snapshotCompletionPercentage"`
 	// status_version is incremented each time the status is updated. Used for
 	// optimistic concurrency control.
 	StatusVersion string `json:"statusVersion"`
@@ -382,15 +387,16 @@ type PrebuildStatus struct {
 
 // prebuildStatusJSON contains the JSON metadata for the struct [PrebuildStatus]
 type prebuildStatusJSON struct {
-	Phase          apijson.Field
-	CompletionTime apijson.Field
-	EnvironmentID  apijson.Field
-	FailureMessage apijson.Field
-	LogURL         apijson.Field
-	StatusVersion  apijson.Field
-	WarningMessage apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	Phase                        apijson.Field
+	CompletionTime               apijson.Field
+	EnvironmentID                apijson.Field
+	FailureMessage               apijson.Field
+	LogURL                       apijson.Field
+	SnapshotCompletionPercentage apijson.Field
+	StatusVersion                apijson.Field
+	WarningMessage               apijson.Field
+	raw                          string
+	ExtraFields                  map[string]apijson.Field
 }
 
 func (r *PrebuildStatus) UnmarshalJSON(data []byte) (err error) {
