@@ -261,11 +261,14 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 	_, err := client.Agents.SendToExecution(context.TODO(), gitpod.AgentSendToExecutionParams{
 		AgentExecutionID: gitpod.F("6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
+			ID:        gitpod.F("id"),
+			CreatedAt: gitpod.F(time.Now()),
+			Image: gitpod.F(gitpod.UserInputBlockImageParam{
+				Data: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+			}),
 			Text: gitpod.F(gitpod.UserInputBlockTextParam{
 				Content: gitpod.F("Generate a report based on the latest logs."),
 			}),
-			ID:        gitpod.F("id"),
-			CreatedAt: gitpod.F(time.Now()),
 		}),
 	})
 	if err != nil {
