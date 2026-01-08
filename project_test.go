@@ -142,7 +142,14 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 				}),
 			}),
 		}),
-		ProjectID:            gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		RecommendedEditors: gitpod.F(gitpod.RecommendedEditorsParam{
+			Editors: gitpod.F(map[string]gitpod.RecommendedEditorsEditorParam{
+				"foo": {
+					Versions: gitpod.F([]string{"string"}),
+				},
+			}),
+		}),
 		TechnicalDescription: gitpod.F("technicalDescription"),
 	})
 	if err != nil {
