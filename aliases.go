@@ -272,6 +272,9 @@ const ResourceTypeRoleAssignmentChanged = shared.ResourceTypeRoleAssignmentChang
 // This is an alias to an internal value.
 const ResourceTypeGroupMembershipChanged = shared.ResourceTypeGroupMembershipChanged
 
+// This is an alias to an internal value.
+const ResourceTypeWebhook = shared.ResourceTypeWebhook
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
