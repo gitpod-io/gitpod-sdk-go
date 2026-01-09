@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.8.0 (2026-01-09)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* **agent:** add group-based SCM tools access control ([02a3ac4](https://github.com/gitpod-io/gitpod-sdk-go/commit/02a3ac402e5b07ea0efffaf6a35ea3740b800211))
+* **api:** add ImageInput to UserInputBlock proto ([c48d8ec](https://github.com/gitpod-io/gitpod-sdk-go/commit/c48d8ec1113b38bdc7cf11495001b6c29cb112a4))
+* **api:** add recommended editors configuration to project settings ([673574f](https://github.com/gitpod-io/gitpod-sdk-go/commit/673574ffc184dc7b7f5e66599e173899d9dd4e4e))
+* **db:** add webhooks table with trigger reference ([41d8762](https://github.com/gitpod-io/gitpod-sdk-go/commit/41d8762b09efce9967748d6c4e57308d8ee2dc7c))
+* **prebuild:** expose snapshot completion percentage in prebuild status ([5e6837c](https://github.com/gitpod-io/gitpod-sdk-go/commit/5e6837cb70420eeba8a19f2b10f965e6c4d4478f))
+* **skills:** add organization-level skills support ([dbd94be](https://github.com/gitpod-io/gitpod-sdk-go/commit/dbd94bebb9f959939d0bb2b882181316b771d0b9))
+
+
+### Bug Fixes
+
+* skip usage tests that don't work with Prism ([2e9de50](https://github.com/gitpod-io/gitpod-sdk-go/commit/2e9de50431b0d2ab64db8b7bbba3c83aedc7d74b))
+* streaming endpoints should pass through errors correctly ([0897659](https://github.com/gitpod-io/gitpod-sdk-go/commit/08976594ce2bdb431fc4a662ec0fa21d6989a8c3))
+
+
+### Chores
+
+* **internal:** codegen related update ([7118d8d](https://github.com/gitpod-io/gitpod-sdk-go/commit/7118d8d561c9b7bacfa89e78e7fa1731c8c9f37b))
+* pin GitHub Actions to SHA ([af1d69c](https://github.com/gitpod-io/gitpod-sdk-go/commit/af1d69c695071e89c7ede111953b510914b6dff0))
+
 ## 0.7.0 (2025-12-15)
 
 Full Changelog: [v0.6.1...v0.7.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.6.1...v0.7.0)

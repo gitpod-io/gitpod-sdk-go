@@ -56,6 +56,7 @@ func TestAgentNewPromptWithOptionalParams(t *testing.T) {
 		Command:     gitpod.F("command"),
 		Description: gitpod.F("x"),
 		IsCommand:   gitpod.F(true),
+		IsSkill:     gitpod.F(true),
 		IsTemplate:  gitpod.F(true),
 		Name:        gitpod.F("x"),
 		Prompt:      gitpod.F("x"),
@@ -177,6 +178,7 @@ func TestAgentListPromptsWithOptionalParams(t *testing.T) {
 			Command:       gitpod.F("command"),
 			CommandPrefix: gitpod.F("commandPrefix"),
 			IsCommand:     gitpod.F(true),
+			IsSkill:       gitpod.F(true),
 			IsTemplate:    gitpod.F(true),
 		}),
 		Pagination: gitpod.F(gitpod.AgentListPromptsParamsPagination{
@@ -259,11 +261,14 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 	_, err := client.Agents.SendToExecution(context.TODO(), gitpod.AgentSendToExecutionParams{
 		AgentExecutionID: gitpod.F("6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
+			ID:        gitpod.F("id"),
+			CreatedAt: gitpod.F(time.Now()),
+			Image: gitpod.F(gitpod.UserInputBlockImageParam{
+				Data: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+			}),
 			Text: gitpod.F(gitpod.UserInputBlockTextParam{
 				Content: gitpod.F("Generate a report based on the latest logs."),
 			}),
-			ID:        gitpod.F("id"),
-			CreatedAt: gitpod.F(time.Now()),
 		}),
 	})
 	if err != nil {
@@ -372,6 +377,7 @@ func TestAgentUpdatePromptWithOptionalParams(t *testing.T) {
 		Spec: gitpod.F(gitpod.AgentUpdatePromptParamsSpec{
 			Command:    gitpod.F("command"),
 			IsCommand:  gitpod.F(true),
+			IsSkill:    gitpod.F(true),
 			IsTemplate: gitpod.F(true),
 			Prompt:     gitpod.F("prompt"),
 		}),

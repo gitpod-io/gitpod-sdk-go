@@ -1385,6 +1385,8 @@ type PromptSpec struct {
 	Command string `json:"command"`
 	// is_command indicates if this prompt is a command
 	IsCommand bool `json:"isCommand"`
+	// is_skill indicates if this prompt is a skill (workflow instructions for agents)
+	IsSkill bool `json:"isSkill"`
 	// is_template indicates if this prompt is a template
 	IsTemplate bool `json:"isTemplate"`
 	// prompt is the content of the prompt
@@ -1396,6 +1398,7 @@ type PromptSpec struct {
 type promptSpecJSON struct {
 	Command     apijson.Field
 	IsCommand   apijson.Field
+	IsSkill     apijson.Field
 	IsTemplate  apijson.Field
 	Prompt      apijson.Field
 	raw         string
@@ -1411,13 +1414,27 @@ func (r promptSpecJSON) RawJSON() string {
 }
 
 type UserInputBlockParam struct {
-	Text param.Field[UserInputBlockTextParam] `json:"text,required"`
-	ID   param.Field[string]                  `json:"id"`
+	ID param.Field[string] `json:"id"`
 	// Timestamp when this block was created. Used for debugging and support bundles.
 	CreatedAt param.Field[time.Time] `json:"createdAt" format:"date-time"`
+	// ImageInput allows sending images to the agent. Media type is inferred from magic
+	// bytes by the backend.
+	Image param.Field[UserInputBlockImageParam] `json:"image"`
+	Text  param.Field[UserInputBlockTextParam]  `json:"text"`
 }
 
 func (r UserInputBlockParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// ImageInput allows sending images to the agent. Media type is inferred from magic
+// bytes by the backend.
+type UserInputBlockImageParam struct {
+	// Raw image data (max 4MB). Supported formats: PNG, JPEG, WebP.
+	Data param.Field[string] `json:"data" format:"byte"`
+}
+
+func (r UserInputBlockImageParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -1575,6 +1592,7 @@ type AgentNewPromptParams struct {
 	Command     param.Field[string] `json:"command"`
 	Description param.Field[string] `json:"description"`
 	IsCommand   param.Field[bool]   `json:"isCommand"`
+	IsSkill     param.Field[bool]   `json:"isSkill"`
 	IsTemplate  param.Field[bool]   `json:"isTemplate"`
 	Name        param.Field[string] `json:"name"`
 	Prompt      param.Field[string] `json:"prompt"`
@@ -1704,6 +1722,7 @@ type AgentListPromptsParamsFilter struct {
 	Command       param.Field[string] `json:"command"`
 	CommandPrefix param.Field[string] `json:"commandPrefix"`
 	IsCommand     param.Field[bool]   `json:"isCommand"`
+	IsSkill       param.Field[bool]   `json:"isSkill"`
 	IsTemplate    param.Field[bool]   `json:"isTemplate"`
 }
 
@@ -1804,6 +1823,8 @@ type AgentUpdatePromptParamsSpec struct {
 	Command param.Field[string] `json:"command"`
 	// Whether this prompt is a command
 	IsCommand param.Field[bool] `json:"isCommand"`
+	// Whether this prompt is a skill
+	IsSkill param.Field[bool] `json:"isSkill"`
 	// Whether this prompt is a template
 	IsTemplate param.Field[bool] `json:"isTemplate"`
 	// The prompt content

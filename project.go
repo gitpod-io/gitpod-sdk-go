@@ -445,6 +445,8 @@ type Project struct {
 	Metadata    ProjectMetadata        `json:"metadata"`
 	// prebuild_configuration defines how prebuilds are created for this project.
 	PrebuildConfiguration ProjectPrebuildConfiguration `json:"prebuildConfiguration"`
+	// recommended_editors specifies the editors recommended for this project.
+	RecommendedEditors RecommendedEditors `json:"recommendedEditors"`
 	// technical_description is a detailed technical description of the project This
 	// field is not returned by default in GetProject or ListProjects responses
 	TechnicalDescription string        `json:"technicalDescription"`
@@ -463,6 +465,7 @@ type projectJSON struct {
 	Initializer           apijson.Field
 	Metadata              apijson.Field
 	PrebuildConfiguration apijson.Field
+	RecommendedEditors    apijson.Field
 	TechnicalDescription  apijson.Field
 	UsedBy                apijson.Field
 	raw                   string
@@ -871,6 +874,82 @@ func (r ProjectPrebuildConfigurationTriggerDailyScheduleParam) MarshalJSON() (da
 	return apijson.MarshalRoot(r)
 }
 
+// RecommendedEditors contains the map of recommended editors and their versions.
+type RecommendedEditors struct {
+	// editors maps editor aliases to their recommended versions. Key is the editor
+	// alias (e.g., "intellij", "goland", "vscode"). Value contains the list of
+	// recommended versions for that editor. If versions list is empty, all available
+	// versions are recommended. Example: {"intellij": {versions: ["2025.1",
+	// "2024.3"]}, "goland": {}}
+	Editors map[string]RecommendedEditorsEditor `json:"editors"`
+	JSON    recommendedEditorsJSON              `json:"-"`
+}
+
+// recommendedEditorsJSON contains the JSON metadata for the struct
+// [RecommendedEditors]
+type recommendedEditorsJSON struct {
+	Editors     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RecommendedEditors) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r recommendedEditorsJSON) RawJSON() string {
+	return r.raw
+}
+
+// EditorVersions contains the recommended versions for an editor.
+type RecommendedEditorsEditor struct {
+	// versions is the list of recommended versions for this editor. If empty, all
+	// available versions are recommended. Examples for JetBrains: ["2025.1", "2024.3"]
+	Versions []string                     `json:"versions"`
+	JSON     recommendedEditorsEditorJSON `json:"-"`
+}
+
+// recommendedEditorsEditorJSON contains the JSON metadata for the struct
+// [RecommendedEditorsEditor]
+type recommendedEditorsEditorJSON struct {
+	Versions    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RecommendedEditorsEditor) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r recommendedEditorsEditorJSON) RawJSON() string {
+	return r.raw
+}
+
+// RecommendedEditors contains the map of recommended editors and their versions.
+type RecommendedEditorsParam struct {
+	// editors maps editor aliases to their recommended versions. Key is the editor
+	// alias (e.g., "intellij", "goland", "vscode"). Value contains the list of
+	// recommended versions for that editor. If versions list is empty, all available
+	// versions are recommended. Example: {"intellij": {versions: ["2025.1",
+	// "2024.3"]}, "goland": {}}
+	Editors param.Field[map[string]RecommendedEditorsEditorParam] `json:"editors"`
+}
+
+func (r RecommendedEditorsParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// EditorVersions contains the recommended versions for an editor.
+type RecommendedEditorsEditorParam struct {
+	// versions is the list of recommended versions for this editor. If empty, all
+	// available versions are recommended. Examples for JetBrains: ["2025.1", "2024.3"]
+	Versions param.Field[[]string] `json:"versions"`
+}
+
+func (r RecommendedEditorsEditorParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type ProjectNewResponse struct {
 	Project Project                `json:"project"`
 	JSON    projectNewResponseJSON `json:"-"`
@@ -1020,6 +1099,10 @@ type ProjectUpdateParams struct {
 	PrebuildConfiguration param.Field[ProjectPrebuildConfigurationParam] `json:"prebuildConfiguration"`
 	// project_id specifies the project identifier
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// recommended_editors specifies the editors recommended for this project. If not
+	// provided, the existing recommended editors are not modified. To clear all
+	// recommended editors, set to an empty RecommendedEditors message.
+	RecommendedEditors param.Field[RecommendedEditorsParam] `json:"recommendedEditors"`
 	// technical_description is a detailed technical description of the project This
 	// field is not returned by default in GetProject or ListProjects responses 8KB max
 	TechnicalDescription param.Field[string] `json:"technicalDescription"`
@@ -1055,6 +1138,9 @@ type ProjectListParamsFilter struct {
 	// runner_ids filters the response to only projects that use environment classes
 	// from these runners
 	RunnerIDs param.Field[[]string] `json:"runnerIds" format:"uuid"`
+	// runner_kinds filters the response to only projects that use environment classes
+	// from runners of these kinds
+	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
 	// search performs case-insensitive search across project name, project ID, and
 	// repository name
 	Search param.Field[string] `json:"search"`

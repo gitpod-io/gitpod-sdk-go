@@ -142,7 +142,14 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 				}),
 			}),
 		}),
-		ProjectID:            gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		RecommendedEditors: gitpod.F(gitpod.RecommendedEditorsParam{
+			Editors: gitpod.F(map[string]gitpod.RecommendedEditorsEditorParam{
+				"foo": {
+					Versions: gitpod.F([]string{"string"}),
+				},
+			}),
+		}),
 		TechnicalDescription: gitpod.F("technicalDescription"),
 	})
 	if err != nil {
@@ -171,9 +178,10 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.ProjectListParamsFilter{
-			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			RunnerIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Search:     gitpod.F("search"),
+			ProjectIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			RunnerKinds: gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			Search:      gitpod.F("search"),
 		}),
 		Pagination: gitpod.F(gitpod.ProjectListParamsPagination{
 			Token:    gitpod.F("token"),
