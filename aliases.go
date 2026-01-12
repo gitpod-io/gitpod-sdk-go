@@ -275,6 +275,9 @@ const ResourceTypeGroupMembershipChanged = shared.ResourceTypeGroupMembershipCha
 // This is an alias to an internal value.
 const ResourceTypeWebhook = shared.ResourceTypeWebhook
 
+// This is an alias to an internal value.
+const ResourceTypeScimConfiguration = shared.ResourceTypeScimConfiguration
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
