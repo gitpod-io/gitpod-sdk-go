@@ -1226,9 +1226,13 @@ func (r runnerParseContextURLResponsePullRequestRepositoryJSON) RawJSON() string
 }
 
 type RunnerSearchRepositoriesResponse struct {
-	// Last page in the responses
+	// Deprecated: Use pagination token instead. Total pages can be extracted from
+	// token.
 	LastPage int64 `json:"lastPage"`
-	// Pagination information for the response
+	// Pagination information for the response. Token format:
+	// "NEXT_PAGE/TOTAL_PAGES/TOTAL_COUNT" (e.g., "2/40/1000"). Use -1 for unknown
+	// values (e.g., "2/-1/-1" when totals unavailable). Empty token means no more
+	// pages.
 	Pagination RunnerSearchRepositoriesResponsePagination `json:"pagination"`
 	// List of repositories matching the search criteria
 	Repositories []RunnerSearchRepositoriesResponseRepository `json:"repositories"`
@@ -1253,7 +1257,10 @@ func (r runnerSearchRepositoriesResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// Pagination information for the response
+// Pagination information for the response. Token format:
+// "NEXT_PAGE/TOTAL_PAGES/TOTAL_COUNT" (e.g., "2/40/1000"). Use -1 for unknown
+// values (e.g., "2/-1/-1" when totals unavailable). Empty token means no more
+// pages.
 type RunnerSearchRepositoriesResponsePagination struct {
 	// Token passed for retrieving the next set of results. Empty if there are no more
 	// results
