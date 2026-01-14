@@ -508,10 +508,12 @@ type AccountMembership struct {
 	UserID string `json:"userId,required" format:"uuid"`
 	// user_role is the role the user has in the organization
 	UserRole shared.OrganizationRole `json:"userRole,required"`
-	// organization_name is the member count of the organization the user is a member
-	// of
-	OrganizationMemberCount int64                 `json:"organizationMemberCount"`
-	JSON                    accountMembershipJSON `json:"-"`
+	// organization_member_count is the member count of the organization the user is a
+	// member of
+	OrganizationMemberCount int64 `json:"organizationMemberCount"`
+	// organization_tier is the tier of the organization (Free, Core, Enterprise)
+	OrganizationTier shared.OrganizationTier `json:"organizationTier"`
+	JSON             accountMembershipJSON   `json:"-"`
 }
 
 // accountMembershipJSON contains the JSON metadata for the struct
@@ -522,6 +524,7 @@ type accountMembershipJSON struct {
 	UserID                  apijson.Field
 	UserRole                apijson.Field
 	OrganizationMemberCount apijson.Field
+	OrganizationTier        apijson.Field
 	raw                     string
 	ExtraFields             map[string]apijson.Field
 }

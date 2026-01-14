@@ -473,7 +473,7 @@ type Organization struct {
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	Name      string    `json:"name,required"`
 	// The tier of the organization - free, enterprise or core
-	Tier OrganizationTier `json:"tier,required"`
+	Tier shared.OrganizationTier `json:"tier,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -709,24 +709,6 @@ func (r *OrganizationMember) UnmarshalJSON(data []byte) (err error) {
 
 func (r organizationMemberJSON) RawJSON() string {
 	return r.raw
-}
-
-type OrganizationTier string
-
-const (
-	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
-	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
-	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
-	OrganizationTierCore        OrganizationTier = "ORGANIZATION_TIER_CORE"
-	OrganizationTierFreeOna     OrganizationTier = "ORGANIZATION_TIER_FREE_ONA"
-)
-
-func (r OrganizationTier) IsKnown() bool {
-	switch r {
-	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise, OrganizationTierCore, OrganizationTierFreeOna:
-		return true
-	}
-	return false
 }
 
 type OrganizationNewResponse struct {
