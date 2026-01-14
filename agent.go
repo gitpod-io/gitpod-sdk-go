@@ -388,10 +388,14 @@ type AgentCodeContextPullRequest struct {
 	ID string `json:"id"`
 	// Author name as provided by the SCM system
 	Author string `json:"author"`
+	// Whether this is a draft pull request
+	Draft bool `json:"draft"`
 	// Source branch name (the branch being merged from)
 	FromBranch string `json:"fromBranch"`
 	// Repository information
 	Repository AgentCodeContextPullRequestRepository `json:"repository"`
+	// Current state of the pull request
+	State shared.State `json:"state"`
 	// Pull request title
 	Title string `json:"title"`
 	// Target branch name (the branch being merged into)
@@ -406,8 +410,10 @@ type AgentCodeContextPullRequest struct {
 type agentCodeContextPullRequestJSON struct {
 	ID          apijson.Field
 	Author      apijson.Field
+	Draft       apijson.Field
 	FromBranch  apijson.Field
 	Repository  apijson.Field
+	State       apijson.Field
 	Title       apijson.Field
 	ToBranch    apijson.Field
 	URL         apijson.Field
@@ -482,10 +488,14 @@ type AgentCodeContextPullRequestParam struct {
 	ID param.Field[string] `json:"id"`
 	// Author name as provided by the SCM system
 	Author param.Field[string] `json:"author"`
+	// Whether this is a draft pull request
+	Draft param.Field[bool] `json:"draft"`
 	// Source branch name (the branch being merged from)
 	FromBranch param.Field[string] `json:"fromBranch"`
 	// Repository information
 	Repository param.Field[AgentCodeContextPullRequestRepositoryParam] `json:"repository"`
+	// Current state of the pull request
+	State param.Field[shared.State] `json:"state"`
 	// Pull request title
 	Title param.Field[string] `json:"title"`
 	// Target branch name (the branch being merged into)

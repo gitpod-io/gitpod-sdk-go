@@ -300,6 +300,23 @@ type SecretRef = shared.SecretRef
 // This is an alias to an internal type.
 type SecretRefParam = shared.SecretRefParam
 
+// Current state of the pull request
+//
+// This is an alias to an internal type.
+type State = shared.State
+
+// This is an alias to an internal value.
+const StateUnspecified = shared.StateUnspecified
+
+// This is an alias to an internal value.
+const StateOpen = shared.StateOpen
+
+// This is an alias to an internal value.
+const StateClosed = shared.StateClosed
+
+// This is an alias to an internal value.
+const StateMerged = shared.StateMerged
+
 // This is an alias to an internal type.
 type Subject = shared.Subject
 
