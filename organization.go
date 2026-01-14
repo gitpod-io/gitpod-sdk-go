@@ -900,6 +900,11 @@ type OrganizationListMembersParams struct {
 	Filter         param.Field[OrganizationListMembersParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing members
 	Pagination param.Field[OrganizationListMembersParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. When unspecified, the authenticated user is
+	// returned first, followed by other members sorted by name ascending. When an
+	// explicit sort is specified, results are sorted purely by the requested field
+	// without any special handling for the authenticated user.
+	Sort param.Field[OrganizationListMembersParamsSort] `json:"sort"`
 }
 
 func (r OrganizationListMembersParams) MarshalJSON() (data []byte, err error) {
@@ -936,6 +941,51 @@ type OrganizationListMembersParamsPagination struct {
 
 func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// sort specifies the order of results. When unspecified, the authenticated user is
+// returned first, followed by other members sorted by name ascending. When an
+// explicit sort is specified, results are sorted purely by the requested field
+// without any special handling for the authenticated user.
+type OrganizationListMembersParamsSort struct {
+	Field param.Field[OrganizationListMembersParamsSortField] `json:"field"`
+	Order param.Field[OrganizationListMembersParamsSortOrder] `json:"order"`
+}
+
+func (r OrganizationListMembersParamsSort) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type OrganizationListMembersParamsSortField string
+
+const (
+	OrganizationListMembersParamsSortFieldSortFieldUnspecified OrganizationListMembersParamsSortField = "SORT_FIELD_UNSPECIFIED"
+	OrganizationListMembersParamsSortFieldSortFieldName        OrganizationListMembersParamsSortField = "SORT_FIELD_NAME"
+	OrganizationListMembersParamsSortFieldSortFieldDateJoined  OrganizationListMembersParamsSortField = "SORT_FIELD_DATE_JOINED"
+)
+
+func (r OrganizationListMembersParamsSortField) IsKnown() bool {
+	switch r {
+	case OrganizationListMembersParamsSortFieldSortFieldUnspecified, OrganizationListMembersParamsSortFieldSortFieldName, OrganizationListMembersParamsSortFieldSortFieldDateJoined:
+		return true
+	}
+	return false
+}
+
+type OrganizationListMembersParamsSortOrder string
+
+const (
+	OrganizationListMembersParamsSortOrderSortOrderUnspecified OrganizationListMembersParamsSortOrder = "SORT_ORDER_UNSPECIFIED"
+	OrganizationListMembersParamsSortOrderSortOrderAsc         OrganizationListMembersParamsSortOrder = "SORT_ORDER_ASC"
+	OrganizationListMembersParamsSortOrderSortOrderDesc        OrganizationListMembersParamsSortOrder = "SORT_ORDER_DESC"
+)
+
+func (r OrganizationListMembersParamsSortOrder) IsKnown() bool {
+	switch r {
+	case OrganizationListMembersParamsSortOrderSortOrderUnspecified, OrganizationListMembersParamsSortOrderSortOrderAsc, OrganizationListMembersParamsSortOrderSortOrderDesc:
+		return true
+	}
+	return false
 }
 
 type OrganizationSetRoleParams struct {

@@ -195,6 +195,10 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
+		Sort: gitpod.F(gitpod.OrganizationListMembersParamsSort{
+			Field: gitpod.F(gitpod.OrganizationListMembersParamsSortFieldSortFieldUnspecified),
+			Order: gitpod.F(gitpod.OrganizationListMembersParamsSortOrderSortOrderUnspecified),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
