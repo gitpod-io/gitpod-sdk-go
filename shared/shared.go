@@ -288,6 +288,24 @@ func (r OrganizationRole) IsKnown() bool {
 	return false
 }
 
+type OrganizationTier string
+
+const (
+	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
+	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
+	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
+	OrganizationTierCore        OrganizationTier = "ORGANIZATION_TIER_CORE"
+	OrganizationTierFreeOna     OrganizationTier = "ORGANIZATION_TIER_FREE_ONA"
+)
+
+func (r OrganizationTier) IsKnown() bool {
+	switch r {
+	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise, OrganizationTierCore, OrganizationTierFreeOna:
+		return true
+	}
+	return false
+}
+
 type Principal string
 
 const (

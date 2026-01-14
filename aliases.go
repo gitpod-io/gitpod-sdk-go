@@ -111,6 +111,24 @@ const OrganizationRoleAdmin = shared.OrganizationRoleAdmin
 const OrganizationRoleMember = shared.OrganizationRoleMember
 
 // This is an alias to an internal type.
+type OrganizationTier = shared.OrganizationTier
+
+// This is an alias to an internal value.
+const OrganizationTierUnspecified = shared.OrganizationTierUnspecified
+
+// This is an alias to an internal value.
+const OrganizationTierFree = shared.OrganizationTierFree
+
+// This is an alias to an internal value.
+const OrganizationTierEnterprise = shared.OrganizationTierEnterprise
+
+// This is an alias to an internal value.
+const OrganizationTierCore = shared.OrganizationTierCore
+
+// This is an alias to an internal value.
+const OrganizationTierFreeOna = shared.OrganizationTierFreeOna
+
+// This is an alias to an internal type.
 type Principal = shared.Principal
 
 // This is an alias to an internal value.
