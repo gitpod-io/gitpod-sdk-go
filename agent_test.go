@@ -12,6 +12,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestAgentNewExecutionConversationTokenWithOptionalParams(t *testing.T) {
@@ -305,6 +306,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 			PullRequest: gitpod.F(gitpod.AgentCodeContextPullRequestParam{
 				ID:         gitpod.F("id"),
 				Author:     gitpod.F("author"),
+				Draft:      gitpod.F(true),
 				FromBranch: gitpod.F("fromBranch"),
 				Repository: gitpod.F(gitpod.AgentCodeContextPullRequestRepositoryParam{
 					CloneURL: gitpod.F("cloneUrl"),
@@ -312,6 +314,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 					Name:     gitpod.F("name"),
 					Owner:    gitpod.F("owner"),
 				}),
+				State:    gitpod.F(shared.StateUnspecified),
 				Title:    gitpod.F("title"),
 				ToBranch: gitpod.F("toBranch"),
 				URL:      gitpod.F("url"),

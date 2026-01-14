@@ -505,6 +505,24 @@ func (r SecretRefParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// Current state of the pull request
+type State string
+
+const (
+	StateUnspecified State = "STATE_UNSPECIFIED"
+	StateOpen        State = "STATE_OPEN"
+	StateClosed      State = "STATE_CLOSED"
+	StateMerged      State = "STATE_MERGED"
+)
+
+func (r State) IsKnown() bool {
+	switch r {
+	case StateUnspecified, StateOpen, StateClosed, StateMerged:
+		return true
+	}
+	return false
+}
+
 type Subject struct {
 	// id is the UUID of the subject
 	ID string `json:"id" format:"uuid"`

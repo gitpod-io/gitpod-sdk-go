@@ -1162,10 +1162,14 @@ type RunnerParseContextURLResponsePullRequest struct {
 	ID string `json:"id"`
 	// Author name as provided by the SCM system
 	Author string `json:"author"`
+	// Whether this is a draft pull request
+	Draft bool `json:"draft"`
 	// Source branch name (the branch being merged from)
 	FromBranch string `json:"fromBranch"`
 	// Repository information
 	Repository RunnerParseContextURLResponsePullRequestRepository `json:"repository"`
+	// Current state of the pull request
+	State shared.State `json:"state"`
 	// Pull request title
 	Title string `json:"title"`
 	// Target branch name (the branch being merged into)
@@ -1180,8 +1184,10 @@ type RunnerParseContextURLResponsePullRequest struct {
 type runnerParseContextURLResponsePullRequestJSON struct {
 	ID          apijson.Field
 	Author      apijson.Field
+	Draft       apijson.Field
 	FromBranch  apijson.Field
 	Repository  apijson.Field
+	State       apijson.Field
 	Title       apijson.Field
 	ToBranch    apijson.Field
 	URL         apijson.Field
