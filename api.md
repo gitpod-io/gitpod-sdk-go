@@ -16,6 +16,7 @@
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#TaskExecutionPhase">TaskExecutionPhase</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#TaskMetadataParam">TaskMetadataParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#TaskSpecParam">TaskSpecParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#UserStatus">UserStatus</a>
 
 # Shared Response Types
 

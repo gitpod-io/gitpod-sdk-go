@@ -921,8 +921,12 @@ func (r OrganizationListMembersParams) URLQuery() (v url.Values) {
 }
 
 type OrganizationListMembersParamsFilter struct {
+	// roles filters members by their organization role
+	Roles param.Field[[]shared.OrganizationRole] `json:"roles"`
 	// search performs case-insensitive search across member name and email
 	Search param.Field[string] `json:"search"`
+	// status filters members by their user status
+	Statuses param.Field[[]shared.UserStatus] `json:"statuses"`
 }
 
 func (r OrganizationListMembersParamsFilter) MarshalJSON() (data []byte, err error) {
