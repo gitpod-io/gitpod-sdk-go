@@ -318,6 +318,30 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 	return
 }
 
+// Lists SCM organizations the user belongs to.
+//
+// Use this method to:
+//
+// - Get all organizations for a user on a specific SCM host
+// - Check organization admin permissions for webhook creation
+//
+// ### Examples
+//
+// - List GitHub organizations:
+//
+//	Lists all organizations the user belongs to on GitHub.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	scmHost: "github.com"
+//	```
+func (r *RunnerService) ListScmOrganizations(ctx context.Context, params RunnerListScmOrganizationsParams, opts ...option.RequestOption) (res *RunnerListScmOrganizationsResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.RunnerService/ListSCMOrganizations"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
+	return
+}
+
 // Parses a context URL and returns the parsed result.
 //
 // Use this method to:
@@ -1023,6 +1047,57 @@ func (r runnerNewRunnerTokenResponseJSON) RawJSON() string {
 	return r.raw
 }
 
+type RunnerListScmOrganizationsResponse struct {
+	// List of organizations the user belongs to
+	Organizations []RunnerListScmOrganizationsResponseOrganization `json:"organizations"`
+	JSON          runnerListScmOrganizationsResponseJSON           `json:"-"`
+}
+
+// runnerListScmOrganizationsResponseJSON contains the JSON metadata for the struct
+// [RunnerListScmOrganizationsResponse]
+type runnerListScmOrganizationsResponseJSON struct {
+	Organizations apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *RunnerListScmOrganizationsResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerListScmOrganizationsResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerListScmOrganizationsResponseOrganization struct {
+	// Whether the user has admin permissions in this organization. Admin permissions
+	// typically allow creating organization-level webhooks.
+	IsAdmin bool `json:"isAdmin"`
+	// Organization name/slug (e.g., "gitpod-io")
+	Name string `json:"name"`
+	// Organization URL (e.g., "https://github.com/gitpod-io")
+	URL  string                                             `json:"url"`
+	JSON runnerListScmOrganizationsResponseOrganizationJSON `json:"-"`
+}
+
+// runnerListScmOrganizationsResponseOrganizationJSON contains the JSON metadata
+// for the struct [RunnerListScmOrganizationsResponseOrganization]
+type runnerListScmOrganizationsResponseOrganizationJSON struct {
+	IsAdmin     apijson.Field
+	Name        apijson.Field
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerListScmOrganizationsResponseOrganization) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerListScmOrganizationsResponseOrganizationJSON) RawJSON() string {
+	return r.raw
+}
+
 type RunnerParseContextURLResponse struct {
 	Git                RunnerParseContextURLResponseGit   `json:"git"`
 	Issue              RunnerParseContextURLResponseIssue `json:"issue"`
@@ -1496,6 +1571,27 @@ type RunnerNewRunnerTokenParams struct {
 
 func (r RunnerNewRunnerTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type RunnerListScmOrganizationsParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// The SCM host to list organizations from (e.g., "github.com", "gitlab.com")
+	ScmHost param.Field[string] `json:"scmHost"`
+}
+
+func (r RunnerListScmOrganizationsParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// URLQuery serializes [RunnerListScmOrganizationsParams]'s query parameters as
+// `url.Values`.
+func (r RunnerListScmOrganizationsParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type RunnerParseContextURLParams struct {
