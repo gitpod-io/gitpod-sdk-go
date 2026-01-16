@@ -111,6 +111,24 @@ const OrganizationRoleAdmin = shared.OrganizationRoleAdmin
 const OrganizationRoleMember = shared.OrganizationRoleMember
 
 // This is an alias to an internal type.
+type OrganizationTier = shared.OrganizationTier
+
+// This is an alias to an internal value.
+const OrganizationTierUnspecified = shared.OrganizationTierUnspecified
+
+// This is an alias to an internal value.
+const OrganizationTierFree = shared.OrganizationTierFree
+
+// This is an alias to an internal value.
+const OrganizationTierEnterprise = shared.OrganizationTierEnterprise
+
+// This is an alias to an internal value.
+const OrganizationTierCore = shared.OrganizationTierCore
+
+// This is an alias to an internal value.
+const OrganizationTierFreeOna = shared.OrganizationTierFreeOna
+
+// This is an alias to an internal type.
 type Principal = shared.Principal
 
 // This is an alias to an internal value.
@@ -275,6 +293,12 @@ const ResourceTypeGroupMembershipChanged = shared.ResourceTypeGroupMembershipCha
 // This is an alias to an internal value.
 const ResourceTypeWebhook = shared.ResourceTypeWebhook
 
+// This is an alias to an internal value.
+const ResourceTypeScimConfiguration = shared.ResourceTypeScimConfiguration
+
+// This is an alias to an internal value.
+const ResourceTypeServiceAccountSecret = shared.ResourceTypeServiceAccountSecret
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
@@ -296,6 +320,23 @@ type SecretRef = shared.SecretRef
 //
 // This is an alias to an internal type.
 type SecretRefParam = shared.SecretRefParam
+
+// Current state of the pull request
+//
+// This is an alias to an internal type.
+type State = shared.State
+
+// This is an alias to an internal value.
+const StateUnspecified = shared.StateUnspecified
+
+// This is an alias to an internal value.
+const StateOpen = shared.StateOpen
+
+// This is an alias to an internal value.
+const StateClosed = shared.StateClosed
+
+// This is an alias to an internal value.
+const StateMerged = shared.StateMerged
 
 // This is an alias to an internal type.
 type Subject = shared.Subject

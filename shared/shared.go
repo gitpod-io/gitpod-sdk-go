@@ -288,6 +288,24 @@ func (r OrganizationRole) IsKnown() bool {
 	return false
 }
 
+type OrganizationTier string
+
+const (
+	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
+	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
+	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
+	OrganizationTierCore        OrganizationTier = "ORGANIZATION_TIER_CORE"
+	OrganizationTierFreeOna     OrganizationTier = "ORGANIZATION_TIER_FREE_ONA"
+)
+
+func (r OrganizationTier) IsKnown() bool {
+	switch r {
+	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise, OrganizationTierCore, OrganizationTierFreeOna:
+		return true
+	}
+	return false
+}
+
 type Principal string
 
 const (
@@ -398,11 +416,13 @@ const (
 	ResourceTypeRoleAssignmentChanged      ResourceType = "RESOURCE_TYPE_ROLE_ASSIGNMENT_CHANGED"
 	ResourceTypeGroupMembershipChanged     ResourceType = "RESOURCE_TYPE_GROUP_MEMBERSHIP_CHANGED"
 	ResourceTypeWebhook                    ResourceType = "RESOURCE_TYPE_WEBHOOK"
+	ResourceTypeScimConfiguration          ResourceType = "RESOURCE_TYPE_SCIM_CONFIGURATION"
+	ResourceTypeServiceAccountSecret       ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT_SECRET"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret:
 		return true
 	}
 	return false
@@ -502,6 +522,24 @@ type SecretRefParam struct {
 
 func (r SecretRefParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Current state of the pull request
+type State string
+
+const (
+	StateUnspecified State = "STATE_UNSPECIFIED"
+	StateOpen        State = "STATE_OPEN"
+	StateClosed      State = "STATE_CLOSED"
+	StateMerged      State = "STATE_MERGED"
+)
+
+func (r State) IsKnown() bool {
+	switch r {
+	case StateUnspecified, StateOpen, StateClosed, StateMerged:
+		return true
+	}
+	return false
 }
 
 type Subject struct {

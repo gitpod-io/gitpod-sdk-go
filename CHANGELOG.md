@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.9.0 (2026-01-16)
+
+Full Changelog: [v0.8.0...v0.9.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.8.0...v0.9.0)
+
+### Features
+
+* [api] sorting for `ListMembers` ([cabae1a](https://github.com/gitpod-io/gitpod-sdk-go/commit/cabae1a3485c18f2bc4906b3f93ae3f407ef0109))
+* [backend] Introduce org:runners_admin organization role ([7993dc4](https://github.com/gitpod-io/gitpod-sdk-go/commit/7993dc4480f7f676181f7837e41caa7f337febaa))
+* [backend] Introduce role and member status filtering for `ListMembers` ([fda937f](https://github.com/gitpod-io/gitpod-sdk-go/commit/fda937f8cbdec42a802895bf6c23e0cb74317c10))
+* **api:** add draft and state fields to PullRequest proto ([b9a0d47](https://github.com/gitpod-io/gitpod-sdk-go/commit/b9a0d47bdd27ff86502afbba720b3d718cdd5f99))
+* **api:** add ListSCMOrganizations endpoint ([6ee682f](https://github.com/gitpod-io/gitpod-sdk-go/commit/6ee682f9bd97ec6d9af9b7e9368cdd25e16c8adf))
+* **api:** improve SearchRepositories pagination with next_page and total_count ([5616440](https://github.com/gitpod-io/gitpod-sdk-go/commit/56164403356b880c01ec2494cedb2f4862fabaf7))
+* **dashboard:** show tier badge in org selector ([3c6cbfa](https://github.com/gitpod-io/gitpod-sdk-go/commit/3c6cbfae5c174df931ae0e365f6279f61a28ca21))
+* Define SCIMConfiguration database schema ([92e9eaf](https://github.com/gitpod-io/gitpod-sdk-go/commit/92e9eafacdd3573ba3805625c21ea476d459aeb8))
+* move agent mode from Spec to Status, add AgentModeChange signals ([32e7ca6](https://github.com/gitpod-io/gitpod-sdk-go/commit/32e7ca6a4a091dfe2d8e5e624ccfd78546e69465))
+* **secrets:** add ServiceAccountSecret entity with full support ([ec680a1](https://github.com/gitpod-io/gitpod-sdk-go/commit/ec680a173f2724fd28eb9c58e16e936cadbd1eba))
+
 ## 0.8.0 (2026-01-09)
 
 Full Changelog: [v0.7.0...v0.8.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.7.0...v0.8.0)

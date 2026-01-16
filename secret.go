@@ -474,6 +474,8 @@ type SecretScope struct {
 	OrganizationID string `json:"organizationId" format:"uuid"`
 	// project_id is the Project ID this Secret belongs to
 	ProjectID string `json:"projectId" format:"uuid"`
+	// service_account_id is the Service Account ID this Secret belongs to
+	ServiceAccountID string `json:"serviceAccountId" format:"uuid"`
 	// user_id is the User ID this Secret belongs to
 	UserID string          `json:"userId" format:"uuid"`
 	JSON   secretScopeJSON `json:"-"`
@@ -481,11 +483,12 @@ type SecretScope struct {
 
 // secretScopeJSON contains the JSON metadata for the struct [SecretScope]
 type secretScopeJSON struct {
-	OrganizationID apijson.Field
-	ProjectID      apijson.Field
-	UserID         apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	OrganizationID   apijson.Field
+	ProjectID        apijson.Field
+	ServiceAccountID apijson.Field
+	UserID           apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *SecretScope) UnmarshalJSON(data []byte) (err error) {
@@ -501,6 +504,8 @@ type SecretScopeParam struct {
 	OrganizationID param.Field[string] `json:"organizationId" format:"uuid"`
 	// project_id is the Project ID this Secret belongs to
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// service_account_id is the Service Account ID this Secret belongs to
+	ServiceAccountID param.Field[string] `json:"serviceAccountId" format:"uuid"`
 	// user_id is the User ID this Secret belongs to
 	UserID param.Field[string] `json:"userId" format:"uuid"`
 }

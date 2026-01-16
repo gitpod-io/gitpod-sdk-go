@@ -34,9 +34,10 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		Name:                           gitpod.F("DATABASE_URL"),
 		ProjectID:                      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Scope: gitpod.F(gitpod.SecretScopeParam{
-			OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			ProjectID:      gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			OrganizationID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			ProjectID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			ServiceAccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+			UserID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
 		Value: gitpod.F("postgresql://user:pass@localhost:5432/db"),
 	})
@@ -68,9 +69,10 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.SecretListParamsFilter{
 			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Scope: gitpod.F(gitpod.SecretScopeParam{
-				OrganizationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				ProjectID:      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-				UserID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				OrganizationID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				ProjectID:        gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+				ServiceAccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				UserID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			}),
 		}),
 		Pagination: gitpod.F(gitpod.SecretListParamsPagination{
