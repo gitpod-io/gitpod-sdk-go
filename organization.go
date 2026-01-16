@@ -30,6 +30,7 @@ type OrganizationService struct {
 	DomainVerifications *OrganizationDomainVerificationService
 	Invites             *OrganizationInviteService
 	Policies            *OrganizationPolicyService
+	ScimConfigurations  *OrganizationScimConfigurationService
 	SSOConfigurations   *OrganizationSSOConfigurationService
 }
 
@@ -43,6 +44,7 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
 	r.Policies = NewOrganizationPolicyService(opts...)
+	r.ScimConfigurations = NewOrganizationScimConfigurationService(opts...)
 	r.SSOConfigurations = NewOrganizationSSOConfigurationService(opts...)
 	return
 }
