@@ -41,6 +41,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 			Name:        gitpod.F("Build Project"),
 			Reference:   gitpod.F("build"),
 			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
+				BeforeSnapshot:        gitpod.F(true),
 				Manual:                gitpod.F(true),
 				PostDevcontainerStart: gitpod.F(true),
 				PostEnvironmentStart:  gitpod.F(true),
@@ -123,6 +124,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 			Name:        gitpod.F("x"),
 			TriggeredBy: gitpod.F(gitpod.EnvironmentAutomationTaskUpdateParamsMetadataTriggeredBy{
 				Trigger: gitpod.F([]shared.AutomationTriggerParam{{
+					BeforeSnapshot:        gitpod.F(true),
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),
