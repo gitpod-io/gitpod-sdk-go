@@ -37,8 +37,10 @@ const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
 // `post_devcontainer_start` field indicates that the automation should be
 // triggered after the dev container has started. The `prebuild` field starts the
 // automation during a prebuild of an environment. This phase does not have user
-// secrets available. Note: The prebuild trigger can only be used with tasks, not
-// services.
+// secrets available. The `before_snapshot` field triggers the automation after all
+// prebuild tasks complete but before the snapshot is taken. This is used for tasks
+// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
+// and before_snapshot triggers can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTrigger = shared.AutomationTrigger
@@ -53,8 +55,10 @@ type AutomationTrigger = shared.AutomationTrigger
 // `post_devcontainer_start` field indicates that the automation should be
 // triggered after the dev container has started. The `prebuild` field starts the
 // automation during a prebuild of an environment. This phase does not have user
-// secrets available. Note: The prebuild trigger can only be used with tasks, not
-// services.
+// secrets available. The `before_snapshot` field triggers the automation after all
+// prebuild tasks complete but before the snapshot is taken. This is used for tasks
+// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
+// and before_snapshot triggers can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTriggerParam = shared.AutomationTriggerParam

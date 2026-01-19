@@ -41,6 +41,7 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 			Reference:   gitpod.F("web-server"),
 			Role:        gitpod.F(gitpod.ServiceRoleUnspecified),
 			TriggeredBy: gitpod.F([]shared.AutomationTriggerParam{{
+				BeforeSnapshot:        gitpod.F(true),
 				Manual:                gitpod.F(true),
 				PostDevcontainerStart: gitpod.F(true),
 				PostEnvironmentStart:  gitpod.F(true),
@@ -130,6 +131,7 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 			Role:        gitpod.F(gitpod.ServiceRoleUnspecified),
 			TriggeredBy: gitpod.F(gitpod.EnvironmentAutomationServiceUpdateParamsMetadataTriggeredBy{
 				Trigger: gitpod.F([]shared.AutomationTriggerParam{{
+					BeforeSnapshot:        gitpod.F(true),
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),

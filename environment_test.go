@@ -35,6 +35,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
 				TriggerFilter: gitpod.F([]shared.AutomationTriggerParam{{
+					BeforeSnapshot:        gitpod.F(true),
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),
@@ -320,6 +321,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				AutomationsFilePath: gitpod.F("automationsFilePath"),
 				Session:             gitpod.F("session"),
 				TriggerFilter: gitpod.F([]shared.AutomationTriggerParam{{
+					BeforeSnapshot:        gitpod.F(true),
 					Manual:                gitpod.F(true),
 					PostDevcontainerStart: gitpod.F(true),
 					PostEnvironmentStart:  gitpod.F(true),

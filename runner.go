@@ -549,18 +549,19 @@ func (r runnerJSON) RawJSON() string {
 type RunnerCapability string
 
 const (
-	RunnerCapabilityUnspecified               RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
-	RunnerCapabilityFetchLocalScmIntegrations RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
-	RunnerCapabilitySecretContainerRegistry   RunnerCapability = "RUNNER_CAPABILITY_SECRET_CONTAINER_REGISTRY"
-	RunnerCapabilityAgentExecution            RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION"
-	RunnerCapabilityAllowEnvTokenPopulation   RunnerCapability = "RUNNER_CAPABILITY_ALLOW_ENV_TOKEN_POPULATION"
-	RunnerCapabilityDefaultDevContainerImage  RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
-	RunnerCapabilityEnvironmentSnapshot       RunnerCapability = "RUNNER_CAPABILITY_ENVIRONMENT_SNAPSHOT"
+	RunnerCapabilityUnspecified                    RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerCapabilityFetchLocalScmIntegrations      RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+	RunnerCapabilitySecretContainerRegistry        RunnerCapability = "RUNNER_CAPABILITY_SECRET_CONTAINER_REGISTRY"
+	RunnerCapabilityAgentExecution                 RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION"
+	RunnerCapabilityAllowEnvTokenPopulation        RunnerCapability = "RUNNER_CAPABILITY_ALLOW_ENV_TOKEN_POPULATION"
+	RunnerCapabilityDefaultDevContainerImage       RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
+	RunnerCapabilityEnvironmentSnapshot            RunnerCapability = "RUNNER_CAPABILITY_ENVIRONMENT_SNAPSHOT"
+	RunnerCapabilityPrebuildsBeforeSnapshotTrigger RunnerCapability = "RUNNER_CAPABILITY_PREBUILDS_BEFORE_SNAPSHOT_TRIGGER"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger:
 		return true
 	}
 	return false
