@@ -265,8 +265,18 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			ID:        gitpod.F("id"),
 			CreatedAt: gitpod.F(time.Now()),
 			Image: gitpod.F(gitpod.UserInputBlockImageParam{
-				Data: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+				Data:     gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+				MimeType: gitpod.F(gitpod.UserInputBlockImageMimeTypeImagePng),
 			}),
+			Inputs: gitpod.F([]gitpod.UserInputBlockInputParam{{
+				Image: gitpod.F(gitpod.UserInputBlockInputsImageParam{
+					Data:     gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+					MimeType: gitpod.F(gitpod.UserInputBlockInputsImageMimeTypeImagePng),
+				}),
+				Text: gitpod.F(gitpod.UserInputBlockInputsTextParam{
+					Content: gitpod.F("x"),
+				}),
+			}}),
 			Text: gitpod.F(gitpod.UserInputBlockTextParam{
 				Content: gitpod.F("Generate a report based on the latest logs."),
 			}),
