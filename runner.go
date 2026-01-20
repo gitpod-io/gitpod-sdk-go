@@ -272,6 +272,36 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 	return
 }
 
+// Checks if a principal has read access to a repository.
+//
+// Use this method to:
+//
+// - Validate repository access before workflow execution
+// - Verify executor credentials for automation bindings
+//
+// Returns:
+//
+// - has_access: true if the principal can read the repository
+// - FAILED_PRECONDITION if authentication is required
+// - INVALID_ARGUMENT if the repository URL is invalid
+//
+// ### Examples
+//
+// - Check access:
+//
+//	Verifies read access to a repository.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	repositoryUrl: "https://github.com/org/repo"
+//	```
+func (r *RunnerService) CheckRepositoryAccess(ctx context.Context, body RunnerCheckRepositoryAccessParams, opts ...option.RequestOption) (res *RunnerCheckRepositoryAccessResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.RunnerService/CheckRepositoryAccess"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Creates an access token for runner logs and debug information.
 //
 // Generated tokens are valid for one hour and provide runner-specific access
@@ -996,6 +1026,32 @@ func (r runnerCheckAuthenticationForHostResponseSupportsPatJSON) RawJSON() strin
 	return r.raw
 }
 
+type RunnerCheckRepositoryAccessResponse struct {
+	// error_message provides details when access check fails. Empty when has_access is
+	// true.
+	ErrorMessage string `json:"errorMessage"`
+	// has_access indicates whether the principal has read access to the repository.
+	HasAccess bool                                    `json:"hasAccess"`
+	JSON      runnerCheckRepositoryAccessResponseJSON `json:"-"`
+}
+
+// runnerCheckRepositoryAccessResponseJSON contains the JSON metadata for the
+// struct [RunnerCheckRepositoryAccessResponse]
+type runnerCheckRepositoryAccessResponseJSON struct {
+	ErrorMessage apijson.Field
+	HasAccess    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *RunnerCheckRepositoryAccessResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerCheckRepositoryAccessResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type RunnerNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs and support bundle
 	// of the runner
@@ -1552,6 +1608,17 @@ type RunnerCheckAuthenticationForHostParams struct {
 }
 
 func (r RunnerCheckAuthenticationForHostParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type RunnerCheckRepositoryAccessParams struct {
+	// repository_url is the URL of the repository to check access for. Can be a clone
+	// URL (https://github.com/org/repo.git) or web URL (https://github.com/org/repo).
+	RepositoryURL param.Field[string] `json:"repositoryUrl" format:"uri"`
+	RunnerID      param.Field[string] `json:"runnerId" format:"uuid"`
+}
+
+func (r RunnerCheckRepositoryAccessParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
