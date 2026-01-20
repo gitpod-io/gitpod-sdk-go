@@ -197,72 +197,6 @@ func (r *GroupRoleAssignmentService) Delete(ctx context.Context, body GroupRoleA
 	return
 }
 
-// ResourceRole represents roles that can be assigned to groups on resources These
-// map directly to the roles defined in backend/db/rule/rbac/role/role.go
-type ResourceRole string
-
-const (
-	ResourceRoleUnspecified                    ResourceRole = "RESOURCE_ROLE_UNSPECIFIED"
-	ResourceRoleOrgAdmin                       ResourceRole = "RESOURCE_ROLE_ORG_ADMIN"
-	ResourceRoleOrgMember                      ResourceRole = "RESOURCE_ROLE_ORG_MEMBER"
-	ResourceRoleOrgRunnersAdmin                ResourceRole = "RESOURCE_ROLE_ORG_RUNNERS_ADMIN"
-	ResourceRoleGroupAdmin                     ResourceRole = "RESOURCE_ROLE_GROUP_ADMIN"
-	ResourceRoleGroupViewer                    ResourceRole = "RESOURCE_ROLE_GROUP_VIEWER"
-	ResourceRoleUserIdentity                   ResourceRole = "RESOURCE_ROLE_USER_IDENTITY"
-	ResourceRoleUserViewer                     ResourceRole = "RESOURCE_ROLE_USER_VIEWER"
-	ResourceRoleUserAdmin                      ResourceRole = "RESOURCE_ROLE_USER_ADMIN"
-	ResourceRoleEnvironmentIdentity            ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_IDENTITY"
-	ResourceRoleEnvironmentAdmin               ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_ADMIN"
-	ResourceRoleEnvironmentUser                ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_USER"
-	ResourceRoleEnvironmentViewer              ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_VIEWER"
-	ResourceRoleEnvironmentRunner              ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_RUNNER"
-	ResourceRoleRunnerIdentity                 ResourceRole = "RESOURCE_ROLE_RUNNER_IDENTITY"
-	ResourceRoleRunnerAdmin                    ResourceRole = "RESOURCE_ROLE_RUNNER_ADMIN"
-	ResourceRoleRunnerLocalAdmin               ResourceRole = "RESOURCE_ROLE_RUNNER_LOCAL_ADMIN"
-	ResourceRoleRunnerManagedAdmin             ResourceRole = "RESOURCE_ROLE_RUNNER_MANAGED_ADMIN"
-	ResourceRoleRunnerUser                     ResourceRole = "RESOURCE_ROLE_RUNNER_USER"
-	ResourceRoleRunnerConfigurationReader      ResourceRole = "RESOURCE_ROLE_RUNNER_CONFIGURATION_READER"
-	ResourceRoleHostAuthenticationTokenAdmin   ResourceRole = "RESOURCE_ROLE_HOST_AUTHENTICATION_TOKEN_ADMIN"
-	ResourceRoleHostAuthenticationTokenUpdater ResourceRole = "RESOURCE_ROLE_HOST_AUTHENTICATION_TOKEN_UPDATER"
-	ResourceRoleProjectAdmin                   ResourceRole = "RESOURCE_ROLE_PROJECT_ADMIN"
-	ResourceRoleProjectUser                    ResourceRole = "RESOURCE_ROLE_PROJECT_USER"
-	ResourceRoleProjectEditor                  ResourceRole = "RESOURCE_ROLE_PROJECT_EDITOR"
-	ResourceRoleEnvironmentServiceAdmin        ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_ADMIN"
-	ResourceRoleEnvironmentServiceViewer       ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_VIEWER"
-	ResourceRoleEnvironmentServiceUser         ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_USER"
-	ResourceRoleEnvironmentServiceEnv          ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_ENV"
-	ResourceRoleEnvironmentTaskAdmin           ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_ADMIN"
-	ResourceRoleEnvironmentTaskViewer          ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_VIEWER"
-	ResourceRoleEnvironmentTaskUser            ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_USER"
-	ResourceRoleEnvironmentTaskEnv             ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_ENV"
-	ResourceRoleServiceAccountIdentity         ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_IDENTITY"
-	ResourceRoleServiceAccountAdmin            ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_ADMIN"
-	ResourceRoleAgentExecutionIdentity         ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_IDENTITY"
-	ResourceRoleAgentExecutionUser             ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_USER"
-	ResourceRoleAgentExecutionAdmin            ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_ADMIN"
-	ResourceRoleAgentExecutionRunner           ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_RUNNER"
-	ResourceRoleAgentExecutionOutputsReporter  ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_OUTPUTS_REPORTER"
-	ResourceRoleAgentAdmin                     ResourceRole = "RESOURCE_ROLE_AGENT_ADMIN"
-	ResourceRoleAgentViewer                    ResourceRole = "RESOURCE_ROLE_AGENT_VIEWER"
-	ResourceRoleAgentExecutor                  ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTOR"
-	ResourceRoleWorkflowAdmin                  ResourceRole = "RESOURCE_ROLE_WORKFLOW_ADMIN"
-	ResourceRoleWorkflowUser                   ResourceRole = "RESOURCE_ROLE_WORKFLOW_USER"
-	ResourceRoleWorkflowViewer                 ResourceRole = "RESOURCE_ROLE_WORKFLOW_VIEWER"
-	ResourceRoleWorkflowExecutor               ResourceRole = "RESOURCE_ROLE_WORKFLOW_EXECUTOR"
-	ResourceRoleSnapshotAdmin                  ResourceRole = "RESOURCE_ROLE_SNAPSHOT_ADMIN"
-	ResourceRoleSnapshotRunner                 ResourceRole = "RESOURCE_ROLE_SNAPSHOT_RUNNER"
-	ResourceRoleWebhookAdmin                   ResourceRole = "RESOURCE_ROLE_WEBHOOK_ADMIN"
-	ResourceRoleWebhookViewer                  ResourceRole = "RESOURCE_ROLE_WEBHOOK_VIEWER"
-)
-
-func (r ResourceRole) IsKnown() bool {
-	switch r {
-	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionIdentity, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer:
-		return true
-	}
-	return false
-}
-
 // RoleAssignment represents a role assigned to a group on a specific resource
 type RoleAssignment struct {
 	// Unique identifier for the role assignment
@@ -274,7 +208,7 @@ type RoleAssignment struct {
 	// Resource identifier
 	ResourceID string `json:"resourceId" format:"uuid"`
 	// Role assigned to the group on this resource
-	ResourceRole ResourceRole `json:"resourceRole"`
+	ResourceRole shared.ResourceRole `json:"resourceRole"`
 	// Type of resource (runner, project, environment, etc.)
 	ResourceType shared.ResourceType `json:"resourceType"`
 	JSON         roleAssignmentJSON  `json:"-"`
@@ -329,7 +263,7 @@ type GroupRoleAssignmentNewParams struct {
 	ResourceID param.Field[string] `json:"resourceId" format:"uuid"`
 	// ResourceRole represents roles that can be assigned to groups on resources These
 	// map directly to the roles defined in backend/db/rule/rbac/role/role.go
-	ResourceRole param.Field[ResourceRole]        `json:"resourceRole"`
+	ResourceRole param.Field[shared.ResourceRole] `json:"resourceRole"`
 	ResourceType param.Field[shared.ResourceType] `json:"resourceType"`
 }
 
@@ -366,7 +300,7 @@ type GroupRoleAssignmentListParamsFilter struct {
 	GroupID param.Field[string] `json:"groupId"`
 	// resource_roles filters the response to only role assignments with these specific
 	// roles
-	ResourceRoles param.Field[[]ResourceRole] `json:"resourceRoles"`
+	ResourceRoles param.Field[[]shared.ResourceRole] `json:"resourceRoles"`
 	// resource_types filters the response to only role assignments for these resource
 	// types
 	ResourceTypes param.Field[[]shared.ResourceType] `json:"resourceTypes"`
