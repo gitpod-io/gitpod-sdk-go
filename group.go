@@ -336,6 +336,9 @@ type Group struct {
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt   time.Time `json:"createdAt" format:"date-time"`
 	Description string    `json:"description"`
+	// direct_share indicates that this group is used for direct user sharing on
+	// resources. These groups are hidden from regular group listings.
+	DirectShare bool `json:"directShare"`
 	// member_count is the total number of members in this group
 	MemberCount    int64  `json:"memberCount"`
 	Name           string `json:"name"`
@@ -439,6 +442,7 @@ type groupJSON struct {
 	ID             apijson.Field
 	CreatedAt      apijson.Field
 	Description    apijson.Field
+	DirectShare    apijson.Field
 	MemberCount    apijson.Field
 	Name           apijson.Field
 	OrganizationID apijson.Field
