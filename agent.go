@@ -1429,27 +1429,96 @@ type UserInputBlockParam struct {
 	ID param.Field[string] `json:"id"`
 	// Timestamp when this block was created. Used for debugging and support bundles.
 	CreatedAt param.Field[time.Time] `json:"createdAt" format:"date-time"`
-	// ImageInput allows sending images to the agent. Media type is inferred from magic
-	// bytes by the backend.
-	Image param.Field[UserInputBlockImageParam] `json:"image"`
-	Text  param.Field[UserInputBlockTextParam]  `json:"text"`
+	// ImageInput allows sending images to the agent. Client must provide the MIME
+	// type; backend validates against magic bytes.
+	//
+	// Deprecated: deprecated
+	Image  param.Field[UserInputBlockImageParam]   `json:"image"`
+	Inputs param.Field[[]UserInputBlockInputParam] `json:"inputs"`
+	// Deprecated: deprecated
+	Text param.Field[UserInputBlockTextParam] `json:"text"`
 }
 
 func (r UserInputBlockParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// ImageInput allows sending images to the agent. Media type is inferred from magic
-// bytes by the backend.
+// ImageInput allows sending images to the agent. Client must provide the MIME
+// type; backend validates against magic bytes.
+//
+// Deprecated: deprecated
 type UserInputBlockImageParam struct {
-	// Raw image data (max 4MB). Supported formats: PNG, JPEG, WebP.
-	Data param.Field[string] `json:"data" format:"byte"`
+	// Raw image data (max 4MB). Supported formats: PNG, JPEG.
+	Data     param.Field[string]                      `json:"data" format:"byte"`
+	MimeType param.Field[UserInputBlockImageMimeType] `json:"mimeType"`
 }
 
 func (r UserInputBlockImageParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type UserInputBlockImageMimeType string
+
+const (
+	UserInputBlockImageMimeTypeImagePng  UserInputBlockImageMimeType = "image/png"
+	UserInputBlockImageMimeTypeImageJpeg UserInputBlockImageMimeType = "image/jpeg"
+)
+
+func (r UserInputBlockImageMimeType) IsKnown() bool {
+	switch r {
+	case UserInputBlockImageMimeTypeImagePng, UserInputBlockImageMimeTypeImageJpeg:
+		return true
+	}
+	return false
+}
+
+type UserInputBlockInputParam struct {
+	// ImageInput allows sending images to the agent. Client must provide the MIME
+	// type; backend validates against magic bytes.
+	Image param.Field[UserInputBlockInputsImageParam] `json:"image"`
+	Text  param.Field[UserInputBlockInputsTextParam]  `json:"text"`
+}
+
+func (r UserInputBlockInputParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// ImageInput allows sending images to the agent. Client must provide the MIME
+// type; backend validates against magic bytes.
+type UserInputBlockInputsImageParam struct {
+	// Raw image data (max 4MB). Supported formats: PNG, JPEG.
+	Data     param.Field[string]                            `json:"data" format:"byte"`
+	MimeType param.Field[UserInputBlockInputsImageMimeType] `json:"mimeType"`
+}
+
+func (r UserInputBlockInputsImageParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type UserInputBlockInputsImageMimeType string
+
+const (
+	UserInputBlockInputsImageMimeTypeImagePng  UserInputBlockInputsImageMimeType = "image/png"
+	UserInputBlockInputsImageMimeTypeImageJpeg UserInputBlockInputsImageMimeType = "image/jpeg"
+)
+
+func (r UserInputBlockInputsImageMimeType) IsKnown() bool {
+	switch r {
+	case UserInputBlockInputsImageMimeTypeImagePng, UserInputBlockInputsImageMimeTypeImageJpeg:
+		return true
+	}
+	return false
+}
+
+type UserInputBlockInputsTextParam struct {
+	Content param.Field[string] `json:"content"`
+}
+
+func (r UserInputBlockInputsTextParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Deprecated: deprecated
 type UserInputBlockTextParam struct {
 	Content param.Field[string] `json:"content"`
 }
