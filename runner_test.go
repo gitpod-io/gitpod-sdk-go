@@ -211,6 +211,32 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 	}
 }
 
+func TestRunnerCheckRepositoryAccessWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Runners.CheckRepositoryAccess(context.TODO(), gitpod.RunnerCheckRepositoryAccessParams{
+		RepositoryURL: gitpod.F("https://github.com/org/repo"),
+		RunnerID:      gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
 func TestRunnerNewLogsTokenWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
