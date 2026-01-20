@@ -1148,11 +1148,12 @@ const (
 	AgentModeExecution   AgentMode = "AGENT_MODE_EXECUTION"
 	AgentModePlanning    AgentMode = "AGENT_MODE_PLANNING"
 	AgentModeRalph       AgentMode = "AGENT_MODE_RALPH"
+	AgentModeSpec        AgentMode = "AGENT_MODE_SPEC"
 )
 
 func (r AgentMode) IsKnown() bool {
 	switch r {
-	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph:
+	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec:
 		return true
 	}
 	return false
