@@ -27,6 +27,7 @@ type GroupService struct {
 	Options         []option.RequestOption
 	Memberships     *GroupMembershipService
 	RoleAssignments *GroupRoleAssignmentService
+	Shares          *GroupShareService
 }
 
 // NewGroupService generates a new service that applies the given options to each
@@ -37,6 +38,7 @@ func NewGroupService(opts ...option.RequestOption) (r *GroupService) {
 	r.Options = opts
 	r.Memberships = NewGroupMembershipService(opts...)
 	r.RoleAssignments = NewGroupRoleAssignmentService(opts...)
+	r.Shares = NewGroupShareService(opts...)
 	return
 }
 
