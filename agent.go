@@ -388,10 +388,14 @@ type AgentCodeContextPullRequest struct {
 	ID string `json:"id"`
 	// Author name as provided by the SCM system
 	Author string `json:"author"`
+	// Whether this is a draft pull request
+	Draft bool `json:"draft"`
 	// Source branch name (the branch being merged from)
 	FromBranch string `json:"fromBranch"`
 	// Repository information
 	Repository AgentCodeContextPullRequestRepository `json:"repository"`
+	// Current state of the pull request
+	State shared.State `json:"state"`
 	// Pull request title
 	Title string `json:"title"`
 	// Target branch name (the branch being merged into)
@@ -406,8 +410,10 @@ type AgentCodeContextPullRequest struct {
 type agentCodeContextPullRequestJSON struct {
 	ID          apijson.Field
 	Author      apijson.Field
+	Draft       apijson.Field
 	FromBranch  apijson.Field
 	Repository  apijson.Field
+	State       apijson.Field
 	Title       apijson.Field
 	ToBranch    apijson.Field
 	URL         apijson.Field
@@ -482,10 +488,14 @@ type AgentCodeContextPullRequestParam struct {
 	ID param.Field[string] `json:"id"`
 	// Author name as provided by the SCM system
 	Author param.Field[string] `json:"author"`
+	// Whether this is a draft pull request
+	Draft param.Field[bool] `json:"draft"`
 	// Source branch name (the branch being merged from)
 	FromBranch param.Field[string] `json:"fromBranch"`
 	// Repository information
 	Repository param.Field[AgentCodeContextPullRequestRepositoryParam] `json:"repository"`
+	// Current state of the pull request
+	State param.Field[shared.State] `json:"state"`
 	// Pull request title
 	Title param.Field[string] `json:"title"`
 	// Target branch name (the branch being merged into)
@@ -783,9 +793,7 @@ type AgentExecutionSpec struct {
 	// desired_phase is the desired phase of the agent run
 	DesiredPhase AgentExecutionSpecDesiredPhase `json:"desiredPhase"`
 	Limits       AgentExecutionSpecLimits       `json:"limits"`
-	// mode is the operational mode for this agent execution
-	Mode    AgentMode `json:"mode"`
-	Session string    `json:"session"`
+	Session      string                         `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -800,7 +808,6 @@ type agentExecutionSpecJSON struct {
 	CodeContext  apijson.Field
 	DesiredPhase apijson.Field
 	Limits       apijson.Field
-	Mode         apijson.Field
 	Session      apijson.Field
 	SpecVersion  apijson.Field
 	raw          string
@@ -879,6 +886,9 @@ type AgentExecutionStatus struct {
 	Iterations      string                            `json:"iterations"`
 	// judgement is the judgement of the agent run produced by the judgement prompt.
 	Judgement string `json:"judgement"`
+	// mode is the current operational mode of the agent execution. This is set by the
+	// agent when entering different modes (e.g., Ralph mode via /ona:ralph command).
+	Mode AgentMode `json:"mode"`
 	// outputs is a map of key-value pairs that can be set by the agent during
 	// execution. Similar to task execution outputs, but with typed values for
 	// structured data.
@@ -917,6 +927,7 @@ type agentExecutionStatusJSON struct {
 	InputTokensUsed          apijson.Field
 	Iterations               apijson.Field
 	Judgement                apijson.Field
+	Mode                     apijson.Field
 	Outputs                  apijson.Field
 	OutputTokensUsed         apijson.Field
 	Phase                    apijson.Field
@@ -1136,11 +1147,13 @@ const (
 	AgentModeUnspecified AgentMode = "AGENT_MODE_UNSPECIFIED"
 	AgentModeExecution   AgentMode = "AGENT_MODE_EXECUTION"
 	AgentModePlanning    AgentMode = "AGENT_MODE_PLANNING"
+	AgentModeRalph       AgentMode = "AGENT_MODE_RALPH"
+	AgentModeSpec        AgentMode = "AGENT_MODE_SPEC"
 )
 
 func (r AgentMode) IsKnown() bool {
 	switch r {
-	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning:
+	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec:
 		return true
 	}
 	return false
@@ -1417,27 +1430,96 @@ type UserInputBlockParam struct {
 	ID param.Field[string] `json:"id"`
 	// Timestamp when this block was created. Used for debugging and support bundles.
 	CreatedAt param.Field[time.Time] `json:"createdAt" format:"date-time"`
-	// ImageInput allows sending images to the agent. Media type is inferred from magic
-	// bytes by the backend.
-	Image param.Field[UserInputBlockImageParam] `json:"image"`
-	Text  param.Field[UserInputBlockTextParam]  `json:"text"`
+	// ImageInput allows sending images to the agent. Client must provide the MIME
+	// type; backend validates against magic bytes.
+	//
+	// Deprecated: deprecated
+	Image  param.Field[UserInputBlockImageParam]   `json:"image"`
+	Inputs param.Field[[]UserInputBlockInputParam] `json:"inputs"`
+	// Deprecated: deprecated
+	Text param.Field[UserInputBlockTextParam] `json:"text"`
 }
 
 func (r UserInputBlockParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// ImageInput allows sending images to the agent. Media type is inferred from magic
-// bytes by the backend.
+// ImageInput allows sending images to the agent. Client must provide the MIME
+// type; backend validates against magic bytes.
+//
+// Deprecated: deprecated
 type UserInputBlockImageParam struct {
-	// Raw image data (max 4MB). Supported formats: PNG, JPEG, WebP.
-	Data param.Field[string] `json:"data" format:"byte"`
+	// Raw image data (max 4MB). Supported formats: PNG, JPEG.
+	Data     param.Field[string]                      `json:"data" format:"byte"`
+	MimeType param.Field[UserInputBlockImageMimeType] `json:"mimeType"`
 }
 
 func (r UserInputBlockImageParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type UserInputBlockImageMimeType string
+
+const (
+	UserInputBlockImageMimeTypeImagePng  UserInputBlockImageMimeType = "image/png"
+	UserInputBlockImageMimeTypeImageJpeg UserInputBlockImageMimeType = "image/jpeg"
+)
+
+func (r UserInputBlockImageMimeType) IsKnown() bool {
+	switch r {
+	case UserInputBlockImageMimeTypeImagePng, UserInputBlockImageMimeTypeImageJpeg:
+		return true
+	}
+	return false
+}
+
+type UserInputBlockInputParam struct {
+	// ImageInput allows sending images to the agent. Client must provide the MIME
+	// type; backend validates against magic bytes.
+	Image param.Field[UserInputBlockInputsImageParam] `json:"image"`
+	Text  param.Field[UserInputBlockInputsTextParam]  `json:"text"`
+}
+
+func (r UserInputBlockInputParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// ImageInput allows sending images to the agent. Client must provide the MIME
+// type; backend validates against magic bytes.
+type UserInputBlockInputsImageParam struct {
+	// Raw image data (max 4MB). Supported formats: PNG, JPEG.
+	Data     param.Field[string]                            `json:"data" format:"byte"`
+	MimeType param.Field[UserInputBlockInputsImageMimeType] `json:"mimeType"`
+}
+
+func (r UserInputBlockInputsImageParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type UserInputBlockInputsImageMimeType string
+
+const (
+	UserInputBlockInputsImageMimeTypeImagePng  UserInputBlockInputsImageMimeType = "image/png"
+	UserInputBlockInputsImageMimeTypeImageJpeg UserInputBlockInputsImageMimeType = "image/jpeg"
+)
+
+func (r UserInputBlockInputsImageMimeType) IsKnown() bool {
+	switch r {
+	case UserInputBlockInputsImageMimeTypeImagePng, UserInputBlockInputsImageMimeTypeImageJpeg:
+		return true
+	}
+	return false
+}
+
+type UserInputBlockInputsTextParam struct {
+	Content param.Field[string] `json:"content"`
+}
+
+func (r UserInputBlockInputsTextParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Deprecated: deprecated
 type UserInputBlockTextParam struct {
 	Content param.Field[string] `json:"content"`
 }

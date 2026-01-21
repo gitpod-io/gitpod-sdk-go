@@ -12,6 +12,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestAgentNewExecutionConversationTokenWithOptionalParams(t *testing.T) {
@@ -264,8 +265,18 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			ID:        gitpod.F("id"),
 			CreatedAt: gitpod.F(time.Now()),
 			Image: gitpod.F(gitpod.UserInputBlockImageParam{
-				Data: gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+				Data:     gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+				MimeType: gitpod.F(gitpod.UserInputBlockImageMimeTypeImagePng),
 			}),
+			Inputs: gitpod.F([]gitpod.UserInputBlockInputParam{{
+				Image: gitpod.F(gitpod.UserInputBlockInputsImageParam{
+					Data:     gitpod.F("U3RhaW5sZXNzIHJvY2tz"),
+					MimeType: gitpod.F(gitpod.UserInputBlockInputsImageMimeTypeImagePng),
+				}),
+				Text: gitpod.F(gitpod.UserInputBlockInputsTextParam{
+					Content: gitpod.F("x"),
+				}),
+			}}),
 			Text: gitpod.F(gitpod.UserInputBlockTextParam{
 				Content: gitpod.F("Generate a report based on the latest logs."),
 			}),
@@ -305,6 +316,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 			PullRequest: gitpod.F(gitpod.AgentCodeContextPullRequestParam{
 				ID:         gitpod.F("id"),
 				Author:     gitpod.F("author"),
+				Draft:      gitpod.F(true),
 				FromBranch: gitpod.F("fromBranch"),
 				Repository: gitpod.F(gitpod.AgentCodeContextPullRequestRepositoryParam{
 					CloneURL: gitpod.F("cloneUrl"),
@@ -312,6 +324,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 					Name:     gitpod.F("name"),
 					Owner:    gitpod.F("owner"),
 				}),
+				State:    gitpod.F(shared.StateUnspecified),
 				Title:    gitpod.F("title"),
 				ToBranch: gitpod.F("toBranch"),
 				URL:      gitpod.F("url"),

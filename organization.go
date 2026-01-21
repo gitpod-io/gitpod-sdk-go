@@ -30,6 +30,7 @@ type OrganizationService struct {
 	DomainVerifications *OrganizationDomainVerificationService
 	Invites             *OrganizationInviteService
 	Policies            *OrganizationPolicyService
+	ScimConfigurations  *OrganizationScimConfigurationService
 	SSOConfigurations   *OrganizationSSOConfigurationService
 }
 
@@ -43,6 +44,7 @@ func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationServic
 	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
 	r.Policies = NewOrganizationPolicyService(opts...)
+	r.ScimConfigurations = NewOrganizationScimConfigurationService(opts...)
 	r.SSOConfigurations = NewOrganizationSSOConfigurationService(opts...)
 	return
 }
@@ -473,7 +475,7 @@ type Organization struct {
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	Name      string    `json:"name,required"`
 	// The tier of the organization - free, enterprise or core
-	Tier OrganizationTier `json:"tier,required"`
+	Tier shared.OrganizationTier `json:"tier,required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -711,24 +713,6 @@ func (r organizationMemberJSON) RawJSON() string {
 	return r.raw
 }
 
-type OrganizationTier string
-
-const (
-	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
-	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
-	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
-	OrganizationTierCore        OrganizationTier = "ORGANIZATION_TIER_CORE"
-	OrganizationTierFreeOna     OrganizationTier = "ORGANIZATION_TIER_FREE_ONA"
-)
-
-func (r OrganizationTier) IsKnown() bool {
-	switch r {
-	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise, OrganizationTierCore, OrganizationTierFreeOna:
-		return true
-	}
-	return false
-}
-
 type OrganizationNewResponse struct {
 	// organization is the created organization
 	Organization Organization `json:"organization,required"`
@@ -900,6 +884,11 @@ type OrganizationListMembersParams struct {
 	Filter         param.Field[OrganizationListMembersParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing members
 	Pagination param.Field[OrganizationListMembersParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. When unspecified, the authenticated user is
+	// returned first, followed by other members sorted by name ascending. When an
+	// explicit sort is specified, results are sorted purely by the requested field
+	// without any special handling for the authenticated user.
+	Sort param.Field[OrganizationListMembersParamsSort] `json:"sort"`
 }
 
 func (r OrganizationListMembersParams) MarshalJSON() (data []byte, err error) {
@@ -916,8 +905,12 @@ func (r OrganizationListMembersParams) URLQuery() (v url.Values) {
 }
 
 type OrganizationListMembersParamsFilter struct {
+	// roles filters members by their organization role
+	Roles param.Field[[]shared.OrganizationRole] `json:"roles"`
 	// search performs case-insensitive search across member name and email
 	Search param.Field[string] `json:"search"`
+	// status filters members by their user status
+	Statuses param.Field[[]shared.UserStatus] `json:"statuses"`
 }
 
 func (r OrganizationListMembersParamsFilter) MarshalJSON() (data []byte, err error) {
@@ -936,6 +929,51 @@ type OrganizationListMembersParamsPagination struct {
 
 func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// sort specifies the order of results. When unspecified, the authenticated user is
+// returned first, followed by other members sorted by name ascending. When an
+// explicit sort is specified, results are sorted purely by the requested field
+// without any special handling for the authenticated user.
+type OrganizationListMembersParamsSort struct {
+	Field param.Field[OrganizationListMembersParamsSortField] `json:"field"`
+	Order param.Field[OrganizationListMembersParamsSortOrder] `json:"order"`
+}
+
+func (r OrganizationListMembersParamsSort) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type OrganizationListMembersParamsSortField string
+
+const (
+	OrganizationListMembersParamsSortFieldSortFieldUnspecified OrganizationListMembersParamsSortField = "SORT_FIELD_UNSPECIFIED"
+	OrganizationListMembersParamsSortFieldSortFieldName        OrganizationListMembersParamsSortField = "SORT_FIELD_NAME"
+	OrganizationListMembersParamsSortFieldSortFieldDateJoined  OrganizationListMembersParamsSortField = "SORT_FIELD_DATE_JOINED"
+)
+
+func (r OrganizationListMembersParamsSortField) IsKnown() bool {
+	switch r {
+	case OrganizationListMembersParamsSortFieldSortFieldUnspecified, OrganizationListMembersParamsSortFieldSortFieldName, OrganizationListMembersParamsSortFieldSortFieldDateJoined:
+		return true
+	}
+	return false
+}
+
+type OrganizationListMembersParamsSortOrder string
+
+const (
+	OrganizationListMembersParamsSortOrderSortOrderUnspecified OrganizationListMembersParamsSortOrder = "SORT_ORDER_UNSPECIFIED"
+	OrganizationListMembersParamsSortOrderSortOrderAsc         OrganizationListMembersParamsSortOrder = "SORT_ORDER_ASC"
+	OrganizationListMembersParamsSortOrderSortOrderDesc        OrganizationListMembersParamsSortOrder = "SORT_ORDER_DESC"
+)
+
+func (r OrganizationListMembersParamsSortOrder) IsKnown() bool {
+	switch r {
+	case OrganizationListMembersParamsSortOrderSortOrderUnspecified, OrganizationListMembersParamsSortOrderSortOrderAsc, OrganizationListMembersParamsSortOrderSortOrderDesc:
+		return true
+	}
+	return false
 }
 
 type OrganizationSetRoleParams struct {

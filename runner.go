@@ -272,6 +272,36 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 	return
 }
 
+// Checks if a principal has read access to a repository.
+//
+// Use this method to:
+//
+// - Validate repository access before workflow execution
+// - Verify executor credentials for automation bindings
+//
+// Returns:
+//
+// - has_access: true if the principal can read the repository
+// - FAILED_PRECONDITION if authentication is required
+// - INVALID_ARGUMENT if the repository URL is invalid
+//
+// ### Examples
+//
+// - Check access:
+//
+//	Verifies read access to a repository.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	repositoryUrl: "https://github.com/org/repo"
+//	```
+func (r *RunnerService) CheckRepositoryAccess(ctx context.Context, body RunnerCheckRepositoryAccessParams, opts ...option.RequestOption) (res *RunnerCheckRepositoryAccessResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.RunnerService/CheckRepositoryAccess"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Creates an access token for runner logs and debug information.
 //
 // Generated tokens are valid for one hour and provide runner-specific access
@@ -315,6 +345,30 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Lists SCM organizations the user belongs to.
+//
+// Use this method to:
+//
+// - Get all organizations for a user on a specific SCM host
+// - Check organization admin permissions for webhook creation
+//
+// ### Examples
+//
+// - List GitHub organizations:
+//
+//	Lists all organizations the user belongs to on GitHub.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	scmHost: "github.com"
+//	```
+func (r *RunnerService) ListScmOrganizations(ctx context.Context, params RunnerListScmOrganizationsParams, opts ...option.RequestOption) (res *RunnerListScmOrganizationsResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.RunnerService/ListSCMOrganizations"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
 
@@ -525,18 +579,19 @@ func (r runnerJSON) RawJSON() string {
 type RunnerCapability string
 
 const (
-	RunnerCapabilityUnspecified               RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
-	RunnerCapabilityFetchLocalScmIntegrations RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
-	RunnerCapabilitySecretContainerRegistry   RunnerCapability = "RUNNER_CAPABILITY_SECRET_CONTAINER_REGISTRY"
-	RunnerCapabilityAgentExecution            RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION"
-	RunnerCapabilityAllowEnvTokenPopulation   RunnerCapability = "RUNNER_CAPABILITY_ALLOW_ENV_TOKEN_POPULATION"
-	RunnerCapabilityDefaultDevContainerImage  RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
-	RunnerCapabilityEnvironmentSnapshot       RunnerCapability = "RUNNER_CAPABILITY_ENVIRONMENT_SNAPSHOT"
+	RunnerCapabilityUnspecified                    RunnerCapability = "RUNNER_CAPABILITY_UNSPECIFIED"
+	RunnerCapabilityFetchLocalScmIntegrations      RunnerCapability = "RUNNER_CAPABILITY_FETCH_LOCAL_SCM_INTEGRATIONS"
+	RunnerCapabilitySecretContainerRegistry        RunnerCapability = "RUNNER_CAPABILITY_SECRET_CONTAINER_REGISTRY"
+	RunnerCapabilityAgentExecution                 RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION"
+	RunnerCapabilityAllowEnvTokenPopulation        RunnerCapability = "RUNNER_CAPABILITY_ALLOW_ENV_TOKEN_POPULATION"
+	RunnerCapabilityDefaultDevContainerImage       RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
+	RunnerCapabilityEnvironmentSnapshot            RunnerCapability = "RUNNER_CAPABILITY_ENVIRONMENT_SNAPSHOT"
+	RunnerCapabilityPrebuildsBeforeSnapshotTrigger RunnerCapability = "RUNNER_CAPABILITY_PREBUILDS_BEFORE_SNAPSHOT_TRIGGER"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger:
 		return true
 	}
 	return false
@@ -971,6 +1026,32 @@ func (r runnerCheckAuthenticationForHostResponseSupportsPatJSON) RawJSON() strin
 	return r.raw
 }
 
+type RunnerCheckRepositoryAccessResponse struct {
+	// error_message provides details when access check fails. Empty when has_access is
+	// true.
+	ErrorMessage string `json:"errorMessage"`
+	// has_access indicates whether the principal has read access to the repository.
+	HasAccess bool                                    `json:"hasAccess"`
+	JSON      runnerCheckRepositoryAccessResponseJSON `json:"-"`
+}
+
+// runnerCheckRepositoryAccessResponseJSON contains the JSON metadata for the
+// struct [RunnerCheckRepositoryAccessResponse]
+type runnerCheckRepositoryAccessResponseJSON struct {
+	ErrorMessage apijson.Field
+	HasAccess    apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *RunnerCheckRepositoryAccessResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerCheckRepositoryAccessResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type RunnerNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs and support bundle
 	// of the runner
@@ -1020,6 +1101,57 @@ func (r *RunnerNewRunnerTokenResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r runnerNewRunnerTokenResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerListScmOrganizationsResponse struct {
+	// List of organizations the user belongs to
+	Organizations []RunnerListScmOrganizationsResponseOrganization `json:"organizations"`
+	JSON          runnerListScmOrganizationsResponseJSON           `json:"-"`
+}
+
+// runnerListScmOrganizationsResponseJSON contains the JSON metadata for the struct
+// [RunnerListScmOrganizationsResponse]
+type runnerListScmOrganizationsResponseJSON struct {
+	Organizations apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *RunnerListScmOrganizationsResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerListScmOrganizationsResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type RunnerListScmOrganizationsResponseOrganization struct {
+	// Whether the user has admin permissions in this organization. Admin permissions
+	// typically allow creating organization-level webhooks.
+	IsAdmin bool `json:"isAdmin"`
+	// Organization name/slug (e.g., "gitpod-io")
+	Name string `json:"name"`
+	// Organization URL (e.g., "https://github.com/gitpod-io")
+	URL  string                                             `json:"url"`
+	JSON runnerListScmOrganizationsResponseOrganizationJSON `json:"-"`
+}
+
+// runnerListScmOrganizationsResponseOrganizationJSON contains the JSON metadata
+// for the struct [RunnerListScmOrganizationsResponseOrganization]
+type runnerListScmOrganizationsResponseOrganizationJSON struct {
+	IsAdmin     apijson.Field
+	Name        apijson.Field
+	URL         apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *RunnerListScmOrganizationsResponseOrganization) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r runnerListScmOrganizationsResponseOrganizationJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1162,10 +1294,14 @@ type RunnerParseContextURLResponsePullRequest struct {
 	ID string `json:"id"`
 	// Author name as provided by the SCM system
 	Author string `json:"author"`
+	// Whether this is a draft pull request
+	Draft bool `json:"draft"`
 	// Source branch name (the branch being merged from)
 	FromBranch string `json:"fromBranch"`
 	// Repository information
 	Repository RunnerParseContextURLResponsePullRequestRepository `json:"repository"`
+	// Current state of the pull request
+	State shared.State `json:"state"`
 	// Pull request title
 	Title string `json:"title"`
 	// Target branch name (the branch being merged into)
@@ -1180,8 +1316,10 @@ type RunnerParseContextURLResponsePullRequest struct {
 type runnerParseContextURLResponsePullRequestJSON struct {
 	ID          apijson.Field
 	Author      apijson.Field
+	Draft       apijson.Field
 	FromBranch  apijson.Field
 	Repository  apijson.Field
+	State       apijson.Field
 	Title       apijson.Field
 	ToBranch    apijson.Field
 	URL         apijson.Field
@@ -1226,9 +1364,13 @@ func (r runnerParseContextURLResponsePullRequestRepositoryJSON) RawJSON() string
 }
 
 type RunnerSearchRepositoriesResponse struct {
-	// Last page in the responses
+	// Deprecated: Use pagination token instead. Total pages can be extracted from
+	// token.
 	LastPage int64 `json:"lastPage"`
-	// Pagination information for the response
+	// Pagination information for the response. Token format:
+	// "NEXT_PAGE/TOTAL_PAGES/TOTAL_COUNT" (e.g., "2/40/1000"). Use -1 for unknown
+	// values (e.g., "2/-1/-1" when totals unavailable). Empty token means no more
+	// pages.
 	Pagination RunnerSearchRepositoriesResponsePagination `json:"pagination"`
 	// List of repositories matching the search criteria
 	Repositories []RunnerSearchRepositoriesResponseRepository `json:"repositories"`
@@ -1253,7 +1395,10 @@ func (r runnerSearchRepositoriesResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// Pagination information for the response
+// Pagination information for the response. Token format:
+// "NEXT_PAGE/TOTAL_PAGES/TOTAL_COUNT" (e.g., "2/40/1000"). Use -1 for unknown
+// values (e.g., "2/-1/-1" when totals unavailable). Empty token means no more
+// pages.
 type RunnerSearchRepositoriesResponsePagination struct {
 	// Token passed for retrieving the next set of results. Empty if there are no more
 	// results
@@ -1466,6 +1611,17 @@ func (r RunnerCheckAuthenticationForHostParams) MarshalJSON() (data []byte, err 
 	return apijson.MarshalRoot(r)
 }
 
+type RunnerCheckRepositoryAccessParams struct {
+	// repository_url is the URL of the repository to check access for. Can be a clone
+	// URL (https://github.com/org/repo.git) or web URL (https://github.com/org/repo).
+	RepositoryURL param.Field[string] `json:"repositoryUrl" format:"uri"`
+	RunnerID      param.Field[string] `json:"runnerId" format:"uuid"`
+}
+
+func (r RunnerCheckRepositoryAccessParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type RunnerNewLogsTokenParams struct {
 	// runner_id specifies the runner for which the logs token should be created.
 	//
@@ -1483,6 +1639,27 @@ type RunnerNewRunnerTokenParams struct {
 
 func (r RunnerNewRunnerTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type RunnerListScmOrganizationsParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// The SCM host to list organizations from (e.g., "github.com", "gitlab.com")
+	ScmHost param.Field[string] `json:"scmHost"`
+}
+
+func (r RunnerListScmOrganizationsParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// URLQuery serializes [RunnerListScmOrganizationsParams]'s query parameters as
+// `url.Values`.
+func (r RunnerListScmOrganizationsParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
 
 type RunnerParseContextURLParams struct {

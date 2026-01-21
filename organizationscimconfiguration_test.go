@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestSecretNewWithOptionalParams(t *testing.T) {
+func TestOrganizationScimConfigurationNewWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,20 +26,10 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.New(context.TODO(), gitpod.SecretNewParams{
-		APIOnly:                        gitpod.F(true),
-		ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
-		EnvironmentVariable:            gitpod.F(true),
-		FilePath:                       gitpod.F("filePath"),
-		Name:                           gitpod.F("DATABASE_URL"),
-		ProjectID:                      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		Scope: gitpod.F(gitpod.SecretScopeParam{
-			OrganizationID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			ProjectID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			ServiceAccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			UserID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-		}),
-		Value: gitpod.F("postgresql://user:pass@localhost:5432/db"),
+	_, err := client.Organizations.ScimConfigurations.New(context.TODO(), gitpod.OrganizationScimConfigurationNewParams{
+		OrganizationID:     gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Name:               gitpod.F("name"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -50,7 +40,7 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretListWithOptionalParams(t *testing.T) {
+func TestOrganizationScimConfigurationGet(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -63,19 +53,63 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.List(context.TODO(), gitpod.SecretListParams{
+	_, err := client.Organizations.ScimConfigurations.Get(context.TODO(), gitpod.OrganizationScimConfigurationGetParams{
+		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestOrganizationScimConfigurationUpdateWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Organizations.ScimConfigurations.Update(context.TODO(), gitpod.OrganizationScimConfigurationUpdateParams{
+		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Enabled:             gitpod.F(false),
+		Name:                gitpod.F("name"),
+		SSOConfigurationID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	})
+	if err != nil {
+		var apierr *gitpod.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestOrganizationScimConfigurationListWithOptionalParams(t *testing.T) {
+	t.Skip("Prism tests are disabled")
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := gitpod.NewClient(
+		option.WithBaseURL(baseURL),
+		option.WithBearerToken("My Bearer Token"),
+	)
+	_, err := client.Organizations.ScimConfigurations.List(context.TODO(), gitpod.OrganizationScimConfigurationListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Filter: gitpod.F(gitpod.SecretListParamsFilter{
-			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Scope: gitpod.F(gitpod.SecretScopeParam{
-				OrganizationID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				ProjectID:        gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-				ServiceAccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				UserID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-			}),
-		}),
-		Pagination: gitpod.F(gitpod.SecretListParamsPagination{
+		Pagination: gitpod.F(gitpod.OrganizationScimConfigurationListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
@@ -89,7 +123,7 @@ func TestSecretListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretDeleteWithOptionalParams(t *testing.T) {
+func TestOrganizationScimConfigurationDelete(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -102,8 +136,8 @@ func TestSecretDeleteWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.Delete(context.TODO(), gitpod.SecretDeleteParams{
-		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	_, err := client.Organizations.ScimConfigurations.Delete(context.TODO(), gitpod.OrganizationScimConfigurationDeleteParams{
+		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -114,7 +148,7 @@ func TestSecretDeleteWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestSecretGetValueWithOptionalParams(t *testing.T) {
+func TestOrganizationScimConfigurationRegenerateToken(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -127,34 +161,8 @@ func TestSecretGetValueWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Secrets.GetValue(context.TODO(), gitpod.SecretGetValueParams{
-		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestSecretUpdateValueWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Secrets.UpdateValue(context.TODO(), gitpod.SecretUpdateValueParams{
-		SecretID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		Value:    gitpod.F("new-secret-value"),
+	_, err := client.Organizations.ScimConfigurations.RegenerateToken(context.TODO(), gitpod.OrganizationScimConfigurationRegenerateTokenParams{
+		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

@@ -19,9 +19,12 @@ import (
 // `post_devcontainer_start` field indicates that the automation should be
 // triggered after the dev container has started. The `prebuild` field starts the
 // automation during a prebuild of an environment. This phase does not have user
-// secrets available. Note: The prebuild trigger can only be used with tasks, not
-// services.
+// secrets available. The `before_snapshot` field triggers the automation after all
+// prebuild tasks complete but before the snapshot is taken. This is used for tasks
+// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
+// and before_snapshot triggers can only be used with tasks, not services.
 type AutomationTrigger struct {
+	BeforeSnapshot        bool                  `json:"beforeSnapshot"`
 	Manual                bool                  `json:"manual"`
 	PostDevcontainerStart bool                  `json:"postDevcontainerStart"`
 	PostEnvironmentStart  bool                  `json:"postEnvironmentStart"`
@@ -33,6 +36,7 @@ type AutomationTrigger struct {
 // automationTriggerJSON contains the JSON metadata for the struct
 // [AutomationTrigger]
 type automationTriggerJSON struct {
+	BeforeSnapshot        apijson.Field
 	Manual                apijson.Field
 	PostDevcontainerStart apijson.Field
 	PostEnvironmentStart  apijson.Field
@@ -60,9 +64,12 @@ func (r automationTriggerJSON) RawJSON() string {
 // `post_devcontainer_start` field indicates that the automation should be
 // triggered after the dev container has started. The `prebuild` field starts the
 // automation during a prebuild of an environment. This phase does not have user
-// secrets available. Note: The prebuild trigger can only be used with tasks, not
-// services.
+// secrets available. The `before_snapshot` field triggers the automation after all
+// prebuild tasks complete but before the snapshot is taken. This is used for tasks
+// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
+// and before_snapshot triggers can only be used with tasks, not services.
 type AutomationTriggerParam struct {
+	BeforeSnapshot        param.Field[bool] `json:"beforeSnapshot"`
 	Manual                param.Field[bool] `json:"manual"`
 	PostDevcontainerStart param.Field[bool] `json:"postDevcontainerStart"`
 	PostEnvironmentStart  param.Field[bool] `json:"postEnvironmentStart"`
@@ -288,6 +295,24 @@ func (r OrganizationRole) IsKnown() bool {
 	return false
 }
 
+type OrganizationTier string
+
+const (
+	OrganizationTierUnspecified OrganizationTier = "ORGANIZATION_TIER_UNSPECIFIED"
+	OrganizationTierFree        OrganizationTier = "ORGANIZATION_TIER_FREE"
+	OrganizationTierEnterprise  OrganizationTier = "ORGANIZATION_TIER_ENTERPRISE"
+	OrganizationTierCore        OrganizationTier = "ORGANIZATION_TIER_CORE"
+	OrganizationTierFreeOna     OrganizationTier = "ORGANIZATION_TIER_FREE_ONA"
+)
+
+func (r OrganizationTier) IsKnown() bool {
+	switch r {
+	case OrganizationTierUnspecified, OrganizationTierFree, OrganizationTierEnterprise, OrganizationTierCore, OrganizationTierFreeOna:
+		return true
+	}
+	return false
+}
+
 type Principal string
 
 const (
@@ -352,6 +377,72 @@ func (r ProjectEnvironmentClassParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// ResourceRole represents roles that can be assigned to groups on resources These
+// map directly to the roles defined in backend/db/rule/rbac/role/role.go
+type ResourceRole string
+
+const (
+	ResourceRoleUnspecified                    ResourceRole = "RESOURCE_ROLE_UNSPECIFIED"
+	ResourceRoleOrgAdmin                       ResourceRole = "RESOURCE_ROLE_ORG_ADMIN"
+	ResourceRoleOrgMember                      ResourceRole = "RESOURCE_ROLE_ORG_MEMBER"
+	ResourceRoleOrgRunnersAdmin                ResourceRole = "RESOURCE_ROLE_ORG_RUNNERS_ADMIN"
+	ResourceRoleGroupAdmin                     ResourceRole = "RESOURCE_ROLE_GROUP_ADMIN"
+	ResourceRoleGroupViewer                    ResourceRole = "RESOURCE_ROLE_GROUP_VIEWER"
+	ResourceRoleUserIdentity                   ResourceRole = "RESOURCE_ROLE_USER_IDENTITY"
+	ResourceRoleUserViewer                     ResourceRole = "RESOURCE_ROLE_USER_VIEWER"
+	ResourceRoleUserAdmin                      ResourceRole = "RESOURCE_ROLE_USER_ADMIN"
+	ResourceRoleEnvironmentIdentity            ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_IDENTITY"
+	ResourceRoleEnvironmentAdmin               ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_ADMIN"
+	ResourceRoleEnvironmentUser                ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_USER"
+	ResourceRoleEnvironmentViewer              ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_VIEWER"
+	ResourceRoleEnvironmentRunner              ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_RUNNER"
+	ResourceRoleRunnerIdentity                 ResourceRole = "RESOURCE_ROLE_RUNNER_IDENTITY"
+	ResourceRoleRunnerAdmin                    ResourceRole = "RESOURCE_ROLE_RUNNER_ADMIN"
+	ResourceRoleRunnerLocalAdmin               ResourceRole = "RESOURCE_ROLE_RUNNER_LOCAL_ADMIN"
+	ResourceRoleRunnerManagedAdmin             ResourceRole = "RESOURCE_ROLE_RUNNER_MANAGED_ADMIN"
+	ResourceRoleRunnerUser                     ResourceRole = "RESOURCE_ROLE_RUNNER_USER"
+	ResourceRoleRunnerConfigurationReader      ResourceRole = "RESOURCE_ROLE_RUNNER_CONFIGURATION_READER"
+	ResourceRoleHostAuthenticationTokenAdmin   ResourceRole = "RESOURCE_ROLE_HOST_AUTHENTICATION_TOKEN_ADMIN"
+	ResourceRoleHostAuthenticationTokenUpdater ResourceRole = "RESOURCE_ROLE_HOST_AUTHENTICATION_TOKEN_UPDATER"
+	ResourceRoleProjectAdmin                   ResourceRole = "RESOURCE_ROLE_PROJECT_ADMIN"
+	ResourceRoleProjectUser                    ResourceRole = "RESOURCE_ROLE_PROJECT_USER"
+	ResourceRoleProjectEditor                  ResourceRole = "RESOURCE_ROLE_PROJECT_EDITOR"
+	ResourceRoleEnvironmentServiceAdmin        ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_ADMIN"
+	ResourceRoleEnvironmentServiceViewer       ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_VIEWER"
+	ResourceRoleEnvironmentServiceUser         ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_USER"
+	ResourceRoleEnvironmentServiceEnv          ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_SERVICE_ENV"
+	ResourceRoleEnvironmentTaskAdmin           ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_ADMIN"
+	ResourceRoleEnvironmentTaskViewer          ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_VIEWER"
+	ResourceRoleEnvironmentTaskUser            ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_USER"
+	ResourceRoleEnvironmentTaskEnv             ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_ENV"
+	ResourceRoleServiceAccountIdentity         ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_IDENTITY"
+	ResourceRoleServiceAccountAdmin            ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_ADMIN"
+	ResourceRoleAgentExecutionIdentity         ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_IDENTITY"
+	ResourceRoleAgentExecutionUser             ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_USER"
+	ResourceRoleAgentExecutionAdmin            ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_ADMIN"
+	ResourceRoleAgentExecutionRunner           ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_RUNNER"
+	ResourceRoleAgentExecutionOutputsReporter  ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_OUTPUTS_REPORTER"
+	ResourceRoleAgentAdmin                     ResourceRole = "RESOURCE_ROLE_AGENT_ADMIN"
+	ResourceRoleAgentViewer                    ResourceRole = "RESOURCE_ROLE_AGENT_VIEWER"
+	ResourceRoleAgentExecutor                  ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTOR"
+	ResourceRoleWorkflowAdmin                  ResourceRole = "RESOURCE_ROLE_WORKFLOW_ADMIN"
+	ResourceRoleWorkflowUser                   ResourceRole = "RESOURCE_ROLE_WORKFLOW_USER"
+	ResourceRoleWorkflowViewer                 ResourceRole = "RESOURCE_ROLE_WORKFLOW_VIEWER"
+	ResourceRoleWorkflowExecutor               ResourceRole = "RESOURCE_ROLE_WORKFLOW_EXECUTOR"
+	ResourceRoleSnapshotAdmin                  ResourceRole = "RESOURCE_ROLE_SNAPSHOT_ADMIN"
+	ResourceRoleSnapshotRunner                 ResourceRole = "RESOURCE_ROLE_SNAPSHOT_RUNNER"
+	ResourceRoleWebhookAdmin                   ResourceRole = "RESOURCE_ROLE_WEBHOOK_ADMIN"
+	ResourceRoleWebhookViewer                  ResourceRole = "RESOURCE_ROLE_WEBHOOK_VIEWER"
+)
+
+func (r ResourceRole) IsKnown() bool {
+	switch r {
+	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionIdentity, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer:
+		return true
+	}
+	return false
+}
+
 type ResourceType string
 
 const (
@@ -398,11 +489,13 @@ const (
 	ResourceTypeRoleAssignmentChanged      ResourceType = "RESOURCE_TYPE_ROLE_ASSIGNMENT_CHANGED"
 	ResourceTypeGroupMembershipChanged     ResourceType = "RESOURCE_TYPE_GROUP_MEMBERSHIP_CHANGED"
 	ResourceTypeWebhook                    ResourceType = "RESOURCE_TYPE_WEBHOOK"
+	ResourceTypeScimConfiguration          ResourceType = "RESOURCE_TYPE_SCIM_CONFIGURATION"
+	ResourceTypeServiceAccountSecret       ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT_SECRET"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret:
 		return true
 	}
 	return false
@@ -502,6 +595,24 @@ type SecretRefParam struct {
 
 func (r SecretRefParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// Current state of the pull request
+type State string
+
+const (
+	StateUnspecified State = "STATE_UNSPECIFIED"
+	StateOpen        State = "STATE_OPEN"
+	StateClosed      State = "STATE_CLOSED"
+	StateMerged      State = "STATE_MERGED"
+)
+
+func (r State) IsKnown() bool {
+	switch r {
+	case StateUnspecified, StateOpen, StateClosed, StateMerged:
+		return true
+	}
+	return false
 }
 
 type Subject struct {

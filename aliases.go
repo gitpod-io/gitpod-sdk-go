@@ -37,8 +37,10 @@ const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
 // `post_devcontainer_start` field indicates that the automation should be
 // triggered after the dev container has started. The `prebuild` field starts the
 // automation during a prebuild of an environment. This phase does not have user
-// secrets available. Note: The prebuild trigger can only be used with tasks, not
-// services.
+// secrets available. The `before_snapshot` field triggers the automation after all
+// prebuild tasks complete but before the snapshot is taken. This is used for tasks
+// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
+// and before_snapshot triggers can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTrigger = shared.AutomationTrigger
@@ -53,8 +55,10 @@ type AutomationTrigger = shared.AutomationTrigger
 // `post_devcontainer_start` field indicates that the automation should be
 // triggered after the dev container has started. The `prebuild` field starts the
 // automation during a prebuild of an environment. This phase does not have user
-// secrets available. Note: The prebuild trigger can only be used with tasks, not
-// services.
+// secrets available. The `before_snapshot` field triggers the automation after all
+// prebuild tasks complete but before the snapshot is taken. This is used for tasks
+// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
+// and before_snapshot triggers can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTriggerParam = shared.AutomationTriggerParam
@@ -111,6 +115,24 @@ const OrganizationRoleAdmin = shared.OrganizationRoleAdmin
 const OrganizationRoleMember = shared.OrganizationRoleMember
 
 // This is an alias to an internal type.
+type OrganizationTier = shared.OrganizationTier
+
+// This is an alias to an internal value.
+const OrganizationTierUnspecified = shared.OrganizationTierUnspecified
+
+// This is an alias to an internal value.
+const OrganizationTierFree = shared.OrganizationTierFree
+
+// This is an alias to an internal value.
+const OrganizationTierEnterprise = shared.OrganizationTierEnterprise
+
+// This is an alias to an internal value.
+const OrganizationTierCore = shared.OrganizationTierCore
+
+// This is an alias to an internal value.
+const OrganizationTierFreeOna = shared.OrganizationTierFreeOna
+
+// This is an alias to an internal type.
 type Principal = shared.Principal
 
 // This is an alias to an internal value.
@@ -142,6 +164,165 @@ type ProjectEnvironmentClass = shared.ProjectEnvironmentClass
 
 // This is an alias to an internal type.
 type ProjectEnvironmentClassParam = shared.ProjectEnvironmentClassParam
+
+// ResourceRole represents roles that can be assigned to groups on resources These
+// map directly to the roles defined in backend/db/rule/rbac/role/role.go
+//
+// This is an alias to an internal type.
+type ResourceRole = shared.ResourceRole
+
+// This is an alias to an internal value.
+const ResourceRoleUnspecified = shared.ResourceRoleUnspecified
+
+// This is an alias to an internal value.
+const ResourceRoleOrgAdmin = shared.ResourceRoleOrgAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleOrgMember = shared.ResourceRoleOrgMember
+
+// This is an alias to an internal value.
+const ResourceRoleOrgRunnersAdmin = shared.ResourceRoleOrgRunnersAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleGroupAdmin = shared.ResourceRoleGroupAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleGroupViewer = shared.ResourceRoleGroupViewer
+
+// This is an alias to an internal value.
+const ResourceRoleUserIdentity = shared.ResourceRoleUserIdentity
+
+// This is an alias to an internal value.
+const ResourceRoleUserViewer = shared.ResourceRoleUserViewer
+
+// This is an alias to an internal value.
+const ResourceRoleUserAdmin = shared.ResourceRoleUserAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentIdentity = shared.ResourceRoleEnvironmentIdentity
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentAdmin = shared.ResourceRoleEnvironmentAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentUser = shared.ResourceRoleEnvironmentUser
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentViewer = shared.ResourceRoleEnvironmentViewer
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentRunner = shared.ResourceRoleEnvironmentRunner
+
+// This is an alias to an internal value.
+const ResourceRoleRunnerIdentity = shared.ResourceRoleRunnerIdentity
+
+// This is an alias to an internal value.
+const ResourceRoleRunnerAdmin = shared.ResourceRoleRunnerAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleRunnerLocalAdmin = shared.ResourceRoleRunnerLocalAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleRunnerManagedAdmin = shared.ResourceRoleRunnerManagedAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleRunnerUser = shared.ResourceRoleRunnerUser
+
+// This is an alias to an internal value.
+const ResourceRoleRunnerConfigurationReader = shared.ResourceRoleRunnerConfigurationReader
+
+// This is an alias to an internal value.
+const ResourceRoleHostAuthenticationTokenAdmin = shared.ResourceRoleHostAuthenticationTokenAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleHostAuthenticationTokenUpdater = shared.ResourceRoleHostAuthenticationTokenUpdater
+
+// This is an alias to an internal value.
+const ResourceRoleProjectAdmin = shared.ResourceRoleProjectAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleProjectUser = shared.ResourceRoleProjectUser
+
+// This is an alias to an internal value.
+const ResourceRoleProjectEditor = shared.ResourceRoleProjectEditor
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentServiceAdmin = shared.ResourceRoleEnvironmentServiceAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentServiceViewer = shared.ResourceRoleEnvironmentServiceViewer
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentServiceUser = shared.ResourceRoleEnvironmentServiceUser
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentServiceEnv = shared.ResourceRoleEnvironmentServiceEnv
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentTaskAdmin = shared.ResourceRoleEnvironmentTaskAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentTaskViewer = shared.ResourceRoleEnvironmentTaskViewer
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentTaskUser = shared.ResourceRoleEnvironmentTaskUser
+
+// This is an alias to an internal value.
+const ResourceRoleEnvironmentTaskEnv = shared.ResourceRoleEnvironmentTaskEnv
+
+// This is an alias to an internal value.
+const ResourceRoleServiceAccountIdentity = shared.ResourceRoleServiceAccountIdentity
+
+// This is an alias to an internal value.
+const ResourceRoleServiceAccountAdmin = shared.ResourceRoleServiceAccountAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutionIdentity = shared.ResourceRoleAgentExecutionIdentity
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutionUser = shared.ResourceRoleAgentExecutionUser
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutionAdmin = shared.ResourceRoleAgentExecutionAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutionRunner = shared.ResourceRoleAgentExecutionRunner
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutionOutputsReporter = shared.ResourceRoleAgentExecutionOutputsReporter
+
+// This is an alias to an internal value.
+const ResourceRoleAgentAdmin = shared.ResourceRoleAgentAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleAgentViewer = shared.ResourceRoleAgentViewer
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutor = shared.ResourceRoleAgentExecutor
+
+// This is an alias to an internal value.
+const ResourceRoleWorkflowAdmin = shared.ResourceRoleWorkflowAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleWorkflowUser = shared.ResourceRoleWorkflowUser
+
+// This is an alias to an internal value.
+const ResourceRoleWorkflowViewer = shared.ResourceRoleWorkflowViewer
+
+// This is an alias to an internal value.
+const ResourceRoleWorkflowExecutor = shared.ResourceRoleWorkflowExecutor
+
+// This is an alias to an internal value.
+const ResourceRoleSnapshotAdmin = shared.ResourceRoleSnapshotAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleSnapshotRunner = shared.ResourceRoleSnapshotRunner
+
+// This is an alias to an internal value.
+const ResourceRoleWebhookAdmin = shared.ResourceRoleWebhookAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleWebhookViewer = shared.ResourceRoleWebhookViewer
 
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
@@ -275,6 +456,12 @@ const ResourceTypeGroupMembershipChanged = shared.ResourceTypeGroupMembershipCha
 // This is an alias to an internal value.
 const ResourceTypeWebhook = shared.ResourceTypeWebhook
 
+// This is an alias to an internal value.
+const ResourceTypeScimConfiguration = shared.ResourceTypeScimConfiguration
+
+// This is an alias to an internal value.
+const ResourceTypeServiceAccountSecret = shared.ResourceTypeServiceAccountSecret
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
@@ -296,6 +483,23 @@ type SecretRef = shared.SecretRef
 //
 // This is an alias to an internal type.
 type SecretRefParam = shared.SecretRefParam
+
+// Current state of the pull request
+//
+// This is an alias to an internal type.
+type State = shared.State
+
+// This is an alias to an internal value.
+const StateUnspecified = shared.StateUnspecified
+
+// This is an alias to an internal value.
+const StateOpen = shared.StateOpen
+
+// This is an alias to an internal value.
+const StateClosed = shared.StateClosed
+
+// This is an alias to an internal value.
+const StateMerged = shared.StateMerged
 
 // This is an alias to an internal type.
 type Subject = shared.Subject

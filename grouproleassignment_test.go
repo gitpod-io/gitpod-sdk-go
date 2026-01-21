@@ -30,7 +30,7 @@ func TestGroupRoleAssignmentNewWithOptionalParams(t *testing.T) {
 	_, err := client.Groups.RoleAssignments.New(context.TODO(), gitpod.GroupRoleAssignmentNewParams{
 		GroupID:      gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		ResourceID:   gitpod.F("f53d2330-3795-4c5d-a1f3-453121af9c60"),
-		ResourceRole: gitpod.F(gitpod.ResourceRoleRunnerAdmin),
+		ResourceRole: gitpod.F(shared.ResourceRoleRunnerAdmin),
 		ResourceType: gitpod.F(shared.ResourceTypeRunner),
 	})
 	if err != nil {
@@ -60,7 +60,7 @@ func TestGroupRoleAssignmentListWithOptionalParams(t *testing.T) {
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.GroupRoleAssignmentListParamsFilter{
 			GroupID:       gitpod.F("groupId"),
-			ResourceRoles: gitpod.F([]gitpod.ResourceRole{gitpod.ResourceRoleUnspecified}),
+			ResourceRoles: gitpod.F([]shared.ResourceRole{shared.ResourceRoleUnspecified}),
 			ResourceTypes: gitpod.F([]shared.ResourceType{shared.ResourceTypeRunner}),
 			UserID:        gitpod.F("userId"),
 		}),
