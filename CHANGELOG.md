@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.9.0 (2026-01-21)
+
+Full Changelog: [v0.8.0...v0.9.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.8.0...v0.9.0)
+
+### Features
+
+* [api] Introduce RPCs to share resources with individual users ([d7ffceb](https://github.com/gitpod-io/gitpod-sdk-go/commit/d7ffceb2eaa72981a62c72f283d60744ca62892a))
+* [api] sorting for `ListMembers` ([cabae1a](https://github.com/gitpod-io/gitpod-sdk-go/commit/cabae1a3485c18f2bc4906b3f93ae3f407ef0109))
+* [backend] Adding direct_share field to groups ([143f723](https://github.com/gitpod-io/gitpod-sdk-go/commit/143f7236d939a962c38a40cf3504d09a8a02d791))
+* [backend] Introduce org:runners_admin organization role ([7993dc4](https://github.com/gitpod-io/gitpod-sdk-go/commit/7993dc4480f7f676181f7837e41caa7f337febaa))
+* [backend] Introduce role and member status filtering for `ListMembers` ([fda937f](https://github.com/gitpod-io/gitpod-sdk-go/commit/fda937f8cbdec42a802895bf6c23e0cb74317c10))
+* **agent:** add spec mode for planning before interactive implementation ([47daf98](https://github.com/gitpod-io/gitpod-sdk-go/commit/47daf9841f0ba302ea5c442bd578cd6912b18ee9))
+* API for SCIM configuration management ([a0f4eed](https://github.com/gitpod-io/gitpod-sdk-go/commit/a0f4eed6d124adafdd7f4fb5aa5685ebe409ff5e))
+* **api:** add CheckRepositoryAccess API for repository access validation ([1879407](https://github.com/gitpod-io/gitpod-sdk-go/commit/1879407adceddbbce473b79bbfd8ed91bfe9f1c1))
+* **api:** add draft and state fields to PullRequest proto ([b9a0d47](https://github.com/gitpod-io/gitpod-sdk-go/commit/b9a0d47bdd27ff86502afbba720b3d718cdd5f99))
+* **api:** add inputs array to UserInputBlock proto ([a1e5a8a](https://github.com/gitpod-io/gitpod-sdk-go/commit/a1e5a8ab944d912f2bbc10f16ad676dba3376bf7))
+* **api:** add ListSCMOrganizations endpoint ([6ee682f](https://github.com/gitpod-io/gitpod-sdk-go/commit/6ee682f9bd97ec6d9af9b7e9368cdd25e16c8adf))
+* **api:** improve SearchRepositories pagination with next_page and total_count ([5616440](https://github.com/gitpod-io/gitpod-sdk-go/commit/56164403356b880c01ec2494cedb2f4862fabaf7))
+* **automations:** add before_snapshot trigger type ([7e9a241](https://github.com/gitpod-io/gitpod-sdk-go/commit/7e9a24185ce20eeaf8221d0333a7c16ee37ca972))
+* **dashboard:** show tier badge in org selector ([3c6cbfa](https://github.com/gitpod-io/gitpod-sdk-go/commit/3c6cbfae5c174df931ae0e365f6279f61a28ca21))
+* Define SCIMConfiguration database schema ([92e9eaf](https://github.com/gitpod-io/gitpod-sdk-go/commit/92e9eafacdd3573ba3805625c21ea476d459aeb8))
+* move agent mode from Spec to Status, add AgentModeChange signals ([32e7ca6](https://github.com/gitpod-io/gitpod-sdk-go/commit/32e7ca6a4a091dfe2d8e5e624ccfd78546e69465))
+* **secrets:** add ServiceAccountSecret entity with full support ([ec680a1](https://github.com/gitpod-io/gitpod-sdk-go/commit/ec680a173f2724fd28eb9c58e16e936cadbd1eba))
+
+
+### Bug Fixes
+
+* **docs:** add missing pointer prefix to api.md return types ([82efe0a](https://github.com/gitpod-io/gitpod-sdk-go/commit/82efe0afe041ce2ffc4ee6452bc1f202c6ca169a))
+
+
+### Chores
+
+* **internal:** update `actions/checkout` version ([ad9a294](https://github.com/gitpod-io/gitpod-sdk-go/commit/ad9a2944946a952fa632be07ef188a32ae46d8ab))
+
 ## 0.8.0 (2026-01-09)
 
 Full Changelog: [v0.7.0...v0.8.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.7.0...v0.8.0)
