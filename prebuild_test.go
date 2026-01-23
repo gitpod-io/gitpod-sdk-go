@@ -86,8 +86,11 @@ func TestPrebuildListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.PrebuildListParamsFilter{
-			Phases:     gitpod.F([]gitpod.PrebuildPhase{gitpod.PrebuildPhaseUnspecified}),
-			ProjectIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			CreatorIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ExecutorIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Phases:      gitpod.F([]gitpod.PrebuildPhase{gitpod.PrebuildPhaseUnspecified}),
+			ProjectIDs:  gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			TriggeredBy: gitpod.F([]gitpod.PrebuildTrigger{gitpod.PrebuildTriggerUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.PrebuildListParamsPagination{
 			Token:    gitpod.F("token"),
