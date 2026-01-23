@@ -26,6 +26,7 @@ import (
 // the [NewOrganizationService] method instead.
 type OrganizationService struct {
 	Options             []option.RequestOption
+	AnnouncementBanner  *OrganizationAnnouncementBannerService
 	CustomDomains       *OrganizationCustomDomainService
 	DomainVerifications *OrganizationDomainVerificationService
 	Invites             *OrganizationInviteService
@@ -40,6 +41,7 @@ type OrganizationService struct {
 func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationService) {
 	r = &OrganizationService{}
 	r.Options = opts
+	r.AnnouncementBanner = NewOrganizationAnnouncementBannerService(opts...)
 	r.CustomDomains = NewOrganizationCustomDomainService(opts...)
 	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
