@@ -29,6 +29,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.New(context.TODO(), gitpod.EnvironmentNewParams{
+		Name: gitpod.F("name"),
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
 			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
@@ -314,6 +315,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.NewFromProject(context.TODO(), gitpod.EnvironmentNewFromProjectParams{
+		Name:      gitpod.F("name"),
 		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
 			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
