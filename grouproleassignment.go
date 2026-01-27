@@ -298,6 +298,11 @@ type GroupRoleAssignmentListParamsFilter struct {
 	// group_id filters the response to only role assignments for this specific group
 	// Empty string is allowed and means no filtering by group
 	GroupID param.Field[string] `json:"groupId"`
+	// resource_id filters the response to only role assignments for this specific
+	// resource When provided, users with :grant permission on the resource can see its
+	// role assignments even if they don't belong to the assigned groups Empty string
+	// is allowed and means no filtering by resource
+	ResourceID param.Field[string] `json:"resourceId"`
 	// resource_roles filters the response to only role assignments with these specific
 	// roles
 	ResourceRoles param.Field[[]shared.ResourceRole] `json:"resourceRoles"`
