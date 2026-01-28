@@ -88,6 +88,32 @@ func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, o
 	return
 }
 
+// Gets the chat identity token for the currently authenticated account.
+//
+// Use this method to:
+//
+// - Obtain a verification hash for in-app chat identity verification
+// - Secure chat sessions against impersonation
+//
+// The returned hash is an HMAC-SHA256 signature of the account's email, used by
+// the chat widget to verify user identity.
+//
+// ### Examples
+//
+// - Get chat identity token:
+//
+//	Retrieves the identity verification hash for the authenticated account.
+//
+//	```yaml
+//	{}
+//	```
+func (r *AccountService) GetChatIdentityToken(ctx context.Context, body AccountGetChatIdentityTokenParams, opts ...option.RequestOption) (res *AccountGetChatIdentityTokenResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.AccountService/GetChatIdentityToken"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Gets the SSO login URL for a specific email domain.
 //
 // Use this method to:
@@ -615,6 +641,29 @@ func (r accountGetResponseJSON) RawJSON() string {
 
 type AccountDeleteResponse = interface{}
 
+type AccountGetChatIdentityTokenResponse struct {
+	// email_hash is the HMAC-SHA256 hash of the account's email address, used for chat
+	// widget identity verification
+	EmailHash string                                  `json:"emailHash,required"`
+	JSON      accountGetChatIdentityTokenResponseJSON `json:"-"`
+}
+
+// accountGetChatIdentityTokenResponseJSON contains the JSON metadata for the
+// struct [AccountGetChatIdentityTokenResponse]
+type accountGetChatIdentityTokenResponseJSON struct {
+	EmailHash   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AccountGetChatIdentityTokenResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r accountGetChatIdentityTokenResponseJSON) RawJSON() string {
+	return r.raw
+}
+
 type AccountGetSSOLoginURLResponse struct {
 	// login_url is the URL to redirect the user to for SSO login
 	LoginURL string                            `json:"loginUrl,required"`
@@ -678,6 +727,14 @@ type AccountDeleteParams struct {
 }
 
 func (r AccountDeleteParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AccountGetChatIdentityTokenParams struct {
+	Empty param.Field[bool] `json:"empty"`
+}
+
+func (r AccountGetChatIdentityTokenParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
