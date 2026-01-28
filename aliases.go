@@ -468,6 +468,9 @@ const ResourceTypeServiceAccountSecret = shared.ResourceTypeServiceAccountSecret
 // This is an alias to an internal value.
 const ResourceTypeAnnouncementBanner = shared.ResourceTypeAnnouncementBanner
 
+// This is an alias to an internal value.
+const ResourceTypeServiceAccountToken = shared.ResourceTypeServiceAccountToken
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
