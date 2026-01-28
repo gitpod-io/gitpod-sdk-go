@@ -184,6 +184,9 @@ const ResourceRoleOrgMember = shared.ResourceRoleOrgMember
 const ResourceRoleOrgRunnersAdmin = shared.ResourceRoleOrgRunnersAdmin
 
 // This is an alias to an internal value.
+const ResourceRoleOrgProjectsAdmin = shared.ResourceRoleOrgProjectsAdmin
+
+// This is an alias to an internal value.
 const ResourceRoleGroupAdmin = shared.ResourceRoleGroupAdmin
 
 // This is an alias to an internal value.
@@ -461,6 +464,12 @@ const ResourceTypeScimConfiguration = shared.ResourceTypeScimConfiguration
 
 // This is an alias to an internal value.
 const ResourceTypeServiceAccountSecret = shared.ResourceTypeServiceAccountSecret
+
+// This is an alias to an internal value.
+const ResourceTypeAnnouncementBanner = shared.ResourceTypeAnnouncementBanner
+
+// This is an alias to an internal value.
+const ResourceTypeServiceAccountToken = shared.ResourceTypeServiceAccountToken
 
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn

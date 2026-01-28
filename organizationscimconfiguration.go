@@ -48,11 +48,22 @@ func NewOrganizationScimConfigurationService(opts ...option.RequestOption) (r *O
 //
 // - Create basic SCIM configuration:
 //
-//	Creates a SCIM configuration linked to an SSO provider.
+//	Creates a SCIM configuration linked to an SSO provider with default 1 year
+//	token expiration.
 //
 //	```yaml
 //	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
 //	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
+//
+// - Create SCIM configuration with custom token expiration:
+//
+//	Creates a SCIM configuration with a 90-day token expiration.
+//
+//	```yaml
+//	organizationId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	ssoConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	tokenExpiresIn: "7776000s"
 //	```
 func (r *OrganizationScimConfigurationService) New(ctx context.Context, body OrganizationScimConfigurationNewParams, opts ...option.RequestOption) (res *OrganizationScimConfigurationNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -212,10 +223,20 @@ func (r *OrganizationScimConfigurationService) Delete(ctx context.Context, body 
 //
 // - Regenerate token:
 //
-//	Creates a new bearer token, invalidating the old one.
+//	Creates a new bearer token with the same expiration duration as the previous
+//	token.
 //
 //	```yaml
 //	scimConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	```
+//
+// - Regenerate token with new expiration:
+//
+//	Creates a new bearer token with a custom 180-day expiration.
+//
+//	```yaml
+//	scimConfigurationId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	tokenExpiresIn: "15552000s"
 //	```
 func (r *OrganizationScimConfigurationService) RegenerateToken(ctx context.Context, body OrganizationScimConfigurationRegenerateTokenParams, opts ...option.RequestOption) (res *OrganizationScimConfigurationRegenerateTokenResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -232,6 +253,8 @@ type ScimConfiguration struct {
 	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
 	// organization_id is the ID of the organization this SCIM configuration belongs to
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	// token_expires_at is when the current SCIM token expires
+	TokenExpiresAt time.Time `json:"tokenExpiresAt,required" format:"date-time"`
 	// updated_at is when the SCIM configuration was last updated
 	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
 	// enabled indicates if SCIM provisioning is active
@@ -249,6 +272,7 @@ type scimConfigurationJSON struct {
 	ID                 apijson.Field
 	CreatedAt          apijson.Field
 	OrganizationID     apijson.Field
+	TokenExpiresAt     apijson.Field
 	UpdatedAt          apijson.Field
 	Enabled            apijson.Field
 	Name               apijson.Field
@@ -270,8 +294,10 @@ type OrganizationScimConfigurationNewResponse struct {
 	// once during creation - store it securely.
 	Token string `json:"token,required"`
 	// scim_configuration is the created SCIM configuration
-	ScimConfiguration ScimConfiguration                            `json:"scimConfiguration,required"`
-	JSON              organizationScimConfigurationNewResponseJSON `json:"-"`
+	ScimConfiguration ScimConfiguration `json:"scimConfiguration,required"`
+	// token_expires_at is when the token will expire
+	TokenExpiresAt time.Time                                    `json:"tokenExpiresAt,required" format:"date-time"`
+	JSON           organizationScimConfigurationNewResponseJSON `json:"-"`
 }
 
 // organizationScimConfigurationNewResponseJSON contains the JSON metadata for the
@@ -279,6 +305,7 @@ type OrganizationScimConfigurationNewResponse struct {
 type organizationScimConfigurationNewResponseJSON struct {
 	Token             apijson.Field
 	ScimConfiguration apijson.Field
+	TokenExpiresAt    apijson.Field
 	raw               string
 	ExtraFields       map[string]apijson.Field
 }
@@ -340,16 +367,19 @@ type OrganizationScimConfigurationDeleteResponse = interface{}
 type OrganizationScimConfigurationRegenerateTokenResponse struct {
 	// token is the new bearer token for SCIM API authentication. This invalidates the
 	// previous token - store it securely.
-	Token string                                                   `json:"token,required"`
-	JSON  organizationScimConfigurationRegenerateTokenResponseJSON `json:"-"`
+	Token string `json:"token,required"`
+	// token_expires_at is when the new token will expire
+	TokenExpiresAt time.Time                                                `json:"tokenExpiresAt,required" format:"date-time"`
+	JSON           organizationScimConfigurationRegenerateTokenResponseJSON `json:"-"`
 }
 
 // organizationScimConfigurationRegenerateTokenResponseJSON contains the JSON
 // metadata for the struct [OrganizationScimConfigurationRegenerateTokenResponse]
 type organizationScimConfigurationRegenerateTokenResponseJSON struct {
-	Token       apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Token          apijson.Field
+	TokenExpiresAt apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *OrganizationScimConfigurationRegenerateTokenResponse) UnmarshalJSON(data []byte) (err error) {
@@ -369,6 +399,9 @@ type OrganizationScimConfigurationNewParams struct {
 	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
 	// name is a human-readable name for the SCIM configuration
 	Name param.Field[string] `json:"name"`
+	// token_expires_in is the duration until the token expires. Defaults to 1 year.
+	// Minimum 1 day, maximum 2 years.
+	TokenExpiresIn param.Field[string] `json:"tokenExpiresIn" format:"regex"`
 }
 
 func (r OrganizationScimConfigurationNewParams) MarshalJSON() (data []byte, err error) {
@@ -444,6 +477,9 @@ type OrganizationScimConfigurationRegenerateTokenParams struct {
 	// scim_configuration_id is the ID of the SCIM configuration to regenerate token
 	// for
 	ScimConfigurationID param.Field[string] `json:"scimConfigurationId,required" format:"uuid"`
+	// token_expires_in is the duration until the new token expires. If not specified,
+	// uses the same duration as the previous token.
+	TokenExpiresIn param.Field[string] `json:"tokenExpiresIn" format:"regex"`
 }
 
 func (r OrganizationScimConfigurationRegenerateTokenParams) MarshalJSON() (data []byte, err error) {

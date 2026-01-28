@@ -2094,6 +2094,9 @@ type EnvironmentStopResponse = interface{}
 type EnvironmentUnarchiveResponse = interface{}
 
 type EnvironmentNewParams struct {
+	// name is a user-defined identifier for the environment. If not specified, the
+	// system will generate a name.
+	Name param.Field[string] `json:"name"`
 	// spec is the configuration of the environment that's required for the to start
 	// the environment
 	Spec param.Field[EnvironmentSpecParam] `json:"spec"`
@@ -2365,6 +2368,9 @@ func (r EnvironmentNewEnvironmentTokenParams) MarshalJSON() (data []byte, err er
 }
 
 type EnvironmentNewFromProjectParams struct {
+	// name is a user-defined identifier for the environment. If not specified, the
+	// system will generate a name.
+	Name      param.Field[string] `json:"name"`
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
 	// Spec is the configuration of the environment that's required for the runner to
 	// start the environment Configuration already defined in the Project will override
