@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.10.0 (2026-01-28)
+
+Full Changelog: [v0.9.0...v0.10.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.9.0...v0.10.0)
+
+### Features
+
+* [backend] Resource admin should be able to see all resource shares ([ca240e4](https://github.com/gitpod-io/gitpod-sdk-go/commit/ca240e4338b7af995b6dbc0d74f48903cb73423d))
+* [SCIM] Configurable token expiration duration ([576e470](https://github.com/gitpod-io/gitpod-sdk-go/commit/576e4705dff1c62cacb2d726ad96c13c362cf51f))
+* **api:** add announcement banner fields to organization proto ([a053bfa](https://github.com/gitpod-io/gitpod-sdk-go/commit/a053bfabb106a47fbe2080daba81b3e865015613))
+* **api:** add filters to ListPrebuilds for inventory page ([5ffa984](https://github.com/gitpod-io/gitpod-sdk-go/commit/5ffa984912e737984d66525a92ad6987743f8c6e))
+* **api:** implement GetAnnouncementBanner and UpdateAnnouncementBanner handlers ([025165d](https://github.com/gitpod-io/gitpod-sdk-go/commit/025165d03294ac90bf9672f131a31876ec48842a))
+* **api:** remove GetChatIdentityToken method from accounts ([ee4a7aa](https://github.com/gitpod-io/gitpod-sdk-go/commit/ee4a7aa2789c34cb8fb63ce439eae2e951ded9f0))
+* **chat:** add Pylon identity verification for chat widget ([cba45c3](https://github.com/gitpod-io/gitpod-sdk-go/commit/cba45c3d2fb196a48626481ffdb46577653f1e1b))
+* **cli:** add --name flag to environment create command ([f406773](https://github.com/gitpod-io/gitpod-sdk-go/commit/f406773b1c7de04ff8915c20b700e73bd21ceb42))
+* **db:** add service_account_tokens table ([17dd72a](https://github.com/gitpod-io/gitpod-sdk-go/commit/17dd72af458736138f41f8a80757daf4a68b56b0))
+* Introduce projects admin org role ([860789d](https://github.com/gitpod-io/gitpod-sdk-go/commit/860789d1f286aa8a96da2d7858c2ae50d4af307e))
+* **runner:** add capability check for ListSCMOrganizations ([465f090](https://github.com/gitpod-io/gitpod-sdk-go/commit/465f0900c63c943aba22d53d8ccae17d62221a90))
+
 ## 0.9.0 (2026-01-21)
 
 Full Changelog: [v0.8.0...v0.9.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.8.0...v0.9.0)
