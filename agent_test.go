@@ -138,7 +138,10 @@ func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.AgentListExecutionsParamsFilter{
-			AgentIDs:       gitpod.F([]string{"b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"}),
+			AgentIDs: gitpod.F([]string{"b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"}),
+			Annotations: gitpod.F(map[string]string{
+				"foo": "string",
+			}),
 			CreatorIDs:     gitpod.F([]string{"string"}),
 			EnvironmentIDs: gitpod.F([]string{"string"}),
 			ProjectIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
@@ -306,6 +309,9 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Agents.StartExecution(context.TODO(), gitpod.AgentStartExecutionParams{
 		AgentID: gitpod.F("b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"),
+		Annotations: gitpod.F(map[string]string{
+			"foo": "string",
+		}),
 		CodeContext: gitpod.F(gitpod.AgentCodeContextParam{
 			ContextURL: gitpod.F(gitpod.AgentCodeContextContextURLParam{
 				EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
