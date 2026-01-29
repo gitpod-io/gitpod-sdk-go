@@ -556,6 +556,8 @@ func (r agentExecutionJSON) RawJSON() string {
 // Metadata is data associated with this agent that's required for other parts of
 // Gitpod to function
 type AgentExecutionMetadata struct {
+	// annotations are key-value pairs for tracking external context.
+	Annotations map[string]string `json:"annotations"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -749,6 +751,7 @@ type AgentExecutionMetadata struct {
 // agentExecutionMetadataJSON contains the JSON metadata for the struct
 // [AgentExecutionMetadata]
 type agentExecutionMetadataJSON struct {
+	Annotations      apijson.Field
 	CreatedAt        apijson.Field
 	Creator          apijson.Field
 	Description      apijson.Field
@@ -1721,7 +1724,10 @@ func (r AgentListExecutionsParams) URLQuery() (v url.Values) {
 }
 
 type AgentListExecutionsParamsFilter struct {
-	AgentIDs       param.Field[[]string]                                     `json:"agentIds"`
+	AgentIDs param.Field[[]string] `json:"agentIds"`
+	// annotations filters by key-value pairs. Only executions containing all specified
+	// annotations (with matching values) are returned.
+	Annotations    param.Field[map[string]string]                            `json:"annotations"`
 	CreatorIDs     param.Field[[]string]                                     `json:"creatorIds"`
 	EnvironmentIDs param.Field[[]string]                                     `json:"environmentIds"`
 	ProjectIDs     param.Field[[]string]                                     `json:"projectIds" format:"uuid"`
@@ -1851,7 +1857,11 @@ func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AgentStartExecutionParams struct {
-	AgentID     param.Field[string]                `json:"agentId" format:"uuid"`
+	AgentID param.Field[string] `json:"agentId" format:"uuid"`
+	// annotations are key-value pairs for tracking external context (e.g., Linear
+	// session IDs, GitHub issue references). Keys should follow domain/name convention
+	// (e.g., "linear.app/session-id").
+	Annotations param.Field[map[string]string]     `json:"annotations"`
 	CodeContext param.Field[AgentCodeContextParam] `json:"codeContext"`
 	// mode specifies the operational mode for this agent execution If not specified,
 	// defaults to AGENT_MODE_EXECUTION
