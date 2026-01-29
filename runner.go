@@ -714,11 +714,12 @@ const (
 	RunnerProviderDesktopMac  RunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
 	RunnerProviderManaged     RunnerProvider = "RUNNER_PROVIDER_MANAGED"
 	RunnerProviderGcp         RunnerProvider = "RUNNER_PROVIDER_GCP"
+	RunnerProviderDevAgent    RunnerProvider = "RUNNER_PROVIDER_DEV_AGENT"
 )
 
 func (r RunnerProvider) IsKnown() bool {
 	switch r {
-	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged, RunnerProviderGcp:
+	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged, RunnerProviderGcp, RunnerProviderDevAgent:
 		return true
 	}
 	return false
