@@ -201,6 +201,11 @@ func (r *GroupRoleAssignmentService) Delete(ctx context.Context, body GroupRoleA
 type RoleAssignment struct {
 	// Unique identifier for the role assignment
 	ID string `json:"id" format:"uuid"`
+	// The org-level role that created this assignment, if any.
+	// RESOURCE_ROLE_UNSPECIFIED means this is a direct share (manually created).
+	// Non-zero (e.g., ORG_PROJECTS_ADMIN, ORG_RUNNERS_ADMIN) means this assignment was
+	// derived from an org-level role.
+	DerivedFromOrgRole shared.ResourceRole `json:"derivedFromOrgRole,nullable"`
 	// Group identifier
 	GroupID string `json:"groupId" format:"uuid"`
 	// Organization identifier
@@ -216,14 +221,15 @@ type RoleAssignment struct {
 
 // roleAssignmentJSON contains the JSON metadata for the struct [RoleAssignment]
 type roleAssignmentJSON struct {
-	ID             apijson.Field
-	GroupID        apijson.Field
-	OrganizationID apijson.Field
-	ResourceID     apijson.Field
-	ResourceRole   apijson.Field
-	ResourceType   apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	ID                 apijson.Field
+	DerivedFromOrgRole apijson.Field
+	GroupID            apijson.Field
+	OrganizationID     apijson.Field
+	ResourceID         apijson.Field
+	ResourceRole       apijson.Field
+	ResourceType       apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
 }
 
 func (r *RoleAssignment) UnmarshalJSON(data []byte) (err error) {
