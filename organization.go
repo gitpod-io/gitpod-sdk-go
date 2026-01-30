@@ -913,6 +913,8 @@ type OrganizationListMembersParamsFilter struct {
 	Search param.Field[string] `json:"search"`
 	// status filters members by their user status
 	Statuses param.Field[[]shared.UserStatus] `json:"statuses"`
+	// user_ids filters the response to only members with the specified user IDs
+	UserIDs param.Field[[]string] `json:"userIds" format:"uuid"`
 }
 
 func (r OrganizationListMembersParamsFilter) MarshalJSON() (data []byte, err error) {
