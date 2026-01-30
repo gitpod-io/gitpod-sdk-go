@@ -190,6 +190,9 @@ const ResourceRoleOrgProjectsAdmin = shared.ResourceRoleOrgProjectsAdmin
 const ResourceRoleOrgAutomationsAdmin = shared.ResourceRoleOrgAutomationsAdmin
 
 // This is an alias to an internal value.
+const ResourceRoleOrgGroupsAdmin = shared.ResourceRoleOrgGroupsAdmin
+
+// This is an alias to an internal value.
 const ResourceRoleGroupAdmin = shared.ResourceRoleGroupAdmin
 
 // This is an alias to an internal value.
