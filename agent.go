@@ -889,6 +889,9 @@ type AgentExecutionStatus struct {
 	Iterations      string                            `json:"iterations"`
 	// judgement is the judgement of the agent run produced by the judgement prompt.
 	Judgement string `json:"judgement"`
+	// mcp_integration_statuses contains the status of all MCP integrations used by
+	// this agent execution
+	McpIntegrationStatuses []AgentExecutionStatusMcpIntegrationStatus `json:"mcpIntegrationStatuses"`
 	// mode is the current operational mode of the agent execution. This is set by the
 	// agent when entering different modes (e.g., Ralph mode via /ona:ralph command).
 	Mode AgentMode `json:"mode"`
@@ -930,6 +933,7 @@ type agentExecutionStatusJSON struct {
 	InputTokensUsed          apijson.Field
 	Iterations               apijson.Field
 	Judgement                apijson.Field
+	McpIntegrationStatuses   apijson.Field
 	Mode                     apijson.Field
 	Outputs                  apijson.Field
 	OutputTokensUsed         apijson.Field
@@ -1040,6 +1044,62 @@ const (
 func (r AgentExecutionStatusFailureReason) IsKnown() bool {
 	switch r {
 	case AgentExecutionStatusFailureReasonAgentExecutionFailureReasonUnspecified, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonEnvironment, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonService, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonLlmIntegration, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonInternal, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonAgentExecution:
+		return true
+	}
+	return false
+}
+
+// MCPIntegrationStatus represents the status of a single MCP integration within an
+// agent execution context
+type AgentExecutionStatusMcpIntegrationStatus struct {
+	// id is the unique name of the MCP integration
+	ID string `json:"id"`
+	// failure_message contains the reason the MCP integration failed to connect or
+	// operate
+	FailureMessage string `json:"failureMessage"`
+	// name is the unique name of the MCP integration (e.g., "linear", "notion")
+	Name string `json:"name"`
+	// phase is the current connection/health phase
+	Phase AgentExecutionStatusMcpIntegrationStatusesPhase `json:"phase"`
+	// warning_message contains warnings (e.g., rate limiting, degraded performance)
+	WarningMessage string                                       `json:"warningMessage"`
+	JSON           agentExecutionStatusMcpIntegrationStatusJSON `json:"-"`
+}
+
+// agentExecutionStatusMcpIntegrationStatusJSON contains the JSON metadata for the
+// struct [AgentExecutionStatusMcpIntegrationStatus]
+type agentExecutionStatusMcpIntegrationStatusJSON struct {
+	ID             apijson.Field
+	FailureMessage apijson.Field
+	Name           apijson.Field
+	Phase          apijson.Field
+	WarningMessage apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *AgentExecutionStatusMcpIntegrationStatus) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r agentExecutionStatusMcpIntegrationStatusJSON) RawJSON() string {
+	return r.raw
+}
+
+// phase is the current connection/health phase
+type AgentExecutionStatusMcpIntegrationStatusesPhase string
+
+const (
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnspecified  AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_UNSPECIFIED"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseInitializing AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_INITIALIZING"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseReady        AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_READY"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseFailed       AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_FAILED"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnavailable  AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_UNAVAILABLE"
+)
+
+func (r AgentExecutionStatusMcpIntegrationStatusesPhase) IsKnown() bool {
+	switch r {
+	case AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnspecified, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseInitializing, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseReady, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseFailed, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnavailable:
 		return true
 	}
 	return false
