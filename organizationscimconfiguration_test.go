@@ -30,6 +30,7 @@ func TestOrganizationScimConfigurationNewWithOptionalParams(t *testing.T) {
 		OrganizationID:     gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Name:               gitpod.F("name"),
+		TokenExpiresIn:     gitpod.F("+9125115.360s"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -148,7 +149,7 @@ func TestOrganizationScimConfigurationDelete(t *testing.T) {
 	}
 }
 
-func TestOrganizationScimConfigurationRegenerateToken(t *testing.T) {
+func TestOrganizationScimConfigurationRegenerateTokenWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -163,6 +164,7 @@ func TestOrganizationScimConfigurationRegenerateToken(t *testing.T) {
 	)
 	_, err := client.Organizations.ScimConfigurations.RegenerateToken(context.TODO(), gitpod.OrganizationScimConfigurationRegenerateTokenParams{
 		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		TokenExpiresIn:      gitpod.F("+9125115.360s"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

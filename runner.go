@@ -587,11 +587,13 @@ const (
 	RunnerCapabilityDefaultDevContainerImage       RunnerCapability = "RUNNER_CAPABILITY_DEFAULT_DEV_CONTAINER_IMAGE"
 	RunnerCapabilityEnvironmentSnapshot            RunnerCapability = "RUNNER_CAPABILITY_ENVIRONMENT_SNAPSHOT"
 	RunnerCapabilityPrebuildsBeforeSnapshotTrigger RunnerCapability = "RUNNER_CAPABILITY_PREBUILDS_BEFORE_SNAPSHOT_TRIGGER"
+	RunnerCapabilityListScmOrganizations           RunnerCapability = "RUNNER_CAPABILITY_LIST_SCM_ORGANIZATIONS"
+	RunnerCapabilityCheckRepositoryAccess          RunnerCapability = "RUNNER_CAPABILITY_CHECK_REPOSITORY_ACCESS"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess:
 		return true
 	}
 	return false
@@ -712,11 +714,12 @@ const (
 	RunnerProviderDesktopMac  RunnerProvider = "RUNNER_PROVIDER_DESKTOP_MAC"
 	RunnerProviderManaged     RunnerProvider = "RUNNER_PROVIDER_MANAGED"
 	RunnerProviderGcp         RunnerProvider = "RUNNER_PROVIDER_GCP"
+	RunnerProviderDevAgent    RunnerProvider = "RUNNER_PROVIDER_DEV_AGENT"
 )
 
 func (r RunnerProvider) IsKnown() bool {
 	switch r {
-	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged, RunnerProviderGcp:
+	case RunnerProviderUnspecified, RunnerProviderAwsEc2, RunnerProviderLinuxHost, RunnerProviderDesktopMac, RunnerProviderManaged, RunnerProviderGcp, RunnerProviderDevAgent:
 		return true
 	}
 	return false

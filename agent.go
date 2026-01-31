@@ -556,6 +556,8 @@ func (r agentExecutionJSON) RawJSON() string {
 // Metadata is data associated with this agent that's required for other parts of
 // Gitpod to function
 type AgentExecutionMetadata struct {
+	// annotations are key-value pairs for tracking external context.
+	Annotations map[string]string `json:"annotations"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -749,6 +751,7 @@ type AgentExecutionMetadata struct {
 // agentExecutionMetadataJSON contains the JSON metadata for the struct
 // [AgentExecutionMetadata]
 type agentExecutionMetadataJSON struct {
+	Annotations      apijson.Field
 	CreatedAt        apijson.Field
 	Creator          apijson.Field
 	Description      apijson.Field
@@ -886,6 +889,9 @@ type AgentExecutionStatus struct {
 	Iterations      string                            `json:"iterations"`
 	// judgement is the judgement of the agent run produced by the judgement prompt.
 	Judgement string `json:"judgement"`
+	// mcp_integration_statuses contains the status of all MCP integrations used by
+	// this agent execution
+	McpIntegrationStatuses []AgentExecutionStatusMcpIntegrationStatus `json:"mcpIntegrationStatuses"`
 	// mode is the current operational mode of the agent execution. This is set by the
 	// agent when entering different modes (e.g., Ralph mode via /ona:ralph command).
 	Mode AgentMode `json:"mode"`
@@ -927,6 +933,7 @@ type agentExecutionStatusJSON struct {
 	InputTokensUsed          apijson.Field
 	Iterations               apijson.Field
 	Judgement                apijson.Field
+	McpIntegrationStatuses   apijson.Field
 	Mode                     apijson.Field
 	Outputs                  apijson.Field
 	OutputTokensUsed         apijson.Field
@@ -1037,6 +1044,62 @@ const (
 func (r AgentExecutionStatusFailureReason) IsKnown() bool {
 	switch r {
 	case AgentExecutionStatusFailureReasonAgentExecutionFailureReasonUnspecified, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonEnvironment, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonService, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonLlmIntegration, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonInternal, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonAgentExecution:
+		return true
+	}
+	return false
+}
+
+// MCPIntegrationStatus represents the status of a single MCP integration within an
+// agent execution context
+type AgentExecutionStatusMcpIntegrationStatus struct {
+	// id is the unique name of the MCP integration
+	ID string `json:"id"`
+	// failure_message contains the reason the MCP integration failed to connect or
+	// operate
+	FailureMessage string `json:"failureMessage"`
+	// name is the unique name of the MCP integration (e.g., "linear", "notion")
+	Name string `json:"name"`
+	// phase is the current connection/health phase
+	Phase AgentExecutionStatusMcpIntegrationStatusesPhase `json:"phase"`
+	// warning_message contains warnings (e.g., rate limiting, degraded performance)
+	WarningMessage string                                       `json:"warningMessage"`
+	JSON           agentExecutionStatusMcpIntegrationStatusJSON `json:"-"`
+}
+
+// agentExecutionStatusMcpIntegrationStatusJSON contains the JSON metadata for the
+// struct [AgentExecutionStatusMcpIntegrationStatus]
+type agentExecutionStatusMcpIntegrationStatusJSON struct {
+	ID             apijson.Field
+	FailureMessage apijson.Field
+	Name           apijson.Field
+	Phase          apijson.Field
+	WarningMessage apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *AgentExecutionStatusMcpIntegrationStatus) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r agentExecutionStatusMcpIntegrationStatusJSON) RawJSON() string {
+	return r.raw
+}
+
+// phase is the current connection/health phase
+type AgentExecutionStatusMcpIntegrationStatusesPhase string
+
+const (
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnspecified  AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_UNSPECIFIED"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseInitializing AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_INITIALIZING"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseReady        AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_READY"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseFailed       AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_FAILED"
+	AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnavailable  AgentExecutionStatusMcpIntegrationStatusesPhase = "MCP_INTEGRATION_PHASE_UNAVAILABLE"
+)
+
+func (r AgentExecutionStatusMcpIntegrationStatusesPhase) IsKnown() bool {
+	switch r {
+	case AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnspecified, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseInitializing, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseReady, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseFailed, AgentExecutionStatusMcpIntegrationStatusesPhaseMcpIntegrationPhaseUnavailable:
 		return true
 	}
 	return false
@@ -1721,7 +1784,10 @@ func (r AgentListExecutionsParams) URLQuery() (v url.Values) {
 }
 
 type AgentListExecutionsParamsFilter struct {
-	AgentIDs       param.Field[[]string]                                     `json:"agentIds"`
+	AgentIDs param.Field[[]string] `json:"agentIds"`
+	// annotations filters by key-value pairs. Only executions containing all specified
+	// annotations (with matching values) are returned.
+	Annotations    param.Field[map[string]string]                            `json:"annotations"`
 	CreatorIDs     param.Field[[]string]                                     `json:"creatorIds"`
 	EnvironmentIDs param.Field[[]string]                                     `json:"environmentIds"`
 	ProjectIDs     param.Field[[]string]                                     `json:"projectIds" format:"uuid"`
@@ -1851,12 +1917,20 @@ func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AgentStartExecutionParams struct {
-	AgentID     param.Field[string]                `json:"agentId" format:"uuid"`
+	AgentID param.Field[string] `json:"agentId" format:"uuid"`
+	// annotations are key-value pairs for tracking external context (e.g., Linear
+	// session IDs, GitHub issue references). Keys should follow domain/name convention
+	// (e.g., "linear.app/session-id").
+	Annotations param.Field[map[string]string]     `json:"annotations"`
 	CodeContext param.Field[AgentCodeContextParam] `json:"codeContext"`
 	// mode specifies the operational mode for this agent execution If not specified,
 	// defaults to AGENT_MODE_EXECUTION
 	Mode param.Field[AgentMode] `json:"mode"`
 	Name param.Field[string]    `json:"name"`
+	// runner_id specifies a runner for this agent execution. When set, the agent
+	// execution is routed to this runner instead of the runner associated with the
+	// environment.
+	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 	// workflow_action_id is an optional reference to the workflow execution action
 	// that created this agent execution. Used for tracking and event correlation.
 	WorkflowActionID param.Field[string] `json:"workflowActionId" format:"uuid"`
