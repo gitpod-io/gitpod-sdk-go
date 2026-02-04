@@ -202,6 +202,10 @@ type OrganizationPolicies struct {
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
 	RequireCustomDomainAccess bool `json:"requireCustomDomainAccess,required"`
+	// restrict_account_creation_to_scim controls whether account creation is
+	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
+	// the organization, only users provisioned via SCIM can create accounts.
+	RestrictAccountCreationToScim bool `json:"restrictAccountCreationToScim,required"`
 	// delete_archived_environments_after controls how long archived environments are
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
@@ -241,6 +245,7 @@ type organizationPoliciesJSON struct {
 	OrganizationID                    apijson.Field
 	PortSharingDisabled               apijson.Field
 	RequireCustomDomainAccess         apijson.Field
+	RestrictAccountCreationToScim     apijson.Field
 	DeleteArchivedEnvironmentsAfter   apijson.Field
 	EditorVersionRestrictions         apijson.Field
 	MaximumEnvironmentLifetime        apijson.Field
@@ -389,6 +394,10 @@ type OrganizationPolicyUpdateParams struct {
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
 	RequireCustomDomainAccess param.Field[bool] `json:"requireCustomDomainAccess"`
+	// restrict_account_creation_to_scim controls whether account creation is
+	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
+	// the organization, only users provisioned via SCIM can create accounts.
+	RestrictAccountCreationToScim param.Field[bool] `json:"restrictAccountCreationToScim"`
 	// security_agent_policy contains security agent configuration updates
 	SecurityAgentPolicy param.Field[OrganizationPolicyUpdateParamsSecurityAgentPolicy] `json:"securityAgentPolicy"`
 }
