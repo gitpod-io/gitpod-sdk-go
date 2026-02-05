@@ -485,14 +485,16 @@ func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnar
 type AdmissionLevel string
 
 const (
-	AdmissionLevelUnspecified AdmissionLevel = "ADMISSION_LEVEL_UNSPECIFIED"
-	AdmissionLevelOwnerOnly   AdmissionLevel = "ADMISSION_LEVEL_OWNER_ONLY"
-	AdmissionLevelEveryone    AdmissionLevel = "ADMISSION_LEVEL_EVERYONE"
+	AdmissionLevelUnspecified  AdmissionLevel = "ADMISSION_LEVEL_UNSPECIFIED"
+	AdmissionLevelOwnerOnly    AdmissionLevel = "ADMISSION_LEVEL_OWNER_ONLY"
+	AdmissionLevelEveryone     AdmissionLevel = "ADMISSION_LEVEL_EVERYONE"
+	AdmissionLevelOrganization AdmissionLevel = "ADMISSION_LEVEL_ORGANIZATION"
+	AdmissionLevelCreatorOnly  AdmissionLevel = "ADMISSION_LEVEL_CREATOR_ONLY"
 )
 
 func (r AdmissionLevel) IsKnown() bool {
 	switch r {
-	case AdmissionLevelUnspecified, AdmissionLevelOwnerOnly, AdmissionLevelEveryone:
+	case AdmissionLevelUnspecified, AdmissionLevelOwnerOnly, AdmissionLevelEveryone, AdmissionLevelOrganization, AdmissionLevelCreatorOnly:
 		return true
 	}
 	return false
