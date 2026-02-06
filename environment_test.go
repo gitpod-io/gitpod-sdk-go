@@ -73,6 +73,14 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				LifecycleStage: gitpod.F(gitpod.EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified),
 				Session:        gitpod.F("session"),
 			}),
+			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
+				Veto: gitpod.F(gitpod.VetoParam{
+					Exec: gitpod.F(gitpod.VetoExecParam{
+						Denylist: gitpod.F([]string{"string"}),
+						Enabled:  gitpod.F(true),
+					}),
+				}),
+			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 				Session: gitpod.F("session"),
@@ -185,6 +193,14 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 			Devcontainer: gitpod.F(gitpod.EnvironmentUpdateParamsSpecDevcontainer{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Session:              gitpod.F("session"),
+			}),
+			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
+				Veto: gitpod.F(gitpod.VetoParam{
+					Exec: gitpod.F(gitpod.VetoExecParam{
+						Denylist: gitpod.F([]string{"string"}),
+						Enabled:  gitpod.F(true),
+					}),
+				}),
 			}),
 			Ports: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecPort{{
 				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
@@ -359,6 +375,14 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				}),
 				LifecycleStage: gitpod.F(gitpod.EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified),
 				Session:        gitpod.F("session"),
+			}),
+			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
+				Veto: gitpod.F(gitpod.VetoParam{
+					Exec: gitpod.F(gitpod.VetoExecParam{
+						Denylist: gitpod.F([]string{"string"}),
+						Enabled:  gitpod.F(true),
+					}),
+				}),
 			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
