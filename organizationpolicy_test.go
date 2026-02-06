@@ -69,6 +69,10 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				AllowedVersions: gitpod.F([]string{"string"}),
 			},
 		}),
+		ExecutableDenyList: gitpod.F(gitpod.ExecutableDenyListParam{
+			Enabled:     gitpod.F(true),
+			Executables: gitpod.F([]string{"string"}),
+		}),
 		MaximumEnvironmentLifetime:        gitpod.F("+9125115.360s"),
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
 		MaximumEnvironmentTimeout:         gitpod.F("3600s"),
