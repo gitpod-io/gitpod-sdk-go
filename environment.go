@@ -984,6 +984,9 @@ type EnvironmentSpecSecret struct {
 	GitCredentialHost string `json:"gitCredentialHost"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
+	// scope indicates where this secret originated from. Used to filter secrets during
+	// build (only org and project secrets are injected).
+	Scope EnvironmentSpecSecretsScope `json:"scope"`
 	// session indicated the current session of the secret. When the session does not
 	// change, secrets are not reloaded in the environment.
 	Session string `json:"session"`
@@ -1004,6 +1007,7 @@ type environmentSpecSecretJSON struct {
 	FilePath                       apijson.Field
 	GitCredentialHost              apijson.Field
 	Name                           apijson.Field
+	Scope                          apijson.Field
 	Session                        apijson.Field
 	Source                         apijson.Field
 	SourceRef                      apijson.Field
@@ -1017,6 +1021,27 @@ func (r *EnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
 
 func (r environmentSpecSecretJSON) RawJSON() string {
 	return r.raw
+}
+
+// scope indicates where this secret originated from. Used to filter secrets during
+// build (only org and project secrets are injected).
+type EnvironmentSpecSecretsScope string
+
+const (
+	EnvironmentSpecSecretsScopeScopeUnspecified    EnvironmentSpecSecretsScope = "SCOPE_UNSPECIFIED"
+	EnvironmentSpecSecretsScopeScopeOrganization   EnvironmentSpecSecretsScope = "SCOPE_ORGANIZATION"
+	EnvironmentSpecSecretsScopeScopeProject        EnvironmentSpecSecretsScope = "SCOPE_PROJECT"
+	EnvironmentSpecSecretsScopeScopeUser           EnvironmentSpecSecretsScope = "SCOPE_USER"
+	EnvironmentSpecSecretsScopeScopeServiceAccount EnvironmentSpecSecretsScope = "SCOPE_SERVICE_ACCOUNT"
+	EnvironmentSpecSecretsScopeScopeRunner         EnvironmentSpecSecretsScope = "SCOPE_RUNNER"
+)
+
+func (r EnvironmentSpecSecretsScope) IsKnown() bool {
+	switch r {
+	case EnvironmentSpecSecretsScopeScopeUnspecified, EnvironmentSpecSecretsScopeScopeOrganization, EnvironmentSpecSecretsScopeScopeProject, EnvironmentSpecSecretsScopeScopeUser, EnvironmentSpecSecretsScopeScopeServiceAccount, EnvironmentSpecSecretsScopeScopeRunner:
+		return true
+	}
+	return false
 }
 
 type EnvironmentSpecSSHPublicKey struct {
@@ -1219,6 +1244,9 @@ type EnvironmentSpecSecretParam struct {
 	GitCredentialHost param.Field[string] `json:"gitCredentialHost"`
 	// name is the human readable description of the secret
 	Name param.Field[string] `json:"name"`
+	// scope indicates where this secret originated from. Used to filter secrets during
+	// build (only org and project secrets are injected).
+	Scope param.Field[EnvironmentSpecSecretsScope] `json:"scope"`
 	// session indicated the current session of the secret. When the session does not
 	// change, secrets are not reloaded in the environment.
 	Session param.Field[string] `json:"session"`
