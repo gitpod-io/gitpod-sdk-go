@@ -236,8 +236,9 @@ type OrganizationPolicies struct {
 	MembersRequireProjects bool `json:"membersRequireProjects,required"`
 	// organization_id is the ID of the organization
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
-	// port_sharing_disabled controls whether port sharing is disabled in the
-	// organization
+	// port_sharing_disabled controls whether user-initiated port sharing is disabled
+	// in the organization. System ports (VS Code Browser, agents) are always exempt
+	// from this policy.
 	PortSharingDisabled bool `json:"portSharingDisabled,required"`
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
@@ -435,8 +436,9 @@ type OrganizationPolicyUpdateParams struct {
 	// members_require_projects controls whether environments can only be created from
 	// projects by non-admin users
 	MembersRequireProjects param.Field[bool] `json:"membersRequireProjects"`
-	// port_sharing_disabled controls whether port sharing is disabled in the
-	// organization
+	// port_sharing_disabled controls whether user-initiated port sharing is disabled
+	// in the organization. System ports (VS Code Browser, agents) are always exempt
+	// from this policy.
 	PortSharingDisabled param.Field[bool] `json:"portSharingDisabled"`
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
