@@ -563,10 +563,16 @@ func (r PrebuildListParams) URLQuery() (v url.Values) {
 
 // filter contains the filter options for listing prebuilds
 type PrebuildListParamsFilter struct {
+	// creator_ids filters prebuilds by who created them
+	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
+	// executor_ids filters prebuilds by whose credentials were used to run them
+	ExecutorIDs param.Field[[]string] `json:"executorIds" format:"uuid"`
 	// phases filters prebuilds by their current phase
 	Phases param.Field[[]PrebuildPhase] `json:"phases"`
 	// project_ids filters prebuilds to specific projects
 	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+	// triggered_by filters prebuilds by how they were triggered
+	TriggeredBy param.Field[[]PrebuildTrigger] `json:"triggeredBy"`
 }
 
 func (r PrebuildListParamsFilter) MarshalJSON() (data []byte, err error) {

@@ -485,14 +485,16 @@ func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnar
 type AdmissionLevel string
 
 const (
-	AdmissionLevelUnspecified AdmissionLevel = "ADMISSION_LEVEL_UNSPECIFIED"
-	AdmissionLevelOwnerOnly   AdmissionLevel = "ADMISSION_LEVEL_OWNER_ONLY"
-	AdmissionLevelEveryone    AdmissionLevel = "ADMISSION_LEVEL_EVERYONE"
+	AdmissionLevelUnspecified  AdmissionLevel = "ADMISSION_LEVEL_UNSPECIFIED"
+	AdmissionLevelOwnerOnly    AdmissionLevel = "ADMISSION_LEVEL_OWNER_ONLY"
+	AdmissionLevelEveryone     AdmissionLevel = "ADMISSION_LEVEL_EVERYONE"
+	AdmissionLevelOrganization AdmissionLevel = "ADMISSION_LEVEL_ORGANIZATION"
+	AdmissionLevelCreatorOnly  AdmissionLevel = "ADMISSION_LEVEL_CREATOR_ONLY"
 )
 
 func (r AdmissionLevel) IsKnown() bool {
 	switch r {
-	case AdmissionLevelUnspecified, AdmissionLevelOwnerOnly, AdmissionLevelEveryone:
+	case AdmissionLevelUnspecified, AdmissionLevelOwnerOnly, AdmissionLevelEveryone, AdmissionLevelOrganization, AdmissionLevelCreatorOnly:
 		return true
 	}
 	return false
@@ -692,6 +694,8 @@ type EnvironmentSpec struct {
 	DesiredPhase EnvironmentPhase `json:"desiredPhase"`
 	// devcontainer is the devcontainer spec of the environment
 	Devcontainer EnvironmentSpecDevcontainer `json:"devcontainer"`
+	// kernel_controls_config configures kernel-level controls for this environment
+	KernelControlsConfig KernelControlsConfig `json:"kernelControlsConfig"`
 	// machine is the machine spec of the environment
 	Machine EnvironmentSpecMachine `json:"machine"`
 	// ports is the set of ports which ought to be exposed to your network
@@ -714,20 +718,21 @@ type EnvironmentSpec struct {
 
 // environmentSpecJSON contains the JSON metadata for the struct [EnvironmentSpec]
 type environmentSpecJSON struct {
-	Admission        apijson.Field
-	AutomationsFile  apijson.Field
-	Content          apijson.Field
-	DesiredPhase     apijson.Field
-	Devcontainer     apijson.Field
-	Machine          apijson.Field
-	Ports            apijson.Field
-	Secrets          apijson.Field
-	SpecVersion      apijson.Field
-	SSHPublicKeys    apijson.Field
-	Timeout          apijson.Field
-	WorkflowActionID apijson.Field
-	raw              string
-	ExtraFields      map[string]apijson.Field
+	Admission            apijson.Field
+	AutomationsFile      apijson.Field
+	Content              apijson.Field
+	DesiredPhase         apijson.Field
+	Devcontainer         apijson.Field
+	KernelControlsConfig apijson.Field
+	Machine              apijson.Field
+	Ports                apijson.Field
+	Secrets              apijson.Field
+	SpecVersion          apijson.Field
+	SSHPublicKeys        apijson.Field
+	Timeout              apijson.Field
+	WorkflowActionID     apijson.Field
+	raw                  string
+	ExtraFields          map[string]apijson.Field
 }
 
 func (r *EnvironmentSpec) UnmarshalJSON(data []byte) (err error) {
@@ -979,6 +984,9 @@ type EnvironmentSpecSecret struct {
 	GitCredentialHost string `json:"gitCredentialHost"`
 	// name is the human readable description of the secret
 	Name string `json:"name"`
+	// scope indicates where this secret originated from. Used to filter secrets during
+	// build (only org and project secrets are injected).
+	Scope EnvironmentSpecSecretsScope `json:"scope"`
 	// session indicated the current session of the secret. When the session does not
 	// change, secrets are not reloaded in the environment.
 	Session string `json:"session"`
@@ -999,6 +1007,7 @@ type environmentSpecSecretJSON struct {
 	FilePath                       apijson.Field
 	GitCredentialHost              apijson.Field
 	Name                           apijson.Field
+	Scope                          apijson.Field
 	Session                        apijson.Field
 	Source                         apijson.Field
 	SourceRef                      apijson.Field
@@ -1012,6 +1021,27 @@ func (r *EnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
 
 func (r environmentSpecSecretJSON) RawJSON() string {
 	return r.raw
+}
+
+// scope indicates where this secret originated from. Used to filter secrets during
+// build (only org and project secrets are injected).
+type EnvironmentSpecSecretsScope string
+
+const (
+	EnvironmentSpecSecretsScopeScopeUnspecified    EnvironmentSpecSecretsScope = "SCOPE_UNSPECIFIED"
+	EnvironmentSpecSecretsScopeScopeOrganization   EnvironmentSpecSecretsScope = "SCOPE_ORGANIZATION"
+	EnvironmentSpecSecretsScopeScopeProject        EnvironmentSpecSecretsScope = "SCOPE_PROJECT"
+	EnvironmentSpecSecretsScopeScopeUser           EnvironmentSpecSecretsScope = "SCOPE_USER"
+	EnvironmentSpecSecretsScopeScopeServiceAccount EnvironmentSpecSecretsScope = "SCOPE_SERVICE_ACCOUNT"
+	EnvironmentSpecSecretsScopeScopeRunner         EnvironmentSpecSecretsScope = "SCOPE_RUNNER"
+)
+
+func (r EnvironmentSpecSecretsScope) IsKnown() bool {
+	switch r {
+	case EnvironmentSpecSecretsScopeScopeUnspecified, EnvironmentSpecSecretsScopeScopeOrganization, EnvironmentSpecSecretsScopeScopeProject, EnvironmentSpecSecretsScopeScopeUser, EnvironmentSpecSecretsScopeScopeServiceAccount, EnvironmentSpecSecretsScopeScopeRunner:
+		return true
+	}
+	return false
 }
 
 type EnvironmentSpecSSHPublicKey struct {
@@ -1076,6 +1106,8 @@ type EnvironmentSpecParam struct {
 	DesiredPhase param.Field[EnvironmentPhase] `json:"desiredPhase"`
 	// devcontainer is the devcontainer spec of the environment
 	Devcontainer param.Field[EnvironmentSpecDevcontainerParam] `json:"devcontainer"`
+	// kernel_controls_config configures kernel-level controls for this environment
+	KernelControlsConfig param.Field[KernelControlsConfigParam] `json:"kernelControlsConfig"`
 	// machine is the machine spec of the environment
 	Machine param.Field[EnvironmentSpecMachineParam] `json:"machine"`
 	// ports is the set of ports which ought to be exposed to your network
@@ -1212,6 +1244,9 @@ type EnvironmentSpecSecretParam struct {
 	GitCredentialHost param.Field[string] `json:"gitCredentialHost"`
 	// name is the human readable description of the secret
 	Name param.Field[string] `json:"name"`
+	// scope indicates where this secret originated from. Used to filter secrets during
+	// build (only org and project secrets are injected).
+	Scope param.Field[EnvironmentSpecSecretsScope] `json:"scope"`
 	// session indicated the current session of the secret. When the session does not
 	// change, secrets are not reloaded in the environment.
 	Session param.Field[string] `json:"session"`
@@ -1971,6 +2006,108 @@ func (r EnvironmentStatusSSHPublicKeysPhase) IsKnown() bool {
 	return false
 }
 
+// KernelControlsConfig configures kernel-level controls for the environment
+type KernelControlsConfig struct {
+	// veto controls blocking mechanisms
+	Veto Veto                     `json:"veto"`
+	JSON kernelControlsConfigJSON `json:"-"`
+}
+
+// kernelControlsConfigJSON contains the JSON metadata for the struct
+// [KernelControlsConfig]
+type kernelControlsConfigJSON struct {
+	Veto        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *KernelControlsConfig) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r kernelControlsConfigJSON) RawJSON() string {
+	return r.raw
+}
+
+// KernelControlsConfig configures kernel-level controls for the environment
+type KernelControlsConfigParam struct {
+	// veto controls blocking mechanisms
+	Veto param.Field[VetoParam] `json:"veto"`
+}
+
+func (r KernelControlsConfigParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// Veto controls kernel-level blocking mechanisms
+type Veto struct {
+	// exec controls executable blocking
+	Exec VetoExec `json:"exec"`
+	JSON vetoJSON `json:"-"`
+}
+
+// vetoJSON contains the JSON metadata for the struct [Veto]
+type vetoJSON struct {
+	Exec        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *Veto) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r vetoJSON) RawJSON() string {
+	return r.raw
+}
+
+// exec controls executable blocking
+type VetoExec struct {
+	// denylist is the list of executable paths or names to block
+	Denylist []string `json:"denylist"`
+	// enabled controls whether executable blocking is active
+	Enabled bool         `json:"enabled"`
+	JSON    vetoExecJSON `json:"-"`
+}
+
+// vetoExecJSON contains the JSON metadata for the struct [VetoExec]
+type vetoExecJSON struct {
+	Denylist    apijson.Field
+	Enabled     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *VetoExec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r vetoExecJSON) RawJSON() string {
+	return r.raw
+}
+
+// Veto controls kernel-level blocking mechanisms
+type VetoParam struct {
+	// exec controls executable blocking
+	Exec param.Field[VetoExecParam] `json:"exec"`
+}
+
+func (r VetoParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// exec controls executable blocking
+type VetoExecParam struct {
+	// denylist is the list of executable paths or names to block
+	Denylist param.Field[[]string] `json:"denylist"`
+	// enabled controls whether executable blocking is active
+	Enabled param.Field[bool] `json:"enabled"`
+}
+
+func (r VetoExecParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type EnvironmentNewResponse struct {
 	// +resource get environment
 	Environment Environment                `json:"environment,required"`
@@ -2094,6 +2231,9 @@ type EnvironmentStopResponse = interface{}
 type EnvironmentUnarchiveResponse = interface{}
 
 type EnvironmentNewParams struct {
+	// name is a user-defined identifier for the environment. If not specified, the
+	// system will generate a name.
+	Name param.Field[string] `json:"name"`
 	// spec is the configuration of the environment that's required for the to start
 	// the environment
 	Spec param.Field[EnvironmentSpecParam] `json:"spec"`
@@ -2139,6 +2279,8 @@ type EnvironmentUpdateParamsSpec struct {
 	AutomationsFile param.Field[EnvironmentUpdateParamsSpecAutomationsFile] `json:"automationsFile"`
 	Content         param.Field[EnvironmentUpdateParamsSpecContent]         `json:"content"`
 	Devcontainer    param.Field[EnvironmentUpdateParamsSpecDevcontainer]    `json:"devcontainer"`
+	// kernel_controls_config configures kernel-level controls for this environment
+	KernelControlsConfig param.Field[KernelControlsConfigParam] `json:"kernelControlsConfig"`
 	// ports controls port sharing
 	Ports param.Field[[]EnvironmentUpdateParamsSpecPort] `json:"ports"`
 	// ssh_public_keys are the public keys to update empty array means nothing to
@@ -2365,6 +2507,9 @@ func (r EnvironmentNewEnvironmentTokenParams) MarshalJSON() (data []byte, err er
 }
 
 type EnvironmentNewFromProjectParams struct {
+	// name is a user-defined identifier for the environment. If not specified, the
+	// system will generate a name.
+	Name      param.Field[string] `json:"name"`
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
 	// Spec is the configuration of the environment that's required for the runner to
 	// start the environment Configuration already defined in the Project will override
