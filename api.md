@@ -524,6 +524,7 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AdditionalScopesUpdateParam">AdditionalScopesUpdateParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SSOConfigurationState">SSOConfigurationState</a>
 
 Response Types:
