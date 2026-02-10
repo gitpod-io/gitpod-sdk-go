@@ -333,6 +333,9 @@ const ResourceRoleWebhookAdmin = shared.ResourceRoleWebhookAdmin
 // This is an alias to an internal value.
 const ResourceRoleWebhookViewer = shared.ResourceRoleWebhookViewer
 
+// This is an alias to an internal value.
+const ResourceRoleWarmpoolRunner = shared.ResourceRoleWarmpoolRunner
+
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
 
@@ -479,6 +482,9 @@ const ResourceTypeServiceAccountToken = shared.ResourceTypeServiceAccountToken
 
 // This is an alias to an internal value.
 const ResourceTypeRoleAssignment = shared.ResourceTypeRoleAssignment
+
+// This is an alias to an internal value.
+const ResourceTypeWarmPool = shared.ResourceTypeWarmPool
 
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
