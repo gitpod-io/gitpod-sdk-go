@@ -69,6 +69,10 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				AllowedVersions: gitpod.F([]string{"string"}),
 			},
 		}),
+		ExecutableDenyList: gitpod.F(gitpod.ExecutableDenyListParam{
+			Enabled:     gitpod.F(true),
+			Executables: gitpod.F([]string{"string"}),
+		}),
 		MaximumEnvironmentLifetime:        gitpod.F("+9125115.360s"),
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
 		MaximumEnvironmentTimeout:         gitpod.F("3600s"),
@@ -77,6 +81,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		MembersRequireProjects:            gitpod.F(true),
 		PortSharingDisabled:               gitpod.F(true),
 		RequireCustomDomainAccess:         gitpod.F(true),
+		RestrictAccountCreationToScim:     gitpod.F(true),
 		SecurityAgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicy{
 			Crowdstrike: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicyCrowdstrike{
 				AdditionalOptions: gitpod.F(map[string]string{

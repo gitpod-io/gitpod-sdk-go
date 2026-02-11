@@ -29,6 +29,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.New(context.TODO(), gitpod.EnvironmentNewParams{
+		Name: gitpod.F("name"),
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
 			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{
@@ -72,6 +73,14 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				LifecycleStage: gitpod.F(gitpod.EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified),
 				Session:        gitpod.F("session"),
 			}),
+			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
+				Veto: gitpod.F(gitpod.VetoParam{
+					Exec: gitpod.F(gitpod.VetoExecParam{
+						Denylist: gitpod.F([]string{"string"}),
+						Enabled:  gitpod.F(true),
+					}),
+				}),
+			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 				Session: gitpod.F("session"),
@@ -90,6 +99,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				FilePath:                       gitpod.F("filePath"),
 				GitCredentialHost:              gitpod.F("gitCredentialHost"),
 				Name:                           gitpod.F("name"),
+				Scope:                          gitpod.F(gitpod.EnvironmentSpecSecretsScopeScopeUnspecified),
 				Session:                        gitpod.F("session"),
 				Source:                         gitpod.F("source"),
 				SourceRef:                      gitpod.F("sourceRef"),
@@ -184,6 +194,14 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 			Devcontainer: gitpod.F(gitpod.EnvironmentUpdateParamsSpecDevcontainer{
 				DevcontainerFilePath: gitpod.F("devcontainerFilePath"),
 				Session:              gitpod.F("session"),
+			}),
+			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
+				Veto: gitpod.F(gitpod.VetoParam{
+					Exec: gitpod.F(gitpod.VetoExecParam{
+						Denylist: gitpod.F([]string{"string"}),
+						Enabled:  gitpod.F(true),
+					}),
+				}),
 			}),
 			Ports: gitpod.F([]gitpod.EnvironmentUpdateParamsSpecPort{{
 				Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
@@ -314,6 +332,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.NewFromProject(context.TODO(), gitpod.EnvironmentNewFromProjectParams{
+		Name:      gitpod.F("name"),
 		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
 			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
@@ -358,6 +377,14 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				LifecycleStage: gitpod.F(gitpod.EnvironmentSpecDevcontainerLifecycleStageLifecycleStageUnspecified),
 				Session:        gitpod.F("session"),
 			}),
+			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
+				Veto: gitpod.F(gitpod.VetoParam{
+					Exec: gitpod.F(gitpod.VetoExecParam{
+						Denylist: gitpod.F([]string{"string"}),
+						Enabled:  gitpod.F(true),
+					}),
+				}),
+			}),
 			Machine: gitpod.F(gitpod.EnvironmentSpecMachineParam{
 				Class:   gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 				Session: gitpod.F("session"),
@@ -376,6 +403,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				FilePath:                       gitpod.F("filePath"),
 				GitCredentialHost:              gitpod.F("gitCredentialHost"),
 				Name:                           gitpod.F("name"),
+				Scope:                          gitpod.F(gitpod.EnvironmentSpecSecretsScopeScopeUnspecified),
 				Session:                        gitpod.F("session"),
 				Source:                         gitpod.F("source"),
 				SourceRef:                      gitpod.F("sourceRef"),

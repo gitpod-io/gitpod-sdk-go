@@ -168,6 +168,46 @@ func (r crowdStrikeConfigJSON) RawJSON() string {
 	return r.raw
 }
 
+// ExecutableDenyList contains executables that are blocked from execution in
+// environments.
+type ExecutableDenyList struct {
+	// enabled controls whether executable blocking is active
+	Enabled bool `json:"enabled"`
+	// executables is the list of executable paths or names to block
+	Executables []string               `json:"executables"`
+	JSON        executableDenyListJSON `json:"-"`
+}
+
+// executableDenyListJSON contains the JSON metadata for the struct
+// [ExecutableDenyList]
+type executableDenyListJSON struct {
+	Enabled     apijson.Field
+	Executables apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ExecutableDenyList) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r executableDenyListJSON) RawJSON() string {
+	return r.raw
+}
+
+// ExecutableDenyList contains executables that are blocked from execution in
+// environments.
+type ExecutableDenyListParam struct {
+	// enabled controls whether executable blocking is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// executables is the list of executable paths or names to block
+	Executables param.Field[[]string] `json:"executables"`
+}
+
+func (r ExecutableDenyListParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type OrganizationPolicies struct {
 	// agent_policy contains agent-specific policy settings
 	AgentPolicy AgentPolicy `json:"agentPolicy,required"`
@@ -196,12 +236,17 @@ type OrganizationPolicies struct {
 	MembersRequireProjects bool `json:"membersRequireProjects,required"`
 	// organization_id is the ID of the organization
 	OrganizationID string `json:"organizationId,required" format:"uuid"`
-	// port_sharing_disabled controls whether port sharing is disabled in the
-	// organization
+	// port_sharing_disabled controls whether user-initiated port sharing is disabled
+	// in the organization. System ports (VS Code Browser, agents) are always exempt
+	// from this policy.
 	PortSharingDisabled bool `json:"portSharingDisabled,required"`
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
 	RequireCustomDomainAccess bool `json:"requireCustomDomainAccess,required"`
+	// restrict_account_creation_to_scim controls whether account creation is
+	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
+	// the organization, only users provisioned via SCIM can create accounts.
+	RestrictAccountCreationToScim bool `json:"restrictAccountCreationToScim,required"`
 	// delete_archived_environments_after controls how long archived environments are
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
@@ -211,6 +256,9 @@ type OrganizationPolicies struct {
 	// restrictions. If empty or not set for an editor, we will use the latest version
 	// of the editor
 	EditorVersionRestrictions map[string]OrganizationPoliciesEditorVersionRestriction `json:"editorVersionRestrictions"`
+	// executable_deny_list contains executables that are blocked from execution in
+	// environments.
+	ExecutableDenyList ExecutableDenyList `json:"executableDenyList"`
 	// maximum_environment_lifetime controls for how long environments are allowed to
 	// be reused. 0 means no maximum lifetime. Maximum duration is 180 days (15552000
 	// seconds).
@@ -241,8 +289,10 @@ type organizationPoliciesJSON struct {
 	OrganizationID                    apijson.Field
 	PortSharingDisabled               apijson.Field
 	RequireCustomDomainAccess         apijson.Field
+	RestrictAccountCreationToScim     apijson.Field
 	DeleteArchivedEnvironmentsAfter   apijson.Field
 	EditorVersionRestrictions         apijson.Field
+	ExecutableDenyList                apijson.Field
 	MaximumEnvironmentLifetime        apijson.Field
 	MaximumEnvironmentTimeout         apijson.Field
 	SecurityAgentPolicy               apijson.Field
@@ -364,6 +414,9 @@ type OrganizationPolicyUpdateParams struct {
 	// editor_version_restrictions restricts which editor versions can be used. Maps
 	// editor ID to version policy with allowed major versions.
 	EditorVersionRestrictions param.Field[map[string]OrganizationPolicyUpdateParamsEditorVersionRestrictions] `json:"editorVersionRestrictions"`
+	// executable_deny_list contains executables that are blocked from execution in
+	// environments.
+	ExecutableDenyList param.Field[ExecutableDenyListParam] `json:"executableDenyList"`
 	// maximum_environment_lifetime controls for how long environments are allowed to
 	// be reused. 0 means no maximum lifetime. Maximum duration is 180 days (15552000
 	// seconds).
@@ -383,12 +436,17 @@ type OrganizationPolicyUpdateParams struct {
 	// members_require_projects controls whether environments can only be created from
 	// projects by non-admin users
 	MembersRequireProjects param.Field[bool] `json:"membersRequireProjects"`
-	// port_sharing_disabled controls whether port sharing is disabled in the
-	// organization
+	// port_sharing_disabled controls whether user-initiated port sharing is disabled
+	// in the organization. System ports (VS Code Browser, agents) are always exempt
+	// from this policy.
 	PortSharingDisabled param.Field[bool] `json:"portSharingDisabled"`
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
 	RequireCustomDomainAccess param.Field[bool] `json:"requireCustomDomainAccess"`
+	// restrict_account_creation_to_scim controls whether account creation is
+	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
+	// the organization, only users provisioned via SCIM can create accounts.
+	RestrictAccountCreationToScim param.Field[bool] `json:"restrictAccountCreationToScim"`
 	// security_agent_policy contains security agent configuration updates
 	SecurityAgentPolicy param.Field[OrganizationPolicyUpdateParamsSecurityAgentPolicy] `json:"securityAgentPolicy"`
 }

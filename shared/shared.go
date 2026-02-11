@@ -386,6 +386,9 @@ const (
 	ResourceRoleOrgAdmin                       ResourceRole = "RESOURCE_ROLE_ORG_ADMIN"
 	ResourceRoleOrgMember                      ResourceRole = "RESOURCE_ROLE_ORG_MEMBER"
 	ResourceRoleOrgRunnersAdmin                ResourceRole = "RESOURCE_ROLE_ORG_RUNNERS_ADMIN"
+	ResourceRoleOrgProjectsAdmin               ResourceRole = "RESOURCE_ROLE_ORG_PROJECTS_ADMIN"
+	ResourceRoleOrgAutomationsAdmin            ResourceRole = "RESOURCE_ROLE_ORG_AUTOMATIONS_ADMIN"
+	ResourceRoleOrgGroupsAdmin                 ResourceRole = "RESOURCE_ROLE_ORG_GROUPS_ADMIN"
 	ResourceRoleGroupAdmin                     ResourceRole = "RESOURCE_ROLE_GROUP_ADMIN"
 	ResourceRoleGroupViewer                    ResourceRole = "RESOURCE_ROLE_GROUP_VIEWER"
 	ResourceRoleUserIdentity                   ResourceRole = "RESOURCE_ROLE_USER_IDENTITY"
@@ -433,11 +436,12 @@ const (
 	ResourceRoleSnapshotRunner                 ResourceRole = "RESOURCE_ROLE_SNAPSHOT_RUNNER"
 	ResourceRoleWebhookAdmin                   ResourceRole = "RESOURCE_ROLE_WEBHOOK_ADMIN"
 	ResourceRoleWebhookViewer                  ResourceRole = "RESOURCE_ROLE_WEBHOOK_VIEWER"
+	ResourceRoleWarmpoolRunner                 ResourceRole = "RESOURCE_ROLE_WARMPOOL_RUNNER"
 )
 
 func (r ResourceRole) IsKnown() bool {
 	switch r {
-	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionIdentity, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer:
+	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionIdentity, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner:
 		return true
 	}
 	return false
@@ -491,11 +495,15 @@ const (
 	ResourceTypeWebhook                    ResourceType = "RESOURCE_TYPE_WEBHOOK"
 	ResourceTypeScimConfiguration          ResourceType = "RESOURCE_TYPE_SCIM_CONFIGURATION"
 	ResourceTypeServiceAccountSecret       ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT_SECRET"
+	ResourceTypeAnnouncementBanner         ResourceType = "RESOURCE_TYPE_ANNOUNCEMENT_BANNER"
+	ResourceTypeServiceAccountToken        ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT_TOKEN"
+	ResourceTypeRoleAssignment             ResourceType = "RESOURCE_TYPE_ROLE_ASSIGNMENT"
+	ResourceTypeWarmPool                   ResourceType = "RESOURCE_TYPE_WARM_POOL"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret, ResourceTypeAnnouncementBanner, ResourceTypeServiceAccountToken, ResourceTypeRoleAssignment, ResourceTypeWarmPool:
 		return true
 	}
 	return false

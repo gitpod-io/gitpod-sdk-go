@@ -189,9 +189,11 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.OrganizationListMembersParamsFilter{
-			Roles:    gitpod.F([]shared.OrganizationRole{shared.OrganizationRoleUnspecified}),
-			Search:   gitpod.F("search"),
-			Statuses: gitpod.F([]shared.UserStatus{shared.UserStatusUnspecified}),
+			ExcludeGroupIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Roles:           gitpod.F([]shared.OrganizationRole{shared.OrganizationRoleUnspecified}),
+			Search:          gitpod.F("search"),
+			Statuses:        gitpod.F([]shared.UserStatus{shared.UserStatusUnspecified}),
+			UserIDs:         gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.OrganizationListMembersParamsPagination{
 			Token:    gitpod.F("token"),

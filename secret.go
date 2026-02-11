@@ -572,10 +572,10 @@ type SecretNewParams struct {
 	// secret
 	EnvironmentVariable param.Field[bool] `json:"environmentVariable"`
 	// absolute path to the file where the secret is mounted value must be an absolute
-	// path (start with a /):
+	// path (e.g. /path/to/file):
 	//
 	// ```
-	// this.matches('^/(?:[^/]*/)*.*$')
+	// this.matches('^/[^/].*$')
 	// ```
 	FilePath param.Field[string] `json:"filePath"`
 	Name     param.Field[string] `json:"name"`

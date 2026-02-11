@@ -244,6 +244,17 @@ func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body O
 	return
 }
 
+// AdditionalScopesUpdate wraps a list of OIDC scopes so that the update request
+// can distinguish "not changing scopes" (field absent) from "clearing all scopes"
+// (field present, empty list).
+type AdditionalScopesUpdateParam struct {
+	Scopes param.Field[[]string] `json:"scopes"`
+}
+
+func (r AdditionalScopesUpdateParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type ProviderType string
 
 const (
@@ -270,6 +281,9 @@ type SSOConfiguration struct {
 	ProviderType ProviderType `json:"providerType,required"`
 	// state is the state of the SSO configuration
 	State SSOConfigurationState `json:"state,required"`
+	// additional_scopes are extra OIDC scopes requested from the identity provider
+	// during sign-in.
+	AdditionalScopes []string `json:"additionalScopes"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims map[string]string `json:"claims"`
 	// client_id is the client ID of the OIDC application set on the IdP
@@ -283,18 +297,19 @@ type SSOConfiguration struct {
 // ssoConfigurationJSON contains the JSON metadata for the struct
 // [SSOConfiguration]
 type ssoConfigurationJSON struct {
-	ID             apijson.Field
-	IssuerURL      apijson.Field
-	OrganizationID apijson.Field
-	ProviderType   apijson.Field
-	State          apijson.Field
-	Claims         apijson.Field
-	ClientID       apijson.Field
-	DisplayName    apijson.Field
-	EmailDomain    apijson.Field
-	EmailDomains   apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	ID               apijson.Field
+	IssuerURL        apijson.Field
+	OrganizationID   apijson.Field
+	ProviderType     apijson.Field
+	State            apijson.Field
+	AdditionalScopes apijson.Field
+	Claims           apijson.Field
+	ClientID         apijson.Field
+	DisplayName      apijson.Field
+	EmailDomain      apijson.Field
+	EmailDomains     apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *SSOConfiguration) UnmarshalJSON(data []byte) (err error) {
@@ -377,7 +392,11 @@ type OrganizationSSOConfigurationNewParams struct {
 	// issuer_url is the URL of the IdP issuer
 	IssuerURL      param.Field[string] `json:"issuerUrl,required" format:"uri"`
 	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
-	DisplayName    param.Field[string] `json:"displayName"`
+	// additional_scopes are extra OIDC scopes to request from the identity provider
+	// during sign-in. These are appended to the default scopes (openid, email,
+	// profile).
+	AdditionalScopes param.Field[[]string] `json:"additionalScopes"`
+	DisplayName      param.Field[string]   `json:"displayName"`
 	// email_domain is the domain that is allowed to sign in to the organization
 	EmailDomain  param.Field[string]   `json:"emailDomain"`
 	EmailDomains param.Field[[]string] `json:"emailDomains"`
@@ -399,6 +418,10 @@ func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err e
 type OrganizationSSOConfigurationUpdateParams struct {
 	// sso_configuration_id is the ID of the SSO configuration to update
 	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	// additional_scopes replaces the configured OIDC scopes when present. When absent
+	// (nil), scopes are left unchanged. When present with an empty scopes list, all
+	// additional scopes are cleared.
+	AdditionalScopes param.Field[AdditionalScopesUpdateParam] `json:"additionalScopes"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims param.Field[map[string]string] `json:"claims"`
 	// client_id is the client ID of the SSO provider

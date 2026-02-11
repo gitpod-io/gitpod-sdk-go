@@ -26,6 +26,7 @@ import (
 // the [NewOrganizationService] method instead.
 type OrganizationService struct {
 	Options             []option.RequestOption
+	AnnouncementBanner  *OrganizationAnnouncementBannerService
 	CustomDomains       *OrganizationCustomDomainService
 	DomainVerifications *OrganizationDomainVerificationService
 	Invites             *OrganizationInviteService
@@ -40,6 +41,7 @@ type OrganizationService struct {
 func NewOrganizationService(opts ...option.RequestOption) (r *OrganizationService) {
 	r = &OrganizationService{}
 	r.Options = opts
+	r.AnnouncementBanner = NewOrganizationAnnouncementBannerService(opts...)
 	r.CustomDomains = NewOrganizationCustomDomainService(opts...)
 	r.DomainVerifications = NewOrganizationDomainVerificationService(opts...)
 	r.Invites = NewOrganizationInviteService(opts...)
@@ -905,12 +907,17 @@ func (r OrganizationListMembersParams) URLQuery() (v url.Values) {
 }
 
 type OrganizationListMembersParamsFilter struct {
+	// exclude_group_ids excludes members who are already in any of the specified
+	// groups
+	ExcludeGroupIDs param.Field[[]string] `json:"excludeGroupIds" format:"uuid"`
 	// roles filters members by their organization role
 	Roles param.Field[[]shared.OrganizationRole] `json:"roles"`
 	// search performs case-insensitive search across member name and email
 	Search param.Field[string] `json:"search"`
 	// status filters members by their user status
 	Statuses param.Field[[]shared.UserStatus] `json:"statuses"`
+	// user_ids filters the response to only members with the specified user IDs
+	UserIDs param.Field[[]string] `json:"userIds" format:"uuid"`
 }
 
 func (r OrganizationListMembersParamsFilter) MarshalJSON() (data []byte, err error) {

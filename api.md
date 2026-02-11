@@ -135,6 +135,8 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentPhase">EnvironmentPhase</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentRole">EnvironmentRole</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentSpecParam">EnvironmentSpecParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#KernelControlsConfigParam">KernelControlsConfigParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#VetoParam">VetoParam</a>
 
 Response Types:
 
@@ -146,6 +148,8 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentRole">EnvironmentRole</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentSpec">EnvironmentSpec</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentStatus">EnvironmentStatus</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#KernelControlsConfig">KernelControlsConfig</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#Veto">Veto</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentNewResponse">EnvironmentNewResponse</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentGetResponse">EnvironmentGetResponse</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentUpdateResponse">EnvironmentUpdateResponse</a>
@@ -406,6 +410,19 @@ Methods:
 - <code title="post /gitpod.v1.OrganizationService/ListMembers">client.Organizations.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationService.ListMembers">ListMembers</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationListMembersParams">OrganizationListMembersParams</a>) (\*<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/packages/pagination#MembersPage">MembersPage</a>[<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationMember">OrganizationMember</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /gitpod.v1.OrganizationService/SetRole">client.Organizations.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationService.SetRole">SetRole</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationSetRoleParams">OrganizationSetRoleParams</a>) (\*<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationSetRoleResponse">OrganizationSetRoleResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+## AnnouncementBanner
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AnnouncementBanner">AnnouncementBanner</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerUpdateResponse">OrganizationAnnouncementBannerUpdateResponse</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerGetResponse">OrganizationAnnouncementBannerGetResponse</a>
+
+Methods:
+
+- <code title="post /gitpod.v1.OrganizationService/UpdateAnnouncementBanner">client.Organizations.AnnouncementBanner.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerService.Update">Update</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerUpdateParams">OrganizationAnnouncementBannerUpdateParams</a>) (\*<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerUpdateResponse">OrganizationAnnouncementBannerUpdateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="post /gitpod.v1.OrganizationService/GetAnnouncementBanner">client.Organizations.AnnouncementBanner.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerGetParams">OrganizationAnnouncementBannerGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationAnnouncementBannerGetResponse">OrganizationAnnouncementBannerGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 ## CustomDomains
 
 Params Types:
@@ -464,10 +481,15 @@ Methods:
 
 ## Policies
 
+Params Types:
+
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ExecutableDenyListParam">ExecutableDenyListParam</a>
+
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentPolicy">AgentPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CrowdStrikeConfig">CrowdStrikeConfig</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ExecutableDenyList">ExecutableDenyList</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationPolicies">OrganizationPolicies</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecurityAgentPolicy">SecurityAgentPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationPolicyGetResponse">OrganizationPolicyGetResponse</a>
@@ -502,6 +524,7 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AdditionalScopesUpdateParam">AdditionalScopesUpdateParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SSOConfigurationState">SSOConfigurationState</a>
 
 Response Types:
@@ -528,6 +551,7 @@ Params Types:
 
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#PrebuildPhase">PrebuildPhase</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#PrebuildSpecParam">PrebuildSpecParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#PrebuildTrigger">PrebuildTrigger</a>
 
 Response Types:
 

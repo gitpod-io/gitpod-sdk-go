@@ -27,13 +27,14 @@ func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.SSOConfigurations.New(context.TODO(), gitpod.OrganizationSSOConfigurationNewParams{
-		ClientID:       gitpod.F("012345678-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com"),
-		ClientSecret:   gitpod.F("GOCSPX-abcdefghijklmnopqrstuvwxyz123456"),
-		IssuerURL:      gitpod.F("https://accounts.google.com"),
-		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		DisplayName:    gitpod.F("displayName"),
-		EmailDomain:    gitpod.F("acme-corp.com"),
-		EmailDomains:   gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
+		ClientID:         gitpod.F("012345678-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com"),
+		ClientSecret:     gitpod.F("GOCSPX-abcdefghijklmnopqrstuvwxyz123456"),
+		IssuerURL:        gitpod.F("https://accounts.google.com"),
+		OrganizationID:   gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		AdditionalScopes: gitpod.F([]string{"x"}),
+		DisplayName:      gitpod.F("displayName"),
+		EmailDomain:      gitpod.F("acme-corp.com"),
+		EmailDomains:     gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -84,6 +85,9 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Organizations.SSOConfigurations.Update(context.TODO(), gitpod.OrganizationSSOConfigurationUpdateParams{
 		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		AdditionalScopes: gitpod.F(gitpod.AdditionalScopesUpdateParam{
+			Scopes: gitpod.F([]string{"x"}),
+		}),
 		Claims: gitpod.F(map[string]string{
 			"foo": "string",
 		}),
