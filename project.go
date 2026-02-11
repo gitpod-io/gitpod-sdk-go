@@ -232,6 +232,100 @@ func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, o
 	return
 }
 
+// Creates multiple projects in a single request.
+//
+// Use this method to:
+//
+// - Onboard multiple repositories at once
+// - Import a batch of projects during initial setup
+//
+// Returns successfully created projects and details about any failures. Each
+// project in the request is processed independently — partial success is possible.
+//
+// ### Examples
+//
+// - Create multiple projects:
+//
+//	Creates several projects in one request.
+//
+//	```yaml
+//	projects:
+//	  - name: "Frontend"
+//	    initializer:
+//	      specs:
+//	        - git:
+//	            remoteUri: "https://github.com/org/frontend"
+//	  - name: "Backend"
+//	    initializer:
+//	      specs:
+//	        - git:
+//	            remoteUri: "https://github.com/org/backend"
+//	```
+func (r *ProjectService) BulkNew(ctx context.Context, body ProjectBulkNewParams, opts ...option.RequestOption) (res *ProjectBulkNewResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.ProjectService/CreateProjects"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Deletes multiple projects in a single request.
+//
+// Use this method to:
+//
+// - Remove multiple unused projects at once
+// - Clean up projects in batch
+//
+// Returns successfully deleted project IDs and details about any failures. Each
+// project in the request is processed independently — partial success is possible.
+//
+// ### Examples
+//
+// - Delete multiple projects:
+//
+//	Permanently removes several projects in one request.
+//
+//	```yaml
+//	projectIds:
+//	  - "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	  - "c1f23g7d-5d78-430e-b5b7-e0949c6eb158"
+//	```
+func (r *ProjectService) BulkDelete(ctx context.Context, body ProjectBulkDeleteParams, opts ...option.RequestOption) (res *ProjectBulkDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.ProjectService/DeleteProjects"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Updates multiple projects in a single request.
+//
+// Use this method to:
+//
+// - Modify settings across multiple projects at once
+// - Apply configuration changes in batch
+//
+// Returns successfully updated projects and details about any failures. Each
+// project in the request is processed independently — partial success is possible.
+//
+// ### Examples
+//
+// - Update multiple projects:
+//
+//	Updates several projects in one request.
+//
+//	```yaml
+//	projects:
+//	  - projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	    name: "Updated Frontend"
+//	  - projectId: "c1f23g7d-5d78-430e-b5b7-e0949c6eb158"
+//	    name: "Updated Backend"
+//	```
+func (r *ProjectService) BulkUpdate(ctx context.Context, body ProjectBulkUpdateParams, opts ...option.RequestOption) (res *ProjectBulkUpdateResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.ProjectService/UpdateProjects"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Creates a new project using an existing environment as a template.
 //
 // Use this method to:
@@ -1015,6 +1109,165 @@ func (r projectUpdateResponseJSON) RawJSON() string {
 
 type ProjectDeleteResponse = interface{}
 
+type ProjectBulkNewResponse struct {
+	// created_projects contains the successfully created projects
+	CreatedProjects []Project `json:"createdProjects"`
+	// failed_projects contains details about projects that failed to create
+	FailedProjects []ProjectBulkNewResponseFailedProject `json:"failedProjects"`
+	JSON           projectBulkNewResponseJSON            `json:"-"`
+}
+
+// projectBulkNewResponseJSON contains the JSON metadata for the struct
+// [ProjectBulkNewResponse]
+type projectBulkNewResponseJSON struct {
+	CreatedProjects apijson.Field
+	FailedProjects  apijson.Field
+	raw             string
+	ExtraFields     map[string]apijson.Field
+}
+
+func (r *ProjectBulkNewResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectBulkNewResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectBulkNewResponseFailedProject struct {
+	// error describes why the project creation failed
+	Error string `json:"error"`
+	// index is the position in the request array (0-based)
+	Index int64 `json:"index"`
+	// name is the project name that failed
+	Name string                                  `json:"name"`
+	JSON projectBulkNewResponseFailedProjectJSON `json:"-"`
+}
+
+// projectBulkNewResponseFailedProjectJSON contains the JSON metadata for the
+// struct [ProjectBulkNewResponseFailedProject]
+type projectBulkNewResponseFailedProjectJSON struct {
+	Error       apijson.Field
+	Index       apijson.Field
+	Name        apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectBulkNewResponseFailedProject) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectBulkNewResponseFailedProjectJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectBulkDeleteResponse struct {
+	// deleted_project_ids contains the IDs of successfully deleted projects
+	DeletedProjectIDs []string `json:"deletedProjectIds"`
+	// failed_projects contains details about projects that failed to delete
+	FailedProjects []ProjectBulkDeleteResponseFailedProject `json:"failedProjects"`
+	JSON           projectBulkDeleteResponseJSON            `json:"-"`
+}
+
+// projectBulkDeleteResponseJSON contains the JSON metadata for the struct
+// [ProjectBulkDeleteResponse]
+type projectBulkDeleteResponseJSON struct {
+	DeletedProjectIDs apijson.Field
+	FailedProjects    apijson.Field
+	raw               string
+	ExtraFields       map[string]apijson.Field
+}
+
+func (r *ProjectBulkDeleteResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectBulkDeleteResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectBulkDeleteResponseFailedProject struct {
+	// error describes why the project deletion failed
+	Error string `json:"error"`
+	// index is the position in the request array (0-based)
+	Index int64 `json:"index"`
+	// project_id is the project ID that failed
+	ProjectID string                                     `json:"projectId"`
+	JSON      projectBulkDeleteResponseFailedProjectJSON `json:"-"`
+}
+
+// projectBulkDeleteResponseFailedProjectJSON contains the JSON metadata for the
+// struct [ProjectBulkDeleteResponseFailedProject]
+type projectBulkDeleteResponseFailedProjectJSON struct {
+	Error       apijson.Field
+	Index       apijson.Field
+	ProjectID   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectBulkDeleteResponseFailedProject) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectBulkDeleteResponseFailedProjectJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectBulkUpdateResponse struct {
+	// failed_projects contains details about projects that failed to update
+	FailedProjects []ProjectBulkUpdateResponseFailedProject `json:"failedProjects"`
+	// updated_projects contains the successfully updated projects
+	UpdatedProjects []Project                     `json:"updatedProjects"`
+	JSON            projectBulkUpdateResponseJSON `json:"-"`
+}
+
+// projectBulkUpdateResponseJSON contains the JSON metadata for the struct
+// [ProjectBulkUpdateResponse]
+type projectBulkUpdateResponseJSON struct {
+	FailedProjects  apijson.Field
+	UpdatedProjects apijson.Field
+	raw             string
+	ExtraFields     map[string]apijson.Field
+}
+
+func (r *ProjectBulkUpdateResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectBulkUpdateResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type ProjectBulkUpdateResponseFailedProject struct {
+	// error describes why the project update failed
+	Error string `json:"error"`
+	// index is the position in the request array (0-based)
+	Index int64 `json:"index"`
+	// project_id is the project ID that failed
+	ProjectID string                                     `json:"projectId"`
+	JSON      projectBulkUpdateResponseFailedProjectJSON `json:"-"`
+}
+
+// projectBulkUpdateResponseFailedProjectJSON contains the JSON metadata for the
+// struct [ProjectBulkUpdateResponseFailedProject]
+type projectBulkUpdateResponseFailedProjectJSON struct {
+	Error       apijson.Field
+	Index       apijson.Field
+	ProjectID   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectBulkUpdateResponseFailedProject) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectBulkUpdateResponseFailedProjectJSON) RawJSON() string {
+	return r.raw
+}
+
 type ProjectNewFromEnvironmentResponse struct {
 	Project Project                               `json:"project"`
 	JSON    projectNewFromEnvironmentResponseJSON `json:"-"`
@@ -1170,6 +1423,97 @@ type ProjectDeleteParams struct {
 }
 
 func (r ProjectDeleteParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ProjectBulkNewParams struct {
+	Projects param.Field[[]ProjectBulkNewParamsProject] `json:"projects"`
+}
+
+func (r ProjectBulkNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ProjectBulkNewParamsProject struct {
+	// initializer is the content initializer
+	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
+	// automations_file_path is the path to the automations file relative to the repo
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	AutomationsFilePath param.Field[string] `json:"automationsFilePath"`
+	// devcontainer_file_path is the path to the devcontainer file relative to the repo
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
+	Name                 param.Field[string] `json:"name"`
+	// prebuild_configuration defines how prebuilds are created for this project. If
+	// not set, prebuilds are disabled for the project.
+	PrebuildConfiguration param.Field[ProjectPrebuildConfigurationParam] `json:"prebuildConfiguration"`
+	// technical_description is a detailed technical description of the project This
+	// field is not returned by default in GetProject or ListProjects responses 8KB max
+	TechnicalDescription param.Field[string] `json:"technicalDescription"`
+}
+
+func (r ProjectBulkNewParamsProject) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ProjectBulkDeleteParams struct {
+	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+}
+
+func (r ProjectBulkDeleteParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ProjectBulkUpdateParams struct {
+	Projects param.Field[[]ProjectBulkUpdateParamsProject] `json:"projects"`
+}
+
+func (r ProjectBulkUpdateParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type ProjectBulkUpdateParamsProject struct {
+	// automations_file_path is the path to the automations file relative to the repo
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	AutomationsFilePath param.Field[string] `json:"automationsFilePath"`
+	// devcontainer_file_path is the path to the devcontainer file relative to the repo
+	// root path must not be absolute (start with a /):
+	//
+	// ```
+	// this.matches('^$|^[^/].*')
+	// ```
+	DevcontainerFilePath param.Field[string] `json:"devcontainerFilePath"`
+	// initializer is the content initializer
+	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer"`
+	Name        param.Field[string]                      `json:"name"`
+	// prebuild_configuration defines how prebuilds are created for this project. If
+	// not provided, the existing prebuild configuration is not modified. To disable
+	// prebuilds, set enabled to false.
+	PrebuildConfiguration param.Field[ProjectPrebuildConfigurationParam] `json:"prebuildConfiguration"`
+	// project_id specifies the project identifier
+	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// recommended_editors specifies the editors recommended for this project. If not
+	// provided, the existing recommended editors are not modified. To clear all
+	// recommended editors, set to an empty RecommendedEditors message.
+	RecommendedEditors param.Field[RecommendedEditorsParam] `json:"recommendedEditors"`
+	// technical_description is a detailed technical description of the project This
+	// field is not returned by default in GetProject or ListProjects responses 8KB max
+	TechnicalDescription param.Field[string] `json:"technicalDescription"`
+}
+
+func (r ProjectBulkUpdateParamsProject) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
