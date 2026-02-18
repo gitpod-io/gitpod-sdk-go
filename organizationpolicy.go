@@ -168,51 +168,6 @@ func (r crowdStrikeConfigJSON) RawJSON() string {
 	return r.raw
 }
 
-// ExecutableDenyList contains executables that are blocked from execution in
-// environments.
-type ExecutableDenyList struct {
-	// action specifies what action kernel-level controls take on policy violations
-	Action KernelControlsAction `json:"action"`
-	// enabled controls whether executable blocking is active
-	Enabled bool `json:"enabled"`
-	// executables is the list of executable paths or names to block
-	Executables []string               `json:"executables"`
-	JSON        executableDenyListJSON `json:"-"`
-}
-
-// executableDenyListJSON contains the JSON metadata for the struct
-// [ExecutableDenyList]
-type executableDenyListJSON struct {
-	Action      apijson.Field
-	Enabled     apijson.Field
-	Executables apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ExecutableDenyList) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r executableDenyListJSON) RawJSON() string {
-	return r.raw
-}
-
-// ExecutableDenyList contains executables that are blocked from execution in
-// environments.
-type ExecutableDenyListParam struct {
-	// action specifies what action kernel-level controls take on policy violations
-	Action param.Field[KernelControlsAction] `json:"action"`
-	// enabled controls whether executable blocking is active
-	Enabled param.Field[bool] `json:"enabled"`
-	// executables is the list of executable paths or names to block
-	Executables param.Field[[]string] `json:"executables"`
-}
-
-func (r ExecutableDenyListParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
 // KernelControlsAction defines how a kernel-level policy violation is handled.
 type KernelControlsAction string
 
@@ -278,9 +233,8 @@ type OrganizationPolicies struct {
 	// restrictions. If empty or not set for an editor, we will use the latest version
 	// of the editor
 	EditorVersionRestrictions map[string]OrganizationPoliciesEditorVersionRestriction `json:"editorVersionRestrictions"`
-	// executable_deny_list contains executables that are blocked from execution in
-	// environments.
-	ExecutableDenyList ExecutableDenyList `json:"executableDenyList"`
+	// executable_deny_list contains the veto exec policy for environments.
+	ExecutableDenyList VetoExecPolicy `json:"executableDenyList"`
 	// maximum_environment_lifetime controls for how long environments are allowed to
 	// be reused. 0 means no maximum lifetime. Maximum duration is 180 days (15552000
 	// seconds).
@@ -380,6 +334,50 @@ func (r securityAgentPolicyJSON) RawJSON() string {
 	return r.raw
 }
 
+// VetoExecPolicy defines the policy for blocking or auditing executable execution
+// in environments.
+type VetoExecPolicy struct {
+	// action specifies what action kernel-level controls take on policy violations
+	Action KernelControlsAction `json:"action"`
+	// enabled controls whether executable blocking is active
+	Enabled bool `json:"enabled"`
+	// executables is the list of executable paths or names to block
+	Executables []string           `json:"executables"`
+	JSON        vetoExecPolicyJSON `json:"-"`
+}
+
+// vetoExecPolicyJSON contains the JSON metadata for the struct [VetoExecPolicy]
+type vetoExecPolicyJSON struct {
+	Action      apijson.Field
+	Enabled     apijson.Field
+	Executables apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *VetoExecPolicy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r vetoExecPolicyJSON) RawJSON() string {
+	return r.raw
+}
+
+// VetoExecPolicy defines the policy for blocking or auditing executable execution
+// in environments.
+type VetoExecPolicyParam struct {
+	// action specifies what action kernel-level controls take on policy violations
+	Action param.Field[KernelControlsAction] `json:"action"`
+	// enabled controls whether executable blocking is active
+	Enabled param.Field[bool] `json:"enabled"`
+	// executables is the list of executable paths or names to block
+	Executables param.Field[[]string] `json:"executables"`
+}
+
+func (r VetoExecPolicyParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type OrganizationPolicyGetResponse struct {
 	Policies OrganizationPolicies              `json:"policies,required"`
 	JSON     organizationPolicyGetResponseJSON `json:"-"`
@@ -436,9 +434,8 @@ type OrganizationPolicyUpdateParams struct {
 	// editor_version_restrictions restricts which editor versions can be used. Maps
 	// editor ID to version policy with allowed major versions.
 	EditorVersionRestrictions param.Field[map[string]OrganizationPolicyUpdateParamsEditorVersionRestrictions] `json:"editorVersionRestrictions"`
-	// executable_deny_list contains executables that are blocked from execution in
-	// environments.
-	ExecutableDenyList param.Field[ExecutableDenyListParam] `json:"executableDenyList"`
+	// executable_deny_list contains the veto exec policy for environments.
+	ExecutableDenyList param.Field[VetoExecPolicyParam] `json:"executableDenyList"`
 	// maximum_environment_lifetime controls for how long environments are allowed to
 	// be reused. 0 means no maximum lifetime. Maximum duration is 180 days (15552000
 	// seconds).
