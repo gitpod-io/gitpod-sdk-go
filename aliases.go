@@ -336,6 +336,12 @@ const ResourceRoleWebhookViewer = shared.ResourceRoleWebhookViewer
 // This is an alias to an internal value.
 const ResourceRoleWarmpoolRunner = shared.ResourceRoleWarmpoolRunner
 
+// This is an alias to an internal value.
+const ResourceRoleWarmpoolAdmin = shared.ResourceRoleWarmpoolAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleWarmpoolViewer = shared.ResourceRoleWarmpoolViewer
+
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
 

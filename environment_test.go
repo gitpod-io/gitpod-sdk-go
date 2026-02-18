@@ -76,6 +76,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
 				Veto: gitpod.F(gitpod.VetoParam{
 					Exec: gitpod.F(gitpod.VetoExecParam{
+						Action:   gitpod.F(gitpod.KernelControlsActionUnspecified),
 						Denylist: gitpod.F([]string{"string"}),
 						Enabled:  gitpod.F(true),
 					}),
@@ -198,6 +199,7 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
 				Veto: gitpod.F(gitpod.VetoParam{
 					Exec: gitpod.F(gitpod.VetoExecParam{
+						Action:   gitpod.F(gitpod.KernelControlsActionUnspecified),
 						Denylist: gitpod.F([]string{"string"}),
 						Enabled:  gitpod.F(true),
 					}),
@@ -380,6 +382,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
 				Veto: gitpod.F(gitpod.VetoParam{
 					Exec: gitpod.F(gitpod.VetoExecParam{
+						Action:   gitpod.F(gitpod.KernelControlsActionUnspecified),
 						Denylist: gitpod.F([]string{"string"}),
 						Enabled:  gitpod.F(true),
 					}),

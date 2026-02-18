@@ -69,7 +69,8 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				AllowedVersions: gitpod.F([]string{"string"}),
 			},
 		}),
-		ExecutableDenyList: gitpod.F(gitpod.ExecutableDenyListParam{
+		ExecutableDenyList: gitpod.F(gitpod.VetoExecPolicyParam{
+			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
 			Enabled:     gitpod.F(true),
 			Executables: gitpod.F([]string{"string"}),
 		}),

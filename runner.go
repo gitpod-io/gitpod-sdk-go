@@ -589,11 +589,12 @@ const (
 	RunnerCapabilityPrebuildsBeforeSnapshotTrigger RunnerCapability = "RUNNER_CAPABILITY_PREBUILDS_BEFORE_SNAPSHOT_TRIGGER"
 	RunnerCapabilityListScmOrganizations           RunnerCapability = "RUNNER_CAPABILITY_LIST_SCM_ORGANIZATIONS"
 	RunnerCapabilityCheckRepositoryAccess          RunnerCapability = "RUNNER_CAPABILITY_CHECK_REPOSITORY_ACCESS"
+	RunnerCapabilityRunnerSideAgent                RunnerCapability = "RUNNER_CAPABILITY_RUNNER_SIDE_AGENT"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent:
 		return true
 	}
 	return false
