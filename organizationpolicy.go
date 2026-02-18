@@ -171,6 +171,8 @@ func (r crowdStrikeConfigJSON) RawJSON() string {
 // ExecutableDenyList contains executables that are blocked from execution in
 // environments.
 type ExecutableDenyList struct {
+	// action specifies what action kernel-level controls take on policy violations
+	Action KernelControlsAction `json:"action"`
 	// enabled controls whether executable blocking is active
 	Enabled bool `json:"enabled"`
 	// executables is the list of executable paths or names to block
@@ -181,6 +183,7 @@ type ExecutableDenyList struct {
 // executableDenyListJSON contains the JSON metadata for the struct
 // [ExecutableDenyList]
 type executableDenyListJSON struct {
+	Action      apijson.Field
 	Enabled     apijson.Field
 	Executables apijson.Field
 	raw         string
@@ -198,6 +201,8 @@ func (r executableDenyListJSON) RawJSON() string {
 // ExecutableDenyList contains executables that are blocked from execution in
 // environments.
 type ExecutableDenyListParam struct {
+	// action specifies what action kernel-level controls take on policy violations
+	Action param.Field[KernelControlsAction] `json:"action"`
 	// enabled controls whether executable blocking is active
 	Enabled param.Field[bool] `json:"enabled"`
 	// executables is the list of executable paths or names to block
@@ -206,6 +211,23 @@ type ExecutableDenyListParam struct {
 
 func (r ExecutableDenyListParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// KernelControlsAction defines how a kernel-level policy violation is handled.
+type KernelControlsAction string
+
+const (
+	KernelControlsActionUnspecified KernelControlsAction = "KERNEL_CONTROLS_ACTION_UNSPECIFIED"
+	KernelControlsActionBlock       KernelControlsAction = "KERNEL_CONTROLS_ACTION_BLOCK"
+	KernelControlsActionAudit       KernelControlsAction = "KERNEL_CONTROLS_ACTION_AUDIT"
+)
+
+func (r KernelControlsAction) IsKnown() bool {
+	switch r {
+	case KernelControlsActionUnspecified, KernelControlsActionBlock, KernelControlsActionAudit:
+		return true
+	}
+	return false
 }
 
 type OrganizationPolicies struct {

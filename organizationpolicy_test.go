@@ -70,6 +70,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 			},
 		}),
 		ExecutableDenyList: gitpod.F(gitpod.ExecutableDenyListParam{
+			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
 			Enabled:     gitpod.F(true),
 			Executables: gitpod.F([]string{"string"}),
 		}),
