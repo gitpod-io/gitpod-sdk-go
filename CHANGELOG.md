@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.12.0 (2026-02-18)
+
+Full Changelog: [v0.11.0...v0.12.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.11.0...v0.12.0)
+
+### Features
+
+* **api:** add audit_only to VetoExec and ExecutableDenyList ([3957348](https://github.com/gitpod-io/gitpod-sdk-go/commit/39573483e5b4013a283ce4075a6b71e79b1d1ce4))
+* **api:** add runner_side_agent capability to RunnerCapability ([926e67e](https://github.com/gitpod-io/gitpod-sdk-go/commit/926e67e5bd00498dc91b7735414c796b5db3784a))
+* **api:** add WarmpoolAdmin and WarmpoolViewer roles to ResourceRole ([e00b441](https://github.com/gitpod-io/gitpod-sdk-go/commit/e00b441d8ed0c1a0eb7d373415e373000e5b9439))
+
+
+### Bug Fixes
+
+* **types:** rename ExecutableDenyList to VetoExecPolicy in organization policies ([8353604](https://github.com/gitpod-io/gitpod-sdk-go/commit/8353604971c6a4d35ed29ddd046120e424fefc8b))
+
 ## 0.11.0 (2026-02-11)
 
 Full Changelog: [v0.10.0...v0.11.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.10.0...v0.11.0)
