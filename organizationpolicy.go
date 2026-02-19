@@ -233,8 +233,6 @@ type OrganizationPolicies struct {
 	// restrictions. If empty or not set for an editor, we will use the latest version
 	// of the editor
 	EditorVersionRestrictions map[string]OrganizationPoliciesEditorVersionRestriction `json:"editorVersionRestrictions"`
-	// executable_deny_list contains the veto exec policy for environments.
-	ExecutableDenyList VetoExecPolicy `json:"executableDenyList"`
 	// maximum_environment_lifetime controls for how long environments are allowed to
 	// be reused. 0 means no maximum lifetime. Maximum duration is 180 days (15552000
 	// seconds).
@@ -246,8 +244,10 @@ type OrganizationPolicies struct {
 	// security_agent_policy contains security agent configuration for the
 	// organization. When configured, security agents are automatically deployed to all
 	// environments.
-	SecurityAgentPolicy SecurityAgentPolicy      `json:"securityAgentPolicy"`
-	JSON                organizationPoliciesJSON `json:"-"`
+	SecurityAgentPolicy SecurityAgentPolicy `json:"securityAgentPolicy"`
+	// veto_exec_policy contains the veto exec policy for environments.
+	VetoExecPolicy VetoExecPolicy           `json:"vetoExecPolicy"`
+	JSON           organizationPoliciesJSON `json:"-"`
 }
 
 // organizationPoliciesJSON contains the JSON metadata for the struct
@@ -268,10 +268,10 @@ type organizationPoliciesJSON struct {
 	RestrictAccountCreationToScim     apijson.Field
 	DeleteArchivedEnvironmentsAfter   apijson.Field
 	EditorVersionRestrictions         apijson.Field
-	ExecutableDenyList                apijson.Field
 	MaximumEnvironmentLifetime        apijson.Field
 	MaximumEnvironmentTimeout         apijson.Field
 	SecurityAgentPolicy               apijson.Field
+	VetoExecPolicy                    apijson.Field
 	raw                               string
 	ExtraFields                       map[string]apijson.Field
 }
@@ -434,8 +434,6 @@ type OrganizationPolicyUpdateParams struct {
 	// editor_version_restrictions restricts which editor versions can be used. Maps
 	// editor ID to version policy with allowed major versions.
 	EditorVersionRestrictions param.Field[map[string]OrganizationPolicyUpdateParamsEditorVersionRestrictions] `json:"editorVersionRestrictions"`
-	// executable_deny_list contains the veto exec policy for environments.
-	ExecutableDenyList param.Field[VetoExecPolicyParam] `json:"executableDenyList"`
 	// maximum_environment_lifetime controls for how long environments are allowed to
 	// be reused. 0 means no maximum lifetime. Maximum duration is 180 days (15552000
 	// seconds).
@@ -468,6 +466,8 @@ type OrganizationPolicyUpdateParams struct {
 	RestrictAccountCreationToScim param.Field[bool] `json:"restrictAccountCreationToScim"`
 	// security_agent_policy contains security agent configuration updates
 	SecurityAgentPolicy param.Field[OrganizationPolicyUpdateParamsSecurityAgentPolicy] `json:"securityAgentPolicy"`
+	// veto_exec_policy contains the veto exec policy for environments.
+	VetoExecPolicy param.Field[VetoExecPolicyParam] `json:"vetoExecPolicy"`
 }
 
 func (r OrganizationPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
