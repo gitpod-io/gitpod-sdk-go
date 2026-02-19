@@ -61,6 +61,7 @@ func TestGroupRoleAssignmentListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.GroupRoleAssignmentListParamsFilter{
 			GroupID:       gitpod.F("groupId"),
 			ResourceID:    gitpod.F("resourceId"),
+			ResourceIDs:   gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			ResourceRoles: gitpod.F([]shared.ResourceRole{shared.ResourceRoleUnspecified}),
 			ResourceTypes: gitpod.F([]shared.ResourceType{shared.ResourceTypeRunner}),
 			UserID:        gitpod.F("userId"),
