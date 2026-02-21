@@ -14,7 +14,7 @@ import (
 )
 
 func TestOrganizationPolicyGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -39,7 +39,7 @@ func TestOrganizationPolicyGet(t *testing.T) {
 }
 
 func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -69,11 +69,6 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				AllowedVersions: gitpod.F([]string{"string"}),
 			},
 		}),
-		ExecutableDenyList: gitpod.F(gitpod.VetoExecPolicyParam{
-			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
-			Enabled:     gitpod.F(true),
-			Executables: gitpod.F([]string{"string"}),
-		}),
 		MaximumEnvironmentLifetime:        gitpod.F("+9125115.360s"),
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
 		MaximumEnvironmentTimeout:         gitpod.F("3600s"),
@@ -93,6 +88,11 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				Image:       gitpod.F("image"),
 				Tags:        gitpod.F("tags"),
 			}),
+		}),
+		VetoExecPolicy: gitpod.F(gitpod.VetoExecPolicyParam{
+			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
+			Enabled:     gitpod.F(true),
+			Executables: gitpod.F([]string{"string"}),
 		}),
 	})
 	if err != nil {

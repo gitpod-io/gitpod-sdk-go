@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.13.0 (2026-02-21)
+
+Full Changelog: [v0.12.0...v0.13.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.12.0...v0.13.0)
+
+### Features
+
+* **api:** add resource_ids to group filters, remove action from veto/policy types ([dca7e89](https://github.com/gitpod-io/gitpod-sdk-go/commit/dca7e8917089556865c9da48f43ee22e3354bdad))
+* **api:** add Sonnet 4.6 model variants to agent supported models ([2d13268](https://github.com/gitpod-io/gitpod-sdk-go/commit/2d1326867ed33b91226cdd03c17cc4966aa5a0ae))
+* **api:** add time range filters to event list method ([7407251](https://github.com/gitpod-io/gitpod-sdk-go/commit/7407251a46ca25ede1377d8486fc02077ced4110))
+
+
+### Bug Fixes
+
+* allow canceling a request while it is waiting to retry ([ec8099b](https://github.com/gitpod-io/gitpod-sdk-go/commit/ec8099b7f44da7197cbdaca0396d2c0b21f01eed))
+* **api:** rename ExecutableDenyList to VetoExecPolicy in organization policies ([59d7ce5](https://github.com/gitpod-io/gitpod-sdk-go/commit/59d7ce52b1626387770b7eab7a5fce73bf5f7d85))
+* **internal:** skip tests that depend on mock server ([0af24f8](https://github.com/gitpod-io/gitpod-sdk-go/commit/0af24f8c3d984471ca831d518773d88f794a2903))
+
+
+### Chores
+
+* **internal:** remove mock server code ([48be3e9](https://github.com/gitpod-io/gitpod-sdk-go/commit/48be3e9a15291c7588193ed32cacfc7ffc98278c))
+* update mock server docs ([8e5bad9](https://github.com/gitpod-io/gitpod-sdk-go/commit/8e5bad965bd13abad2082bc22d1b32bdedcc3816))
+
 ## 0.12.0 (2026-02-18)
 
 Full Changelog: [v0.11.0...v0.12.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.11.0...v0.12.0)

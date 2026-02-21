@@ -7,6 +7,7 @@ import (
 	"errors"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
@@ -15,7 +16,7 @@ import (
 )
 
 func TestEventListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -33,8 +34,10 @@ func TestEventListWithOptionalParams(t *testing.T) {
 		Filter: gitpod.F(gitpod.EventListParamsFilter{
 			ActorIDs:        gitpod.F([]string{"d2c94c27-3b76-4a42-b88c-95a85e392c68"}),
 			ActorPrincipals: gitpod.F([]shared.Principal{shared.PrincipalUser}),
+			From:            gitpod.F(time.Now()),
 			SubjectIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			SubjectTypes:    gitpod.F([]shared.ResourceType{shared.ResourceTypeUnspecified}),
+			To:              gitpod.F(time.Now()),
 		}),
 		Pagination: gitpod.F(gitpod.EventListParamsPagination{
 			Token:    gitpod.F("token"),
