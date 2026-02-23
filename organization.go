@@ -944,7 +944,7 @@ func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err
 // without any special handling for the authenticated user.
 type OrganizationListMembersParamsSort struct {
 	Field param.Field[OrganizationListMembersParamsSortField] `json:"field"`
-	Order param.Field[OrganizationListMembersParamsSortOrder] `json:"order"`
+	Order param.Field[SortOrder]                              `json:"order"`
 }
 
 func (r OrganizationListMembersParamsSort) MarshalJSON() (data []byte, err error) {
@@ -962,22 +962,6 @@ const (
 func (r OrganizationListMembersParamsSortField) IsKnown() bool {
 	switch r {
 	case OrganizationListMembersParamsSortFieldSortFieldUnspecified, OrganizationListMembersParamsSortFieldSortFieldName, OrganizationListMembersParamsSortFieldSortFieldDateJoined:
-		return true
-	}
-	return false
-}
-
-type OrganizationListMembersParamsSortOrder string
-
-const (
-	OrganizationListMembersParamsSortOrderSortOrderUnspecified OrganizationListMembersParamsSortOrder = "SORT_ORDER_UNSPECIFIED"
-	OrganizationListMembersParamsSortOrderSortOrderAsc         OrganizationListMembersParamsSortOrder = "SORT_ORDER_ASC"
-	OrganizationListMembersParamsSortOrderSortOrderDesc        OrganizationListMembersParamsSortOrder = "SORT_ORDER_DESC"
-)
-
-func (r OrganizationListMembersParamsSortOrder) IsKnown() bool {
-	switch r {
-	case OrganizationListMembersParamsSortOrderSortOrderUnspecified, OrganizationListMembersParamsSortOrderSortOrderAsc, OrganizationListMembersParamsSortOrderSortOrderDesc:
 		return true
 	}
 	return false
