@@ -1044,6 +1044,32 @@ func (r RecommendedEditorsEditorParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type SortParam struct {
+	// Field name to sort by, in camelCase.
+	Field param.Field[string]    `json:"field"`
+	Order param.Field[SortOrder] `json:"order"`
+}
+
+func (r SortParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type SortOrder string
+
+const (
+	SortOrderUnspecified SortOrder = "SORT_ORDER_UNSPECIFIED"
+	SortOrderAsc         SortOrder = "SORT_ORDER_ASC"
+	SortOrderDesc        SortOrder = "SORT_ORDER_DESC"
+)
+
+func (r SortOrder) IsKnown() bool {
+	switch r {
+	case SortOrderUnspecified, SortOrderAsc, SortOrderDesc:
+		return true
+	}
+	return false
+}
+
 type ProjectNewResponse struct {
 	Project Project                `json:"project"`
 	JSON    projectNewResponseJSON `json:"-"`
@@ -1371,6 +1397,15 @@ type ProjectListParams struct {
 	Filter   param.Field[ProjectListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing organizations
 	Pagination param.Field[ProjectListParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. Defaults to popularity descending.
+	//
+	// Supported fields:
+	//
+	//   - "id": Sort by project ID (UUID v7, effectively creation order). Produces a
+	//     stable, deterministic result set suitable for consistent pagination.
+	//   - "popularity": Sort by popularity — a precomputed score based on recent
+	//     environment creation activity. Updated periodically by a background job.
+	Sort param.Field[SortParam] `json:"sort"`
 }
 
 func (r ProjectListParams) MarshalJSON() (data []byte, err error) {
