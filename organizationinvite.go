@@ -93,7 +93,7 @@ func (r *OrganizationInviteService) GetSummary(ctx context.Context, body Organiz
 type OrganizationInvite struct {
 	// invite_id is the unique identifier of the invite to join the organization. Use
 	// JoinOrganization with this ID to join the organization.
-	InviteID string                 `json:"inviteId,required" format:"uuid"`
+	InviteID string                 `json:"inviteId" api:"required" format:"uuid"`
 	JSON     organizationInviteJSON `json:"-"`
 }
 
@@ -114,7 +114,7 @@ func (r organizationInviteJSON) RawJSON() string {
 }
 
 type OrganizationInviteNewResponse struct {
-	Invite OrganizationInvite                `json:"invite,required"`
+	Invite OrganizationInvite                `json:"invite" api:"required"`
 	JSON   organizationInviteNewResponseJSON `json:"-"`
 }
 
@@ -135,7 +135,7 @@ func (r organizationInviteNewResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteGetResponse struct {
-	Invite OrganizationInvite                `json:"invite,required"`
+	Invite OrganizationInvite                `json:"invite" api:"required"`
 	JSON   organizationInviteGetResponseJSON `json:"-"`
 }
 
@@ -156,7 +156,7 @@ func (r organizationInviteGetResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteGetSummaryResponse struct {
-	OrganizationID          string                                   `json:"organizationId,required" format:"uuid"`
+	OrganizationID          string                                   `json:"organizationId" api:"required" format:"uuid"`
 	OrganizationMemberCount int64                                    `json:"organizationMemberCount"`
 	OrganizationName        string                                   `json:"organizationName"`
 	JSON                    organizationInviteGetSummaryResponseJSON `json:"-"`
@@ -181,7 +181,7 @@ func (r organizationInviteGetSummaryResponseJSON) RawJSON() string {
 }
 
 type OrganizationInviteNewParams struct {
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationInviteNewParams) MarshalJSON() (data []byte, err error) {
@@ -189,7 +189,7 @@ func (r OrganizationInviteNewParams) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationInviteGetParams struct {
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationInviteGetParams) MarshalJSON() (data []byte, err error) {
@@ -197,7 +197,7 @@ func (r OrganizationInviteGetParams) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationInviteGetSummaryParams struct {
-	InviteID param.Field[string] `json:"inviteId,required" format:"uuid"`
+	InviteID param.Field[string] `json:"inviteId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationInviteGetSummaryParams) MarshalJSON() (data []byte, err error) {

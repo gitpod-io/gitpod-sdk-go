@@ -874,7 +874,7 @@ func (r SearchMode) IsKnown() bool {
 }
 
 type RunnerNewResponse struct {
-	Runner Runner `json:"runner,required"`
+	Runner Runner `json:"runner" api:"required"`
 	// deprecated, will be removed. Use exchange_token instead.
 	//
 	// Deprecated: deprecated
@@ -905,7 +905,7 @@ func (r runnerNewResponseJSON) RawJSON() string {
 }
 
 type RunnerGetResponse struct {
-	Runner Runner                `json:"runner,required"`
+	Runner Runner                `json:"runner" api:"required"`
 	JSON   runnerGetResponseJSON `json:"-"`
 }
 
@@ -1059,7 +1059,7 @@ func (r runnerCheckRepositoryAccessResponseJSON) RawJSON() string {
 type RunnerNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs and support bundle
 	// of the runner
-	AccessToken string                         `json:"accessToken,required"`
+	AccessToken string                         `json:"accessToken" api:"required"`
 	JSON        runnerNewLogsTokenResponseJSON `json:"-"`
 }
 

@@ -100,13 +100,13 @@ func (r *OrganizationPolicyService) Update(ctx context.Context, body Organizatio
 type AgentPolicy struct {
 	// command_deny_list contains a list of commands that agents are not allowed to
 	// execute
-	CommandDenyList []string `json:"commandDenyList,required"`
+	CommandDenyList []string `json:"commandDenyList" api:"required"`
 	// mcp_disabled controls whether MCP (Model Context Protocol) is disabled for
 	// agents
-	McpDisabled bool `json:"mcpDisabled,required"`
+	McpDisabled bool `json:"mcpDisabled" api:"required"`
 	// scm_tools_disabled controls whether SCM (Source Control Management) tools are
 	// disabled for agents
-	ScmToolsDisabled bool `json:"scmToolsDisabled,required"`
+	ScmToolsDisabled bool `json:"scmToolsDisabled" api:"required"`
 	// scm_tools_allowed_group_id restricts SCM tools access to members of this group.
 	// Empty means no restriction (all users can use SCM tools if not disabled).
 	ScmToolsAllowedGroupID string          `json:"scmToolsAllowedGroupId"`
@@ -187,43 +187,43 @@ func (r KernelControlsAction) IsKnown() bool {
 
 type OrganizationPolicies struct {
 	// agent_policy contains agent-specific policy settings
-	AgentPolicy AgentPolicy `json:"agentPolicy,required"`
+	AgentPolicy AgentPolicy `json:"agentPolicy" api:"required"`
 	// allowed_editor_ids is the list of editor IDs that are allowed to be used in the
 	// organization
-	AllowedEditorIDs []string `json:"allowedEditorIds,required"`
+	AllowedEditorIDs []string `json:"allowedEditorIds" api:"required"`
 	// allow_local_runners controls whether local runners are allowed to be used in the
 	// organization
-	AllowLocalRunners bool `json:"allowLocalRunners,required"`
+	AllowLocalRunners bool `json:"allowLocalRunners" api:"required"`
 	// default_editor_id is the default editor ID to be used when a user doesn't
 	// specify one
-	DefaultEditorID string `json:"defaultEditorId,required"`
+	DefaultEditorID string `json:"defaultEditorId" api:"required"`
 	// default_environment_image is the default container image when none is defined in
 	// repo
-	DefaultEnvironmentImage string `json:"defaultEnvironmentImage,required"`
+	DefaultEnvironmentImage string `json:"defaultEnvironmentImage" api:"required"`
 	// maximum_environments_per_user limits total environments (running or stopped) per
 	// user
-	MaximumEnvironmentsPerUser string `json:"maximumEnvironmentsPerUser,required"`
+	MaximumEnvironmentsPerUser string `json:"maximumEnvironmentsPerUser" api:"required"`
 	// maximum_running_environments_per_user limits simultaneously running environments
 	// per user
-	MaximumRunningEnvironmentsPerUser string `json:"maximumRunningEnvironmentsPerUser,required"`
+	MaximumRunningEnvironmentsPerUser string `json:"maximumRunningEnvironmentsPerUser" api:"required"`
 	// members_create_projects controls whether members can create projects
-	MembersCreateProjects bool `json:"membersCreateProjects,required"`
+	MembersCreateProjects bool `json:"membersCreateProjects" api:"required"`
 	// members_require_projects controls whether environments can only be created from
 	// projects by non-admin users
-	MembersRequireProjects bool `json:"membersRequireProjects,required"`
+	MembersRequireProjects bool `json:"membersRequireProjects" api:"required"`
 	// organization_id is the ID of the organization
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// port_sharing_disabled controls whether user-initiated port sharing is disabled
 	// in the organization. System ports (VS Code Browser, agents) are always exempt
 	// from this policy.
-	PortSharingDisabled bool `json:"portSharingDisabled,required"`
+	PortSharingDisabled bool `json:"portSharingDisabled" api:"required"`
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
-	RequireCustomDomainAccess bool `json:"requireCustomDomainAccess,required"`
+	RequireCustomDomainAccess bool `json:"requireCustomDomainAccess" api:"required"`
 	// restrict_account_creation_to_scim controls whether account creation is
 	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
 	// the organization, only users provisioned via SCIM can create accounts.
-	RestrictAccountCreationToScim bool `json:"restrictAccountCreationToScim,required"`
+	RestrictAccountCreationToScim bool `json:"restrictAccountCreationToScim" api:"required"`
 	// delete_archived_environments_after controls how long archived environments are
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
@@ -379,7 +379,7 @@ func (r VetoExecPolicyParam) MarshalJSON() (data []byte, err error) {
 }
 
 type OrganizationPolicyGetResponse struct {
-	Policies OrganizationPolicies              `json:"policies,required"`
+	Policies OrganizationPolicies              `json:"policies" api:"required"`
 	JSON     organizationPolicyGetResponseJSON `json:"-"`
 }
 
@@ -403,7 +403,7 @@ type OrganizationPolicyUpdateResponse = interface{}
 
 type OrganizationPolicyGetParams struct {
 	// organization_id is the ID of the organization to retrieve policies for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationPolicyGetParams) MarshalJSON() (data []byte, err error) {
@@ -412,7 +412,7 @@ func (r OrganizationPolicyGetParams) MarshalJSON() (data []byte, err error) {
 
 type OrganizationPolicyUpdateParams struct {
 	// organization_id is the ID of the organization to update policies for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// agent_policy contains agent-specific policy settings
 	AgentPolicy param.Field[OrganizationPolicyUpdateParamsAgentPolicy] `json:"agentPolicy"`
 	// allowed_editor_ids is the list of editor IDs that are allowed to be used in the

@@ -23,7 +23,7 @@ type Error struct {
 	// [google.rpc.Status.details][google.rpc.Status.details] field, or localized by
 	// the client.
 	Message     string                 `json:"message"`
-	ExtraFields map[string]interface{} `json:"-,extras"`
+	ExtraFields map[string]interface{} `json:"-" api:"extrafields"`
 	JSON        errorJSON              `json:"-"`
 	StatusCode  int
 	Request     *http.Request

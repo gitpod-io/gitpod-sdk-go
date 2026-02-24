@@ -328,7 +328,7 @@ func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body Env
 }
 
 type Service struct {
-	ID            string          `json:"id,required" format:"uuid"`
+	ID            string          `json:"id" api:"required" format:"uuid"`
 	EnvironmentID string          `json:"environmentId" format:"uuid"`
 	Metadata      ServiceMetadata `json:"metadata"`
 	Spec          ServiceSpec     `json:"spec"`
@@ -643,7 +643,7 @@ func (r serviceStatusJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationServiceNewResponse struct {
-	Service Service                                     `json:"service,required"`
+	Service Service                                     `json:"service" api:"required"`
 	JSON    environmentAutomationServiceNewResponseJSON `json:"-"`
 }
 
@@ -664,7 +664,7 @@ func (r environmentAutomationServiceNewResponseJSON) RawJSON() string {
 }
 
 type EnvironmentAutomationServiceGetResponse struct {
-	Service Service                                     `json:"service,required"`
+	Service Service                                     `json:"service" api:"required"`
 	JSON    environmentAutomationServiceGetResponseJSON `json:"-"`
 }
 

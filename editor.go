@@ -171,10 +171,10 @@ func (r *EditorService) ResolveURL(ctx context.Context, body EditorResolveURLPar
 }
 
 type Editor struct {
-	ID                       string `json:"id,required" format:"uuid"`
-	InstallationInstructions string `json:"installationInstructions,required"`
-	Name                     string `json:"name,required"`
-	URLTemplate              string `json:"urlTemplate,required"`
+	ID                       string `json:"id" api:"required" format:"uuid"`
+	InstallationInstructions string `json:"installationInstructions" api:"required"`
+	Name                     string `json:"name" api:"required"`
+	URLTemplate              string `json:"urlTemplate" api:"required"`
 	Alias                    string `json:"alias"`
 	IconURL                  string `json:"iconUrl"`
 	ShortDescription         string `json:"shortDescription"`
@@ -207,7 +207,7 @@ func (r editorJSON) RawJSON() string {
 
 type EditorVersion struct {
 	// version is the version string of the editor Examples for JetBrains: 2025.2
-	Version string            `json:"version,required"`
+	Version string            `json:"version" api:"required"`
 	JSON    editorVersionJSON `json:"-"`
 }
 
@@ -228,7 +228,7 @@ func (r editorVersionJSON) RawJSON() string {
 
 type EditorGetResponse struct {
 	// editor contains the editor
-	Editor Editor                `json:"editor,required"`
+	Editor Editor                `json:"editor" api:"required"`
 	JSON   editorGetResponseJSON `json:"-"`
 }
 
@@ -250,7 +250,7 @@ func (r editorGetResponseJSON) RawJSON() string {
 
 type EditorResolveURLResponse struct {
 	// url is the resolved editor URL
-	URL  string                       `json:"url,required"`
+	URL  string                       `json:"url" api:"required"`
 	JSON editorResolveURLResponseJSON `json:"-"`
 }
 
@@ -272,7 +272,7 @@ func (r editorResolveURLResponseJSON) RawJSON() string {
 
 type EditorGetParams struct {
 	// id is the ID of the editor to get
-	ID param.Field[string] `json:"id,required"`
+	ID param.Field[string] `json:"id" api:"required"`
 }
 
 func (r EditorGetParams) MarshalJSON() (data []byte, err error) {
@@ -327,11 +327,11 @@ func (r EditorListParamsPagination) MarshalJSON() (data []byte, err error) {
 
 type EditorResolveURLParams struct {
 	// editorId is the ID of the editor to resolve the URL for
-	EditorID param.Field[string] `json:"editorId,required" format:"uuid"`
+	EditorID param.Field[string] `json:"editorId" api:"required" format:"uuid"`
 	// environmentId is the ID of the environment to resolve the URL for
-	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
+	EnvironmentID param.Field[string] `json:"environmentId" api:"required" format:"uuid"`
 	// organizationId is the ID of the organization to resolve the URL for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// version is the editor version to use If not provided, the latest version will be
 	// installed
 	//

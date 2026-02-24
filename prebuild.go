@@ -200,11 +200,11 @@ func (r *PrebuildService) NewLogsToken(ctx context.Context, body PrebuildNewLogs
 // environment startup times.
 type Prebuild struct {
 	// metadata contains organizational and ownership information
-	Metadata PrebuildMetadata `json:"metadata,required"`
+	Metadata PrebuildMetadata `json:"metadata" api:"required"`
 	// spec contains the configuration used to create this prebuild
-	Spec PrebuildSpec `json:"spec,required"`
+	Spec PrebuildSpec `json:"spec" api:"required"`
 	// status contains the current status and progress of the prebuild
-	Status PrebuildStatus `json:"status,required"`
+	Status PrebuildStatus `json:"status" api:"required"`
 	// id is the unique identifier for the prebuild
 	ID   string       `json:"id" format:"uuid"`
 	JSON prebuildJSON `json:"-"`
@@ -231,13 +231,13 @@ func (r prebuildJSON) RawJSON() string {
 // PrebuildMetadata contains metadata about the prebuild
 type PrebuildMetadata struct {
 	// created_at is when the prebuild was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// creator is the identity of who created the prebuild. For manual prebuilds, this
 	// is the user who triggered it. For scheduled prebuilds, this is the configured
 	// executor.
-	Creator shared.Subject `json:"creator,required"`
+	Creator shared.Subject `json:"creator" api:"required"`
 	// updated_at is when the prebuild was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// environment_class_id is the environment class used to create this prebuild.
 	// While the prebuild is created with a specific environment class, environments
 	// with different classes (e.g., smaller or larger instance sizes) can be created
@@ -357,7 +357,7 @@ func (r PrebuildSpecParam) MarshalJSON() (data []byte, err error) {
 // PrebuildStatus contains the current status and progress of a prebuild
 type PrebuildStatus struct {
 	// phase is the current phase of the prebuild lifecycle
-	Phase PrebuildPhase `json:"phase,required"`
+	Phase PrebuildPhase `json:"phase" api:"required"`
 	// completion_time is when the prebuild completed (successfully or with failure)
 	CompletionTime time.Time `json:"completionTime" format:"date-time"`
 	// environment_id is the ID of the environment used to create this prebuild. This
@@ -427,7 +427,7 @@ func (r PrebuildTrigger) IsKnown() bool {
 type PrebuildNewResponse struct {
 	// Prebuild represents a prebuild for a project that creates a snapshot for faster
 	// environment startup times.
-	Prebuild Prebuild                `json:"prebuild,required"`
+	Prebuild Prebuild                `json:"prebuild" api:"required"`
 	JSON     prebuildNewResponseJSON `json:"-"`
 }
 
@@ -450,7 +450,7 @@ func (r prebuildNewResponseJSON) RawJSON() string {
 type PrebuildGetResponse struct {
 	// Prebuild represents a prebuild for a project that creates a snapshot for faster
 	// environment startup times.
-	Prebuild Prebuild                `json:"prebuild,required"`
+	Prebuild Prebuild                `json:"prebuild" api:"required"`
 	JSON     prebuildGetResponseJSON `json:"-"`
 }
 
@@ -475,7 +475,7 @@ type PrebuildDeleteResponse = interface{}
 type PrebuildCancelResponse struct {
 	// Prebuild represents a prebuild for a project that creates a snapshot for faster
 	// environment startup times.
-	Prebuild Prebuild                   `json:"prebuild,required"`
+	Prebuild Prebuild                   `json:"prebuild" api:"required"`
 	JSON     prebuildCancelResponseJSON `json:"-"`
 }
 
@@ -497,7 +497,7 @@ func (r prebuildCancelResponseJSON) RawJSON() string {
 
 type PrebuildNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs of the prebuild
-	AccessToken string                           `json:"accessToken,required"`
+	AccessToken string                           `json:"accessToken" api:"required"`
 	JSON        prebuildNewLogsTokenResponseJSON `json:"-"`
 }
 
@@ -519,9 +519,9 @@ func (r prebuildNewLogsTokenResponseJSON) RawJSON() string {
 
 type PrebuildNewParams struct {
 	// project_id specifies the project to create a prebuild for
-	ProjectID param.Field[string] `json:"projectId,required" format:"uuid"`
+	ProjectID param.Field[string] `json:"projectId" api:"required" format:"uuid"`
 	// spec contains the configuration for creating the prebuild
-	Spec param.Field[PrebuildSpecParam] `json:"spec,required"`
+	Spec param.Field[PrebuildSpecParam] `json:"spec" api:"required"`
 	// environment_class_id specifies which environment class to use for the prebuild.
 	// If not specified, uses the project's default environment class.
 	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
@@ -533,7 +533,7 @@ func (r PrebuildNewParams) MarshalJSON() (data []byte, err error) {
 
 type PrebuildGetParams struct {
 	// prebuild_id specifies the prebuild to retrieve
-	PrebuildID param.Field[string] `json:"prebuildId,required" format:"uuid"`
+	PrebuildID param.Field[string] `json:"prebuildId" api:"required" format:"uuid"`
 }
 
 func (r PrebuildGetParams) MarshalJSON() (data []byte, err error) {
@@ -595,7 +595,7 @@ func (r PrebuildListParamsPagination) MarshalJSON() (data []byte, err error) {
 
 type PrebuildDeleteParams struct {
 	// prebuild_id specifies the prebuild to delete
-	PrebuildID param.Field[string] `json:"prebuildId,required" format:"uuid"`
+	PrebuildID param.Field[string] `json:"prebuildId" api:"required" format:"uuid"`
 }
 
 func (r PrebuildDeleteParams) MarshalJSON() (data []byte, err error) {
@@ -604,7 +604,7 @@ func (r PrebuildDeleteParams) MarshalJSON() (data []byte, err error) {
 
 type PrebuildCancelParams struct {
 	// prebuild_id specifies the prebuild to cancel
-	PrebuildID param.Field[string] `json:"prebuildId,required" format:"uuid"`
+	PrebuildID param.Field[string] `json:"prebuildId" api:"required" format:"uuid"`
 }
 
 func (r PrebuildCancelParams) MarshalJSON() (data []byte, err error) {
@@ -615,7 +615,7 @@ type PrebuildNewLogsTokenParams struct {
 	// prebuild_id specifies the prebuild for which the logs token should be created.
 	//
 	// +required
-	PrebuildID param.Field[string] `json:"prebuildId,required" format:"uuid"`
+	PrebuildID param.Field[string] `json:"prebuildId" api:"required" format:"uuid"`
 }
 
 func (r PrebuildNewLogsTokenParams) MarshalJSON() (data []byte, err error) {

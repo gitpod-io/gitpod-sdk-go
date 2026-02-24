@@ -132,7 +132,7 @@ func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedPar
 
 type User struct {
 	// id is a UUID of the user
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// avatar_url is a link to the user avatar
 	AvatarURL string `json:"avatarUrl"`
 	// created_at is the creation time
@@ -174,7 +174,7 @@ func (r userJSON) RawJSON() string {
 type UserDeleteUserResponse = interface{}
 
 type UserGetAuthenticatedUserResponse struct {
-	User User                                 `json:"user,required"`
+	User User                                 `json:"user" api:"required"`
 	JSON userGetAuthenticatedUserResponseJSON `json:"-"`
 }
 
@@ -195,7 +195,7 @@ func (r userGetAuthenticatedUserResponseJSON) RawJSON() string {
 }
 
 type UserGetUserResponse struct {
-	User User                    `json:"user,required"`
+	User User                    `json:"user" api:"required"`
 	JSON userGetUserResponseJSON `json:"-"`
 }
 

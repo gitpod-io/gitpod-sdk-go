@@ -520,7 +520,7 @@ type Project struct {
 	// Use `environment_classes` instead.
 	//
 	// Deprecated: deprecated
-	EnvironmentClass shared.ProjectEnvironmentClass `json:"environmentClass,required"`
+	EnvironmentClass shared.ProjectEnvironmentClass `json:"environmentClass" api:"required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -872,7 +872,7 @@ func (r projectPrebuildConfigurationJSON) RawJSON() string {
 type ProjectPrebuildConfigurationTrigger struct {
 	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
 	// actual start time may vary slightly to distribute system load.
-	DailySchedule ProjectPrebuildConfigurationTriggerDailySchedule `json:"dailySchedule,required"`
+	DailySchedule ProjectPrebuildConfigurationTriggerDailySchedule `json:"dailySchedule" api:"required"`
 	JSON          projectPrebuildConfigurationTriggerJSON          `json:"-"`
 }
 
@@ -949,7 +949,7 @@ func (r ProjectPrebuildConfigurationParam) MarshalJSON() (data []byte, err error
 type ProjectPrebuildConfigurationTriggerParam struct {
 	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
 	// actual start time may vary slightly to distribute system load.
-	DailySchedule param.Field[ProjectPrebuildConfigurationTriggerDailyScheduleParam] `json:"dailySchedule,required"`
+	DailySchedule param.Field[ProjectPrebuildConfigurationTriggerDailyScheduleParam] `json:"dailySchedule" api:"required"`
 }
 
 func (r ProjectPrebuildConfigurationTriggerParam) MarshalJSON() (data []byte, err error) {
@@ -1317,7 +1317,7 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 
 type ProjectNewParams struct {
 	// initializer is the content initializer
-	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
+	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer" api:"required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -1471,7 +1471,7 @@ func (r ProjectBulkNewParams) MarshalJSON() (data []byte, err error) {
 
 type ProjectBulkNewParamsProject struct {
 	// initializer is the content initializer
-	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
+	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer" api:"required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
 	//

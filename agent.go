@@ -334,7 +334,7 @@ type AgentCodeContext struct {
 	// Pull request context - optional metadata about the PR being worked on This is
 	// populated when the agent execution is triggered by a PR workflow or when
 	// explicitly provided through the browser extension
-	PullRequest AgentCodeContextPullRequest `json:"pullRequest,nullable"`
+	PullRequest AgentCodeContextPullRequest `json:"pullRequest" api:"nullable"`
 	JSON        agentCodeContextJSON        `json:"-"`
 }
 
@@ -744,7 +744,7 @@ type AgentExecutionMetadata struct {
 	// workflow_action_id is set when this agent execution was created as part of a
 	// workflow. Used to correlate agent executions with their parent workflow
 	// execution action.
-	WorkflowActionID string                     `json:"workflowActionId,nullable" format:"uuid"`
+	WorkflowActionID string                     `json:"workflowActionId" api:"nullable" format:"uuid"`
 	JSON             agentExecutionMetadataJSON `json:"-"`
 }
 
