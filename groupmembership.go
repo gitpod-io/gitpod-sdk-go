@@ -282,7 +282,7 @@ func (r GroupMembershipNewParams) MarshalJSON() (data []byte, err error) {
 
 type GroupMembershipGetParams struct {
 	// Subject to check membership for
-	Subject param.Field[shared.SubjectParam] `json:"subject,required"`
+	Subject param.Field[shared.SubjectParam] `json:"subject" api:"required"`
 	GroupID param.Field[string]              `json:"groupId" format:"uuid"`
 }
 

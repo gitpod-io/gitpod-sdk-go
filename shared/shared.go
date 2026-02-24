@@ -83,10 +83,10 @@ func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentClass struct {
 	// id is the unique identifier of the environment class
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
-	RunnerID string `json:"runnerId,required"`
+	RunnerID string `json:"runnerId" api:"required"`
 	// configuration describes the configuration of the environment class
 	Configuration []FieldValue `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -122,10 +122,10 @@ func (r environmentClassJSON) RawJSON() string {
 
 type EnvironmentClassParam struct {
 	// id is the unique identifier of the environment class
-	ID param.Field[string] `json:"id,required"`
+	ID param.Field[string] `json:"id" api:"required"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
-	RunnerID param.Field[string] `json:"runnerId,required"`
+	RunnerID param.Field[string] `json:"runnerId" api:"required"`
 	// configuration describes the configuration of the environment class
 	Configuration param.Field[[]FieldValueParam] `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -189,7 +189,7 @@ func (r EnvironmentVariableItemParam) MarshalJSON() (data []byte, err error) {
 // EnvironmentVariableSource specifies a source for an environment variable value.
 type EnvironmentVariableSource struct {
 	// secret_ref references a secret by ID.
-	SecretRef SecretRef                     `json:"secretRef,required"`
+	SecretRef SecretRef                     `json:"secretRef" api:"required"`
 	JSON      environmentVariableSourceJSON `json:"-"`
 }
 
@@ -212,7 +212,7 @@ func (r environmentVariableSourceJSON) RawJSON() string {
 // EnvironmentVariableSource specifies a source for an environment variable value.
 type EnvironmentVariableSourceParam struct {
 	// secret_ref references a secret by ID.
-	SecretRef param.Field[SecretRefParam] `json:"secretRef,required"`
+	SecretRef param.Field[SecretRefParam] `json:"secretRef" api:"required"`
 }
 
 func (r EnvironmentVariableSourceParam) MarshalJSON() (data []byte, err error) {
@@ -254,9 +254,9 @@ func (r FieldValueParam) MarshalJSON() (data []byte, err error) {
 type Gateway struct {
 	// name is the human-readable name of the gateway. name is unique across all
 	// gateways.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// url of the gateway
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// region is the geographical region where the gateway is located
 	Region string      `json:"region"`
 	JSON   gatewayJSON `json:"-"`
@@ -661,7 +661,7 @@ func (r SubjectParam) MarshalJSON() (data []byte, err error) {
 }
 
 type Task struct {
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// dependencies specifies the IDs of the automations this task depends on.
 	DependsOn     []string     `json:"dependsOn" format:"uuid"`
 	EnvironmentID string       `json:"environmentId" format:"uuid"`
@@ -690,7 +690,7 @@ func (r taskJSON) RawJSON() string {
 }
 
 type TaskExecution struct {
-	ID       string                `json:"id,required" format:"uuid"`
+	ID       string                `json:"id" api:"required" format:"uuid"`
 	Metadata TaskExecutionMetadata `json:"metadata"`
 	Spec     TaskExecutionSpec     `json:"spec"`
 	Status   TaskExecutionStatus   `json:"status"`

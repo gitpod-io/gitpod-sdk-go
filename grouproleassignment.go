@@ -205,7 +205,7 @@ type RoleAssignment struct {
 	// RESOURCE_ROLE_UNSPECIFIED means this is a direct share (manually created).
 	// Non-zero (e.g., ORG_PROJECTS_ADMIN, ORG_RUNNERS_ADMIN) means this assignment was
 	// derived from an org-level role.
-	DerivedFromOrgRole shared.ResourceRole `json:"derivedFromOrgRole,nullable"`
+	DerivedFromOrgRole shared.ResourceRole `json:"derivedFromOrgRole" api:"nullable"`
 	// Group identifier
 	GroupID string `json:"groupId" format:"uuid"`
 	// Organization identifier

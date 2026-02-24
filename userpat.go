@@ -446,7 +446,7 @@ func (r personalAccessTokenJSON) RawJSON() string {
 type UserPatDeleteResponse = interface{}
 
 type UserPatGetResponse struct {
-	Pat  PersonalAccessToken    `json:"pat,required"`
+	Pat  PersonalAccessToken    `json:"pat" api:"required"`
 	JSON userPatGetResponseJSON `json:"-"`
 }
 

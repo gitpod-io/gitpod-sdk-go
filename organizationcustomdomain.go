@@ -129,15 +129,15 @@ func (r *OrganizationCustomDomainService) Delete(ctx context.Context, body Organ
 // CustomDomain represents a custom domain configuration for an organization
 type CustomDomain struct {
 	// id is the unique identifier of the custom domain
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// created_at is when the custom domain was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// domain_name is the custom domain name
-	DomainName string `json:"domainName,required"`
+	DomainName string `json:"domainName" api:"required"`
 	// organization_id is the ID of the organization this custom domain belongs to
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// updated_at is when the custom domain was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// aws_account_id is the AWS account ID (deprecated: use cloud_account_id)
 	//
 	// Deprecated: deprecated
@@ -193,7 +193,7 @@ func (r CustomDomainProvider) IsKnown() bool {
 // CreateCustomDomainResponse is the response message for creating a custom domain
 type OrganizationCustomDomainNewResponse struct {
 	// custom_domain is the created custom domain
-	CustomDomain CustomDomain                            `json:"customDomain,required"`
+	CustomDomain CustomDomain                            `json:"customDomain" api:"required"`
 	JSON         organizationCustomDomainNewResponseJSON `json:"-"`
 }
 
@@ -215,7 +215,7 @@ func (r organizationCustomDomainNewResponseJSON) RawJSON() string {
 
 type OrganizationCustomDomainGetResponse struct {
 	// CustomDomain represents a custom domain configuration for an organization
-	CustomDomain CustomDomain                            `json:"customDomain,required"`
+	CustomDomain CustomDomain                            `json:"customDomain" api:"required"`
 	JSON         organizationCustomDomainGetResponseJSON `json:"-"`
 }
 
@@ -238,7 +238,7 @@ func (r organizationCustomDomainGetResponseJSON) RawJSON() string {
 // UpdateCustomDomainResponse is the response message for updating a custom domain
 type OrganizationCustomDomainUpdateResponse struct {
 	// custom_domain is the updated custom domain
-	CustomDomain CustomDomain                               `json:"customDomain,required"`
+	CustomDomain CustomDomain                               `json:"customDomain" api:"required"`
 	JSON         organizationCustomDomainUpdateResponseJSON `json:"-"`
 }
 
@@ -262,9 +262,9 @@ type OrganizationCustomDomainDeleteResponse = interface{}
 
 type OrganizationCustomDomainNewParams struct {
 	// domain_name is the custom domain name
-	DomainName param.Field[string] `json:"domainName,required"`
+	DomainName param.Field[string] `json:"domainName" api:"required"`
 	// organization_id is the ID of the organization to create the custom domain for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// aws_account_id is the AWS account ID (deprecated: use cloud_account_id)
 	AwsAccountID param.Field[string] `json:"awsAccountId"`
 	// cloud_account_id is the unified cloud account identifier (AWS Account ID or GCP
@@ -280,7 +280,7 @@ func (r OrganizationCustomDomainNewParams) MarshalJSON() (data []byte, err error
 
 type OrganizationCustomDomainGetParams struct {
 	// organization_id is the ID of the organization to retrieve custom domain for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationCustomDomainGetParams) MarshalJSON() (data []byte, err error) {
@@ -289,9 +289,9 @@ func (r OrganizationCustomDomainGetParams) MarshalJSON() (data []byte, err error
 
 type OrganizationCustomDomainUpdateParams struct {
 	// domain_name is the custom domain name
-	DomainName param.Field[string] `json:"domainName,required"`
+	DomainName param.Field[string] `json:"domainName" api:"required"`
 	// organization_id is the ID of the organization to update custom domain for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// aws_account_id is the AWS account ID (deprecated: use cloud_account_id)
 	AwsAccountID param.Field[string] `json:"awsAccountId"`
 	// cloud_account_id is the unified cloud account identifier (AWS Account ID or GCP
@@ -307,7 +307,7 @@ func (r OrganizationCustomDomainUpdateParams) MarshalJSON() (data []byte, err er
 
 type OrganizationCustomDomainDeleteParams struct {
 	// organization_id is the ID of the organization to delete custom domain for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationCustomDomainDeleteParams) MarshalJSON() (data []byte, err error) {

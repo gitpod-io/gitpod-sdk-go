@@ -273,14 +273,14 @@ func (r ProviderType) IsKnown() bool {
 
 type SSOConfiguration struct {
 	// id is the unique identifier of the SSO configuration
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// issuer_url is the URL of the IdP issuer
-	IssuerURL      string `json:"issuerUrl,required"`
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	IssuerURL      string `json:"issuerUrl" api:"required"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// provider_type defines the type of the SSO configuration
-	ProviderType ProviderType `json:"providerType,required"`
+	ProviderType ProviderType `json:"providerType" api:"required"`
 	// state is the state of the SSO configuration
-	State SSOConfigurationState `json:"state,required"`
+	State SSOConfigurationState `json:"state" api:"required"`
 	// additional_scopes are extra OIDC scopes requested from the identity provider
 	// during sign-in.
 	AdditionalScopes []string `json:"additionalScopes"`
@@ -338,7 +338,7 @@ func (r SSOConfigurationState) IsKnown() bool {
 
 type OrganizationSSOConfigurationNewResponse struct {
 	// sso_configuration is the created SSO configuration
-	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration,required"`
+	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration" api:"required"`
 	JSON             organizationSSOConfigurationNewResponseJSON `json:"-"`
 }
 
@@ -360,7 +360,7 @@ func (r organizationSSOConfigurationNewResponseJSON) RawJSON() string {
 
 type OrganizationSSOConfigurationGetResponse struct {
 	// sso_configuration is the SSO configuration identified by the ID
-	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration,required"`
+	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration" api:"required"`
 	JSON             organizationSSOConfigurationGetResponseJSON `json:"-"`
 }
 
@@ -386,12 +386,12 @@ type OrganizationSSOConfigurationDeleteResponse = interface{}
 
 type OrganizationSSOConfigurationNewParams struct {
 	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID param.Field[string] `json:"clientId,required"`
+	ClientID param.Field[string] `json:"clientId" api:"required"`
 	// client_secret is the client secret of the OIDC application set on the IdP
-	ClientSecret param.Field[string] `json:"clientSecret,required"`
+	ClientSecret param.Field[string] `json:"clientSecret" api:"required"`
 	// issuer_url is the URL of the IdP issuer
-	IssuerURL      param.Field[string] `json:"issuerUrl,required" format:"uri"`
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	IssuerURL      param.Field[string] `json:"issuerUrl" api:"required" format:"uri"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// additional_scopes are extra OIDC scopes to request from the identity provider
 	// during sign-in. These are appended to the default scopes (openid, email,
 	// profile).
@@ -408,7 +408,7 @@ func (r OrganizationSSOConfigurationNewParams) MarshalJSON() (data []byte, err e
 
 type OrganizationSSOConfigurationGetParams struct {
 	// sso_configuration_id is the ID of the SSO configuration to get
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err error) {
@@ -417,7 +417,7 @@ func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err e
 
 type OrganizationSSOConfigurationUpdateParams struct {
 	// sso_configuration_id is the ID of the SSO configuration to update
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 	// additional_scopes replaces the configured OIDC scopes when present. When absent
 	// (nil), scopes are left unchanged. When present with an empty scopes list, all
 	// additional scopes are cleared.
@@ -443,7 +443,7 @@ func (r OrganizationSSOConfigurationUpdateParams) MarshalJSON() (data []byte, er
 
 type OrganizationSSOConfigurationListParams struct {
 	// organization_id is the ID of the organization to list SSO configurations for.
-	OrganizationID param.Field[string]                                           `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string]                                           `json:"organizationId" api:"required" format:"uuid"`
 	Token          param.Field[string]                                           `query:"token"`
 	PageSize       param.Field[int64]                                            `query:"pageSize"`
 	Pagination     param.Field[OrganizationSSOConfigurationListParamsPagination] `json:"pagination"`
@@ -476,7 +476,7 @@ func (r OrganizationSSOConfigurationListParamsPagination) MarshalJSON() (data []
 }
 
 type OrganizationSSOConfigurationDeleteParams struct {
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationSSOConfigurationDeleteParams) MarshalJSON() (data []byte, err error) {

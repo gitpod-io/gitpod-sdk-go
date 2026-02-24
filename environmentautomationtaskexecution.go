@@ -170,7 +170,7 @@ func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, bo
 }
 
 type EnvironmentAutomationTaskExecutionGetResponse struct {
-	TaskExecution shared.TaskExecution                              `json:"taskExecution,required"`
+	TaskExecution shared.TaskExecution                              `json:"taskExecution" api:"required"`
 	JSON          environmentAutomationTaskExecutionGetResponseJSON `json:"-"`
 }
 

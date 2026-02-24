@@ -73,8 +73,8 @@ func (r *RunnerConfigurationService) Validate(ctx context.Context, body RunnerCo
 
 type EnvironmentClassValidationResult struct {
 	ConfigurationErrors []FieldValidationError               `json:"configurationErrors"`
-	DescriptionError    string                               `json:"descriptionError,nullable"`
-	DisplayNameError    string                               `json:"displayNameError,nullable"`
+	DescriptionError    string                               `json:"descriptionError" api:"nullable"`
+	DisplayNameError    string                               `json:"displayNameError" api:"nullable"`
 	Valid               bool                                 `json:"valid"`
 	JSON                environmentClassValidationResultJSON `json:"-"`
 }
@@ -122,10 +122,10 @@ func (r fieldValidationErrorJSON) RawJSON() string {
 }
 
 type ScmIntegrationValidationResult struct {
-	HostError  string                             `json:"hostError,nullable"`
-	OAuthError string                             `json:"oauthError,nullable"`
-	PatError   string                             `json:"patError,nullable"`
-	ScmIDError string                             `json:"scmIdError,nullable"`
+	HostError  string                             `json:"hostError" api:"nullable"`
+	OAuthError string                             `json:"oauthError" api:"nullable"`
+	PatError   string                             `json:"patError" api:"nullable"`
+	ScmIDError string                             `json:"scmIdError" api:"nullable"`
 	Valid      bool                               `json:"valid"`
 	JSON       scmIntegrationValidationResultJSON `json:"-"`
 }

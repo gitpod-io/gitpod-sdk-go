@@ -108,7 +108,7 @@ func (r dotfilesConfigurationJSON) RawJSON() string {
 }
 
 type UserDotfileGetResponse struct {
-	DotfilesConfiguration DotfilesConfiguration      `json:"dotfilesConfiguration,required"`
+	DotfilesConfiguration DotfilesConfiguration      `json:"dotfilesConfiguration" api:"required"`
 	JSON                  userDotfileGetResponseJSON `json:"-"`
 }
 

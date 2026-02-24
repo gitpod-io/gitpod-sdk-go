@@ -227,10 +227,10 @@ func (r *OrganizationDomainVerificationService) Verify(ctx context.Context, body
 }
 
 type DomainVerification struct {
-	ID             string                  `json:"id,required" format:"uuid"`
-	Domain         string                  `json:"domain,required"`
-	OrganizationID string                  `json:"organizationId,required" format:"uuid"`
-	State          DomainVerificationState `json:"state,required"`
+	ID             string                  `json:"id" api:"required" format:"uuid"`
+	Domain         string                  `json:"domain" api:"required"`
+	OrganizationID string                  `json:"organizationId" api:"required" format:"uuid"`
+	State          DomainVerificationState `json:"state" api:"required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -452,7 +452,7 @@ func (r DomainVerificationState) IsKnown() bool {
 }
 
 type OrganizationDomainVerificationNewResponse struct {
-	DomainVerification DomainVerification                            `json:"domainVerification,required"`
+	DomainVerification DomainVerification                            `json:"domainVerification" api:"required"`
 	JSON               organizationDomainVerificationNewResponseJSON `json:"-"`
 }
 
@@ -473,7 +473,7 @@ func (r organizationDomainVerificationNewResponseJSON) RawJSON() string {
 }
 
 type OrganizationDomainVerificationGetResponse struct {
-	DomainVerification DomainVerification                            `json:"domainVerification,required"`
+	DomainVerification DomainVerification                            `json:"domainVerification" api:"required"`
 	JSON               organizationDomainVerificationGetResponseJSON `json:"-"`
 }
 
@@ -496,7 +496,7 @@ func (r organizationDomainVerificationGetResponseJSON) RawJSON() string {
 type OrganizationDomainVerificationDeleteResponse = interface{}
 
 type OrganizationDomainVerificationVerifyResponse struct {
-	DomainVerification DomainVerification                               `json:"domainVerification,required"`
+	DomainVerification DomainVerification                               `json:"domainVerification" api:"required"`
 	JSON               organizationDomainVerificationVerifyResponseJSON `json:"-"`
 }
 
@@ -517,8 +517,8 @@ func (r organizationDomainVerificationVerifyResponseJSON) RawJSON() string {
 }
 
 type OrganizationDomainVerificationNewParams struct {
-	Domain         param.Field[string] `json:"domain,required"`
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	Domain         param.Field[string] `json:"domain" api:"required"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationDomainVerificationNewParams) MarshalJSON() (data []byte, err error) {
@@ -526,7 +526,7 @@ func (r OrganizationDomainVerificationNewParams) MarshalJSON() (data []byte, err
 }
 
 type OrganizationDomainVerificationGetParams struct {
-	DomainVerificationID param.Field[string] `json:"domainVerificationId,required" format:"uuid"`
+	DomainVerificationID param.Field[string] `json:"domainVerificationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationDomainVerificationGetParams) MarshalJSON() (data []byte, err error) {
@@ -534,7 +534,7 @@ func (r OrganizationDomainVerificationGetParams) MarshalJSON() (data []byte, err
 }
 
 type OrganizationDomainVerificationListParams struct {
-	OrganizationID param.Field[string]                                             `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string]                                             `json:"organizationId" api:"required" format:"uuid"`
 	Token          param.Field[string]                                             `query:"token"`
 	PageSize       param.Field[int64]                                              `query:"pageSize"`
 	Pagination     param.Field[OrganizationDomainVerificationListParamsPagination] `json:"pagination"`
@@ -567,7 +567,7 @@ func (r OrganizationDomainVerificationListParamsPagination) MarshalJSON() (data 
 }
 
 type OrganizationDomainVerificationDeleteParams struct {
-	DomainVerificationID param.Field[string] `json:"domainVerificationId,required" format:"uuid"`
+	DomainVerificationID param.Field[string] `json:"domainVerificationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationDomainVerificationDeleteParams) MarshalJSON() (data []byte, err error) {
@@ -575,7 +575,7 @@ func (r OrganizationDomainVerificationDeleteParams) MarshalJSON() (data []byte, 
 }
 
 type OrganizationDomainVerificationVerifyParams struct {
-	DomainVerificationID param.Field[string] `json:"domainVerificationId,required" format:"uuid"`
+	DomainVerificationID param.Field[string] `json:"domainVerificationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationDomainVerificationVerifyParams) MarshalJSON() (data []byte, err error) {

@@ -504,7 +504,7 @@ func (r AdmissionLevel) IsKnown() bool {
 type Environment struct {
 	// ID is a unique identifier of this environment. No other environment with the
 	// same name must be managed by this environment manager
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Metadata is data associated with this environment that's required for other
 	// parts of Gitpod to function
 	Metadata EnvironmentMetadata `json:"metadata"`
@@ -603,7 +603,7 @@ type EnvironmentMetadata struct {
 	OriginalContextURL string `json:"originalContextUrl"`
 	// prebuild_id is the ID of the prebuild this environment was created from. Only
 	// set if the environment was created from a prebuild.
-	PrebuildID string `json:"prebuildId,nullable" format:"uuid"`
+	PrebuildID string `json:"prebuildId" api:"nullable" format:"uuid"`
 	// If the Environment was started from a project, the project_id will reference the
 	// project.
 	ProjectID string `json:"projectId"`
@@ -712,7 +712,7 @@ type EnvironmentSpec struct {
 	Timeout EnvironmentSpecTimeout `json:"timeout"`
 	// workflow_action_id is an optional reference to the workflow execution action
 	// that created this environment. Used for tracking and event correlation.
-	WorkflowActionID string              `json:"workflowActionId,nullable" format:"uuid"`
+	WorkflowActionID string              `json:"workflowActionId" api:"nullable" format:"uuid"`
 	JSON             environmentSpecJSON `json:"-"`
 }
 
@@ -854,7 +854,7 @@ func (r environmentSpecDevcontainerJSON) RawJSON() string {
 // Experimental: dotfiles is the dotfiles configuration of the devcontainer
 type EnvironmentSpecDevcontainerDotfiles struct {
 	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
-	Repository string                                  `json:"repository,required" format:"uri"`
+	Repository string                                  `json:"repository" api:"required" format:"uri"`
 	JSON       environmentSpecDevcontainerDotfilesJSON `json:"-"`
 }
 
@@ -1194,7 +1194,7 @@ func (r EnvironmentSpecDevcontainerParam) MarshalJSON() (data []byte, err error)
 // Experimental: dotfiles is the dotfiles configuration of the devcontainer
 type EnvironmentSpecDevcontainerDotfilesParam struct {
 	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
-	Repository param.Field[string] `json:"repository,required" format:"uri"`
+	Repository param.Field[string] `json:"repository" api:"required" format:"uri"`
 }
 
 func (r EnvironmentSpecDevcontainerDotfilesParam) MarshalJSON() (data []byte, err error) {
@@ -2115,7 +2115,7 @@ func (r VetoExecParam) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentNewResponse struct {
 	// +resource get environment
-	Environment Environment                `json:"environment,required"`
+	Environment Environment                `json:"environment" api:"required"`
 	JSON        environmentNewResponseJSON `json:"-"`
 }
 
@@ -2137,7 +2137,7 @@ func (r environmentNewResponseJSON) RawJSON() string {
 
 type EnvironmentGetResponse struct {
 	// +resource get environment
-	Environment Environment                `json:"environment,required"`
+	Environment Environment                `json:"environment" api:"required"`
 	JSON        environmentGetResponseJSON `json:"-"`
 }
 
@@ -2163,7 +2163,7 @@ type EnvironmentDeleteResponse = interface{}
 
 type EnvironmentNewEnvironmentTokenResponse struct {
 	// access_token is the token that can be used for environment authentication
-	AccessToken string                                     `json:"accessToken,required"`
+	AccessToken string                                     `json:"accessToken" api:"required"`
 	JSON        environmentNewEnvironmentTokenResponseJSON `json:"-"`
 }
 
@@ -2185,7 +2185,7 @@ func (r environmentNewEnvironmentTokenResponseJSON) RawJSON() string {
 
 type EnvironmentNewFromProjectResponse struct {
 	// +resource get environment
-	Environment Environment                           `json:"environment,required"`
+	Environment Environment                           `json:"environment" api:"required"`
 	JSON        environmentNewFromProjectResponseJSON `json:"-"`
 }
 
@@ -2207,7 +2207,7 @@ func (r environmentNewFromProjectResponseJSON) RawJSON() string {
 
 type EnvironmentNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs of the environment
-	AccessToken string                              `json:"accessToken,required"`
+	AccessToken string                              `json:"accessToken" api:"required"`
 	JSON        environmentNewLogsTokenResponseJSON `json:"-"`
 }
 
@@ -2250,7 +2250,7 @@ func (r EnvironmentNewParams) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentGetParams struct {
 	// environment_id specifies the environment to get
-	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
+	EnvironmentID param.Field[string] `json:"environmentId" api:"required" format:"uuid"`
 }
 
 func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
@@ -2504,7 +2504,7 @@ func (r EnvironmentDeleteParams) MarshalJSON() (data []byte, err error) {
 type EnvironmentNewEnvironmentTokenParams struct {
 	// environment_id specifies the environment for which the access token should be
 	// created.
-	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
+	EnvironmentID param.Field[string] `json:"environmentId" api:"required" format:"uuid"`
 }
 
 func (r EnvironmentNewEnvironmentTokenParams) MarshalJSON() (data []byte, err error) {

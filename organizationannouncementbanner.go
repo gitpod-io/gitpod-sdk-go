@@ -81,7 +81,7 @@ func (r *OrganizationAnnouncementBannerService) Get(ctx context.Context, body Or
 
 type AnnouncementBanner struct {
 	// organization_id is the ID of the organization
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// enabled controls whether the banner is displayed
 	Enabled bool `json:"enabled"`
 	// message is the banner message displayed to users. Supports basic Markdown.
@@ -109,7 +109,7 @@ func (r announcementBannerJSON) RawJSON() string {
 
 type OrganizationAnnouncementBannerUpdateResponse struct {
 	// banner is the updated announcement banner configuration
-	Banner AnnouncementBanner                               `json:"banner,required"`
+	Banner AnnouncementBanner                               `json:"banner" api:"required"`
 	JSON   organizationAnnouncementBannerUpdateResponseJSON `json:"-"`
 }
 
@@ -131,7 +131,7 @@ func (r organizationAnnouncementBannerUpdateResponseJSON) RawJSON() string {
 
 type OrganizationAnnouncementBannerGetResponse struct {
 	// banner is the announcement banner configuration
-	Banner AnnouncementBanner                            `json:"banner,required"`
+	Banner AnnouncementBanner                            `json:"banner" api:"required"`
 	JSON   organizationAnnouncementBannerGetResponseJSON `json:"-"`
 }
 
@@ -153,7 +153,7 @@ func (r organizationAnnouncementBannerGetResponseJSON) RawJSON() string {
 
 type OrganizationAnnouncementBannerUpdateParams struct {
 	// organization_id is the ID of the organization
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// enabled controls whether the banner is displayed
 	Enabled param.Field[bool] `json:"enabled"`
 	// message is the banner message. Supports basic Markdown. Maximum 1000 characters.
@@ -166,7 +166,7 @@ func (r OrganizationAnnouncementBannerUpdateParams) MarshalJSON() (data []byte, 
 
 type OrganizationAnnouncementBannerGetParams struct {
 	// organization_id is the ID of the organization
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationAnnouncementBannerGetParams) MarshalJSON() (data []byte, err error) {
