@@ -594,6 +594,10 @@ type EnvironmentMetadata struct {
 	// Time when the Environment was last started (i.e. CreateEnvironment or
 	// StartEnvironment were called).
 	LastStartedAt time.Time `json:"lastStartedAt" format:"date-time"`
+	// lockdown_at is the time at which the environment becomes locked down due to the
+	// organization's maximum environment lifetime policy. Nil when no lifetime policy
+	// applies.
+	LockdownAt time.Time `json:"lockdownAt" format:"date-time"`
 	// name is the name of the environment as specified by the user
 	Name string `json:"name"`
 	// organization_id is the ID of the organization that contains the environment
@@ -622,6 +626,7 @@ type environmentMetadataJSON struct {
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
 	LastStartedAt      apijson.Field
+	LockdownAt         apijson.Field
 	Name               apijson.Field
 	OrganizationID     apijson.Field
 	OriginalContextURL apijson.Field
