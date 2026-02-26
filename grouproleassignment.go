@@ -304,15 +304,14 @@ type GroupRoleAssignmentListParamsFilter struct {
 	// group_id filters the response to only role assignments for this specific group
 	// Empty string is allowed and means no filtering by group
 	GroupID param.Field[string] `json:"groupId"`
-	// Filters by a single resource. Use this when listing all groups that have access
-	// to a specific resource (e.g. share dialogs). Non-admin callers with :grant
-	// permission on the resource can see role assignments from groups they don't
-	// belong to. Mutually exclusive with resource_ids.
+	// Filters by a single resource. Non-admin callers with :grant permission on the
+	// resource can see role assignments from groups they don't belong to. Mutually
+	// exclusive with resource_ids.
 	ResourceID param.Field[string] `json:"resourceId"`
-	// Filters by multiple resources in a single request. Use this for batch permission
-	// lookups (e.g. checking the caller's own permissions across several resources).
-	// Does not support the :grant permission bypass. Mutually exclusive with
-	// resource_id.
+	// Filters by multiple resources in a single request. Non-admin callers with :grant
+	// permission on a resource can see all role assignments for that resource, even
+	// from groups they don't belong to. The :grant check is applied per-resource
+	// within the batch. Mutually exclusive with resource_id.
 	ResourceIDs param.Field[[]string] `json:"resourceIds" format:"uuid"`
 	// resource_roles filters the response to only role assignments with these specific
 	// roles
