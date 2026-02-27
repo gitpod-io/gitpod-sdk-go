@@ -108,6 +108,9 @@ func TestGroupListWithOptionalParams(t *testing.T) {
 	_, err := client.Groups.List(context.TODO(), gitpod.GroupListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.GroupListParamsFilter{
+			Search: gitpod.F("search"),
+		}),
 		Pagination: gitpod.F(gitpod.GroupListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),

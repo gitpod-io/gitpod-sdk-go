@@ -558,6 +558,8 @@ func (r GroupUpdateParams) MarshalJSON() (data []byte, err error) {
 type GroupListParams struct {
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
+	// filter contains options for filtering the list of groups.
+	Filter param.Field[GroupListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing groups
 	Pagination param.Field[GroupListParamsPagination] `json:"pagination"`
 }
@@ -572,6 +574,16 @@ func (r GroupListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// filter contains options for filtering the list of groups.
+type GroupListParamsFilter struct {
+	// search performs case-insensitive search across group name, description, and ID
+	Search param.Field[string] `json:"search"`
+}
+
+func (r GroupListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // pagination contains the pagination options for listing groups
