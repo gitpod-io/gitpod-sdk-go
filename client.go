@@ -16,23 +16,29 @@ import (
 // interacting with the gitpod API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options       []option.RequestOption
-	Accounts      *AccountService
-	Agents        *AgentService
-	Editors       *EditorService
-	Environments  *EnvironmentService
+	Options      []option.RequestOption
+	Accounts     *AccountService
+	Agents       *AgentService
+	Editors      *EditorService
+	Environments *EnvironmentService
+	// ErrorsService provides endpoints for clients to report errors that will be sent
+	// to error reporting systems.
 	Errors        *ErrorService
 	Events        *EventService
 	Gateways      *GatewayService
 	Groups        *GroupService
 	Identity      *IdentityService
 	Organizations *OrganizationService
-	Prebuilds     *PrebuildService
-	Projects      *ProjectService
-	Runners       *RunnerService
-	Secrets       *SecretService
-	Usage         *UsageService
-	Users         *UserService
+	// PrebuildService manages prebuilds for projects to enable faster environment
+	// startup times. Prebuilds create snapshots of environments that can be used to
+	// provision new environments quickly.
+	Prebuilds *PrebuildService
+	Projects  *ProjectService
+	Runners   *RunnerService
+	Secrets   *SecretService
+	// UsageService provides usage information about environments, users, and projects.
+	Usage *UsageService
+	Users *UserService
 }
 
 // DefaultClientOptions read from the environment (GITPOD_API_KEY,

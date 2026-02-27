@@ -14,6 +14,9 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
+// ErrorsService provides endpoints for clients to report errors that will be sent
+// to error reporting systems.
+//
 // ErrorService contains methods and other services that help with interacting with
 // the gitpod API.
 //
