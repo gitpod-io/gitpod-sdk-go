@@ -323,12 +323,11 @@ const (
 	PrincipalEnvironment    Principal = "PRINCIPAL_ENVIRONMENT"
 	PrincipalServiceAccount Principal = "PRINCIPAL_SERVICE_ACCOUNT"
 	PrincipalRunnerManager  Principal = "PRINCIPAL_RUNNER_MANAGER"
-	PrincipalAgentExecution Principal = "PRINCIPAL_AGENT_EXECUTION"
 )
 
 func (r Principal) IsKnown() bool {
 	switch r {
-	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager, PrincipalAgentExecution:
+	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager:
 		return true
 	}
 	return false
@@ -420,7 +419,6 @@ const (
 	ResourceRoleEnvironmentTaskEnv             ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_ENV"
 	ResourceRoleServiceAccountIdentity         ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_IDENTITY"
 	ResourceRoleServiceAccountAdmin            ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_ADMIN"
-	ResourceRoleAgentExecutionIdentity         ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_IDENTITY"
 	ResourceRoleAgentExecutionUser             ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_USER"
 	ResourceRoleAgentExecutionAdmin            ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_ADMIN"
 	ResourceRoleAgentExecutionRunner           ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_RUNNER"
@@ -443,7 +441,7 @@ const (
 
 func (r ResourceRole) IsKnown() bool {
 	switch r {
-	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionIdentity, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner, ResourceRoleWarmpoolAdmin, ResourceRoleWarmpoolViewer:
+	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner, ResourceRoleWarmpoolAdmin, ResourceRoleWarmpoolViewer:
 		return true
 	}
 	return false
