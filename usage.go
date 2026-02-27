@@ -17,6 +17,8 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/packages/pagination"
 )
 
+// UsageService provides usage information about environments, users, and projects.
+//
 // UsageService contains methods and other services that help with interacting with
 // the gitpod API.
 //

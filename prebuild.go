@@ -18,6 +18,10 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
+// PrebuildService manages prebuilds for projects to enable faster environment
+// startup times. Prebuilds create snapshots of environments that can be used to
+// provision new environments quickly.
+//
 // PrebuildService contains methods and other services that help with interacting
 // with the gitpod API.
 //
