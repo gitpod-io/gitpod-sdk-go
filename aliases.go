@@ -156,9 +156,6 @@ const PrincipalServiceAccount = shared.PrincipalServiceAccount
 // This is an alias to an internal value.
 const PrincipalRunnerManager = shared.PrincipalRunnerManager
 
-// This is an alias to an internal value.
-const PrincipalAgentExecution = shared.PrincipalAgentExecution
-
 // This is an alias to an internal type.
 type ProjectEnvironmentClass = shared.ProjectEnvironmentClass
 
@@ -284,9 +281,6 @@ const ResourceRoleServiceAccountIdentity = shared.ResourceRoleServiceAccountIden
 
 // This is an alias to an internal value.
 const ResourceRoleServiceAccountAdmin = shared.ResourceRoleServiceAccountAdmin
-
-// This is an alias to an internal value.
-const ResourceRoleAgentExecutionIdentity = shared.ResourceRoleAgentExecutionIdentity
 
 // This is an alias to an internal value.
 const ResourceRoleAgentExecutionUser = shared.ResourceRoleAgentExecutionUser
