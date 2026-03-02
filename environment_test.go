@@ -499,7 +499,8 @@ func TestEnvironmentStartWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Environments.Start(context.TODO(), gitpod.EnvironmentStartParams{
-		EnvironmentID: gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
+		AcknowledgeToken: gitpod.F("acknowledgeToken"),
+		EnvironmentID:    gitpod.F("07e03a28-65a5-4d98-b532-8ea67b188048"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
