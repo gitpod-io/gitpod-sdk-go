@@ -2555,10 +2555,6 @@ func (r EnvironmentMarkActiveParams) MarshalJSON() (data []byte, err error) {
 }
 
 type EnvironmentStartParams struct {
-	// acknowledge_token is the HMAC token from a previous
-	// EnvironmentMaxLifetimeEnforcementDetails response, allowing the user to start an
-	// environment past its max lifetime in warn mode.
-	AcknowledgeToken param.Field[string] `json:"acknowledgeToken"`
 	// environment_id specifies which environment should be started.
 	EnvironmentID param.Field[string] `json:"environmentId" format:"uuid"`
 }
