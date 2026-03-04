@@ -381,8 +381,31 @@ type EventWatchParams struct {
 	// the caller can see within their organization. No task, task execution or service
 	// events are produed.
 	Organization param.Field[bool] `json:"organization"`
+	// Filters to limit which events are delivered on organization-scoped streams. When
+	// empty, all events for the scope are delivered. When populated, only events
+	// matching at least one filter entry are forwarded. Not supported for
+	// environment-scoped streams; setting this field returns an error.
+	ResourceTypeFilters param.Field[[]EventWatchParamsResourceTypeFilter] `json:"resourceTypeFilters"`
 }
 
 func (r EventWatchParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// ResourceTypeFilter restricts which events are delivered for a specific resource
+// type.
+type EventWatchParamsResourceTypeFilter struct {
+	// If non-empty, only events where the resource was created by one of these user
+	// IDs are delivered. Skipped for DELETE operations (creator info is unavailable
+	// after deletion). Events with no creator information are skipped when this filter
+	// is set (fail-closed).
+	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
+	// If non-empty, only events for these specific resource IDs are delivered.
+	ResourceIDs param.Field[[]string] `json:"resourceIds" format:"uuid"`
+	// The resource type to filter for.
+	ResourceType param.Field[shared.ResourceType] `json:"resourceType"`
+}
+
+func (r EventWatchParamsResourceTypeFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
