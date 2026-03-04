@@ -156,7 +156,8 @@ func (r identityExchangeTokenResponseJSON) RawJSON() string {
 }
 
 type IdentityGetAuthenticatedIdentityResponse struct {
-	OrganizationID string `json:"organizationId"`
+	OrganizationID   string `json:"organizationId"`
+	OrganizationTier string `json:"organizationTier"`
 	// subject is the identity of the current user
 	Subject shared.Subject                               `json:"subject"`
 	JSON    identityGetAuthenticatedIdentityResponseJSON `json:"-"`
@@ -165,10 +166,11 @@ type IdentityGetAuthenticatedIdentityResponse struct {
 // identityGetAuthenticatedIdentityResponseJSON contains the JSON metadata for the
 // struct [IdentityGetAuthenticatedIdentityResponse]
 type identityGetAuthenticatedIdentityResponseJSON struct {
-	OrganizationID apijson.Field
-	Subject        apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	OrganizationID   apijson.Field
+	OrganizationTier apijson.Field
+	Subject          apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *IdentityGetAuthenticatedIdentityResponse) UnmarshalJSON(data []byte) (err error) {
