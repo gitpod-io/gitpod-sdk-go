@@ -88,7 +88,10 @@ func TestGroupMembershipListWithOptionalParams(t *testing.T) {
 	_, err := client.Groups.Memberships.List(context.TODO(), gitpod.GroupMembershipListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		GroupID:  gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Filter: gitpod.F(gitpod.GroupMembershipListParamsFilter{
+			Search: gitpod.F("search"),
+		}),
+		GroupID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Pagination: gitpod.F(gitpod.GroupMembershipListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
