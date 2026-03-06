@@ -179,11 +179,12 @@ func TestAgentListPromptsWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.AgentListPromptsParamsFilter{
-			Command:       gitpod.F("command"),
-			CommandPrefix: gitpod.F("commandPrefix"),
-			IsCommand:     gitpod.F(true),
-			IsSkill:       gitpod.F(true),
-			IsTemplate:    gitpod.F(true),
+			Command:              gitpod.F("command"),
+			CommandPrefix:        gitpod.F("commandPrefix"),
+			ExcludePromptContent: gitpod.F(true),
+			IsCommand:            gitpod.F(true),
+			IsSkill:              gitpod.F(true),
+			IsTemplate:           gitpod.F(true),
 		}),
 		Pagination: gitpod.F(gitpod.AgentListPromptsParamsPagination{
 			Token:    gitpod.F("token"),
