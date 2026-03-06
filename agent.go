@@ -1873,9 +1873,13 @@ func (r AgentListPromptsParams) URLQuery() (v url.Values) {
 type AgentListPromptsParamsFilter struct {
 	Command       param.Field[string] `json:"command"`
 	CommandPrefix param.Field[string] `json:"commandPrefix"`
-	IsCommand     param.Field[bool]   `json:"isCommand"`
-	IsSkill       param.Field[bool]   `json:"isSkill"`
-	IsTemplate    param.Field[bool]   `json:"isTemplate"`
+	// exclude_prompt_content omits the large spec.prompt text from the response. Other
+	// spec fields (is_template, is_command, command, is_skill) are still returned. Use
+	// GetPrompt to retrieve the full prompt content when needed.
+	ExcludePromptContent param.Field[bool] `json:"excludePromptContent"`
+	IsCommand            param.Field[bool] `json:"isCommand"`
+	IsSkill              param.Field[bool] `json:"isSkill"`
+	IsTemplate           param.Field[bool] `json:"isTemplate"`
 }
 
 func (r AgentListPromptsParamsFilter) MarshalJSON() (data []byte, err error) {
