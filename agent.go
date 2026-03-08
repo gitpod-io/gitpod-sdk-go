@@ -1939,6 +1939,9 @@ type AgentStartExecutionParams struct {
 	// execution is routed to this runner instead of the runner associated with the
 	// environment.
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// session_id is the ID of the session this agent execution belongs to. If empty, a
+	// new session is created implicitly.
+	SessionID param.Field[string] `json:"sessionId" format:"uuid"`
 	// workflow_action_id is an optional reference to the workflow execution action
 	// that created this agent execution. Used for tracking and event correlation.
 	WorkflowActionID param.Field[string] `json:"workflowActionId" format:"uuid"`

@@ -2244,6 +2244,9 @@ type EnvironmentNewParams struct {
 	// name is a user-defined identifier for the environment. If not specified, the
 	// system will generate a name.
 	Name param.Field[string] `json:"name"`
+	// session_id is the ID of the session this environment belongs to. If empty, a new
+	// session is created implicitly.
+	SessionID param.Field[string] `json:"sessionId" format:"uuid"`
 	// spec is the configuration of the environment that's required for the to start
 	// the environment
 	Spec param.Field[EnvironmentSpecParam] `json:"spec"`
