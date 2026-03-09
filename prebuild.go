@@ -378,6 +378,9 @@ type PrebuildStatus struct {
 	// cloud provider. This value may update infrequently or remain at 0 depending on
 	// the provider.
 	SnapshotCompletionPercentage int64 `json:"snapshotCompletionPercentage"`
+	// snapshot_size_bytes is the size of the snapshot in bytes. Only populated when
+	// the snapshot is available (phase is COMPLETED).
+	SnapshotSizeBytes string `json:"snapshotSizeBytes"`
 	// status_version is incremented each time the status is updated. Used for
 	// optimistic concurrency control.
 	StatusVersion string `json:"statusVersion"`
@@ -397,6 +400,7 @@ type prebuildStatusJSON struct {
 	FailureMessage               apijson.Field
 	LogURL                       apijson.Field
 	SnapshotCompletionPercentage apijson.Field
+	SnapshotSizeBytes            apijson.Field
 	StatusVersion                apijson.Field
 	WarningMessage               apijson.Field
 	raw                          string
