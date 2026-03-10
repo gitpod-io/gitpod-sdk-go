@@ -265,6 +265,10 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Agents.SendToExecution(context.TODO(), gitpod.AgentSendToExecutionParams{
 		AgentExecutionID: gitpod.F("6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"),
+		AgentMessage: gitpod.F(gitpod.AgentMessageParam{
+			Payload: gitpod.F("payload"),
+			Type:    gitpod.F(gitpod.TypeUnspecified),
+		}),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
 			ID:        gitpod.F("id"),
 			CreatedAt: gitpod.F(time.Now()),

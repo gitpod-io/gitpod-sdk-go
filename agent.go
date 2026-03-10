@@ -1207,6 +1207,18 @@ func (r agentExecutionStatusUsedEnvironmentJSON) RawJSON() string {
 	return r.raw
 }
 
+// AgentMessage is a message sent between agents (e.g. from a parent agent to a
+// child agent execution, or vice versa).
+type AgentMessageParam struct {
+	// Free-form payload of the message.
+	Payload param.Field[string] `json:"payload"`
+	Type    param.Field[Type]   `json:"type"`
+}
+
+func (r AgentMessageParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 // AgentMode defines the operational mode of an agent
 type AgentMode string
 
@@ -1491,6 +1503,22 @@ func (r *PromptSpec) UnmarshalJSON(data []byte) (err error) {
 
 func (r promptSpecJSON) RawJSON() string {
 	return r.raw
+}
+
+type Type string
+
+const (
+	TypeUnspecified Type = "TYPE_UNSPECIFIED"
+	TypeUpdate      Type = "TYPE_UPDATE"
+	TypeComplete    Type = "TYPE_COMPLETE"
+)
+
+func (r Type) IsKnown() bool {
+	switch r {
+	case TypeUnspecified, TypeUpdate, TypeComplete:
+		return true
+	}
+	return false
 }
 
 type UserInputBlockParam struct {
@@ -1916,8 +1944,11 @@ func (r AgentGetPromptParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AgentSendToExecutionParams struct {
-	AgentExecutionID param.Field[string]              `json:"agentExecutionId" format:"uuid"`
-	UserInput        param.Field[UserInputBlockParam] `json:"userInput"`
+	AgentExecutionID param.Field[string] `json:"agentExecutionId" format:"uuid"`
+	// AgentMessage is a message sent between agents (e.g. from a parent agent to a
+	// child agent execution, or vice versa).
+	AgentMessage param.Field[AgentMessageParam]   `json:"agentMessage"`
+	UserInput    param.Field[UserInputBlockParam] `json:"userInput"`
 }
 
 func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
