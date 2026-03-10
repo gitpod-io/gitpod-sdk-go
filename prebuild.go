@@ -200,6 +200,150 @@ func (r *PrebuildService) NewLogsToken(ctx context.Context, body PrebuildNewLogs
 	return
 }
 
+// Creates a warm pool for a project and environment class.
+//
+// A warm pool maintains pre-created environment instances from a prebuild snapshot
+// so that new environments can start near-instantly.
+//
+// Only one warm pool is allowed per <project, environment_class> pair. The
+// environment class must have prebuilds enabled on the project.
+//
+// The pool's snapshot is managed automatically: when a new prebuild completes for
+// the same project and environment class, the pool's snapshot is updated and the
+// runner rotates instances.
+//
+// ### Examples
+//
+// - Create warm pool:
+//
+//	Creates a warm pool with 2 instances for a project and environment class.
+//
+//	```yaml
+//	projectId: "b0e12f6c-4c67-429d-a4a6-d9838b5da047"
+//	environmentClassId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	desiredSize: 2
+//	```
+func (r *PrebuildService) NewWarmPool(ctx context.Context, body PrebuildNewWarmPoolParams, opts ...option.RequestOption) (res *PrebuildNewWarmPoolResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.PrebuildService/CreateWarmPool"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Deletes a warm pool.
+//
+// Deletion is processed asynchronously. The pool is marked for deletion and the
+// runner drains instances in the background.
+//
+// Warm pools are also automatically deleted when prebuilds are disabled on the
+// project or the environment class is removed from the prebuild configuration.
+//
+// ### Examples
+//
+// - Delete warm pool:
+//
+//	```yaml
+//	warmPoolId: "a1b2c3d4-5678-9abc-def0-1234567890ab"
+//	```
+func (r *PrebuildService) DeleteWarmPool(ctx context.Context, body PrebuildDeleteWarmPoolParams, opts ...option.RequestOption) (res *PrebuildDeleteWarmPoolResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.PrebuildService/DeleteWarmPool"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Lists warm pools with optional filtering.
+//
+// Use this method to:
+//
+// - View all warm pools for a project
+// - Monitor warm pool status across environment classes
+//
+// ### Examples
+//
+// - List warm pools for a project:
+//
+//	```yaml
+//	filter:
+//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
+//	```
+func (r *PrebuildService) ListWarmPools(ctx context.Context, params PrebuildListWarmPoolsParams, opts ...option.RequestOption) (res *pagination.WarmPoolsPage[WarmPool], err error) {
+	var raw *http.Response
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
+	path := "gitpod.v1.PrebuildService/ListWarmPools"
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Lists warm pools with optional filtering.
+//
+// Use this method to:
+//
+// - View all warm pools for a project
+// - Monitor warm pool status across environment classes
+//
+// ### Examples
+//
+// - List warm pools for a project:
+//
+//	```yaml
+//	filter:
+//	  projectIds: ["b0e12f6c-4c67-429d-a4a6-d9838b5da047"]
+//	```
+func (r *PrebuildService) ListWarmPoolsAutoPaging(ctx context.Context, params PrebuildListWarmPoolsParams, opts ...option.RequestOption) *pagination.WarmPoolsPageAutoPager[WarmPool] {
+	return pagination.NewWarmPoolsPageAutoPager(r.ListWarmPools(ctx, params, opts...))
+}
+
+// Gets details about a specific warm pool.
+//
+// Use this method to:
+//
+// - Check warm pool status and phase
+// - View the current snapshot being warmed
+// - Monitor pool health
+//
+// ### Examples
+//
+// - Get warm pool:
+//
+//	```yaml
+//	warmPoolId: "a1b2c3d4-5678-9abc-def0-1234567890ab"
+//	```
+func (r *PrebuildService) GetWarmPool(ctx context.Context, body PrebuildGetWarmPoolParams, opts ...option.RequestOption) (res *PrebuildGetWarmPoolResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.PrebuildService/GetWarmPool"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
+// Updates a warm pool's configuration.
+//
+// Use this method to change the desired pool size.
+//
+// ### Examples
+//
+// - Update pool size:
+//
+//	```yaml
+//	warmPoolId: "a1b2c3d4-5678-9abc-def0-1234567890ab"
+//	desiredSize: 5
+//	```
+func (r *PrebuildService) UpdateWarmPool(ctx context.Context, body PrebuildUpdateWarmPoolParams, opts ...option.RequestOption) (res *PrebuildUpdateWarmPoolResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "gitpod.v1.PrebuildService/UpdateWarmPool"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	return
+}
+
 // Prebuild represents a prebuild for a project that creates a snapshot for faster
 // environment startup times.
 type Prebuild struct {
@@ -432,6 +576,163 @@ func (r PrebuildTrigger) IsKnown() bool {
 	return false
 }
 
+// WarmPool maintains pre-created environment instances from a prebuild snapshot
+// for near-instant environment startup. One warm pool exists per <project,
+// environment_class> pair.
+type WarmPool struct {
+	// metadata contains organizational and ownership information
+	Metadata WarmPoolMetadata `json:"metadata" api:"required"`
+	// spec contains the desired configuration for this warm pool
+	Spec WarmPoolSpec `json:"spec" api:"required"`
+	// status contains the current status reported by the runner
+	Status WarmPoolStatus `json:"status" api:"required"`
+	// id is the unique identifier for the warm pool
+	ID   string       `json:"id" format:"uuid"`
+	JSON warmPoolJSON `json:"-"`
+}
+
+// warmPoolJSON contains the JSON metadata for the struct [WarmPool]
+type warmPoolJSON struct {
+	Metadata    apijson.Field
+	Spec        apijson.Field
+	Status      apijson.Field
+	ID          apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WarmPool) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolJSON) RawJSON() string {
+	return r.raw
+}
+
+// WarmPoolMetadata contains metadata about the warm pool
+type WarmPoolMetadata struct {
+	// created_at is when the warm pool was created
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	// updated_at is when the warm pool was last updated
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// environment_class_id is the environment class whose instances are warmed
+	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
+	// organization_id is the ID of the organization that owns the warm pool
+	OrganizationID string `json:"organizationId" format:"uuid"`
+	// project_id is the ID of the project this warm pool belongs to
+	ProjectID string `json:"projectId" format:"uuid"`
+	// runner_id is the runner that manages this warm pool. Derived from the
+	// environment class.
+	RunnerID string               `json:"runnerId" format:"uuid"`
+	JSON     warmPoolMetadataJSON `json:"-"`
+}
+
+// warmPoolMetadataJSON contains the JSON metadata for the struct
+// [WarmPoolMetadata]
+type warmPoolMetadataJSON struct {
+	CreatedAt          apijson.Field
+	UpdatedAt          apijson.Field
+	EnvironmentClassID apijson.Field
+	OrganizationID     apijson.Field
+	ProjectID          apijson.Field
+	RunnerID           apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *WarmPoolMetadata) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolMetadataJSON) RawJSON() string {
+	return r.raw
+}
+
+// WarmPoolPhase represents the lifecycle phase of a warm pool
+type WarmPoolPhase string
+
+const (
+	WarmPoolPhaseUnspecified WarmPoolPhase = "WARM_POOL_PHASE_UNSPECIFIED"
+	WarmPoolPhasePending     WarmPoolPhase = "WARM_POOL_PHASE_PENDING"
+	WarmPoolPhaseReady       WarmPoolPhase = "WARM_POOL_PHASE_READY"
+	WarmPoolPhaseDegraded    WarmPoolPhase = "WARM_POOL_PHASE_DEGRADED"
+	WarmPoolPhaseDeleting    WarmPoolPhase = "WARM_POOL_PHASE_DELETING"
+	WarmPoolPhaseDeleted     WarmPoolPhase = "WARM_POOL_PHASE_DELETED"
+)
+
+func (r WarmPoolPhase) IsKnown() bool {
+	switch r {
+	case WarmPoolPhaseUnspecified, WarmPoolPhasePending, WarmPoolPhaseReady, WarmPoolPhaseDegraded, WarmPoolPhaseDeleting, WarmPoolPhaseDeleted:
+		return true
+	}
+	return false
+}
+
+// WarmPoolSpec contains the desired configuration for a warm pool
+type WarmPoolSpec struct {
+	// desired_phase is the intended lifecycle phase for this warm pool. Managed by the
+	// API and reconciler.
+	DesiredPhase WarmPoolPhase `json:"desiredPhase"`
+	// desired_size is the number of warm instances to maintain.
+	DesiredSize int64 `json:"desiredSize"`
+	// snapshot_id is the prebuild snapshot to warm up in the pool. Updated by the
+	// reconciler when a new prebuild completes for this project and environment class.
+	// Empty when no completed prebuild exists yet.
+	SnapshotID string `json:"snapshotId" api:"nullable" format:"uuid"`
+	// spec_version is incremented each time the spec is updated. Used for optimistic
+	// concurrency control.
+	SpecVersion string           `json:"specVersion"`
+	JSON        warmPoolSpecJSON `json:"-"`
+}
+
+// warmPoolSpecJSON contains the JSON metadata for the struct [WarmPoolSpec]
+type warmPoolSpecJSON struct {
+	DesiredPhase apijson.Field
+	DesiredSize  apijson.Field
+	SnapshotID   apijson.Field
+	SpecVersion  apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *WarmPoolSpec) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolSpecJSON) RawJSON() string {
+	return r.raw
+}
+
+// WarmPoolStatus contains the current status of a warm pool as reported by the
+// runner
+type WarmPoolStatus struct {
+	// phase is the current phase of the warm pool lifecycle
+	Phase WarmPoolPhase `json:"phase" api:"required"`
+	// failure_message contains details about why the warm pool is degraded or failed
+	FailureMessage string `json:"failureMessage"`
+	// status_version is incremented each time the status is updated. Used for
+	// optimistic concurrency control.
+	StatusVersion string             `json:"statusVersion"`
+	JSON          warmPoolStatusJSON `json:"-"`
+}
+
+// warmPoolStatusJSON contains the JSON metadata for the struct [WarmPoolStatus]
+type warmPoolStatusJSON struct {
+	Phase          apijson.Field
+	FailureMessage apijson.Field
+	StatusVersion  apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
+}
+
+func (r *WarmPoolStatus) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolStatusJSON) RawJSON() string {
+	return r.raw
+}
+
 type PrebuildNewResponse struct {
 	// Prebuild represents a prebuild for a project that creates a snapshot for faster
 	// environment startup times.
@@ -522,6 +823,80 @@ func (r *PrebuildNewLogsTokenResponse) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r prebuildNewLogsTokenResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type PrebuildNewWarmPoolResponse struct {
+	// WarmPool maintains pre-created environment instances from a prebuild snapshot
+	// for near-instant environment startup. One warm pool exists per <project,
+	// environment_class> pair.
+	WarmPool WarmPool                        `json:"warmPool" api:"required"`
+	JSON     prebuildNewWarmPoolResponseJSON `json:"-"`
+}
+
+// prebuildNewWarmPoolResponseJSON contains the JSON metadata for the struct
+// [PrebuildNewWarmPoolResponse]
+type prebuildNewWarmPoolResponseJSON struct {
+	WarmPool    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *PrebuildNewWarmPoolResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r prebuildNewWarmPoolResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type PrebuildDeleteWarmPoolResponse = interface{}
+
+type PrebuildGetWarmPoolResponse struct {
+	// WarmPool maintains pre-created environment instances from a prebuild snapshot
+	// for near-instant environment startup. One warm pool exists per <project,
+	// environment_class> pair.
+	WarmPool WarmPool                        `json:"warmPool" api:"required"`
+	JSON     prebuildGetWarmPoolResponseJSON `json:"-"`
+}
+
+// prebuildGetWarmPoolResponseJSON contains the JSON metadata for the struct
+// [PrebuildGetWarmPoolResponse]
+type prebuildGetWarmPoolResponseJSON struct {
+	WarmPool    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *PrebuildGetWarmPoolResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r prebuildGetWarmPoolResponseJSON) RawJSON() string {
+	return r.raw
+}
+
+type PrebuildUpdateWarmPoolResponse struct {
+	// WarmPool maintains pre-created environment instances from a prebuild snapshot
+	// for near-instant environment startup. One warm pool exists per <project,
+	// environment_class> pair.
+	WarmPool WarmPool                           `json:"warmPool" api:"required"`
+	JSON     prebuildUpdateWarmPoolResponseJSON `json:"-"`
+}
+
+// prebuildUpdateWarmPoolResponseJSON contains the JSON metadata for the struct
+// [PrebuildUpdateWarmPoolResponse]
+type prebuildUpdateWarmPoolResponseJSON struct {
+	WarmPool    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *PrebuildUpdateWarmPoolResponse) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r prebuildUpdateWarmPoolResponseJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -627,5 +1002,97 @@ type PrebuildNewLogsTokenParams struct {
 }
 
 func (r PrebuildNewLogsTokenParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type PrebuildNewWarmPoolParams struct {
+	// environment_class_id specifies which environment class to warm. Must be listed
+	// in the project's prebuild configuration environment_class_ids.
+	EnvironmentClassID param.Field[string] `json:"environmentClassId" api:"required" format:"uuid"`
+	// project_id specifies the project this warm pool belongs to. The project must
+	// have prebuilds enabled.
+	ProjectID param.Field[string] `json:"projectId" api:"required" format:"uuid"`
+	// desired_size is the number of warm instances to maintain.
+	DesiredSize param.Field[int64] `json:"desiredSize"`
+}
+
+func (r PrebuildNewWarmPoolParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type PrebuildDeleteWarmPoolParams struct {
+	// warm_pool_id specifies the warm pool to delete
+	WarmPoolID param.Field[string] `json:"warmPoolId" api:"required" format:"uuid"`
+}
+
+func (r PrebuildDeleteWarmPoolParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type PrebuildListWarmPoolsParams struct {
+	Token    param.Field[string] `query:"token"`
+	PageSize param.Field[int64]  `query:"pageSize"`
+	// filter contains the filter options for listing warm pools
+	Filter param.Field[PrebuildListWarmPoolsParamsFilter] `json:"filter"`
+	// pagination contains the pagination options for listing warm pools
+	Pagination param.Field[PrebuildListWarmPoolsParamsPagination] `json:"pagination"`
+}
+
+func (r PrebuildListWarmPoolsParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// URLQuery serializes [PrebuildListWarmPoolsParams]'s query parameters as
+// `url.Values`.
+func (r PrebuildListWarmPoolsParams) URLQuery() (v url.Values) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
+}
+
+// filter contains the filter options for listing warm pools
+type PrebuildListWarmPoolsParamsFilter struct {
+	// environment_class_ids filters warm pools to specific environment classes
+	EnvironmentClassIDs param.Field[[]string] `json:"environmentClassIds" format:"uuid"`
+	// project_ids filters warm pools to specific projects
+	ProjectIDs param.Field[[]string] `json:"projectIds" format:"uuid"`
+}
+
+func (r PrebuildListWarmPoolsParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// pagination contains the pagination options for listing warm pools
+type PrebuildListWarmPoolsParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
+}
+
+func (r PrebuildListWarmPoolsParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type PrebuildGetWarmPoolParams struct {
+	// warm_pool_id specifies the warm pool to retrieve
+	WarmPoolID param.Field[string] `json:"warmPoolId" api:"required" format:"uuid"`
+}
+
+func (r PrebuildGetWarmPoolParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type PrebuildUpdateWarmPoolParams struct {
+	// warm_pool_id specifies the warm pool to update
+	WarmPoolID param.Field[string] `json:"warmPoolId" api:"required" format:"uuid"`
+	// desired_size updates the number of warm instances to maintain.
+	DesiredSize param.Field[int64] `json:"desiredSize"`
+}
+
+func (r PrebuildUpdateWarmPoolParams) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

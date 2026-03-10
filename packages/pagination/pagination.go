@@ -3743,3 +3743,127 @@ func (r *TokensPageAutoPager[T]) Err() error {
 func (r *TokensPageAutoPager[T]) Index() int {
 	return r.run
 }
+
+type WarmPoolsPagePagination struct {
+	NextToken string                      `json:"nextToken"`
+	JSON      warmPoolsPagePaginationJSON `json:"-"`
+}
+
+// warmPoolsPagePaginationJSON contains the JSON metadata for the struct
+// [WarmPoolsPagePagination]
+type warmPoolsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WarmPoolsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type WarmPoolsPage[T any] struct {
+	Pagination WarmPoolsPagePagination `json:"pagination"`
+	WarmPools  []T                     `json:"warmPools"`
+	JSON       warmPoolsPageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// warmPoolsPageJSON contains the JSON metadata for the struct [WarmPoolsPage[T]]
+type warmPoolsPageJSON struct {
+	Pagination  apijson.Field
+	WarmPools   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WarmPoolsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *WarmPoolsPage[T]) GetNextPage() (res *WarmPoolsPage[T], err error) {
+	if len(r.WarmPools) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *WarmPoolsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &WarmPoolsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type WarmPoolsPageAutoPager[T any] struct {
+	page *WarmPoolsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewWarmPoolsPageAutoPager[T any](page *WarmPoolsPage[T], err error) *WarmPoolsPageAutoPager[T] {
+	return &WarmPoolsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.WarmPools) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.WarmPools) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.WarmPools) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.WarmPools[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Index() int {
+	return r.run
+}
