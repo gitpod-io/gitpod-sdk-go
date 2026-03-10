@@ -55,7 +55,7 @@ func (r *EditorService) Get(ctx context.Context, body EditorGetParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EditorService/GetEditor"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all available code editors, optionally filtered to those allowed in an
@@ -167,7 +167,7 @@ func (r *EditorService) ResolveURL(ctx context.Context, body EditorResolveURLPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EditorService/ResolveEditorURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type Editor struct {

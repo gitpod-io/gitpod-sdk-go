@@ -65,7 +65,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Cont
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific host authentication token.
@@ -89,7 +89,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Cont
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing host authentication token.
@@ -116,7 +116,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.C
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists host authentication tokens with optional filtering.
@@ -219,7 +219,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.C
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type HostAuthenticationToken struct {

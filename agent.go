@@ -53,7 +53,7 @@ func (r *AgentService) NewExecutionConversationToken(ctx context.Context, body A
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/CreateAgentExecutionConversationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new prompt.
@@ -66,7 +66,7 @@ func (r *AgentService) NewPrompt(ctx context.Context, body AgentNewPromptParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/CreatePrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes an agent run.
@@ -86,7 +86,7 @@ func (r *AgentService) DeleteExecution(ctx context.Context, body AgentDeleteExec
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/DeleteAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes a prompt.
@@ -98,7 +98,7 @@ func (r *AgentService) DeletePrompt(ctx context.Context, body AgentDeletePromptP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/DeletePrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all agent runs matching the specified filter.
@@ -223,7 +223,7 @@ func (r *AgentService) GetExecution(ctx context.Context, body AgentGetExecutionP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/GetAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific prompt including name, description, and prompt
@@ -245,7 +245,7 @@ func (r *AgentService) GetPrompt(ctx context.Context, body AgentGetPromptParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/GetPrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Sends user input to an active agent run.
@@ -268,7 +268,7 @@ func (r *AgentService) SendToExecution(ctx context.Context, body AgentSendToExec
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/SendToAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Starts (or triggers) an agent run using a provided agent.
@@ -290,7 +290,7 @@ func (r *AgentService) StartExecution(ctx context.Context, body AgentStartExecut
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/StartAgent"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Stops an active agent execution.
@@ -311,7 +311,7 @@ func (r *AgentService) StopExecution(ctx context.Context, body AgentStopExecutio
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/StopAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing prompt.
@@ -324,7 +324,7 @@ func (r *AgentService) UpdatePrompt(ctx context.Context, body AgentUpdatePromptP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/UpdatePrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AgentCodeContext struct {

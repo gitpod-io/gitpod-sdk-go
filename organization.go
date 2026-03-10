@@ -84,7 +84,7 @@ func (r *OrganizationService) New(ctx context.Context, body OrganizationNewParam
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific organization.
@@ -108,7 +108,7 @@ func (r *OrganizationService) Get(ctx context.Context, body OrganizationGetParam
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an organization's settings including name, invite domains, and member
@@ -149,7 +149,7 @@ func (r *OrganizationService) Update(ctx context.Context, body OrganizationUpdat
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Permanently deletes an organization.
@@ -173,7 +173,7 @@ func (r *OrganizationService) Delete(ctx context.Context, body OrganizationDelet
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Allows users to join an organization through direct ID, invite link, or
@@ -206,7 +206,7 @@ func (r *OrganizationService) Join(ctx context.Context, body OrganizationJoinPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/JoinOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Removes a user from an organization while preserving organization data.
@@ -233,7 +233,7 @@ func (r *OrganizationService) Leave(ctx context.Context, body OrganizationLeaveP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/LeaveOrganization"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists and filters organization members with optional pagination.
@@ -351,7 +351,7 @@ func (r *OrganizationService) SetRole(ctx context.Context, body OrganizationSetR
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/SetRole"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type InviteDomains struct {

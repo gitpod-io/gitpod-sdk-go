@@ -60,7 +60,7 @@ func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific SCM integration.
@@ -84,7 +84,7 @@ func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing SCM integration.
@@ -110,7 +110,7 @@ func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, b
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists SCM integrations for a runner.
@@ -195,7 +195,7 @@ func (r *RunnerConfigurationScmIntegrationService) Delete(ctx context.Context, b
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type ScmIntegration struct {

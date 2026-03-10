@@ -59,7 +59,7 @@ func (r *AccountService) Get(ctx context.Context, body AccountGetParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/GetAccount"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes an account permanently.
@@ -85,7 +85,7 @@ func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/DeleteAccount"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets the SSO login URL for a specific email domain.
@@ -118,7 +118,7 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/GetSSOLoginURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists organizations that the currently authenticated account can join.

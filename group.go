@@ -69,7 +69,7 @@ func (r *GroupService) New(ctx context.Context, body GroupNewParams, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/CreateGroup"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets information about a specific group.
@@ -97,7 +97,7 @@ func (r *GroupService) Get(ctx context.Context, body GroupGetParams, opts ...opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/GetGroup"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates group information.
@@ -127,7 +127,7 @@ func (r *GroupService) Update(ctx context.Context, body GroupUpdateParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/UpdateGroup"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists groups with optional pagination.
@@ -243,7 +243,7 @@ func (r *GroupService) Delete(ctx context.Context, body GroupDeleteParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/DeleteGroup"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type Group struct {

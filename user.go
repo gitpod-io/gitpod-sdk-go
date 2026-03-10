@@ -44,7 +44,7 @@ func (r *UserService) DeleteUser(ctx context.Context, body UserDeleteUserParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/DeleteUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets information about the currently authenticated user.
@@ -69,7 +69,7 @@ func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuth
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets basic information about a specific user by their ID.
@@ -93,7 +93,7 @@ func (r *UserService) GetUser(ctx context.Context, body UserGetUserParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Sets whether a user account is suspended.
@@ -127,7 +127,7 @@ func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/SetSuspended"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type User struct {

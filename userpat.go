@@ -119,7 +119,7 @@ func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific personal access token.
@@ -143,7 +143,7 @@ func (r *UserPatService) Get(ctx context.Context, body UserPatGetParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetPersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type PersonalAccessToken struct {

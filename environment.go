@@ -106,7 +106,7 @@ func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific environment including its status, configuration,
@@ -133,7 +133,7 @@ func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an environment's configuration while it is running.
@@ -190,7 +190,7 @@ func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/UpdateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all environments matching the specified criteria.
@@ -316,7 +316,7 @@ func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/DeleteEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an access token for the environment.
@@ -337,7 +337,7 @@ func (r *EnvironmentService) NewEnvironmentToken(ctx context.Context, body Envir
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an environment from an existing project configuration and starts it.
@@ -374,7 +374,7 @@ func (r *EnvironmentService) NewFromProject(ctx context.Context, body Environmen
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentFromProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an access token for retrieving environment logs.
@@ -395,7 +395,7 @@ func (r *EnvironmentService) NewLogsToken(ctx context.Context, body EnvironmentN
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentLogsToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Records environment activity to prevent automatic shutdown.
@@ -419,7 +419,7 @@ func (r *EnvironmentService) MarkActive(ctx context.Context, body EnvironmentMar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/MarkEnvironmentActive"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Starts a stopped environment.
@@ -441,7 +441,7 @@ func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/StartEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Stops a running environment.
@@ -462,7 +462,7 @@ func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParam
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/StopEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Unarchives an environment.
@@ -478,7 +478,7 @@ func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/UnarchiveEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Admission level describes who can access an environment instance and its ports.

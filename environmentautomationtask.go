@@ -83,7 +83,7 @@ func (r *EnvironmentAutomationTaskService) New(ctx context.Context, body Environ
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific automation task.
@@ -107,7 +107,7 @@ func (r *EnvironmentAutomationTaskService) Get(ctx context.Context, body Environ
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an automation task configuration.
@@ -146,7 +146,7 @@ func (r *EnvironmentAutomationTaskService) Update(ctx context.Context, body Envi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists automation tasks with optional filtering.
@@ -253,7 +253,7 @@ func (r *EnvironmentAutomationTaskService) Delete(ctx context.Context, body Envi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Starts a task by creating a new task execution. This call does not block until
@@ -278,7 +278,7 @@ func (r *EnvironmentAutomationTaskService) Start(ctx context.Context, body Envir
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StartTask"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type EnvironmentAutomationTaskNewResponse struct {

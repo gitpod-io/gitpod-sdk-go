@@ -68,7 +68,7 @@ func (r *OrganizationDomainVerificationService) New(ctx context.Context, body Or
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateDomainVerification"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the status of a domain verification request.
@@ -92,7 +92,7 @@ func (r *OrganizationDomainVerificationService) Get(ctx context.Context, body Or
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetDomainVerification"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists and monitors domain verification status across an organization.
@@ -199,7 +199,7 @@ func (r *OrganizationDomainVerificationService) Delete(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteDomainVerification"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Verifies domain ownership for an organization.
@@ -223,7 +223,7 @@ func (r *OrganizationDomainVerificationService) Verify(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/VerifyDomain"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type DomainVerification struct {

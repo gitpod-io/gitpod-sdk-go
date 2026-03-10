@@ -87,7 +87,7 @@ func (r *EnvironmentAutomationServiceService) New(ctx context.Context, body Envi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/CreateService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific automation service.
@@ -112,7 +112,7 @@ func (r *EnvironmentAutomationServiceService) Get(ctx context.Context, body Envi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/GetService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an automation service configuration.
@@ -154,7 +154,7 @@ func (r *EnvironmentAutomationServiceService) Update(ctx context.Context, body E
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/UpdateService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists automation services with optional filtering.
@@ -272,7 +272,7 @@ func (r *EnvironmentAutomationServiceService) Delete(ctx context.Context, body E
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/DeleteService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Starts an automation service. This call does not block until the service is
@@ -298,7 +298,7 @@ func (r *EnvironmentAutomationServiceService) Start(ctx context.Context, body En
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StartService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Stops an automation service. This call does not block until the service is
@@ -324,7 +324,7 @@ func (r *EnvironmentAutomationServiceService) Stop(ctx context.Context, body Env
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StopService"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type Service struct {

@@ -81,7 +81,7 @@ func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific project.
@@ -105,7 +105,7 @@ func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/GetProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a project's configuration.
@@ -148,7 +148,7 @@ func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists projects with optional filtering.
@@ -229,7 +229,7 @@ func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates multiple projects in a single request.
@@ -265,7 +265,7 @@ func (r *ProjectService) BulkNew(ctx context.Context, body ProjectBulkNewParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes multiple projects in a single request.
@@ -293,7 +293,7 @@ func (r *ProjectService) BulkDelete(ctx context.Context, body ProjectBulkDeleteP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProjects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates multiple projects in a single request.
@@ -323,7 +323,7 @@ func (r *ProjectService) BulkUpdate(ctx context.Context, body ProjectBulkUpdateP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProjects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new project using an existing environment as a template.
@@ -348,7 +348,7 @@ func (r *ProjectService) NewFromEnvironment(ctx context.Context, body ProjectNew
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized

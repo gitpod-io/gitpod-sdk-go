@@ -78,7 +78,7 @@ func (r *PrebuildService) New(ctx context.Context, body PrebuildNewParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/CreatePrebuild"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific prebuild.
@@ -101,7 +101,7 @@ func (r *PrebuildService) Get(ctx context.Context, body PrebuildGetParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/GetPrebuild"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // ListPrebuilds
@@ -149,7 +149,7 @@ func (r *PrebuildService) Delete(ctx context.Context, body PrebuildDeleteParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/DeletePrebuild"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Cancels a running prebuild.
@@ -172,7 +172,7 @@ func (r *PrebuildService) Cancel(ctx context.Context, body PrebuildCancelParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/CancelPrebuild"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a logs access token for a prebuild.
@@ -197,7 +197,7 @@ func (r *PrebuildService) NewLogsToken(ctx context.Context, body PrebuildNewLogs
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/CreatePrebuildLogsToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a warm pool for a project and environment class.
@@ -227,7 +227,7 @@ func (r *PrebuildService) NewWarmPool(ctx context.Context, body PrebuildNewWarmP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/CreateWarmPool"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes a warm pool.
@@ -249,7 +249,7 @@ func (r *PrebuildService) DeleteWarmPool(ctx context.Context, body PrebuildDelet
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/DeleteWarmPool"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists warm pools with optional filtering.
@@ -322,7 +322,7 @@ func (r *PrebuildService) GetWarmPool(ctx context.Context, body PrebuildGetWarmP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/GetWarmPool"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a warm pool's configuration.
@@ -341,7 +341,7 @@ func (r *PrebuildService) UpdateWarmPool(ctx context.Context, body PrebuildUpdat
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.PrebuildService/UpdateWarmPool"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Prebuild represents a prebuild for a project that creates a snapshot for faster
