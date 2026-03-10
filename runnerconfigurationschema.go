@@ -53,7 +53,7 @@ func (r *RunnerConfigurationSchemaService) Get(ctx context.Context, body RunnerC
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetRunnerConfigurationSchema"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type RunnerConfigurationSchema struct {

@@ -74,7 +74,7 @@ func (r *GroupRoleAssignmentService) New(ctx context.Context, body GroupRoleAssi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/CreateRoleAssignment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists role assignments for a group or resource.
@@ -194,7 +194,7 @@ func (r *GroupRoleAssignmentService) Delete(ctx context.Context, body GroupRoleA
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/DeleteRoleAssignment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // RoleAssignment represents a role assigned to a group on a specific resource

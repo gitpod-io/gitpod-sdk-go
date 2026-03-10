@@ -64,7 +64,7 @@ func (r *GroupMembershipService) New(ctx context.Context, body GroupMembershipNe
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/CreateMembership"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets a specific membership by group ID and subject.
@@ -94,7 +94,7 @@ func (r *GroupMembershipService) Get(ctx context.Context, body GroupMembershipGe
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/GetMembership"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all memberships of a group.
@@ -187,7 +187,7 @@ func (r *GroupMembershipService) Delete(ctx context.Context, body GroupMembershi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/DeleteMembership"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // GroupMembership represents a subject's membership in a group

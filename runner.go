@@ -85,7 +85,7 @@ func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific runner.
@@ -110,7 +110,7 @@ func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/GetRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a runner's configuration.
@@ -140,7 +140,7 @@ func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/UpdateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all registered runners with optional filtering.
@@ -245,7 +245,7 @@ func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/DeleteRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Checks if a user is authenticated for a specific host.
@@ -269,7 +269,7 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CheckAuthenticationForHost"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Checks if a principal has read access to a repository.
@@ -299,7 +299,7 @@ func (r *RunnerService) CheckRepositoryAccess(ctx context.Context, body RunnerCh
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CheckRepositoryAccess"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an access token for runner logs and debug information.
@@ -319,7 +319,7 @@ func (r *RunnerService) NewLogsToken(ctx context.Context, body RunnerNewLogsToke
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerLogsToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new authentication token for a runner.
@@ -345,7 +345,7 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists SCM organizations the user belongs to.
@@ -369,7 +369,7 @@ func (r *RunnerService) ListScmOrganizations(ctx context.Context, params RunnerL
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/ListSCMOrganizations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Parses a context URL and returns the parsed result.
@@ -400,7 +400,7 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseCon
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Searches for repositories across all authenticated SCM hosts.
@@ -437,7 +437,7 @@ func (r *RunnerService) SearchRepositories(ctx context.Context, body RunnerSearc
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/SearchRepositories"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type GatewayInfo struct {

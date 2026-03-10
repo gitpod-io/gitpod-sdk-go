@@ -73,7 +73,7 @@ func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body Orga
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a specific SSO configuration.
@@ -97,7 +97,7 @@ func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body Orga
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates SSO provider settings and authentication rules.
@@ -134,7 +134,7 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists and filters SSO configurations for an organization.
@@ -241,7 +241,7 @@ func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body O
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // AdditionalScopesUpdate wraps a list of OIDC scopes so that the update request

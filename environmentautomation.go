@@ -75,7 +75,7 @@ func (r *EnvironmentAutomationService) Upsert(ctx context.Context, body Environm
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/UpsertAutomationsFile"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // WARN: Do not remove any field here, as it will break reading automation yaml

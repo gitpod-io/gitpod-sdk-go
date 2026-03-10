@@ -58,7 +58,7 @@ func (r *ProjectPolicyService) New(ctx context.Context, body ProjectPolicyNewPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjectPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing project policy.
@@ -84,7 +84,7 @@ func (r *ProjectPolicyService) Update(ctx context.Context, body ProjectPolicyUpd
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProjectPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists policies for a project.
@@ -168,7 +168,7 @@ func (r *ProjectPolicyService) Delete(ctx context.Context, body ProjectPolicyDel
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProjectPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type ProjectPolicy struct {

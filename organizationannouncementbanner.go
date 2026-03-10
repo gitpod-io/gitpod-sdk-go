@@ -57,7 +57,7 @@ func (r *OrganizationAnnouncementBannerService) Update(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateAnnouncementBanner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves the announcement banner configuration for an organization.
@@ -76,7 +76,7 @@ func (r *OrganizationAnnouncementBannerService) Get(ctx context.Context, body Or
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetAnnouncementBanner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AnnouncementBanner struct {

@@ -68,7 +68,7 @@ func (r *RunnerConfigurationService) Validate(ctx context.Context, body RunnerCo
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/ValidateRunnerConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type EnvironmentClassValidationResult struct {

@@ -54,7 +54,7 @@ func (r *OrganizationInviteService) New(ctx context.Context, body OrganizationIn
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateOrganizationInvite"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // GetOrganizationInvite
@@ -62,7 +62,7 @@ func (r *OrganizationInviteService) Get(ctx context.Context, body OrganizationIn
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInvite"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves organization details and membership info based on an invite link.
@@ -87,7 +87,7 @@ func (r *OrganizationInviteService) GetSummary(ctx context.Context, body Organiz
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganizationInviteSummary"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type OrganizationInvite struct {

@@ -53,7 +53,7 @@ func (r *OrganizationCustomDomainService) New(ctx context.Context, body Organiza
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateCustomDomain"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a specific custom domain configuration.
@@ -73,7 +73,7 @@ func (r *OrganizationCustomDomainService) Get(ctx context.Context, body Organiza
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetCustomDomain"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates custom domain configuration settings.
@@ -99,7 +99,7 @@ func (r *OrganizationCustomDomainService) Update(ctx context.Context, body Organ
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateCustomDomain"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Removes a custom domain configuration from an organization.
@@ -123,7 +123,7 @@ func (r *OrganizationCustomDomainService) Delete(ctx context.Context, body Organ
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteCustomDomain"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // CustomDomain represents a custom domain configuration for an organization

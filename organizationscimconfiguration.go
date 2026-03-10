@@ -69,7 +69,7 @@ func (r *OrganizationScimConfigurationService) New(ctx context.Context, body Org
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a specific SCIM configuration.
@@ -93,7 +93,7 @@ func (r *OrganizationScimConfigurationService) Get(ctx context.Context, body Org
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a SCIM configuration.
@@ -127,7 +127,7 @@ func (r *OrganizationScimConfigurationService) Update(ctx context.Context, body 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists SCIM configurations for an organization.
@@ -208,7 +208,7 @@ func (r *OrganizationScimConfigurationService) Delete(ctx context.Context, body 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Regenerates the bearer token for a SCIM configuration.
@@ -242,7 +242,7 @@ func (r *OrganizationScimConfigurationService) RegenerateToken(ctx context.Conte
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/RegenerateSCIMToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // SCIMConfiguration represents a SCIM 2.0 provisioning configuration

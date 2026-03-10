@@ -53,7 +53,7 @@ func (r *OrganizationPolicyService) Get(ctx context.Context, body OrganizationPo
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetOrganizationPolicies"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates organization policy settings.
@@ -93,7 +93,7 @@ func (r *OrganizationPolicyService) Update(ctx context.Context, body Organizatio
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateOrganizationPolicies"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // AgentPolicy contains agent-specific policy settings for an organization
