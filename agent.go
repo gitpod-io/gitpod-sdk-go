@@ -1623,6 +1623,27 @@ func (r UserInputBlockTextParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// WakeEvent is sent by the backend to wake an agent when a registered interest
+// fires. Delivered via SendToAgentExecution as a new oneof variant.
+type WakeEventParam struct {
+	Timer param.Field[WakeEventTimerParam] `json:"timer" api:"required"`
+	// The interest ID that fired (from WaitingInfo.Interest.id).
+	InterestID param.Field[string] `json:"interestId"`
+}
+
+func (r WakeEventParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventTimerParam struct {
+	// The actual time the timer was evaluated as expired.
+	FiredAt param.Field[time.Time] `json:"firedAt" format:"date-time"`
+}
+
+func (r WakeEventTimerParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type AgentNewExecutionConversationTokenResponse struct {
 	Token string                                         `json:"token"`
 	JSON  agentNewExecutionConversationTokenResponseJSON `json:"-"`
@@ -1949,6 +1970,9 @@ type AgentSendToExecutionParams struct {
 	// child agent execution, or vice versa).
 	AgentMessage param.Field[AgentMessageParam]   `json:"agentMessage"`
 	UserInput    param.Field[UserInputBlockParam] `json:"userInput"`
+	// WakeEvent is sent by the backend to wake an agent when a registered interest
+	// fires. Delivered via SendToAgentExecution as a new oneof variant.
+	WakeEvent param.Field[WakeEventParam] `json:"wakeEvent"`
 }
 
 func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
