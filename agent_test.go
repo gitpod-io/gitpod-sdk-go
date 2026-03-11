@@ -289,6 +289,12 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 				Content: gitpod.F("Generate a report based on the latest logs."),
 			}),
 		}),
+		WakeEvent: gitpod.F(gitpod.WakeEventParam{
+			Timer: gitpod.F(gitpod.WakeEventTimerParam{
+				FiredAt: gitpod.F(time.Now()),
+			}),
+			InterestID: gitpod.F("interestId"),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
