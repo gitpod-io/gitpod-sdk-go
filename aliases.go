@@ -342,6 +342,12 @@ const ResourceRoleSessionAdmin = shared.ResourceRoleSessionAdmin
 // This is an alias to an internal value.
 const ResourceRoleSessionUser = shared.ResourceRoleSessionUser
 
+// This is an alias to an internal value.
+const ResourceRoleTeamAdmin = shared.ResourceRoleTeamAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleTeamViewer = shared.ResourceRoleTeamViewer
+
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
 
