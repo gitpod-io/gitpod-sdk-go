@@ -328,8 +328,11 @@ type EventListParams struct {
 	Token    param.Field[string]                `query:"token"`
 	PageSize param.Field[int64]                 `query:"pageSize"`
 	Filter   param.Field[EventListParamsFilter] `json:"filter"`
-	// pagination contains the pagination options for listing environments
+	// pagination contains the pagination options for listing audit logs
 	Pagination param.Field[EventListParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. When unspecified, results are sorted by
+	// creation time descending (newest first). Supported sort fields: createdAt.
+	Sort param.Field[shared.SortParam] `json:"sort"`
 }
 
 func (r EventListParams) MarshalJSON() (data []byte, err error) {
@@ -359,7 +362,7 @@ func (r EventListParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// pagination contains the pagination options for listing environments
+// pagination contains the pagination options for listing audit logs
 type EventListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
 	// PaginationResponse

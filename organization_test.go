@@ -201,7 +201,7 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		}),
 		Sort: gitpod.F(gitpod.OrganizationListMembersParamsSort{
 			Field: gitpod.F(gitpod.OrganizationListMembersParamsSortFieldSortFieldUnspecified),
-			Order: gitpod.F(gitpod.SortOrderUnspecified),
+			Order: gitpod.F(shared.SortOrderUnspecified),
 		}),
 	})
 	if err != nil {
