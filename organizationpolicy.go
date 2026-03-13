@@ -239,7 +239,12 @@ type OrganizationPolicies struct {
 	MaximumEnvironmentLifetime string `json:"maximumEnvironmentLifetime" format:"regex"`
 	// maximum_environment_timeout controls the maximum timeout allowed for
 	// environments in seconds. 0 means no limit (never). Minimum duration is 30
-	// minutes (1800 seconds).
+	// minutes (1800 seconds). value must be 0s (no limit) or at least 1800s (30
+	// minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	MaximumEnvironmentTimeout string `json:"maximumEnvironmentTimeout" format:"regex"`
 	// security_agent_policy contains security agent configuration for the
 	// organization. When configured, security agents are automatically deployed to all
@@ -443,7 +448,12 @@ type OrganizationPolicyUpdateParams struct {
 	MaximumEnvironmentsPerUser param.Field[string] `json:"maximumEnvironmentsPerUser"`
 	// maximum_environment_timeout controls the maximum timeout allowed for
 	// environments in seconds. 0 means no limit (never). Minimum duration is 30
-	// minutes (1800 seconds).
+	// minutes (1800 seconds). value must be 0s (no limit) or at least 1800s (30
+	// minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	MaximumEnvironmentTimeout param.Field[string] `json:"maximumEnvironmentTimeout" format:"regex"`
 	// maximum_running_environments_per_user limits simultaneously running environments
 	// per user

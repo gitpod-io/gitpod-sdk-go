@@ -1077,7 +1077,12 @@ func (r environmentSpecSSHPublicKeyJSON) RawJSON() string {
 // Timeout configures the environment timeout
 type EnvironmentSpecTimeout struct {
 	// inacitivity is the maximum time of disconnection before the environment is
-	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable. value
+	// must be 0s (disabled) or at least 1800s (30 minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	Disconnected string                     `json:"disconnected" format:"regex"`
 	JSON         environmentSpecTimeoutJSON `json:"-"`
 }
@@ -1279,7 +1284,12 @@ func (r EnvironmentSpecSSHPublicKeyParam) MarshalJSON() (data []byte, err error)
 // Timeout configures the environment timeout
 type EnvironmentSpecTimeoutParam struct {
 	// inacitivity is the maximum time of disconnection before the environment is
-	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable. value
+	// must be 0s (disabled) or at least 1800s (30 minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	Disconnected param.Field[string] `json:"disconnected" format:"regex"`
 }
 
@@ -2406,7 +2416,12 @@ func (r EnvironmentUpdateParamsSpecSSHPublicKey) MarshalJSON() (data []byte, err
 // Timeout configures the environment timeout
 type EnvironmentUpdateParamsSpecTimeout struct {
 	// inacitivity is the maximum time of disconnection before the environment is
-	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable. value
+	// must be 0s (disabled) or at least 1800s (30 minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	Disconnected param.Field[string] `json:"disconnected" format:"regex"`
 }
 
