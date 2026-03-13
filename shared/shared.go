@@ -609,6 +609,32 @@ func (r SecretRefParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type SortParam struct {
+	// Field name to sort by, in camelCase.
+	Field param.Field[string]    `json:"field"`
+	Order param.Field[SortOrder] `json:"order"`
+}
+
+func (r SortParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type SortOrder string
+
+const (
+	SortOrderUnspecified SortOrder = "SORT_ORDER_UNSPECIFIED"
+	SortOrderAsc         SortOrder = "SORT_ORDER_ASC"
+	SortOrderDesc        SortOrder = "SORT_ORDER_DESC"
+)
+
+func (r SortOrder) IsKnown() bool {
+	switch r {
+	case SortOrderUnspecified, SortOrderAsc, SortOrderDesc:
+		return true
+	}
+	return false
+}
+
 // Current state of the pull request
 type State string
 

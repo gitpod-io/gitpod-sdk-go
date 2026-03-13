@@ -1044,32 +1044,6 @@ func (r RecommendedEditorsEditorParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type SortParam struct {
-	// Field name to sort by, in camelCase.
-	Field param.Field[string]    `json:"field"`
-	Order param.Field[SortOrder] `json:"order"`
-}
-
-func (r SortParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type SortOrder string
-
-const (
-	SortOrderUnspecified SortOrder = "SORT_ORDER_UNSPECIFIED"
-	SortOrderAsc         SortOrder = "SORT_ORDER_ASC"
-	SortOrderDesc        SortOrder = "SORT_ORDER_DESC"
-)
-
-func (r SortOrder) IsKnown() bool {
-	switch r {
-	case SortOrderUnspecified, SortOrderAsc, SortOrderDesc:
-		return true
-	}
-	return false
-}
-
 type ProjectNewResponse struct {
 	Project Project                `json:"project"`
 	JSON    projectNewResponseJSON `json:"-"`
@@ -1405,7 +1379,7 @@ type ProjectListParams struct {
 	//     stable, deterministic result set suitable for consistent pagination.
 	//   - "popularity": Sort by popularity — a precomputed score based on recent
 	//     environment creation activity. Updated periodically by a background job.
-	Sort param.Field[SortParam] `json:"sort"`
+	Sort param.Field[shared.SortParam] `json:"sort"`
 }
 
 func (r ProjectListParams) MarshalJSON() (data []byte, err error) {

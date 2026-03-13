@@ -12,6 +12,8 @@
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#ResourceType">ResourceType</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#RunsOnParam">RunsOnParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#SecretRefParam">SecretRefParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#SortParam">SortParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#SortOrder">SortOrder</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#State">State</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#SubjectParam">SubjectParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#TaskExecutionPhase">TaskExecutionPhase</a>
@@ -602,8 +604,6 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentInitializerParam">EnvironmentInitializerParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectPrebuildConfigurationParam">ProjectPrebuildConfigurationParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#RecommendedEditorsParam">RecommendedEditorsParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SortParam">SortParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SortOrder">SortOrder</a>
 
 Response Types:
 

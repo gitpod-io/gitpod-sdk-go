@@ -520,6 +520,21 @@ type SecretRef = shared.SecretRef
 // This is an alias to an internal type.
 type SecretRefParam = shared.SecretRefParam
 
+// This is an alias to an internal type.
+type SortParam = shared.SortParam
+
+// This is an alias to an internal type.
+type SortOrder = shared.SortOrder
+
+// This is an alias to an internal value.
+const SortOrderUnspecified = shared.SortOrderUnspecified
+
+// This is an alias to an internal value.
+const SortOrderAsc = shared.SortOrderAsc
+
+// This is an alias to an internal value.
+const SortOrderDesc = shared.SortOrderDesc
+
 // Current state of the pull request
 //
 // This is an alias to an internal type.

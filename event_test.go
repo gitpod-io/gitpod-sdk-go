@@ -43,6 +43,10 @@ func TestEventListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
+		Sort: gitpod.F(shared.SortParam{
+			Field: gitpod.F("field"),
+			Order: gitpod.F(shared.SortOrderUnspecified),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

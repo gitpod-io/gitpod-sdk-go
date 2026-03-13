@@ -944,7 +944,7 @@ func (r OrganizationListMembersParamsPagination) MarshalJSON() (data []byte, err
 // without any special handling for the authenticated user.
 type OrganizationListMembersParamsSort struct {
 	Field param.Field[OrganizationListMembersParamsSortField] `json:"field"`
-	Order param.Field[SortOrder]                              `json:"order"`
+	Order param.Field[shared.SortOrder]                       `json:"order"`
 }
 
 func (r OrganizationListMembersParamsSort) MarshalJSON() (data []byte, err error) {
