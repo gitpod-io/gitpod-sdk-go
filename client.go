@@ -19,6 +19,7 @@ type Client struct {
 	Options      []option.RequestOption
 	Accounts     *AccountService
 	Agents       *AgentService
+	Automations  *AutomationService
 	Editors      *EditorService
 	Environments *EnvironmentService
 	// ErrorsService provides endpoints for clients to report errors that will be sent
@@ -65,6 +66,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 
 	r.Accounts = NewAccountService(opts...)
 	r.Agents = NewAgentService(opts...)
+	r.Automations = NewAutomationService(opts...)
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Errors = NewErrorService(opts...)
