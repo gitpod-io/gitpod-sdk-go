@@ -1982,9 +1982,9 @@ func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
 
 type AgentStartExecutionParams struct {
 	AgentID param.Field[string] `json:"agentId" format:"uuid"`
-	// annotations are key-value pairs for tracking external context (e.g., Linear
+	// annotations are key-value pairs for tracking external context (e.g., integration
 	// session IDs, GitHub issue references). Keys should follow domain/name convention
-	// (e.g., "linear.app/session-id").
+	// (e.g., "agent-client-session/id").
 	Annotations param.Field[map[string]string]     `json:"annotations"`
 	CodeContext param.Field[AgentCodeContextParam] `json:"codeContext"`
 	// mode specifies the operational mode for this agent execution If not specified,
