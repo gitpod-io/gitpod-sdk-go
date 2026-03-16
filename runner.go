@@ -617,8 +617,11 @@ type RunnerConfiguration struct {
 	// See the runner's status for the actual region.
 	Region string `json:"region"`
 	// The release channel the runner is on
-	ReleaseChannel RunnerReleaseChannel    `json:"releaseChannel"`
-	JSON           runnerConfigurationJSON `json:"-"`
+	ReleaseChannel RunnerReleaseChannel `json:"releaseChannel"`
+	// update_window defines the daily time window (UTC) during which auto-updates are
+	// allowed. If not set, updates are allowed at any time.
+	UpdateWindow UpdateWindow            `json:"updateWindow"`
+	JSON         runnerConfigurationJSON `json:"-"`
 }
 
 // runnerConfigurationJSON contains the JSON metadata for the struct
@@ -630,6 +633,7 @@ type runnerConfigurationJSON struct {
 	Metrics                       apijson.Field
 	Region                        apijson.Field
 	ReleaseChannel                apijson.Field
+	UpdateWindow                  apijson.Field
 	raw                           string
 	ExtraFields                   map[string]apijson.Field
 }
@@ -659,6 +663,9 @@ type RunnerConfigurationParam struct {
 	Region param.Field[string] `json:"region"`
 	// The release channel the runner is on
 	ReleaseChannel param.Field[RunnerReleaseChannel] `json:"releaseChannel"`
+	// update_window defines the daily time window (UTC) during which auto-updates are
+	// allowed. If not set, updates are allowed at any time.
+	UpdateWindow param.Field[UpdateWindowParam] `json:"updateWindow"`
 }
 
 func (r RunnerConfigurationParam) MarshalJSON() (data []byte, err error) {
@@ -872,6 +879,49 @@ func (r SearchMode) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// UpdateWindow defines a daily time window (UTC) during which auto-updates are
+// allowed. The window must be at least 2 hours long. Overnight windows are
+// supported (e.g., start_hour=22, end_hour=4).
+type UpdateWindow struct {
+	// end_hour is the end of the update window as a UTC hour (0-23). If not set,
+	// defaults to start_hour + 2.
+	EndHour int64 `json:"endHour" api:"nullable"`
+	// start_hour is the beginning of the update window as a UTC hour (0-23). +required
+	StartHour int64            `json:"startHour" api:"nullable"`
+	JSON      updateWindowJSON `json:"-"`
+}
+
+// updateWindowJSON contains the JSON metadata for the struct [UpdateWindow]
+type updateWindowJSON struct {
+	EndHour     apijson.Field
+	StartHour   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *UpdateWindow) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r updateWindowJSON) RawJSON() string {
+	return r.raw
+}
+
+// UpdateWindow defines a daily time window (UTC) during which auto-updates are
+// allowed. The window must be at least 2 hours long. Overnight windows are
+// supported (e.g., start_hour=22, end_hour=4).
+type UpdateWindowParam struct {
+	// end_hour is the end of the update window as a UTC hour (0-23). If not set,
+	// defaults to start_hour + 2.
+	EndHour param.Field[int64] `json:"endHour"`
+	// start_hour is the beginning of the update window as a UTC hour (0-23). +required
+	StartHour param.Field[int64] `json:"startHour"`
+}
+
+func (r UpdateWindowParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerNewResponse struct {
@@ -1525,6 +1575,11 @@ type RunnerUpdateParamsSpecConfiguration struct {
 	Metrics param.Field[RunnerUpdateParamsSpecConfigurationMetrics] `json:"metrics"`
 	// The release channel the runner is on
 	ReleaseChannel param.Field[RunnerReleaseChannel] `json:"releaseChannel"`
+	// update_window defines the daily time window (UTC) during which auto-updates are
+	// allowed. start_hour is required. If end_hour is omitted, it defaults to
+	// start_hour + 2. Send an empty UpdateWindow (no start_hour or end_hour) to clear
+	// a custom window and allow updates at any time.
+	UpdateWindow param.Field[UpdateWindowParam] `json:"updateWindow"`
 }
 
 func (r RunnerUpdateParamsSpecConfiguration) MarshalJSON() (data []byte, err error) {

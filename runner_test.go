@@ -44,6 +44,10 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 				}),
 				Region:         gitpod.F("us-west"),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
+				UpdateWindow: gitpod.F(gitpod.UpdateWindowParam{
+					EndHour:   gitpod.F(int64(0)),
+					StartHour: gitpod.F(int64(0)),
+				}),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseActive),
 			Variant:      gitpod.F(gitpod.RunnerVariantUnspecified),
@@ -111,6 +115,10 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 					Username: gitpod.F("username"),
 				}),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelLatest),
+				UpdateWindow: gitpod.F(gitpod.UpdateWindowParam{
+					EndHour:   gitpod.F(int64(0)),
+					StartHour: gitpod.F(int64(0)),
+				}),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
