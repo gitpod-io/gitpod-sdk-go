@@ -146,6 +146,7 @@ func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
 			EnvironmentIDs: gitpod.F([]string{"string"}),
 			ProjectIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Roles:          gitpod.F([]gitpod.AgentListExecutionsParamsFilterRole{gitpod.AgentListExecutionsParamsFilterRoleAgentExecutionRoleUnspecified}),
+			SessionIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			StatusPhases:   gitpod.F([]gitpod.AgentListExecutionsParamsFilterStatusPhase{gitpod.AgentListExecutionsParamsFilterStatusPhasePhaseUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.AgentListExecutionsParamsPagination{

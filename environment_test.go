@@ -254,6 +254,7 @@ func TestEnvironmentListWithOptionalParams(t *testing.T) {
 			Roles:          gitpod.F([]gitpod.EnvironmentRole{gitpod.EnvironmentRoleUnspecified}),
 			RunnerIDs:      gitpod.F([]string{"e6aa9c54-89d3-42c1-ac31-bd8d8f1concentrate"}),
 			RunnerKinds:    gitpod.F([]gitpod.RunnerKind{gitpod.RunnerKindUnspecified}),
+			SessionIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			StatusPhases:   gitpod.F([]gitpod.EnvironmentPhase{gitpod.EnvironmentPhaseUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.EnvironmentListParamsPagination{

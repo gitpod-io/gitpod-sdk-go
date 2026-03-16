@@ -1841,12 +1841,15 @@ type AgentListExecutionsParamsFilter struct {
 	AgentIDs param.Field[[]string] `json:"agentIds"`
 	// annotations filters by key-value pairs. Only executions containing all specified
 	// annotations (with matching values) are returned.
-	Annotations    param.Field[map[string]string]                            `json:"annotations"`
-	CreatorIDs     param.Field[[]string]                                     `json:"creatorIds"`
-	EnvironmentIDs param.Field[[]string]                                     `json:"environmentIds"`
-	ProjectIDs     param.Field[[]string]                                     `json:"projectIds" format:"uuid"`
-	Roles          param.Field[[]AgentListExecutionsParamsFilterRole]        `json:"roles"`
-	StatusPhases   param.Field[[]AgentListExecutionsParamsFilterStatusPhase] `json:"statusPhases"`
+	Annotations    param.Field[map[string]string]                     `json:"annotations"`
+	CreatorIDs     param.Field[[]string]                              `json:"creatorIds"`
+	EnvironmentIDs param.Field[[]string]                              `json:"environmentIds"`
+	ProjectIDs     param.Field[[]string]                              `json:"projectIds" format:"uuid"`
+	Roles          param.Field[[]AgentListExecutionsParamsFilterRole] `json:"roles"`
+	// session_ids filters the response to only executions belonging to the specified
+	// sessions
+	SessionIDs   param.Field[[]string]                                     `json:"sessionIds" format:"uuid"`
+	StatusPhases param.Field[[]AgentListExecutionsParamsFilterStatusPhase] `json:"statusPhases"`
 }
 
 func (r AgentListExecutionsParamsFilter) MarshalJSON() (data []byte, err error) {
