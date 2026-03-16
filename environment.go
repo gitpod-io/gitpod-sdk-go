@@ -2467,6 +2467,9 @@ type EnvironmentListParamsFilter struct {
 	// runner_kinds filters the response to only Environments running on these Runner
 	// Kinds
 	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
+	// session_ids filters the response to only environments belonging to the specified
+	// sessions
+	SessionIDs param.Field[[]string] `json:"sessionIds" format:"uuid"`
 	// actual_phases is a list of phases the environment must be in for it to be
 	// returned in the API call
 	StatusPhases param.Field[[]EnvironmentPhase] `json:"statusPhases"`
