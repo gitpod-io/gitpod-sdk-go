@@ -416,7 +416,10 @@ type PersonalAccessToken struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	LastUsed time.Time               `json:"lastUsed" format:"date-time"`
+	LastUsed time.Time `json:"lastUsed" format:"date-time"`
+	// When true, the token can only be used for read operations. Mutations will be
+	// denied at the data layer.
+	ReadOnly bool                    `json:"readOnly"`
 	UserID   string                  `json:"userId" format:"uuid"`
 	JSON     personalAccessTokenJSON `json:"-"`
 }
@@ -430,6 +433,7 @@ type personalAccessTokenJSON struct {
 	Description apijson.Field
 	ExpiresAt   apijson.Field
 	LastUsed    apijson.Field
+	ReadOnly    apijson.Field
 	UserID      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
