@@ -338,6 +338,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 	_, err := client.Environments.NewFromProject(context.TODO(), gitpod.EnvironmentNewFromProjectParams{
 		Name:      gitpod.F("name"),
 		ProjectID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		SessionID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Spec: gitpod.F(gitpod.EnvironmentSpecParam{
 			Admission: gitpod.F(gitpod.AdmissionLevelUnspecified),
 			AutomationsFile: gitpod.F(gitpod.EnvironmentSpecAutomationsFileParam{

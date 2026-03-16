@@ -2542,6 +2542,9 @@ type EnvironmentNewFromProjectParams struct {
 	// system will generate a name.
 	Name      param.Field[string] `json:"name"`
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// session_id is the ID of the session this environment belongs to. If empty, a new
+	// session is created implicitly.
+	SessionID param.Field[string] `json:"sessionId" format:"uuid"`
 	// Spec is the configuration of the environment that's required for the runner to
 	// start the environment Configuration already defined in the Project will override
 	// parts of the spec, if set
