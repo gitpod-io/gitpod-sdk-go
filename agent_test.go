@@ -291,10 +291,23 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			}),
 		}),
 		WakeEvent: gitpod.F(gitpod.WakeEventParam{
+			InterestID: gitpod.F("interestId"),
+			LoopRetrigger: gitpod.F(gitpod.WakeEventLoopRetriggerParam{
+				Outputs: gitpod.F(map[string]string{
+					"foo": "string",
+				}),
+				UnmetConditions: gitpod.F([]gitpod.WakeEventLoopRetriggerUnmetConditionParam{{
+					ID:            gitpod.F("id"),
+					Description:   gitpod.F("description"),
+					Expression:    gitpod.F("expression"),
+					Iteration:     gitpod.F(int64(0)),
+					MaxIterations: gitpod.F(int64(0)),
+					Reason:        gitpod.F("reason"),
+				}}),
+			}),
 			Timer: gitpod.F(gitpod.WakeEventTimerParam{
 				FiredAt: gitpod.F(time.Now()),
 			}),
-			InterestID: gitpod.F("interestId"),
 		}),
 	})
 	if err != nil {
