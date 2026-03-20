@@ -533,12 +533,14 @@ Methods:
 
 Params Types:
 
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ConversationSharingPolicy">ConversationSharingPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#KernelControlsAction">KernelControlsAction</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#VetoExecPolicyParam">VetoExecPolicyParam</a>
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentPolicy">AgentPolicy</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ConversationSharingPolicy">ConversationSharingPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CrowdStrikeConfig">CrowdStrikeConfig</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#KernelControlsAction">KernelControlsAction</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationPolicies">OrganizationPolicies</a>

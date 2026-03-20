@@ -107,6 +107,8 @@ type AgentPolicy struct {
 	// scm_tools_disabled controls whether SCM (Source Control Management) tools are
 	// disabled for agents
 	ScmToolsDisabled bool `json:"scmToolsDisabled" api:"required"`
+	// conversation_sharing_policy controls whether agent conversations can be shared
+	ConversationSharingPolicy ConversationSharingPolicy `json:"conversationSharingPolicy"`
 	// scm_tools_allowed_group_id restricts SCM tools access to members of this group.
 	// Empty means no restriction (all users can use SCM tools if not disabled).
 	ScmToolsAllowedGroupID string          `json:"scmToolsAllowedGroupId"`
@@ -115,12 +117,13 @@ type AgentPolicy struct {
 
 // agentPolicyJSON contains the JSON metadata for the struct [AgentPolicy]
 type agentPolicyJSON struct {
-	CommandDenyList        apijson.Field
-	McpDisabled            apijson.Field
-	ScmToolsDisabled       apijson.Field
-	ScmToolsAllowedGroupID apijson.Field
-	raw                    string
-	ExtraFields            map[string]apijson.Field
+	CommandDenyList           apijson.Field
+	McpDisabled               apijson.Field
+	ScmToolsDisabled          apijson.Field
+	ConversationSharingPolicy apijson.Field
+	ScmToolsAllowedGroupID    apijson.Field
+	raw                       string
+	ExtraFields               map[string]apijson.Field
 }
 
 func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
@@ -129,6 +132,23 @@ func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
 
 func (r agentPolicyJSON) RawJSON() string {
 	return r.raw
+}
+
+// ConversationSharingPolicy controls how agent conversations can be shared.
+type ConversationSharingPolicy string
+
+const (
+	ConversationSharingPolicyUnspecified  ConversationSharingPolicy = "CONVERSATION_SHARING_POLICY_UNSPECIFIED"
+	ConversationSharingPolicyDisabled     ConversationSharingPolicy = "CONVERSATION_SHARING_POLICY_DISABLED"
+	ConversationSharingPolicyOrganization ConversationSharingPolicy = "CONVERSATION_SHARING_POLICY_ORGANIZATION"
+)
+
+func (r ConversationSharingPolicy) IsKnown() bool {
+	switch r {
+	case ConversationSharingPolicyUnspecified, ConversationSharingPolicyDisabled, ConversationSharingPolicyOrganization:
+		return true
+	}
+	return false
 }
 
 // CrowdStrikeConfig configures CrowdStrike Falcon sensor deployment
@@ -489,6 +509,8 @@ type OrganizationPolicyUpdateParamsAgentPolicy struct {
 	// command_deny_list contains a list of commands that agents are not allowed to
 	// execute
 	CommandDenyList param.Field[[]string] `json:"commandDenyList"`
+	// conversation_sharing_policy controls whether agent conversations can be shared
+	ConversationSharingPolicy param.Field[ConversationSharingPolicy] `json:"conversationSharingPolicy"`
 	// mcp_disabled controls whether MCP (Model Context Protocol) is disabled for
 	// agents
 	McpDisabled param.Field[bool] `json:"mcpDisabled"`
