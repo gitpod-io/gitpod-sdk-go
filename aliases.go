@@ -298,6 +298,9 @@ const ResourceRoleAgentExecutionRunner = shared.ResourceRoleAgentExecutionRunner
 const ResourceRoleAgentExecutionOutputsReporter = shared.ResourceRoleAgentExecutionOutputsReporter
 
 // This is an alias to an internal value.
+const ResourceRoleAgentExecutionViewer = shared.ResourceRoleAgentExecutionViewer
+
+// This is an alias to an internal value.
 const ResourceRoleAgentAdmin = shared.ResourceRoleAgentAdmin
 
 // This is an alias to an internal value.
