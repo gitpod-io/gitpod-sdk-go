@@ -3530,6 +3530,12 @@ func (r AutomationListParams) URLQuery() (v url.Values) {
 type AutomationListParamsFilter struct {
 	// creator_ids filters workflows by creator user IDs
 	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
+	// has_failed_execution_since filters workflows that have at least one failed
+	// execution with create_time >= the specified timestamp. A failed execution is one
+	// that is COMPLETED with failed_action_count > 0, or STOPPED with
+	// failed_action_count > 0 or a non-empty failure_message. This filter is mutually
+	// exclusive with status_phases.
+	HasFailedExecutionSince param.Field[time.Time] `json:"hasFailedExecutionSince" format:"date-time"`
 	// search performs case-insensitive search across workflow name, description, and
 	// ID
 	Search param.Field[string] `json:"search"`
