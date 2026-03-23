@@ -983,7 +983,14 @@ type EnvironmentSpecSecret struct {
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
-	EnvironmentVariable            string `json:"environmentVariable"`
+	// credential_proxy configures transparent credential injection via the credential
+	// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+	// hosts and replaces the dummy secret value with the real value in the specified
+	// HTTP header. The real secret value is never exposed in the environment. This
+	// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+	// credential) and proxied at the same time.
+	CredentialProxy     EnvironmentSpecSecretsCredentialProxy `json:"credentialProxy"`
+	EnvironmentVariable string                                `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          string `json:"filePath"`
 	GitCredentialHost string `json:"gitCredentialHost"`
@@ -1008,6 +1015,7 @@ type environmentSpecSecretJSON struct {
 	ID                             apijson.Field
 	APIOnly                        apijson.Field
 	ContainerRegistryBasicAuthHost apijson.Field
+	CredentialProxy                apijson.Field
 	EnvironmentVariable            apijson.Field
 	FilePath                       apijson.Field
 	GitCredentialHost              apijson.Field
@@ -1026,6 +1034,60 @@ func (r *EnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
 
 func (r environmentSpecSecretJSON) RawJSON() string {
 	return r.raw
+}
+
+// credential_proxy configures transparent credential injection via the credential
+// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+// hosts and replaces the dummy secret value with the real value in the specified
+// HTTP header. The real secret value is never exposed in the environment. This
+// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+// credential) and proxied at the same time.
+type EnvironmentSpecSecretsCredentialProxy struct {
+	// format describes how the secret value is encoded. The proxy uses this to decode
+	// the value before injecting it into the header.
+	Format EnvironmentSpecSecretsCredentialProxyFormat `json:"format"`
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header string `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts []string                                  `json:"targetHosts"`
+	JSON        environmentSpecSecretsCredentialProxyJSON `json:"-"`
+}
+
+// environmentSpecSecretsCredentialProxyJSON contains the JSON metadata for the
+// struct [EnvironmentSpecSecretsCredentialProxy]
+type environmentSpecSecretsCredentialProxyJSON struct {
+	Format      apijson.Field
+	Header      apijson.Field
+	TargetHosts apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentSpecSecretsCredentialProxy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentSpecSecretsCredentialProxyJSON) RawJSON() string {
+	return r.raw
+}
+
+// format describes how the secret value is encoded. The proxy uses this to decode
+// the value before injecting it into the header.
+type EnvironmentSpecSecretsCredentialProxyFormat string
+
+const (
+	EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_UNSPECIFIED"
+	EnvironmentSpecSecretsCredentialProxyFormatFormatPlain       EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_PLAIN"
+	EnvironmentSpecSecretsCredentialProxyFormatFormatBase64      EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_BASE64"
+)
+
+func (r EnvironmentSpecSecretsCredentialProxyFormat) IsKnown() bool {
+	switch r {
+	case EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified, EnvironmentSpecSecretsCredentialProxyFormatFormatPlain, EnvironmentSpecSecretsCredentialProxyFormatFormatBase64:
+		return true
+	}
+	return false
 }
 
 // scope indicates where this secret originated from. Used to filter secrets during
@@ -1248,7 +1310,14 @@ type EnvironmentSpecSecretParam struct {
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
-	EnvironmentVariable            param.Field[string] `json:"environmentVariable"`
+	// credential_proxy configures transparent credential injection via the credential
+	// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+	// hosts and replaces the dummy secret value with the real value in the specified
+	// HTTP header. The real secret value is never exposed in the environment. This
+	// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+	// credential) and proxied at the same time.
+	CredentialProxy     param.Field[EnvironmentSpecSecretsCredentialProxyParam] `json:"credentialProxy"`
+	EnvironmentVariable param.Field[string]                                     `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          param.Field[string] `json:"filePath"`
 	GitCredentialHost param.Field[string] `json:"gitCredentialHost"`
@@ -1267,6 +1336,27 @@ type EnvironmentSpecSecretParam struct {
 }
 
 func (r EnvironmentSpecSecretParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// credential_proxy configures transparent credential injection via the credential
+// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+// hosts and replaces the dummy secret value with the real value in the specified
+// HTTP header. The real secret value is never exposed in the environment. This
+// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+// credential) and proxied at the same time.
+type EnvironmentSpecSecretsCredentialProxyParam struct {
+	// format describes how the secret value is encoded. The proxy uses this to decode
+	// the value before injecting it into the header.
+	Format param.Field[EnvironmentSpecSecretsCredentialProxyFormat] `json:"format"`
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header param.Field[string] `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts param.Field[[]string] `json:"targetHosts"`
+}
+
+func (r EnvironmentSpecSecretsCredentialProxyParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
