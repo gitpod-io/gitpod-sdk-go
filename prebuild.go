@@ -673,8 +673,18 @@ type WarmPoolSpec struct {
 	// desired_phase is the intended lifecycle phase for this warm pool. Managed by the
 	// API and reconciler.
 	DesiredPhase WarmPoolPhase `json:"desiredPhase"`
-	// desired_size is the number of warm instances to maintain.
+	// desired_size is the number of warm instances to maintain. Deprecated: Use
+	// min_size and max_size instead for dynamic scaling. Existing pools will be
+	// migrated to min_size=max_size=desired_size.
+	//
+	// Deprecated: deprecated
 	DesiredSize int64 `json:"desiredSize"`
+	// max_size is the maximum number of warm instances to maintain. The pool will
+	// never scale above this value. Must be >= min_size and <= 20.
+	MaxSize int64 `json:"maxSize" api:"nullable"`
+	// min_size is the minimum number of warm instances to maintain. The pool will
+	// never scale below this value. Must be >= 1 and <= max_size.
+	MinSize int64 `json:"minSize" api:"nullable"`
 	// snapshot_id is the prebuild snapshot to warm up in the pool. Updated by the
 	// reconciler when a new prebuild completes for this project and environment class.
 	// Empty when no completed prebuild exists yet.
@@ -689,6 +699,8 @@ type WarmPoolSpec struct {
 type warmPoolSpecJSON struct {
 	DesiredPhase apijson.Field
 	DesiredSize  apijson.Field
+	MaxSize      apijson.Field
+	MinSize      apijson.Field
 	SnapshotID   apijson.Field
 	SpecVersion  apijson.Field
 	raw          string
@@ -710,19 +722,30 @@ type WarmPoolStatus struct {
 	Phase WarmPoolPhase `json:"phase" api:"required"`
 	// failure_message contains details about why the warm pool is degraded or failed
 	FailureMessage string `json:"failureMessage"`
+	// running_instances is the number of running warm instances in the pool, ready to
+	// be claimed for near-instant environment startup.
+	RunningInstances int64 `json:"runningInstances"`
 	// status_version is incremented each time the status is updated. Used for
 	// optimistic concurrency control.
-	StatusVersion string             `json:"statusVersion"`
-	JSON          warmPoolStatusJSON `json:"-"`
+	StatusVersion string `json:"statusVersion"`
+	// stopped_instances is the number of pre-provisioned but stopped instances in the
+	// pool. When a running instance is claimed, stopped instances are used to backfill
+	// the running pool faster than provisioning from scratch. Stopped instances only
+	// incur storage costs, allowing a larger total pool at lower cost than keeping all
+	// instances running.
+	StoppedInstances int64              `json:"stoppedInstances"`
+	JSON             warmPoolStatusJSON `json:"-"`
 }
 
 // warmPoolStatusJSON contains the JSON metadata for the struct [WarmPoolStatus]
 type warmPoolStatusJSON struct {
-	Phase          apijson.Field
-	FailureMessage apijson.Field
-	StatusVersion  apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	Phase            apijson.Field
+	FailureMessage   apijson.Field
+	RunningInstances apijson.Field
+	StatusVersion    apijson.Field
+	StoppedInstances apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *WarmPoolStatus) UnmarshalJSON(data []byte) (err error) {
@@ -1012,8 +1035,15 @@ type PrebuildNewWarmPoolParams struct {
 	// project_id specifies the project this warm pool belongs to. The project must
 	// have prebuilds enabled.
 	ProjectID param.Field[string] `json:"projectId" api:"required" format:"uuid"`
-	// desired_size is the number of warm instances to maintain.
+	// desired_size is the number of warm instances to maintain. Deprecated: Use
+	// min_size and max_size instead for dynamic scaling.
 	DesiredSize param.Field[int64] `json:"desiredSize"`
+	// max_size is the maximum number of warm instances to maintain. The pool will
+	// never scale above this value. Must be >= min_size and <= 20.
+	MaxSize param.Field[int64] `json:"maxSize"`
+	// min_size is the minimum number of warm instances to maintain. The pool will
+	// never scale below this value. Must be >= 1 and <= max_size.
+	MinSize param.Field[int64] `json:"minSize"`
 }
 
 func (r PrebuildNewWarmPoolParams) MarshalJSON() (data []byte, err error) {
@@ -1089,8 +1119,15 @@ func (r PrebuildGetWarmPoolParams) MarshalJSON() (data []byte, err error) {
 type PrebuildUpdateWarmPoolParams struct {
 	// warm_pool_id specifies the warm pool to update
 	WarmPoolID param.Field[string] `json:"warmPoolId" api:"required" format:"uuid"`
-	// desired_size updates the number of warm instances to maintain.
+	// desired_size updates the number of warm instances to maintain. Deprecated: Use
+	// min_size and max_size instead for dynamic scaling.
 	DesiredSize param.Field[int64] `json:"desiredSize"`
+	// max_size updates the maximum number of warm instances to maintain. The pool will
+	// never scale above this value. Must be >= min_size and <= 20.
+	MaxSize param.Field[int64] `json:"maxSize"`
+	// min_size updates the minimum number of warm instances to maintain. The pool will
+	// never scale below this value. Must be >= 1 and <= max_size.
+	MinSize param.Field[int64] `json:"minSize"`
 }
 
 func (r PrebuildUpdateWarmPoolParams) MarshalJSON() (data []byte, err error) {
