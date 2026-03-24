@@ -1983,6 +1983,9 @@ type AgentListPromptsParamsFilter struct {
 	IsCommand            param.Field[bool] `json:"isCommand"`
 	IsSkill              param.Field[bool] `json:"isSkill"`
 	IsTemplate           param.Field[bool] `json:"isTemplate"`
+	// search performs case-insensitive search across prompt name, description, and
+	// command.
+	Search param.Field[string] `json:"search"`
 }
 
 func (r AgentListPromptsParamsFilter) MarshalJSON() (data []byte, err error) {
