@@ -64,6 +64,18 @@ type AutomationTrigger = shared.AutomationTrigger
 type AutomationTriggerParam = shared.AutomationTriggerParam
 
 // This is an alias to an internal type.
+type CountResponseRelation = shared.CountResponseRelation
+
+// This is an alias to an internal value.
+const CountResponseRelationUnspecified = shared.CountResponseRelationUnspecified
+
+// This is an alias to an internal value.
+const CountResponseRelationEq = shared.CountResponseRelationEq
+
+// This is an alias to an internal value.
+const CountResponseRelationGte = shared.CountResponseRelationGte
+
+// This is an alias to an internal type.
 type EnvironmentClass = shared.EnvironmentClass
 
 // This is an alias to an internal type.
@@ -90,6 +102,60 @@ type EnvironmentVariableSource = shared.EnvironmentVariableSource
 //
 // This is an alias to an internal type.
 type EnvironmentVariableSourceParam = shared.EnvironmentVariableSourceParam
+
+// The status code, which should be an enum value of
+// [google.rpc.Code][google.rpc.Code].
+//
+// This is an alias to an internal type.
+type ErrorCode = shared.ErrorCode
+
+// This is an alias to an internal value.
+const ErrorCodeCanceled = shared.ErrorCodeCanceled
+
+// This is an alias to an internal value.
+const ErrorCodeUnknown = shared.ErrorCodeUnknown
+
+// This is an alias to an internal value.
+const ErrorCodeInvalidArgument = shared.ErrorCodeInvalidArgument
+
+// This is an alias to an internal value.
+const ErrorCodeDeadlineExceeded = shared.ErrorCodeDeadlineExceeded
+
+// This is an alias to an internal value.
+const ErrorCodeNotFound = shared.ErrorCodeNotFound
+
+// This is an alias to an internal value.
+const ErrorCodeAlreadyExists = shared.ErrorCodeAlreadyExists
+
+// This is an alias to an internal value.
+const ErrorCodePermissionDenied = shared.ErrorCodePermissionDenied
+
+// This is an alias to an internal value.
+const ErrorCodeResourceExhausted = shared.ErrorCodeResourceExhausted
+
+// This is an alias to an internal value.
+const ErrorCodeFailedPrecondition = shared.ErrorCodeFailedPrecondition
+
+// This is an alias to an internal value.
+const ErrorCodeAborted = shared.ErrorCodeAborted
+
+// This is an alias to an internal value.
+const ErrorCodeOutOfRange = shared.ErrorCodeOutOfRange
+
+// This is an alias to an internal value.
+const ErrorCodeUnimplemented = shared.ErrorCodeUnimplemented
+
+// This is an alias to an internal value.
+const ErrorCodeInternal = shared.ErrorCodeInternal
+
+// This is an alias to an internal value.
+const ErrorCodeUnavailable = shared.ErrorCodeUnavailable
+
+// This is an alias to an internal value.
+const ErrorCodeDataLoss = shared.ErrorCodeDataLoss
+
+// This is an alias to an internal value.
+const ErrorCodeUnauthenticated = shared.ErrorCodeUnauthenticated
 
 // This is an alias to an internal type.
 type FieldValue = shared.FieldValue

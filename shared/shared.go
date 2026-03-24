@@ -81,6 +81,22 @@ func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type CountResponseRelation string
+
+const (
+	CountResponseRelationUnspecified CountResponseRelation = "COUNT_RESPONSE_RELATION_UNSPECIFIED"
+	CountResponseRelationEq          CountResponseRelation = "COUNT_RESPONSE_RELATION_EQ"
+	CountResponseRelationGte         CountResponseRelation = "COUNT_RESPONSE_RELATION_GTE"
+)
+
+func (r CountResponseRelation) IsKnown() bool {
+	switch r {
+	case CountResponseRelationUnspecified, CountResponseRelationEq, CountResponseRelationGte:
+		return true
+	}
+	return false
+}
+
 type EnvironmentClass struct {
 	// id is the unique identifier of the environment class
 	ID string `json:"id" api:"required"`
@@ -217,6 +233,37 @@ type EnvironmentVariableSourceParam struct {
 
 func (r EnvironmentVariableSourceParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// The status code, which should be an enum value of
+// [google.rpc.Code][google.rpc.Code].
+type ErrorCode string
+
+const (
+	ErrorCodeCanceled           ErrorCode = "canceled"
+	ErrorCodeUnknown            ErrorCode = "unknown"
+	ErrorCodeInvalidArgument    ErrorCode = "invalid_argument"
+	ErrorCodeDeadlineExceeded   ErrorCode = "deadline_exceeded"
+	ErrorCodeNotFound           ErrorCode = "not_found"
+	ErrorCodeAlreadyExists      ErrorCode = "already_exists"
+	ErrorCodePermissionDenied   ErrorCode = "permission_denied"
+	ErrorCodeResourceExhausted  ErrorCode = "resource_exhausted"
+	ErrorCodeFailedPrecondition ErrorCode = "failed_precondition"
+	ErrorCodeAborted            ErrorCode = "aborted"
+	ErrorCodeOutOfRange         ErrorCode = "out_of_range"
+	ErrorCodeUnimplemented      ErrorCode = "unimplemented"
+	ErrorCodeInternal           ErrorCode = "internal"
+	ErrorCodeUnavailable        ErrorCode = "unavailable"
+	ErrorCodeDataLoss           ErrorCode = "data_loss"
+	ErrorCodeUnauthenticated    ErrorCode = "unauthenticated"
+)
+
+func (r ErrorCode) IsKnown() bool {
+	switch r {
+	case ErrorCodeCanceled, ErrorCodeUnknown, ErrorCodeInvalidArgument, ErrorCodeDeadlineExceeded, ErrorCodeNotFound, ErrorCodeAlreadyExists, ErrorCodePermissionDenied, ErrorCodeResourceExhausted, ErrorCodeFailedPrecondition, ErrorCodeAborted, ErrorCodeOutOfRange, ErrorCodeUnimplemented, ErrorCodeInternal, ErrorCodeUnavailable, ErrorCodeDataLoss, ErrorCodeUnauthenticated:
+		return true
+	}
+	return false
 }
 
 type FieldValue struct {
