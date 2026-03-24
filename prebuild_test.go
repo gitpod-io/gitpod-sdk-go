@@ -198,8 +198,6 @@ func TestPrebuildNewWarmPoolWithOptionalParams(t *testing.T) {
 		EnvironmentClassID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		ProjectID:          gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		DesiredSize:        gitpod.F(int64(2)),
-		MaxSize:            gitpod.F(int64(1)),
-		MinSize:            gitpod.F(int64(1)),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -310,8 +308,6 @@ func TestPrebuildUpdateWarmPoolWithOptionalParams(t *testing.T) {
 	_, err := client.Prebuilds.UpdateWarmPool(context.TODO(), gitpod.PrebuildUpdateWarmPoolParams{
 		WarmPoolID:  gitpod.F("a1b2c3d4-5678-9abc-def0-1234567890ab"),
 		DesiredSize: gitpod.F(int64(5)),
-		MaxSize:     gitpod.F(int64(1)),
-		MinSize:     gitpod.F(int64(1)),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
