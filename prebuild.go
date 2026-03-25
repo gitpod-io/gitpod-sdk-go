@@ -683,8 +683,7 @@ type WarmPoolSpec struct {
 	// never scale above this value. Must be >= min_size and <= 20.
 	MaxSize int64 `json:"maxSize" api:"nullable"`
 	// min_size is the minimum number of warm instances to maintain. The pool will
-	// never scale below this value. Must be >= 0 and <= max_size. Set to 0 to allow
-	// full scale-down.
+	// never scale below this value. Must be >= 1 and <= max_size.
 	MinSize int64 `json:"minSize" api:"nullable"`
 	// snapshot_id is the prebuild snapshot to warm up in the pool. Updated by the
 	// reconciler when a new prebuild completes for this project and environment class.
@@ -1048,8 +1047,7 @@ type PrebuildNewWarmPoolParams struct {
 	// never scale above this value. Must be >= min_size and <= 20.
 	MaxSize param.Field[int64] `json:"maxSize"`
 	// min_size is the minimum number of warm instances to maintain. The pool will
-	// never scale below this value. Must be >= 0 and <= max_size. Set to 0 to allow
-	// full scale-down.
+	// never scale below this value. Must be >= 1 and <= max_size.
 	MinSize param.Field[int64] `json:"minSize"`
 }
 
@@ -1133,8 +1131,7 @@ type PrebuildUpdateWarmPoolParams struct {
 	// never scale above this value. Must be >= min_size and <= 20.
 	MaxSize param.Field[int64] `json:"maxSize"`
 	// min_size updates the minimum number of warm instances to maintain. The pool will
-	// never scale below this value. Must be >= 0 and <= max_size. Set to 0 to allow
-	// full scale-down.
+	// never scale below this value. Must be >= 1 and <= max_size.
 	MinSize param.Field[int64] `json:"minSize"`
 }
 
