@@ -199,7 +199,7 @@ func TestPrebuildNewWarmPoolWithOptionalParams(t *testing.T) {
 		ProjectID:          gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		DesiredSize:        gitpod.F(int64(2)),
 		MaxSize:            gitpod.F(int64(1)),
-		MinSize:            gitpod.F(int64(1)),
+		MinSize:            gitpod.F(int64(20)),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -311,7 +311,7 @@ func TestPrebuildUpdateWarmPoolWithOptionalParams(t *testing.T) {
 		WarmPoolID:  gitpod.F("a1b2c3d4-5678-9abc-def0-1234567890ab"),
 		DesiredSize: gitpod.F(int64(5)),
 		MaxSize:     gitpod.F(int64(1)),
-		MinSize:     gitpod.F(int64(1)),
+		MinSize:     gitpod.F(int64(20)),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
