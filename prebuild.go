@@ -721,6 +721,10 @@ func (r warmPoolSpecJSON) RawJSON() string {
 type WarmPoolStatus struct {
 	// phase is the current phase of the warm pool lifecycle
 	Phase WarmPoolPhase `json:"phase" api:"required"`
+	// desired_size is the current target number of instances the autoscaler has
+	// decided on. Unlike running_instances, this value is stable and does not
+	// fluctuate as instances are claimed and backfilled.
+	DesiredSize int64 `json:"desiredSize"`
 	// failure_message contains details about why the warm pool is degraded or failed
 	FailureMessage string `json:"failureMessage"`
 	// running_instances is the number of running warm instances in the pool, ready to
@@ -741,6 +745,7 @@ type WarmPoolStatus struct {
 // warmPoolStatusJSON contains the JSON metadata for the struct [WarmPoolStatus]
 type warmPoolStatusJSON struct {
 	Phase            apijson.Field
+	DesiredSize      apijson.Field
 	FailureMessage   apijson.Field
 	RunningInstances apijson.Field
 	StatusVersion    apijson.Field
