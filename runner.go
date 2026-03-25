@@ -598,11 +598,12 @@ const (
 	RunnerCapabilityCheckRepositoryAccess          RunnerCapability = "RUNNER_CAPABILITY_CHECK_REPOSITORY_ACCESS"
 	RunnerCapabilityRunnerSideAgent                RunnerCapability = "RUNNER_CAPABILITY_RUNNER_SIDE_AGENT"
 	RunnerCapabilityWarmPool                       RunnerCapability = "RUNNER_CAPABILITY_WARM_POOL"
+	RunnerCapabilityAsgWarmPool                    RunnerCapability = "RUNNER_CAPABILITY_ASG_WARM_POOL"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool:
 		return true
 	}
 	return false
