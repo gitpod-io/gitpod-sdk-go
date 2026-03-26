@@ -109,6 +109,10 @@ type AgentPolicy struct {
 	ScmToolsDisabled bool `json:"scmToolsDisabled" api:"required"`
 	// conversation_sharing_policy controls whether agent conversations can be shared
 	ConversationSharingPolicy ConversationSharingPolicy `json:"conversationSharingPolicy"`
+	// max_subagents_per_environment limits the number of non-terminal sub-agents a
+	// parent can have running simultaneously in the same environment. Valid range:
+	// 0-10. Zero means use the default (5).
+	MaxSubagentsPerEnvironment int64 `json:"maxSubagentsPerEnvironment"`
 	// scm_tools_allowed_group_id restricts SCM tools access to members of this group.
 	// Empty means no restriction (all users can use SCM tools if not disabled).
 	ScmToolsAllowedGroupID string          `json:"scmToolsAllowedGroupId"`
@@ -117,13 +121,14 @@ type AgentPolicy struct {
 
 // agentPolicyJSON contains the JSON metadata for the struct [AgentPolicy]
 type agentPolicyJSON struct {
-	CommandDenyList           apijson.Field
-	McpDisabled               apijson.Field
-	ScmToolsDisabled          apijson.Field
-	ConversationSharingPolicy apijson.Field
-	ScmToolsAllowedGroupID    apijson.Field
-	raw                       string
-	ExtraFields               map[string]apijson.Field
+	CommandDenyList            apijson.Field
+	McpDisabled                apijson.Field
+	ScmToolsDisabled           apijson.Field
+	ConversationSharingPolicy  apijson.Field
+	MaxSubagentsPerEnvironment apijson.Field
+	ScmToolsAllowedGroupID     apijson.Field
+	raw                        string
+	ExtraFields                map[string]apijson.Field
 }
 
 func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
@@ -511,6 +516,10 @@ type OrganizationPolicyUpdateParamsAgentPolicy struct {
 	CommandDenyList param.Field[[]string] `json:"commandDenyList"`
 	// conversation_sharing_policy controls whether agent conversations can be shared
 	ConversationSharingPolicy param.Field[ConversationSharingPolicy] `json:"conversationSharingPolicy"`
+	// max_subagents_per_environment limits the number of non-terminal sub-agents a
+	// parent can have running simultaneously in the same environment. Valid range:
+	// 0-10. Zero means use the default (5).
+	MaxSubagentsPerEnvironment param.Field[int64] `json:"maxSubagentsPerEnvironment"`
 	// mcp_disabled controls whether MCP (Model Context Protocol) is disabled for
 	// agents
 	McpDisabled param.Field[bool] `json:"mcpDisabled"`
