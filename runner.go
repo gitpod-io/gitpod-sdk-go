@@ -485,6 +485,9 @@ func (r LogLevel) IsKnown() bool {
 type MetricsConfiguration struct {
 	// enabled indicates whether the runner should collect metrics
 	Enabled bool `json:"enabled"`
+	// When true, the runner pushes metrics to the management plane via
+	// ReportRunnerMetrics instead of directly to the remote_write endpoint.
+	ManagedMetricsEnabled bool `json:"managedMetricsEnabled"`
 	// password is the password to use for the metrics collector
 	Password string `json:"password"`
 	// url is the URL of the metrics collector
@@ -497,12 +500,13 @@ type MetricsConfiguration struct {
 // metricsConfigurationJSON contains the JSON metadata for the struct
 // [MetricsConfiguration]
 type metricsConfigurationJSON struct {
-	Enabled     apijson.Field
-	Password    apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Enabled               apijson.Field
+	ManagedMetricsEnabled apijson.Field
+	Password              apijson.Field
+	URL                   apijson.Field
+	Username              apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *MetricsConfiguration) UnmarshalJSON(data []byte) (err error) {
@@ -516,6 +520,9 @@ func (r metricsConfigurationJSON) RawJSON() string {
 type MetricsConfigurationParam struct {
 	// enabled indicates whether the runner should collect metrics
 	Enabled param.Field[bool] `json:"enabled"`
+	// When true, the runner pushes metrics to the management plane via
+	// ReportRunnerMetrics instead of directly to the remote_write endpoint.
+	ManagedMetricsEnabled param.Field[bool] `json:"managedMetricsEnabled"`
 	// password is the password to use for the metrics collector
 	Password param.Field[string] `json:"password"`
 	// url is the URL of the metrics collector
@@ -1591,6 +1598,9 @@ func (r RunnerUpdateParamsSpecConfiguration) MarshalJSON() (data []byte, err err
 type RunnerUpdateParamsSpecConfigurationMetrics struct {
 	// enabled indicates whether the runner should collect metrics
 	Enabled param.Field[bool] `json:"enabled"`
+	// When true, the runner pushes metrics to the management plane via
+	// ReportRunnerMetrics instead of directly to the remote_write endpoint.
+	ManagedMetricsEnabled param.Field[bool] `json:"managedMetricsEnabled"`
 	// password is the password to use for the metrics collector
 	Password param.Field[string] `json:"password"`
 	// url is the URL of the metrics collector
