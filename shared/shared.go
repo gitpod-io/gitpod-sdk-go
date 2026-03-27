@@ -566,13 +566,17 @@ type RunsOn struct {
 	Docker RunsOnDocker `json:"docker"`
 	// Machine runs the service/task directly on the VM/machine level.
 	Machine interface{} `json:"machine"`
-	JSON    runsOnJSON  `json:"-"`
+	// Terminal runs the service inside a managed PTY terminal in the devcontainer.
+	// Users can attach to the terminal interactively via the terminal API.
+	Terminal interface{} `json:"terminal"`
+	JSON     runsOnJSON  `json:"-"`
 }
 
 // runsOnJSON contains the JSON metadata for the struct [RunsOn]
 type runsOnJSON struct {
 	Docker      apijson.Field
 	Machine     apijson.Field
+	Terminal    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -611,6 +615,9 @@ type RunsOnParam struct {
 	Docker param.Field[RunsOnDockerParam] `json:"docker"`
 	// Machine runs the service/task directly on the VM/machine level.
 	Machine param.Field[interface{}] `json:"machine"`
+	// Terminal runs the service inside a managed PTY terminal in the devcontainer.
+	// Users can attach to the terminal interactively via the terminal API.
+	Terminal param.Field[interface{}] `json:"terminal"`
 }
 
 func (r RunsOnParam) MarshalJSON() (data []byte, err error) {

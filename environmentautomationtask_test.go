@@ -65,7 +65,8 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
-				Machine: gitpod.F[any](map[string]interface{}{}),
+				Machine:  gitpod.F[any](map[string]interface{}{}),
+				Terminal: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 	})
@@ -149,7 +150,8 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
-				Machine: gitpod.F[any](map[string]interface{}{}),
+				Machine:  gitpod.F[any](map[string]interface{}{}),
+				Terminal: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 	})
