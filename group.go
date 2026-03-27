@@ -72,7 +72,7 @@ func (r *GroupService) New(ctx context.Context, body GroupNewParams, opts ...opt
 	return res, err
 }
 
-// Gets information about a specific group.
+// Gets information about a specific group by ID or name.
 //
 // Use this method to:
 //
@@ -82,12 +82,12 @@ func (r *GroupService) New(ctx context.Context, body GroupNewParams, opts ...opt
 //
 // ### Examples
 //
-// - Get group details:
+// - Get group by ID:
 //
-//	Retrieves information about a specific group.
+//	Retrieves information about a specific group by its unique ID.
 //
 //	```yaml
-//	groupId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	id: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	```
 //
 // ### Authorization
@@ -538,7 +538,12 @@ func (r GroupNewParams) MarshalJSON() (data []byte, err error) {
 }
 
 type GroupGetParams struct {
-	GroupID param.Field[string] `json:"groupId" format:"uuid"`
+	// id looks up the group by its unique ID.
+	ID param.Field[string] `json:"id" format:"uuid"`
+	// Deprecated: use the group oneof instead.
+	GroupID param.Field[string] `json:"groupId"`
+	// name looks up the group by its name within the caller's organization.
+	Name param.Field[string] `json:"name"`
 }
 
 func (r GroupGetParams) MarshalJSON() (data []byte, err error) {
@@ -578,8 +583,16 @@ func (r GroupListParams) URLQuery() (v url.Values) {
 
 // filter contains options for filtering the list of groups.
 type GroupListParamsFilter struct {
+	// direct_share filters groups by their direct_share flag. When set, only groups
+	// matching this value are returned.
+	DirectShare param.Field[bool] `json:"directShare"`
+	// group_ids filters the response to only groups with the specified IDs
+	GroupIDs param.Field[[]string] `json:"groupIds" format:"uuid"`
 	// search performs case-insensitive search across group name, description, and ID
 	Search param.Field[string] `json:"search"`
+	// system_managed filters groups by their system_managed flag. When set, only
+	// groups matching this value are returned.
+	SystemManaged param.Field[bool] `json:"systemManaged"`
 }
 
 func (r GroupListParamsFilter) MarshalJSON() (data []byte, err error) {
