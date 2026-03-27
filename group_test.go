@@ -54,7 +54,9 @@ func TestGroupGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Groups.Get(context.TODO(), gitpod.GroupGetParams{
-		GroupID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		ID:      gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		GroupID: gitpod.F("groupId"),
+		Name:    gitpod.F("xxx"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -109,7 +111,10 @@ func TestGroupListWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.GroupListParamsFilter{
-			Search: gitpod.F("search"),
+			DirectShare:   gitpod.F(true),
+			GroupIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Search:        gitpod.F("search"),
+			SystemManaged: gitpod.F(true),
 		}),
 		Pagination: gitpod.F(gitpod.GroupListParamsPagination{
 			Token:    gitpod.F("token"),
