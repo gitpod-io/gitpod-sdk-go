@@ -290,6 +290,10 @@ func TestAutomationListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(100)),
 		}),
+		Sort: gitpod.F(gitpod.AutomationListParamsSort{
+			Field: gitpod.F(gitpod.AutomationListParamsSortFieldSortFieldUnspecified),
+			Order: gitpod.F(shared.SortOrderUnspecified),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
