@@ -286,6 +286,12 @@ type SSOConfiguration struct {
 	AdditionalScopes []string `json:"additionalScopes"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims map[string]string `json:"claims"`
+	// claims_expression is a CEL (Common Expression Language) expression evaluated
+	// against the OIDC token claims during login. When set, the expression must
+	// evaluate to true for the login to succeed. The expression has access to a
+	// `claims` variable containing all token claims as a map. Example:
+	// `claims.email_verified && claims.email.endsWith("@example.com")`
+	ClaimsExpression string `json:"claimsExpression"`
 	// client_id is the client ID of the OIDC application set on the IdP
 	ClientID     string               `json:"clientId"`
 	DisplayName  string               `json:"displayName"`
@@ -304,6 +310,7 @@ type ssoConfigurationJSON struct {
 	State            apijson.Field
 	AdditionalScopes apijson.Field
 	Claims           apijson.Field
+	ClaimsExpression apijson.Field
 	ClientID         apijson.Field
 	DisplayName      apijson.Field
 	EmailDomain      apijson.Field
@@ -396,7 +403,12 @@ type OrganizationSSOConfigurationNewParams struct {
 	// during sign-in. These are appended to the default scopes (openid, email,
 	// profile).
 	AdditionalScopes param.Field[[]string] `json:"additionalScopes"`
-	DisplayName      param.Field[string]   `json:"displayName"`
+	// claims_expression is an optional CEL expression evaluated against OIDC token
+	// claims during login. When set, the expression must evaluate to true for the
+	// login to succeed. Example:
+	// `claims.email_verified && claims.email.endsWith("@example.com")`
+	ClaimsExpression param.Field[string] `json:"claimsExpression"`
+	DisplayName      param.Field[string] `json:"displayName"`
 	// email_domain is the domain that is allowed to sign in to the organization
 	EmailDomain  param.Field[string]   `json:"emailDomain"`
 	EmailDomains param.Field[[]string] `json:"emailDomains"`
@@ -424,6 +436,10 @@ type OrganizationSSOConfigurationUpdateParams struct {
 	AdditionalScopes param.Field[AdditionalScopesUpdateParam] `json:"additionalScopes"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims param.Field[map[string]string] `json:"claims"`
+	// claims_expression is a CEL expression evaluated against OIDC token claims during
+	// login. When set, the expression must evaluate to true for the login to succeed.
+	// When present with an empty string, the expression is cleared.
+	ClaimsExpression param.Field[string] `json:"claimsExpression"`
 	// client_id is the client ID of the SSO provider
 	ClientID param.Field[string] `json:"clientId"`
 	// client_secret is the client secret of the SSO provider
