@@ -3513,6 +3513,9 @@ type AutomationListParams struct {
 	PageSize   param.Field[int64]                          `query:"pageSize"`
 	Filter     param.Field[AutomationListParamsFilter]     `json:"filter"`
 	Pagination param.Field[AutomationListParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. When unspecified, results are sorted
+	// alphabetically by name ascending.
+	Sort param.Field[AutomationListParamsSort] `json:"sort"`
 }
 
 func (r AutomationListParams) MarshalJSON() (data []byte, err error) {
@@ -3582,6 +3585,33 @@ type AutomationListParamsPagination struct {
 
 func (r AutomationListParamsPagination) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// sort specifies the order of results. When unspecified, results are sorted
+// alphabetically by name ascending.
+type AutomationListParamsSort struct {
+	Field param.Field[AutomationListParamsSortField] `json:"field"`
+	Order param.Field[shared.SortOrder]              `json:"order"`
+}
+
+func (r AutomationListParamsSort) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type AutomationListParamsSortField string
+
+const (
+	AutomationListParamsSortFieldSortFieldUnspecified       AutomationListParamsSortField = "SORT_FIELD_UNSPECIFIED"
+	AutomationListParamsSortFieldSortFieldName              AutomationListParamsSortField = "SORT_FIELD_NAME"
+	AutomationListParamsSortFieldSortFieldRecentlyCompleted AutomationListParamsSortField = "SORT_FIELD_RECENTLY_COMPLETED"
+)
+
+func (r AutomationListParamsSortField) IsKnown() bool {
+	switch r {
+	case AutomationListParamsSortFieldSortFieldUnspecified, AutomationListParamsSortFieldSortFieldName, AutomationListParamsSortFieldSortFieldRecentlyCompleted:
+		return true
+	}
+	return false
 }
 
 type AutomationDeleteParams struct {
