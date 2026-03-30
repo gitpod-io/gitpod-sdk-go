@@ -910,6 +910,9 @@ type OrganizationListMembersParamsFilter struct {
 	// exclude_group_ids excludes members who are already in any of the specified
 	// groups
 	ExcludeGroupIDs param.Field[[]string] `json:"excludeGroupIds" format:"uuid"`
+	// exclude_members_in_any_team excludes members who belong to any team in the
+	// organization
+	ExcludeMembersInAnyTeam param.Field[bool] `json:"excludeMembersInAnyTeam"`
 	// roles filters members by their organization role
 	Roles param.Field[[]shared.OrganizationRole] `json:"roles"`
 	// search performs case-insensitive search across member name and email
