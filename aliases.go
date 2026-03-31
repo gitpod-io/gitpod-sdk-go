@@ -570,6 +570,9 @@ const ResourceTypeRoleAssignment = shared.ResourceTypeRoleAssignment
 // This is an alias to an internal value.
 const ResourceTypeWarmPool = shared.ResourceTypeWarmPool
 
+// This is an alias to an internal value.
+const ResourceTypeNotification = shared.ResourceTypeNotification
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
