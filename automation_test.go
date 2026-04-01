@@ -192,6 +192,7 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 			}}),
 		}),
 		Description: gitpod.F("description"),
+		Disabled:    gitpod.F(true),
 		Executor: gitpod.F(shared.SubjectParam{
 			ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			Principal: gitpod.F(shared.PrincipalUnspecified),
