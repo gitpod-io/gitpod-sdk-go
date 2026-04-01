@@ -3485,8 +3485,11 @@ type AutomationUpdateParams struct {
 	// ```
 	// size(this) <= 500
 	// ```
-	Description param.Field[string]              `json:"description"`
-	Executor    param.Field[shared.SubjectParam] `json:"executor"`
+	Description param.Field[string] `json:"description"`
+	// When set, enables or disables the workflow. A disabled workflow will not be
+	// triggered by any automatic trigger and manual starts are rejected.
+	Disabled param.Field[bool]                `json:"disabled"`
+	Executor param.Field[shared.SubjectParam] `json:"executor"`
 	// Name must be between 1 and 80 characters:
 	//
 	// ```
