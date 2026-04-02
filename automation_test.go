@@ -47,9 +47,6 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
 				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
-				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
 				}),
@@ -78,9 +75,6 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 					Description: gitpod.F("description"),
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
-				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
 				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
@@ -183,9 +177,6 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
 				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
-				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
 				}),
@@ -215,9 +206,6 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 					Description: gitpod.F("description"),
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
-				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
 				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
