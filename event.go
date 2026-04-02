@@ -64,6 +64,16 @@ func NewEventService(opts ...option.RequestOption) (r *EventService) {
 //	pagination:
 //	  pageSize: 20
 //	```
+//
+// - Filter by time range:
+//
+//	```yaml
+//	filter:
+//	  from: "2024-01-01T00:00:00Z"
+//	  to: "2024-02-01T00:00:00Z"
+//	pagination:
+//	  pageSize: 20
+//	```
 func (r *EventService) List(ctx context.Context, params EventListParams, opts ...option.RequestOption) (res *pagination.EntriesPage[EventListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -104,6 +114,16 @@ func (r *EventService) List(ctx context.Context, params EventListParams, opts ..
 //	filter:
 //	  actorIds: ["d2c94c27-3b76-4a42-b88c-95a85e392c68"]
 //	  actorPrincipals: ["PRINCIPAL_USER"]
+//	pagination:
+//	  pageSize: 20
+//	```
+//
+// - Filter by time range:
+//
+//	```yaml
+//	filter:
+//	  from: "2024-01-01T00:00:00Z"
+//	  to: "2024-02-01T00:00:00Z"
 //	pagination:
 //	  pageSize: 20
 //	```
@@ -308,8 +328,11 @@ type EventListParams struct {
 	Token    param.Field[string]                `query:"token"`
 	PageSize param.Field[int64]                 `query:"pageSize"`
 	Filter   param.Field[EventListParamsFilter] `json:"filter"`
-	// pagination contains the pagination options for listing environments
+	// pagination contains the pagination options for listing audit logs
 	Pagination param.Field[EventListParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. When unspecified, results are sorted by
+	// creation time descending (newest first). Supported sort fields: createdAt.
+	Sort param.Field[shared.SortParam] `json:"sort"`
 }
 
 func (r EventListParams) MarshalJSON() (data []byte, err error) {
@@ -325,17 +348,21 @@ func (r EventListParams) URLQuery() (v url.Values) {
 }
 
 type EventListParamsFilter struct {
-	ActorIDs        param.Field[[]string]              `json:"actorIds" format:"uuid"`
-	ActorPrincipals param.Field[[]shared.Principal]    `json:"actorPrincipals"`
-	SubjectIDs      param.Field[[]string]              `json:"subjectIds" format:"uuid"`
-	SubjectTypes    param.Field[[]shared.ResourceType] `json:"subjectTypes"`
+	ActorIDs        param.Field[[]string]           `json:"actorIds" format:"uuid"`
+	ActorPrincipals param.Field[[]shared.Principal] `json:"actorPrincipals"`
+	// from filters audit logs created at or after this timestamp (inclusive).
+	From         param.Field[time.Time]             `json:"from" format:"date-time"`
+	SubjectIDs   param.Field[[]string]              `json:"subjectIds" format:"uuid"`
+	SubjectTypes param.Field[[]shared.ResourceType] `json:"subjectTypes"`
+	// to filters audit logs created before this timestamp (exclusive).
+	To param.Field[time.Time] `json:"to" format:"date-time"`
 }
 
 func (r EventListParamsFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-// pagination contains the pagination options for listing environments
+// pagination contains the pagination options for listing audit logs
 type EventListParamsPagination struct {
 	// Token for the next set of results that was returned as next_token of a
 	// PaginationResponse
@@ -357,8 +384,31 @@ type EventWatchParams struct {
 	// the caller can see within their organization. No task, task execution or service
 	// events are produed.
 	Organization param.Field[bool] `json:"organization"`
+	// Filters to limit which events are delivered on organization-scoped streams. When
+	// empty, all events for the scope are delivered. When populated, only events
+	// matching at least one filter entry are forwarded. Not supported for
+	// environment-scoped streams; setting this field returns an error.
+	ResourceTypeFilters param.Field[[]EventWatchParamsResourceTypeFilter] `json:"resourceTypeFilters"`
 }
 
 func (r EventWatchParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// ResourceTypeFilter restricts which events are delivered for a specific resource
+// type.
+type EventWatchParamsResourceTypeFilter struct {
+	// If non-empty, only events where the resource was created by one of these user
+	// IDs are delivered. Skipped for DELETE operations (creator info is unavailable
+	// after deletion). Events with no creator information are skipped when this filter
+	// is set (fail-closed).
+	CreatorIDs param.Field[[]string] `json:"creatorIds" format:"uuid"`
+	// If non-empty, only events for these specific resource IDs are delivered.
+	ResourceIDs param.Field[[]string] `json:"resourceIds" format:"uuid"`
+	// The resource type to filter for.
+	ResourceType param.Field[shared.ResourceType] `json:"resourceType"`
+}
+
+func (r EventWatchParamsResourceTypeFilter) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }

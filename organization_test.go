@@ -15,7 +15,7 @@ import (
 )
 
 func TestOrganizationNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -42,7 +42,7 @@ func TestOrganizationNewWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -67,7 +67,7 @@ func TestOrganizationGet(t *testing.T) {
 }
 
 func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -96,7 +96,7 @@ func TestOrganizationUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationDelete(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -121,7 +121,7 @@ func TestOrganizationDelete(t *testing.T) {
 }
 
 func TestOrganizationJoinWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -147,7 +147,7 @@ func TestOrganizationJoinWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationLeave(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -172,7 +172,7 @@ func TestOrganizationLeave(t *testing.T) {
 }
 
 func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -189,11 +189,12 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		Token:          gitpod.F("token"),
 		PageSize:       gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.OrganizationListMembersParamsFilter{
-			ExcludeGroupIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
-			Roles:           gitpod.F([]shared.OrganizationRole{shared.OrganizationRoleUnspecified}),
-			Search:          gitpod.F("search"),
-			Statuses:        gitpod.F([]shared.UserStatus{shared.UserStatusUnspecified}),
-			UserIDs:         gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ExcludeGroupIDs:         gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			ExcludeMembersInAnyTeam: gitpod.F(true),
+			Roles:                   gitpod.F([]shared.OrganizationRole{shared.OrganizationRoleUnspecified}),
+			Search:                  gitpod.F("search"),
+			Statuses:                gitpod.F([]shared.UserStatus{shared.UserStatusUnspecified}),
+			UserIDs:                 gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 		}),
 		Pagination: gitpod.F(gitpod.OrganizationListMembersParamsPagination{
 			Token:    gitpod.F("token"),
@@ -201,7 +202,7 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 		}),
 		Sort: gitpod.F(gitpod.OrganizationListMembersParamsSort{
 			Field: gitpod.F(gitpod.OrganizationListMembersParamsSortFieldSortFieldUnspecified),
-			Order: gitpod.F(gitpod.OrganizationListMembersParamsSortOrderSortOrderUnspecified),
+			Order: gitpod.F(shared.SortOrderUnspecified),
 		}),
 	})
 	if err != nil {
@@ -214,7 +215,7 @@ func TestOrganizationListMembersWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSetRoleWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

@@ -51,7 +51,7 @@ func (r *UserDotfileService) Get(ctx context.Context, body UserDotfileGetParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetDotfilesConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Sets the dotfiles configuration for a user.
@@ -82,7 +82,7 @@ func (r *UserDotfileService) Set(ctx context.Context, body UserDotfileSetParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/SetDotfilesConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type DotfilesConfiguration struct {
@@ -108,7 +108,7 @@ func (r dotfilesConfigurationJSON) RawJSON() string {
 }
 
 type UserDotfileGetResponse struct {
-	DotfilesConfiguration DotfilesConfiguration      `json:"dotfilesConfiguration,required"`
+	DotfilesConfiguration DotfilesConfiguration      `json:"dotfilesConfiguration" api:"required"`
 	JSON                  userDotfileGetResponseJSON `json:"-"`
 }
 

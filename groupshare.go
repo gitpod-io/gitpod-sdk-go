@@ -74,7 +74,7 @@ func (r *GroupShareService) New(ctx context.Context, body GroupShareNewParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/ShareResourceWithPrincipal"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Removes direct access for a principal (user or service account) from a resource.
@@ -104,7 +104,7 @@ func (r *GroupShareService) Delete(ctx context.Context, body GroupShareDeletePar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/UnshareResourceWithPrincipal"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type GroupShareNewResponse = interface{}

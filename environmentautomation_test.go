@@ -15,7 +15,7 @@ import (
 )
 
 func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -44,7 +44,8 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
-						Machine: gitpod.F[any](map[string]interface{}{}),
+						Machine:  gitpod.F[any](map[string]interface{}{}),
+						Terminal: gitpod.F[any](map[string]interface{}{}),
 					}),
 					TriggeredBy: gitpod.F([]gitpod.AutomationsFileServicesTriggeredBy{gitpod.AutomationsFileServicesTriggeredByPostDevcontainerStart}),
 				},
@@ -60,7 +61,8 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 							Environment: gitpod.F([]string{"string"}),
 							Image:       gitpod.F("x"),
 						}),
-						Machine: gitpod.F[any](map[string]interface{}{}),
+						Machine:  gitpod.F[any](map[string]interface{}{}),
+						Terminal: gitpod.F[any](map[string]interface{}{}),
 					}),
 					TriggeredBy: gitpod.F([]gitpod.AutomationsFileTasksTriggeredBy{gitpod.AutomationsFileTasksTriggeredByPostEnvironmentStart}),
 				},

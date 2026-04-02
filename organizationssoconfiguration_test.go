@@ -14,7 +14,7 @@ import (
 )
 
 func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -32,6 +32,7 @@ func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 		IssuerURL:        gitpod.F("https://accounts.google.com"),
 		OrganizationID:   gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		AdditionalScopes: gitpod.F([]string{"x"}),
+		ClaimsExpression: gitpod.F("claimsExpression"),
 		DisplayName:      gitpod.F("displayName"),
 		EmailDomain:      gitpod.F("acme-corp.com"),
 		EmailDomains:     gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
@@ -46,7 +47,7 @@ func TestOrganizationSSOConfigurationNewWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -71,7 +72,7 @@ func TestOrganizationSSOConfigurationGet(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -91,13 +92,14 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 		Claims: gitpod.F(map[string]string{
 			"foo": "string",
 		}),
-		ClientID:     gitpod.F("new-client-id"),
-		ClientSecret: gitpod.F("new-client-secret"),
-		DisplayName:  gitpod.F("displayName"),
-		EmailDomain:  gitpod.F("xxxx"),
-		EmailDomains: gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
-		IssuerURL:    gitpod.F("https://example.com"),
-		State:        gitpod.F(gitpod.SSOConfigurationStateUnspecified),
+		ClaimsExpression: gitpod.F("claimsExpression"),
+		ClientID:         gitpod.F("new-client-id"),
+		ClientSecret:     gitpod.F("new-client-secret"),
+		DisplayName:      gitpod.F("displayName"),
+		EmailDomain:      gitpod.F("xxxx"),
+		EmailDomains:     gitpod.F([]string{"sfN2.l.iJR-BU.u9JV9.a.m.o2D-4b-Jd.0Z-kX.L.n.S.f.UKbxB"}),
+		IssuerURL:        gitpod.F("https://example.com"),
+		State:            gitpod.F(gitpod.SSOConfigurationStateUnspecified),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -109,7 +111,7 @@ func TestOrganizationSSOConfigurationUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -140,7 +142,7 @@ func TestOrganizationSSOConfigurationListWithOptionalParams(t *testing.T) {
 }
 
 func TestOrganizationSSOConfigurationDelete(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

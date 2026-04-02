@@ -64,7 +64,7 @@ func (r *GroupMembershipService) New(ctx context.Context, body GroupMembershipNe
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/CreateMembership"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets a specific membership by group ID and subject.
@@ -94,7 +94,7 @@ func (r *GroupMembershipService) Get(ctx context.Context, body GroupMembershipGe
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/GetMembership"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all memberships of a group.
@@ -187,7 +187,7 @@ func (r *GroupMembershipService) Delete(ctx context.Context, body GroupMembershi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/DeleteMembership"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // GroupMembership represents a subject's membership in a group
@@ -282,7 +282,7 @@ func (r GroupMembershipNewParams) MarshalJSON() (data []byte, err error) {
 
 type GroupMembershipGetParams struct {
 	// Subject to check membership for
-	Subject param.Field[shared.SubjectParam] `json:"subject,required"`
+	Subject param.Field[shared.SubjectParam] `json:"subject" api:"required"`
 	GroupID param.Field[string]              `json:"groupId" format:"uuid"`
 }
 
@@ -293,7 +293,9 @@ func (r GroupMembershipGetParams) MarshalJSON() (data []byte, err error) {
 type GroupMembershipListParams struct {
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
-	GroupID  param.Field[string] `json:"groupId" format:"uuid"`
+	// filter contains options for filtering the list of memberships.
+	Filter  param.Field[GroupMembershipListParamsFilter] `json:"filter"`
+	GroupID param.Field[string]                          `json:"groupId" format:"uuid"`
 	// pagination contains the pagination options for listing memberships
 	Pagination param.Field[GroupMembershipListParamsPagination] `json:"pagination"`
 }
@@ -309,6 +311,17 @@ func (r GroupMembershipListParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// filter contains options for filtering the list of memberships.
+type GroupMembershipListParamsFilter struct {
+	// search performs case-insensitive search across member name, email, ID, and
+	// service account name and description
+	Search param.Field[string] `json:"search"`
+}
+
+func (r GroupMembershipListParamsFilter) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // pagination contains the pagination options for listing memberships

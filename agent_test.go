@@ -16,7 +16,7 @@ import (
 )
 
 func TestAgentNewExecutionConversationTokenWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -41,7 +41,7 @@ func TestAgentNewExecutionConversationTokenWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentNewPromptWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -72,7 +72,7 @@ func TestAgentNewPromptWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentDeleteExecutionWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -97,7 +97,7 @@ func TestAgentDeleteExecutionWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentDeletePromptWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -122,7 +122,7 @@ func TestAgentDeletePromptWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -146,6 +146,7 @@ func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
 			EnvironmentIDs: gitpod.F([]string{"string"}),
 			ProjectIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			Roles:          gitpod.F([]gitpod.AgentListExecutionsParamsFilterRole{gitpod.AgentListExecutionsParamsFilterRoleAgentExecutionRoleUnspecified}),
+			SessionIDs:     gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
 			StatusPhases:   gitpod.F([]gitpod.AgentListExecutionsParamsFilterStatusPhase{gitpod.AgentListExecutionsParamsFilterStatusPhasePhaseUnspecified}),
 		}),
 		Pagination: gitpod.F(gitpod.AgentListExecutionsParamsPagination{
@@ -163,7 +164,7 @@ func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentListPromptsWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -179,11 +180,13 @@ func TestAgentListPromptsWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.AgentListPromptsParamsFilter{
-			Command:       gitpod.F("command"),
-			CommandPrefix: gitpod.F("commandPrefix"),
-			IsCommand:     gitpod.F(true),
-			IsSkill:       gitpod.F(true),
-			IsTemplate:    gitpod.F(true),
+			Command:              gitpod.F("command"),
+			CommandPrefix:        gitpod.F("commandPrefix"),
+			ExcludePromptContent: gitpod.F(true),
+			IsCommand:            gitpod.F(true),
+			IsSkill:              gitpod.F(true),
+			IsTemplate:           gitpod.F(true),
+			Search:               gitpod.F("search"),
 		}),
 		Pagination: gitpod.F(gitpod.AgentListPromptsParamsPagination{
 			Token:    gitpod.F("token"),
@@ -200,7 +203,7 @@ func TestAgentListPromptsWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentGetExecutionWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -225,7 +228,7 @@ func TestAgentGetExecutionWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentGetPromptWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -250,7 +253,7 @@ func TestAgentGetPromptWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -264,6 +267,10 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Agents.SendToExecution(context.TODO(), gitpod.AgentSendToExecutionParams{
 		AgentExecutionID: gitpod.F("6fa1a3c7-fbb7-49d1-ba56-1890dc7c4c35"),
+		AgentMessage: gitpod.F(gitpod.AgentMessageParam{
+			Payload: gitpod.F("payload"),
+			Type:    gitpod.F(gitpod.TypeUnspecified),
+		}),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
 			ID:        gitpod.F("id"),
 			CreatedAt: gitpod.F(time.Now()),
@@ -284,6 +291,30 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 				Content: gitpod.F("Generate a report based on the latest logs."),
 			}),
 		}),
+		WakeEvent: gitpod.F(gitpod.WakeEventParam{
+			Environment: gitpod.F(gitpod.WakeEventEnvironmentParam{
+				EnvironmentID:  gitpod.F("environmentId"),
+				FailureMessage: gitpod.F([]string{"string"}),
+				Phase:          gitpod.F("phase"),
+			}),
+			InterestID: gitpod.F("interestId"),
+			LoopRetrigger: gitpod.F(gitpod.WakeEventLoopRetriggerParam{
+				Outputs: gitpod.F(map[string]string{
+					"foo": "string",
+				}),
+				UnmetConditions: gitpod.F([]gitpod.WakeEventLoopRetriggerUnmetConditionParam{{
+					ID:            gitpod.F("id"),
+					Description:   gitpod.F("description"),
+					Expression:    gitpod.F("expression"),
+					Iteration:     gitpod.F(int64(0)),
+					MaxIterations: gitpod.F(int64(0)),
+					Reason:        gitpod.F("reason"),
+				}}),
+			}),
+			Timer: gitpod.F(gitpod.WakeEventTimerParam{
+				FiredAt: gitpod.F(time.Now()),
+			}),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -295,7 +326,7 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -339,6 +370,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 		Mode:             gitpod.F(gitpod.AgentModeUnspecified),
 		Name:             gitpod.F("name"),
 		RunnerID:         gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		SessionID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		WorkflowActionID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
@@ -351,7 +383,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentStopExecutionWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -376,7 +408,7 @@ func TestAgentStopExecutionWithOptionalParams(t *testing.T) {
 }
 
 func TestAgentUpdatePromptWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

@@ -85,7 +85,7 @@ func (r *RunnerService) New(ctx context.Context, body RunnerNewParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific runner.
@@ -110,7 +110,7 @@ func (r *RunnerService) Get(ctx context.Context, body RunnerGetParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/GetRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a runner's configuration.
@@ -140,7 +140,7 @@ func (r *RunnerService) Update(ctx context.Context, body RunnerUpdateParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/UpdateRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all registered runners with optional filtering.
@@ -245,7 +245,7 @@ func (r *RunnerService) Delete(ctx context.Context, body RunnerDeleteParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/DeleteRunner"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Checks if a user is authenticated for a specific host.
@@ -269,7 +269,7 @@ func (r *RunnerService) CheckAuthenticationForHost(ctx context.Context, body Run
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CheckAuthenticationForHost"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Checks if a principal has read access to a repository.
@@ -299,7 +299,7 @@ func (r *RunnerService) CheckRepositoryAccess(ctx context.Context, body RunnerCh
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CheckRepositoryAccess"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an access token for runner logs and debug information.
@@ -319,7 +319,7 @@ func (r *RunnerService) NewLogsToken(ctx context.Context, body RunnerNewLogsToke
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerLogsToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new authentication token for a runner.
@@ -345,7 +345,7 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists SCM organizations the user belongs to.
@@ -369,7 +369,7 @@ func (r *RunnerService) ListScmOrganizations(ctx context.Context, params RunnerL
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/ListSCMOrganizations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // Parses a context URL and returns the parsed result.
@@ -400,7 +400,7 @@ func (r *RunnerService) ParseContextURL(ctx context.Context, body RunnerParseCon
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/ParseContextURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Searches for repositories across all authenticated SCM hosts.
@@ -437,7 +437,7 @@ func (r *RunnerService) SearchRepositories(ctx context.Context, body RunnerSearc
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/SearchRepositories"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type GatewayInfo struct {
@@ -485,6 +485,9 @@ func (r LogLevel) IsKnown() bool {
 type MetricsConfiguration struct {
 	// enabled indicates whether the runner should collect metrics
 	Enabled bool `json:"enabled"`
+	// When true, the runner pushes metrics to the management plane via
+	// ReportRunnerMetrics instead of directly to the remote_write endpoint.
+	ManagedMetricsEnabled bool `json:"managedMetricsEnabled"`
 	// password is the password to use for the metrics collector
 	Password string `json:"password"`
 	// url is the URL of the metrics collector
@@ -497,12 +500,13 @@ type MetricsConfiguration struct {
 // metricsConfigurationJSON contains the JSON metadata for the struct
 // [MetricsConfiguration]
 type metricsConfigurationJSON struct {
-	Enabled     apijson.Field
-	Password    apijson.Field
-	URL         apijson.Field
-	Username    apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Enabled               apijson.Field
+	ManagedMetricsEnabled apijson.Field
+	Password              apijson.Field
+	URL                   apijson.Field
+	Username              apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
 }
 
 func (r *MetricsConfiguration) UnmarshalJSON(data []byte) (err error) {
@@ -516,6 +520,9 @@ func (r metricsConfigurationJSON) RawJSON() string {
 type MetricsConfigurationParam struct {
 	// enabled indicates whether the runner should collect metrics
 	Enabled param.Field[bool] `json:"enabled"`
+	// When true, the runner pushes metrics to the management plane via
+	// ReportRunnerMetrics instead of directly to the remote_write endpoint.
+	ManagedMetricsEnabled param.Field[bool] `json:"managedMetricsEnabled"`
 	// password is the password to use for the metrics collector
 	Password param.Field[string] `json:"password"`
 	// url is the URL of the metrics collector
@@ -590,11 +597,13 @@ const (
 	RunnerCapabilityListScmOrganizations           RunnerCapability = "RUNNER_CAPABILITY_LIST_SCM_ORGANIZATIONS"
 	RunnerCapabilityCheckRepositoryAccess          RunnerCapability = "RUNNER_CAPABILITY_CHECK_REPOSITORY_ACCESS"
 	RunnerCapabilityRunnerSideAgent                RunnerCapability = "RUNNER_CAPABILITY_RUNNER_SIDE_AGENT"
+	RunnerCapabilityWarmPool                       RunnerCapability = "RUNNER_CAPABILITY_WARM_POOL"
+	RunnerCapabilityAsgWarmPool                    RunnerCapability = "RUNNER_CAPABILITY_ASG_WARM_POOL"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool:
 		return true
 	}
 	return false
@@ -616,8 +625,11 @@ type RunnerConfiguration struct {
 	// See the runner's status for the actual region.
 	Region string `json:"region"`
 	// The release channel the runner is on
-	ReleaseChannel RunnerReleaseChannel    `json:"releaseChannel"`
-	JSON           runnerConfigurationJSON `json:"-"`
+	ReleaseChannel RunnerReleaseChannel `json:"releaseChannel"`
+	// update_window defines the daily time window (UTC) during which auto-updates are
+	// allowed. If not set, updates are allowed at any time.
+	UpdateWindow UpdateWindow            `json:"updateWindow"`
+	JSON         runnerConfigurationJSON `json:"-"`
 }
 
 // runnerConfigurationJSON contains the JSON metadata for the struct
@@ -629,6 +641,7 @@ type runnerConfigurationJSON struct {
 	Metrics                       apijson.Field
 	Region                        apijson.Field
 	ReleaseChannel                apijson.Field
+	UpdateWindow                  apijson.Field
 	raw                           string
 	ExtraFields                   map[string]apijson.Field
 }
@@ -658,6 +671,9 @@ type RunnerConfigurationParam struct {
 	Region param.Field[string] `json:"region"`
 	// The release channel the runner is on
 	ReleaseChannel param.Field[RunnerReleaseChannel] `json:"releaseChannel"`
+	// update_window defines the daily time window (UTC) during which auto-updates are
+	// allowed. If not set, updates are allowed at any time.
+	UpdateWindow param.Field[UpdateWindowParam] `json:"updateWindow"`
 }
 
 func (r RunnerConfigurationParam) MarshalJSON() (data []byte, err error) {
@@ -873,8 +889,51 @@ func (r SearchMode) IsKnown() bool {
 	return false
 }
 
+// UpdateWindow defines a daily time window (UTC) during which auto-updates are
+// allowed. The window must be at least 2 hours long. Overnight windows are
+// supported (e.g., start_hour=22, end_hour=4).
+type UpdateWindow struct {
+	// end_hour is the end of the update window as a UTC hour (0-23). If not set,
+	// defaults to start_hour + 2.
+	EndHour int64 `json:"endHour" api:"nullable"`
+	// start_hour is the beginning of the update window as a UTC hour (0-23). +required
+	StartHour int64            `json:"startHour" api:"nullable"`
+	JSON      updateWindowJSON `json:"-"`
+}
+
+// updateWindowJSON contains the JSON metadata for the struct [UpdateWindow]
+type updateWindowJSON struct {
+	EndHour     apijson.Field
+	StartHour   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *UpdateWindow) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r updateWindowJSON) RawJSON() string {
+	return r.raw
+}
+
+// UpdateWindow defines a daily time window (UTC) during which auto-updates are
+// allowed. The window must be at least 2 hours long. Overnight windows are
+// supported (e.g., start_hour=22, end_hour=4).
+type UpdateWindowParam struct {
+	// end_hour is the end of the update window as a UTC hour (0-23). If not set,
+	// defaults to start_hour + 2.
+	EndHour param.Field[int64] `json:"endHour"`
+	// start_hour is the beginning of the update window as a UTC hour (0-23). +required
+	StartHour param.Field[int64] `json:"startHour"`
+}
+
+func (r UpdateWindowParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type RunnerNewResponse struct {
-	Runner Runner `json:"runner,required"`
+	Runner Runner `json:"runner" api:"required"`
 	// deprecated, will be removed. Use exchange_token instead.
 	//
 	// Deprecated: deprecated
@@ -905,7 +964,7 @@ func (r runnerNewResponseJSON) RawJSON() string {
 }
 
 type RunnerGetResponse struct {
-	Runner Runner                `json:"runner,required"`
+	Runner Runner                `json:"runner" api:"required"`
 	JSON   runnerGetResponseJSON `json:"-"`
 }
 
@@ -1059,7 +1118,7 @@ func (r runnerCheckRepositoryAccessResponseJSON) RawJSON() string {
 type RunnerNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs and support bundle
 	// of the runner
-	AccessToken string                         `json:"accessToken,required"`
+	AccessToken string                         `json:"accessToken" api:"required"`
 	JSON        runnerNewLogsTokenResponseJSON `json:"-"`
 }
 
@@ -1524,6 +1583,11 @@ type RunnerUpdateParamsSpecConfiguration struct {
 	Metrics param.Field[RunnerUpdateParamsSpecConfigurationMetrics] `json:"metrics"`
 	// The release channel the runner is on
 	ReleaseChannel param.Field[RunnerReleaseChannel] `json:"releaseChannel"`
+	// update_window defines the daily time window (UTC) during which auto-updates are
+	// allowed. start_hour is required. If end_hour is omitted, it defaults to
+	// start_hour + 2. Send an empty UpdateWindow (no start_hour or end_hour) to clear
+	// a custom window and allow updates at any time.
+	UpdateWindow param.Field[UpdateWindowParam] `json:"updateWindow"`
 }
 
 func (r RunnerUpdateParamsSpecConfiguration) MarshalJSON() (data []byte, err error) {
@@ -1534,6 +1598,9 @@ func (r RunnerUpdateParamsSpecConfiguration) MarshalJSON() (data []byte, err err
 type RunnerUpdateParamsSpecConfigurationMetrics struct {
 	// enabled indicates whether the runner should collect metrics
 	Enabled param.Field[bool] `json:"enabled"`
+	// When true, the runner pushes metrics to the management plane via
+	// ReportRunnerMetrics instead of directly to the remote_write endpoint.
+	ManagedMetricsEnabled param.Field[bool] `json:"managedMetricsEnabled"`
 	// password is the password to use for the metrics collector
 	Password param.Field[string] `json:"password"`
 	// url is the URL of the metrics collector

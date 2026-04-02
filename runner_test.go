@@ -14,7 +14,7 @@ import (
 )
 
 func TestRunnerNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -37,13 +37,18 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 				DevcontainerImageCacheEnabled: gitpod.F(true),
 				LogLevel:                      gitpod.F(gitpod.LogLevelUnspecified),
 				Metrics: gitpod.F(gitpod.MetricsConfigurationParam{
-					Enabled:  gitpod.F(true),
-					Password: gitpod.F("password"),
-					URL:      gitpod.F("url"),
-					Username: gitpod.F("username"),
+					Enabled:               gitpod.F(true),
+					ManagedMetricsEnabled: gitpod.F(true),
+					Password:              gitpod.F("password"),
+					URL:                   gitpod.F("url"),
+					Username:              gitpod.F("username"),
 				}),
 				Region:         gitpod.F("us-west"),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
+				UpdateWindow: gitpod.F(gitpod.UpdateWindowParam{
+					EndHour:   gitpod.F(int64(0)),
+					StartHour: gitpod.F(int64(0)),
+				}),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseActive),
 			Variant:      gitpod.F(gitpod.RunnerVariantUnspecified),
@@ -59,7 +64,7 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -84,7 +89,7 @@ func TestRunnerGetWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -105,12 +110,17 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 				DevcontainerImageCacheEnabled: gitpod.F(true),
 				LogLevel:                      gitpod.F(gitpod.LogLevelUnspecified),
 				Metrics: gitpod.F(gitpod.RunnerUpdateParamsSpecConfigurationMetrics{
-					Enabled:  gitpod.F(true),
-					Password: gitpod.F("password"),
-					URL:      gitpod.F("url"),
-					Username: gitpod.F("username"),
+					Enabled:               gitpod.F(true),
+					ManagedMetricsEnabled: gitpod.F(true),
+					Password:              gitpod.F("password"),
+					URL:                   gitpod.F("url"),
+					Username:              gitpod.F("username"),
 				}),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelLatest),
+				UpdateWindow: gitpod.F(gitpod.UpdateWindowParam{
+					EndHour:   gitpod.F(int64(0)),
+					StartHour: gitpod.F(int64(0)),
+				}),
 			}),
 			DesiredPhase: gitpod.F(gitpod.RunnerPhaseUnspecified),
 		}),
@@ -125,7 +135,7 @@ func TestRunnerUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -160,7 +170,7 @@ func TestRunnerListWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -186,7 +196,7 @@ func TestRunnerDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -212,7 +222,7 @@ func TestRunnerCheckAuthenticationForHostWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerCheckRepositoryAccessWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -238,7 +248,7 @@ func TestRunnerCheckRepositoryAccessWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerNewLogsTokenWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -263,7 +273,7 @@ func TestRunnerNewLogsTokenWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -288,7 +298,7 @@ func TestRunnerNewRunnerTokenWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerListScmOrganizationsWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -316,7 +326,7 @@ func TestRunnerListScmOrganizationsWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -342,7 +352,7 @@ func TestRunnerParseContextURLWithOptionalParams(t *testing.T) {
 }
 
 func TestRunnerSearchRepositoriesWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

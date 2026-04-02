@@ -58,7 +58,7 @@ func (r *RunnerPolicyService) New(ctx context.Context, body RunnerPolicyNewParam
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/CreateRunnerPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing runner policy.
@@ -84,7 +84,7 @@ func (r *RunnerPolicyService) Update(ctx context.Context, body RunnerPolicyUpdat
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/UpdateRunnerPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists policies for a runner.
@@ -168,7 +168,7 @@ func (r *RunnerPolicyService) Delete(ctx context.Context, body RunnerPolicyDelet
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerService/DeleteRunnerPolicy"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type RunnerPolicy struct {
@@ -211,7 +211,7 @@ func (r RunnerRole) IsKnown() bool {
 }
 
 type RunnerPolicyNewResponse struct {
-	Policy RunnerPolicy                `json:"policy,required"`
+	Policy RunnerPolicy                `json:"policy" api:"required"`
 	JSON   runnerPolicyNewResponseJSON `json:"-"`
 }
 
@@ -232,7 +232,7 @@ func (r runnerPolicyNewResponseJSON) RawJSON() string {
 }
 
 type RunnerPolicyUpdateResponse struct {
-	Policy RunnerPolicy                   `json:"policy,required"`
+	Policy RunnerPolicy                   `json:"policy" api:"required"`
 	JSON   runnerPolicyUpdateResponseJSON `json:"-"`
 }
 

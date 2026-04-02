@@ -119,7 +119,7 @@ func (r *UserPatService) Delete(ctx context.Context, body UserPatDeleteParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/DeletePersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific personal access token.
@@ -143,7 +143,7 @@ func (r *UserPatService) Get(ctx context.Context, body UserPatGetParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetPersonalAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type PersonalAccessToken struct {
@@ -416,7 +416,10 @@ type PersonalAccessToken struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	LastUsed time.Time               `json:"lastUsed" format:"date-time"`
+	LastUsed time.Time `json:"lastUsed" format:"date-time"`
+	// When true, the token can only be used for read operations. Mutations will be
+	// denied at the data layer.
+	ReadOnly bool                    `json:"readOnly"`
 	UserID   string                  `json:"userId" format:"uuid"`
 	JSON     personalAccessTokenJSON `json:"-"`
 }
@@ -430,6 +433,7 @@ type personalAccessTokenJSON struct {
 	Description apijson.Field
 	ExpiresAt   apijson.Field
 	LastUsed    apijson.Field
+	ReadOnly    apijson.Field
 	UserID      apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -446,7 +450,7 @@ func (r personalAccessTokenJSON) RawJSON() string {
 type UserPatDeleteResponse = interface{}
 
 type UserPatGetResponse struct {
-	Pat  PersonalAccessToken    `json:"pat,required"`
+	Pat  PersonalAccessToken    `json:"pat" api:"required"`
 	JSON userPatGetResponseJSON `json:"-"`
 }
 

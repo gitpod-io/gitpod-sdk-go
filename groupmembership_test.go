@@ -15,7 +15,7 @@ import (
 )
 
 func TestGroupMembershipNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -44,7 +44,7 @@ func TestGroupMembershipNewWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupMembershipGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -73,7 +73,7 @@ func TestGroupMembershipGetWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupMembershipListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -88,7 +88,10 @@ func TestGroupMembershipListWithOptionalParams(t *testing.T) {
 	_, err := client.Groups.Memberships.List(context.TODO(), gitpod.GroupMembershipListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		GroupID:  gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Filter: gitpod.F(gitpod.GroupMembershipListParamsFilter{
+			Search: gitpod.F("search"),
+		}),
+		GroupID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		Pagination: gitpod.F(gitpod.GroupMembershipListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
@@ -104,7 +107,7 @@ func TestGroupMembershipListWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupMembershipDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

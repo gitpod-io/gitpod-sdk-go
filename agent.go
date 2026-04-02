@@ -53,7 +53,7 @@ func (r *AgentService) NewExecutionConversationToken(ctx context.Context, body A
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/CreateAgentExecutionConversationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new prompt.
@@ -66,7 +66,7 @@ func (r *AgentService) NewPrompt(ctx context.Context, body AgentNewPromptParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/CreatePrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes an agent run.
@@ -86,7 +86,7 @@ func (r *AgentService) DeleteExecution(ctx context.Context, body AgentDeleteExec
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/DeleteAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes a prompt.
@@ -98,7 +98,7 @@ func (r *AgentService) DeletePrompt(ctx context.Context, body AgentDeletePromptP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/DeletePrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all agent runs matching the specified filter.
@@ -223,7 +223,7 @@ func (r *AgentService) GetExecution(ctx context.Context, body AgentGetExecutionP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/GetAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific prompt including name, description, and prompt
@@ -245,7 +245,7 @@ func (r *AgentService) GetPrompt(ctx context.Context, body AgentGetPromptParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/GetPrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Sends user input to an active agent run.
@@ -268,7 +268,7 @@ func (r *AgentService) SendToExecution(ctx context.Context, body AgentSendToExec
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/SendToAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Starts (or triggers) an agent run using a provided agent.
@@ -290,7 +290,7 @@ func (r *AgentService) StartExecution(ctx context.Context, body AgentStartExecut
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/StartAgent"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Stops an active agent execution.
@@ -311,7 +311,7 @@ func (r *AgentService) StopExecution(ctx context.Context, body AgentStopExecutio
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/StopAgentExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing prompt.
@@ -324,7 +324,7 @@ func (r *AgentService) UpdatePrompt(ctx context.Context, body AgentUpdatePromptP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AgentService/UpdatePrompt"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type AgentCodeContext struct {
@@ -334,7 +334,7 @@ type AgentCodeContext struct {
 	// Pull request context - optional metadata about the PR being worked on This is
 	// populated when the agent execution is triggered by a PR workflow or when
 	// explicitly provided through the browser extension
-	PullRequest AgentCodeContextPullRequest `json:"pullRequest,nullable"`
+	PullRequest AgentCodeContextPullRequest `json:"pullRequest" api:"nullable"`
 	JSON        agentCodeContextJSON        `json:"-"`
 }
 
@@ -744,7 +744,7 @@ type AgentExecutionMetadata struct {
 	// workflow_action_id is set when this agent execution was created as part of a
 	// workflow. Used to correlate agent executions with their parent workflow
 	// execution action.
-	WorkflowActionID string                     `json:"workflowActionId,nullable" format:"uuid"`
+	WorkflowActionID string                     `json:"workflowActionId" api:"nullable" format:"uuid"`
 	JSON             agentExecutionMetadataJSON `json:"-"`
 }
 
@@ -794,9 +794,10 @@ type AgentExecutionSpec struct {
 	AgentID     string           `json:"agentId" format:"uuid"`
 	CodeContext AgentCodeContext `json:"codeContext"`
 	// desired_phase is the desired phase of the agent run
-	DesiredPhase AgentExecutionSpecDesiredPhase `json:"desiredPhase"`
-	Limits       AgentExecutionSpecLimits       `json:"limits"`
-	Session      string                         `json:"session"`
+	DesiredPhase   AgentExecutionSpecDesiredPhase    `json:"desiredPhase"`
+	Limits         AgentExecutionSpecLimits          `json:"limits"`
+	LoopConditions []AgentExecutionSpecLoopCondition `json:"loopConditions"`
+	Session        string                            `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -807,14 +808,15 @@ type AgentExecutionSpec struct {
 // agentExecutionSpecJSON contains the JSON metadata for the struct
 // [AgentExecutionSpec]
 type agentExecutionSpecJSON struct {
-	AgentID      apijson.Field
-	CodeContext  apijson.Field
-	DesiredPhase apijson.Field
-	Limits       apijson.Field
-	Session      apijson.Field
-	SpecVersion  apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
+	AgentID        apijson.Field
+	CodeContext    apijson.Field
+	DesiredPhase   apijson.Field
+	Limits         apijson.Field
+	LoopConditions apijson.Field
+	Session        apijson.Field
+	SpecVersion    apijson.Field
+	raw            string
+	ExtraFields    map[string]apijson.Field
 }
 
 func (r *AgentExecutionSpec) UnmarshalJSON(data []byte) (err error) {
@@ -866,6 +868,31 @@ func (r *AgentExecutionSpecLimits) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r agentExecutionSpecLimitsJSON) RawJSON() string {
+	return r.raw
+}
+
+type AgentExecutionSpecLoopCondition struct {
+	ID          string                              `json:"id"`
+	Description string                              `json:"description"`
+	Expression  string                              `json:"expression"`
+	JSON        agentExecutionSpecLoopConditionJSON `json:"-"`
+}
+
+// agentExecutionSpecLoopConditionJSON contains the JSON metadata for the struct
+// [AgentExecutionSpecLoopCondition]
+type agentExecutionSpecLoopConditionJSON struct {
+	ID          apijson.Field
+	Description apijson.Field
+	Expression  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AgentExecutionSpecLoopCondition) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r agentExecutionSpecLoopConditionJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1162,12 +1189,15 @@ const (
 	AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_EXTENDED"
 	AgentExecutionStatusSupportedModelSupportedModelSonnet4_5         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_5"
 	AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_5_EXTENDED"
+	AgentExecutionStatusSupportedModelSupportedModelSonnet4_6         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_6"
+	AgentExecutionStatusSupportedModelSupportedModelSonnet4_6Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_6_EXTENDED"
 	AgentExecutionStatusSupportedModelSupportedModelOpus4             AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4"
 	AgentExecutionStatusSupportedModelSupportedModelOpus4Extended     AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_EXTENDED"
 	AgentExecutionStatusSupportedModelSupportedModelOpus4_5           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_5"
 	AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_5_EXTENDED"
 	AgentExecutionStatusSupportedModelSupportedModelOpus4_6           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_6"
 	AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_6_EXTENDED"
+	AgentExecutionStatusSupportedModelSupportedModelHaiku4_5          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_HAIKU_4_5"
 	AgentExecutionStatusSupportedModelSupportedModelOpenAI4O          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_4O"
 	AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini      AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_4O_MINI"
 	AgentExecutionStatusSupportedModelSupportedModelOpenAIO1          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_O1"
@@ -1176,7 +1206,7 @@ const (
 
 func (r AgentExecutionStatusSupportedModel) IsKnown() bool {
 	switch r {
-	case AgentExecutionStatusSupportedModelSupportedModelUnspecified, AgentExecutionStatusSupportedModelSupportedModelSonnet3_5, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4, AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4, AgentExecutionStatusSupportedModelSupportedModelOpus4Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_5, AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_6, AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended, AgentExecutionStatusSupportedModelSupportedModelOpenAI4O, AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1Mini:
+	case AgentExecutionStatusSupportedModelSupportedModelUnspecified, AgentExecutionStatusSupportedModelSupportedModelSonnet3_5, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4, AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_6, AgentExecutionStatusSupportedModelSupportedModelSonnet4_6Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4, AgentExecutionStatusSupportedModelSupportedModelOpus4Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_5, AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_6, AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended, AgentExecutionStatusSupportedModelSupportedModelHaiku4_5, AgentExecutionStatusSupportedModelSupportedModelOpenAI4O, AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1Mini:
 		return true
 	}
 	return false
@@ -1203,6 +1233,18 @@ func (r *AgentExecutionStatusUsedEnvironment) UnmarshalJSON(data []byte) (err er
 
 func (r agentExecutionStatusUsedEnvironmentJSON) RawJSON() string {
 	return r.raw
+}
+
+// AgentMessage is a message sent between agents (e.g. from a parent agent to a
+// child agent execution, or vice versa).
+type AgentMessageParam struct {
+	// Free-form payload of the message.
+	Payload param.Field[string] `json:"payload"`
+	Type    param.Field[Type]   `json:"type"`
+}
+
+func (r AgentMessageParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // AgentMode defines the operational mode of an agent
@@ -1491,6 +1533,22 @@ func (r promptSpecJSON) RawJSON() string {
 	return r.raw
 }
 
+type Type string
+
+const (
+	TypeUnspecified Type = "TYPE_UNSPECIFIED"
+	TypeUpdate      Type = "TYPE_UPDATE"
+	TypeComplete    Type = "TYPE_COMPLETE"
+)
+
+func (r Type) IsKnown() bool {
+	switch r {
+	case TypeUnspecified, TypeUpdate, TypeComplete:
+		return true
+	}
+	return false
+}
+
 type UserInputBlockParam struct {
 	ID param.Field[string] `json:"id"`
 	// Timestamp when this block was created. Used for debugging and support bundles.
@@ -1590,6 +1648,62 @@ type UserInputBlockTextParam struct {
 }
 
 func (r UserInputBlockTextParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// WakeEvent is sent by the backend to wake an agent when a registered interest
+// fires. Delivered via SendToAgentExecution as a new oneof variant.
+type WakeEventParam struct {
+	Environment param.Field[WakeEventEnvironmentParam] `json:"environment"`
+	// The interest ID that fired (from WaitingInfo.Interest.id).
+	InterestID    param.Field[string]                      `json:"interestId"`
+	LoopRetrigger param.Field[WakeEventLoopRetriggerParam] `json:"loopRetrigger"`
+	Timer         param.Field[WakeEventTimerParam]         `json:"timer"`
+}
+
+func (r WakeEventParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventEnvironmentParam struct {
+	EnvironmentID  param.Field[string]   `json:"environmentId"`
+	FailureMessage param.Field[[]string] `json:"failureMessage"`
+	// The phase the environment reached (e.g. "running", "stopped", "deleted").
+	Phase param.Field[string] `json:"phase"`
+}
+
+func (r WakeEventEnvironmentParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventLoopRetriggerParam struct {
+	Outputs         param.Field[map[string]string]                           `json:"outputs"`
+	UnmetConditions param.Field[[]WakeEventLoopRetriggerUnmetConditionParam] `json:"unmetConditions"`
+}
+
+func (r WakeEventLoopRetriggerParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventLoopRetriggerUnmetConditionParam struct {
+	ID            param.Field[string] `json:"id"`
+	Description   param.Field[string] `json:"description"`
+	Expression    param.Field[string] `json:"expression"`
+	Iteration     param.Field[int64]  `json:"iteration"`
+	MaxIterations param.Field[int64]  `json:"maxIterations"`
+	Reason        param.Field[string] `json:"reason"`
+}
+
+func (r WakeEventLoopRetriggerUnmetConditionParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventTimerParam struct {
+	// The actual time the timer was evaluated as expired.
+	FiredAt param.Field[time.Time] `json:"firedAt" format:"date-time"`
+}
+
+func (r WakeEventTimerParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -1789,12 +1903,15 @@ type AgentListExecutionsParamsFilter struct {
 	AgentIDs param.Field[[]string] `json:"agentIds"`
 	// annotations filters by key-value pairs. Only executions containing all specified
 	// annotations (with matching values) are returned.
-	Annotations    param.Field[map[string]string]                            `json:"annotations"`
-	CreatorIDs     param.Field[[]string]                                     `json:"creatorIds"`
-	EnvironmentIDs param.Field[[]string]                                     `json:"environmentIds"`
-	ProjectIDs     param.Field[[]string]                                     `json:"projectIds" format:"uuid"`
-	Roles          param.Field[[]AgentListExecutionsParamsFilterRole]        `json:"roles"`
-	StatusPhases   param.Field[[]AgentListExecutionsParamsFilterStatusPhase] `json:"statusPhases"`
+	Annotations    param.Field[map[string]string]                     `json:"annotations"`
+	CreatorIDs     param.Field[[]string]                              `json:"creatorIds"`
+	EnvironmentIDs param.Field[[]string]                              `json:"environmentIds"`
+	ProjectIDs     param.Field[[]string]                              `json:"projectIds" format:"uuid"`
+	Roles          param.Field[[]AgentListExecutionsParamsFilterRole] `json:"roles"`
+	// session_ids filters the response to only executions belonging to the specified
+	// sessions
+	SessionIDs   param.Field[[]string]                                     `json:"sessionIds" format:"uuid"`
+	StatusPhases param.Field[[]AgentListExecutionsParamsFilterStatusPhase] `json:"statusPhases"`
 }
 
 func (r AgentListExecutionsParamsFilter) MarshalJSON() (data []byte, err error) {
@@ -1871,9 +1988,16 @@ func (r AgentListPromptsParams) URLQuery() (v url.Values) {
 type AgentListPromptsParamsFilter struct {
 	Command       param.Field[string] `json:"command"`
 	CommandPrefix param.Field[string] `json:"commandPrefix"`
-	IsCommand     param.Field[bool]   `json:"isCommand"`
-	IsSkill       param.Field[bool]   `json:"isSkill"`
-	IsTemplate    param.Field[bool]   `json:"isTemplate"`
+	// exclude_prompt_content omits the large spec.prompt text from the response. Other
+	// spec fields (is_template, is_command, command, is_skill) are still returned. Use
+	// GetPrompt to retrieve the full prompt content when needed.
+	ExcludePromptContent param.Field[bool] `json:"excludePromptContent"`
+	IsCommand            param.Field[bool] `json:"isCommand"`
+	IsSkill              param.Field[bool] `json:"isSkill"`
+	IsTemplate           param.Field[bool] `json:"isTemplate"`
+	// search performs case-insensitive search across prompt name, description, and
+	// command.
+	Search param.Field[string] `json:"search"`
 }
 
 func (r AgentListPromptsParamsFilter) MarshalJSON() (data []byte, err error) {
@@ -1910,8 +2034,14 @@ func (r AgentGetPromptParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AgentSendToExecutionParams struct {
-	AgentExecutionID param.Field[string]              `json:"agentExecutionId" format:"uuid"`
-	UserInput        param.Field[UserInputBlockParam] `json:"userInput"`
+	AgentExecutionID param.Field[string] `json:"agentExecutionId" format:"uuid"`
+	// AgentMessage is a message sent between agents (e.g. from a parent agent to a
+	// child agent execution, or vice versa).
+	AgentMessage param.Field[AgentMessageParam]   `json:"agentMessage"`
+	UserInput    param.Field[UserInputBlockParam] `json:"userInput"`
+	// WakeEvent is sent by the backend to wake an agent when a registered interest
+	// fires. Delivered via SendToAgentExecution as a new oneof variant.
+	WakeEvent param.Field[WakeEventParam] `json:"wakeEvent"`
 }
 
 func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
@@ -1920,9 +2050,9 @@ func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
 
 type AgentStartExecutionParams struct {
 	AgentID param.Field[string] `json:"agentId" format:"uuid"`
-	// annotations are key-value pairs for tracking external context (e.g., Linear
+	// annotations are key-value pairs for tracking external context (e.g., integration
 	// session IDs, GitHub issue references). Keys should follow domain/name convention
-	// (e.g., "linear.app/session-id").
+	// (e.g., "agent-client-session/id").
 	Annotations param.Field[map[string]string]     `json:"annotations"`
 	CodeContext param.Field[AgentCodeContextParam] `json:"codeContext"`
 	// mode specifies the operational mode for this agent execution If not specified,
@@ -1933,6 +2063,9 @@ type AgentStartExecutionParams struct {
 	// execution is routed to this runner instead of the runner associated with the
 	// environment.
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
+	// session_id is the ID of the session this agent execution belongs to. If empty, a
+	// new session is created implicitly.
+	SessionID param.Field[string] `json:"sessionId" format:"uuid"`
 	// workflow_action_id is an optional reference to the workflow execution action
 	// that created this agent execution. Used for tracking and event correlation.
 	WorkflowActionID param.Field[string] `json:"workflowActionId" format:"uuid"`

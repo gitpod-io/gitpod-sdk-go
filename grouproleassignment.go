@@ -74,7 +74,7 @@ func (r *GroupRoleAssignmentService) New(ctx context.Context, body GroupRoleAssi
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/CreateRoleAssignment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists role assignments for a group or resource.
@@ -194,7 +194,7 @@ func (r *GroupRoleAssignmentService) Delete(ctx context.Context, body GroupRoleA
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.GroupService/DeleteRoleAssignment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // RoleAssignment represents a role assigned to a group on a specific resource
@@ -205,7 +205,7 @@ type RoleAssignment struct {
 	// RESOURCE_ROLE_UNSPECIFIED means this is a direct share (manually created).
 	// Non-zero (e.g., ORG_PROJECTS_ADMIN, ORG_RUNNERS_ADMIN) means this assignment was
 	// derived from an org-level role.
-	DerivedFromOrgRole shared.ResourceRole `json:"derivedFromOrgRole,nullable"`
+	DerivedFromOrgRole shared.ResourceRole `json:"derivedFromOrgRole" api:"nullable"`
 	// Group identifier
 	GroupID string `json:"groupId" format:"uuid"`
 	// Organization identifier
@@ -304,11 +304,15 @@ type GroupRoleAssignmentListParamsFilter struct {
 	// group_id filters the response to only role assignments for this specific group
 	// Empty string is allowed and means no filtering by group
 	GroupID param.Field[string] `json:"groupId"`
-	// resource_id filters the response to only role assignments for this specific
-	// resource When provided, users with :grant permission on the resource can see its
-	// role assignments even if they don't belong to the assigned groups Empty string
-	// is allowed and means no filtering by resource
+	// Filters by a single resource. Non-admin callers with :grant permission on the
+	// resource can see role assignments from groups they don't belong to. Mutually
+	// exclusive with resource_ids.
 	ResourceID param.Field[string] `json:"resourceId"`
+	// Filters by multiple resources in a single request. Non-admin callers with :grant
+	// permission on a resource can see all role assignments for that resource, even
+	// from groups they don't belong to. The :grant check is applied per-resource
+	// within the batch. Mutually exclusive with resource_id.
+	ResourceIDs param.Field[[]string] `json:"resourceIds" format:"uuid"`
 	// resource_roles filters the response to only role assignments with these specific
 	// roles
 	ResourceRoles param.Field[[]shared.ResourceRole] `json:"resourceRoles"`

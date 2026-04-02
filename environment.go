@@ -106,7 +106,7 @@ func (r *EnvironmentService) New(ctx context.Context, body EnvironmentNewParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific environment including its status, configuration,
@@ -133,7 +133,7 @@ func (r *EnvironmentService) Get(ctx context.Context, body EnvironmentGetParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/GetEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an environment's configuration while it is running.
@@ -190,7 +190,7 @@ func (r *EnvironmentService) Update(ctx context.Context, body EnvironmentUpdateP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/UpdateEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists all environments matching the specified criteria.
@@ -316,7 +316,7 @@ func (r *EnvironmentService) Delete(ctx context.Context, body EnvironmentDeleteP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/DeleteEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an access token for the environment.
@@ -337,7 +337,7 @@ func (r *EnvironmentService) NewEnvironmentToken(ctx context.Context, body Envir
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentAccessToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an environment from an existing project configuration and starts it.
@@ -374,7 +374,7 @@ func (r *EnvironmentService) NewFromProject(ctx context.Context, body Environmen
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentFromProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates an access token for retrieving environment logs.
@@ -395,7 +395,7 @@ func (r *EnvironmentService) NewLogsToken(ctx context.Context, body EnvironmentN
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/CreateEnvironmentLogsToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Records environment activity to prevent automatic shutdown.
@@ -419,7 +419,7 @@ func (r *EnvironmentService) MarkActive(ctx context.Context, body EnvironmentMar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/MarkEnvironmentActive"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Starts a stopped environment.
@@ -441,7 +441,7 @@ func (r *EnvironmentService) Start(ctx context.Context, body EnvironmentStartPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/StartEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Stops a running environment.
@@ -462,7 +462,7 @@ func (r *EnvironmentService) Stop(ctx context.Context, body EnvironmentStopParam
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/StopEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Unarchives an environment.
@@ -478,7 +478,7 @@ func (r *EnvironmentService) Unarchive(ctx context.Context, body EnvironmentUnar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentService/UnarchiveEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Admission level describes who can access an environment instance and its ports.
@@ -504,7 +504,7 @@ func (r AdmissionLevel) IsKnown() bool {
 type Environment struct {
 	// ID is a unique identifier of this environment. No other environment with the
 	// same name must be managed by this environment manager
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Metadata is data associated with this environment that's required for other
 	// parts of Gitpod to function
 	Metadata EnvironmentMetadata `json:"metadata"`
@@ -594,6 +594,10 @@ type EnvironmentMetadata struct {
 	// Time when the Environment was last started (i.e. CreateEnvironment or
 	// StartEnvironment were called).
 	LastStartedAt time.Time `json:"lastStartedAt" format:"date-time"`
+	// lockdown_at is the time at which the environment becomes locked down due to the
+	// organization's maximum environment lifetime policy. Nil when no lifetime policy
+	// applies.
+	LockdownAt time.Time `json:"lockdownAt" format:"date-time"`
 	// name is the name of the environment as specified by the user
 	Name string `json:"name"`
 	// organization_id is the ID of the organization that contains the environment
@@ -603,7 +607,7 @@ type EnvironmentMetadata struct {
 	OriginalContextURL string `json:"originalContextUrl"`
 	// prebuild_id is the ID of the prebuild this environment was created from. Only
 	// set if the environment was created from a prebuild.
-	PrebuildID string `json:"prebuildId,nullable" format:"uuid"`
+	PrebuildID string `json:"prebuildId" api:"nullable" format:"uuid"`
 	// If the Environment was started from a project, the project_id will reference the
 	// project.
 	ProjectID string `json:"projectId"`
@@ -622,6 +626,7 @@ type environmentMetadataJSON struct {
 	CreatedAt          apijson.Field
 	Creator            apijson.Field
 	LastStartedAt      apijson.Field
+	LockdownAt         apijson.Field
 	Name               apijson.Field
 	OrganizationID     apijson.Field
 	OriginalContextURL apijson.Field
@@ -712,7 +717,7 @@ type EnvironmentSpec struct {
 	Timeout EnvironmentSpecTimeout `json:"timeout"`
 	// workflow_action_id is an optional reference to the workflow execution action
 	// that created this environment. Used for tracking and event correlation.
-	WorkflowActionID string              `json:"workflowActionId,nullable" format:"uuid"`
+	WorkflowActionID string              `json:"workflowActionId" api:"nullable" format:"uuid"`
 	JSON             environmentSpecJSON `json:"-"`
 }
 
@@ -854,7 +859,7 @@ func (r environmentSpecDevcontainerJSON) RawJSON() string {
 // Experimental: dotfiles is the dotfiles configuration of the devcontainer
 type EnvironmentSpecDevcontainerDotfiles struct {
 	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
-	Repository string                                  `json:"repository,required" format:"uri"`
+	Repository string                                  `json:"repository" api:"required" format:"uri"`
 	JSON       environmentSpecDevcontainerDotfilesJSON `json:"-"`
 }
 
@@ -978,7 +983,14 @@ type EnvironmentSpecSecret struct {
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost string `json:"containerRegistryBasicAuthHost"`
-	EnvironmentVariable            string `json:"environmentVariable"`
+	// credential_proxy configures transparent credential injection via the credential
+	// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+	// hosts and replaces the dummy secret value with the real value in the specified
+	// HTTP header. The real secret value is never exposed in the environment. This
+	// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+	// credential) and proxied at the same time.
+	CredentialProxy     EnvironmentSpecSecretsCredentialProxy `json:"credentialProxy"`
+	EnvironmentVariable string                                `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          string `json:"filePath"`
 	GitCredentialHost string `json:"gitCredentialHost"`
@@ -1003,6 +1015,7 @@ type environmentSpecSecretJSON struct {
 	ID                             apijson.Field
 	APIOnly                        apijson.Field
 	ContainerRegistryBasicAuthHost apijson.Field
+	CredentialProxy                apijson.Field
 	EnvironmentVariable            apijson.Field
 	FilePath                       apijson.Field
 	GitCredentialHost              apijson.Field
@@ -1021,6 +1034,60 @@ func (r *EnvironmentSpecSecret) UnmarshalJSON(data []byte) (err error) {
 
 func (r environmentSpecSecretJSON) RawJSON() string {
 	return r.raw
+}
+
+// credential_proxy configures transparent credential injection via the credential
+// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+// hosts and replaces the dummy secret value with the real value in the specified
+// HTTP header. The real secret value is never exposed in the environment. This
+// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+// credential) and proxied at the same time.
+type EnvironmentSpecSecretsCredentialProxy struct {
+	// format describes how the secret value is encoded. The proxy uses this to decode
+	// the value before injecting it into the header.
+	Format EnvironmentSpecSecretsCredentialProxyFormat `json:"format"`
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header string `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts []string                                  `json:"targetHosts"`
+	JSON        environmentSpecSecretsCredentialProxyJSON `json:"-"`
+}
+
+// environmentSpecSecretsCredentialProxyJSON contains the JSON metadata for the
+// struct [EnvironmentSpecSecretsCredentialProxy]
+type environmentSpecSecretsCredentialProxyJSON struct {
+	Format      apijson.Field
+	Header      apijson.Field
+	TargetHosts apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *EnvironmentSpecSecretsCredentialProxy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r environmentSpecSecretsCredentialProxyJSON) RawJSON() string {
+	return r.raw
+}
+
+// format describes how the secret value is encoded. The proxy uses this to decode
+// the value before injecting it into the header.
+type EnvironmentSpecSecretsCredentialProxyFormat string
+
+const (
+	EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_UNSPECIFIED"
+	EnvironmentSpecSecretsCredentialProxyFormatFormatPlain       EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_PLAIN"
+	EnvironmentSpecSecretsCredentialProxyFormatFormatBase64      EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_BASE64"
+)
+
+func (r EnvironmentSpecSecretsCredentialProxyFormat) IsKnown() bool {
+	switch r {
+	case EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified, EnvironmentSpecSecretsCredentialProxyFormatFormatPlain, EnvironmentSpecSecretsCredentialProxyFormatFormatBase64:
+		return true
+	}
+	return false
 }
 
 // scope indicates where this secret originated from. Used to filter secrets during
@@ -1072,7 +1139,12 @@ func (r environmentSpecSSHPublicKeyJSON) RawJSON() string {
 // Timeout configures the environment timeout
 type EnvironmentSpecTimeout struct {
 	// inacitivity is the maximum time of disconnection before the environment is
-	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable. value
+	// must be 0s (disabled) or at least 1800s (30 minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	Disconnected string                     `json:"disconnected" format:"regex"`
 	JSON         environmentSpecTimeoutJSON `json:"-"`
 }
@@ -1194,7 +1266,7 @@ func (r EnvironmentSpecDevcontainerParam) MarshalJSON() (data []byte, err error)
 // Experimental: dotfiles is the dotfiles configuration of the devcontainer
 type EnvironmentSpecDevcontainerDotfilesParam struct {
 	// URL of a dotfiles Git repository (e.g. https://github.com/owner/repository)
-	Repository param.Field[string] `json:"repository,required" format:"uri"`
+	Repository param.Field[string] `json:"repository" api:"required" format:"uri"`
 }
 
 func (r EnvironmentSpecDevcontainerDotfilesParam) MarshalJSON() (data []byte, err error) {
@@ -1238,7 +1310,14 @@ type EnvironmentSpecSecretParam struct {
 	// container_registry_basic_auth_host is the hostname of the container registry
 	// that supports basic auth
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
-	EnvironmentVariable            param.Field[string] `json:"environmentVariable"`
+	// credential_proxy configures transparent credential injection via the credential
+	// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+	// hosts and replaces the dummy secret value with the real value in the specified
+	// HTTP header. The real secret value is never exposed in the environment. This
+	// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+	// credential) and proxied at the same time.
+	CredentialProxy     param.Field[EnvironmentSpecSecretsCredentialProxyParam] `json:"credentialProxy"`
+	EnvironmentVariable param.Field[string]                                     `json:"environmentVariable"`
 	// file_path is the path inside the devcontainer where the secret is mounted
 	FilePath          param.Field[string] `json:"filePath"`
 	GitCredentialHost param.Field[string] `json:"gitCredentialHost"`
@@ -1260,6 +1339,27 @@ func (r EnvironmentSpecSecretParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+// credential_proxy configures transparent credential injection via the credential
+// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+// hosts and replaces the dummy secret value with the real value in the specified
+// HTTP header. The real secret value is never exposed in the environment. This
+// field is orthogonal to mount — a secret can be both mounted (e.g. as a git
+// credential) and proxied at the same time.
+type EnvironmentSpecSecretsCredentialProxyParam struct {
+	// format describes how the secret value is encoded. The proxy uses this to decode
+	// the value before injecting it into the header.
+	Format param.Field[EnvironmentSpecSecretsCredentialProxyFormat] `json:"format"`
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header param.Field[string] `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts param.Field[[]string] `json:"targetHosts"`
+}
+
+func (r EnvironmentSpecSecretsCredentialProxyParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type EnvironmentSpecSSHPublicKeyParam struct {
 	// id is the unique identifier of the public key
 	ID param.Field[string] `json:"id"`
@@ -1274,7 +1374,12 @@ func (r EnvironmentSpecSSHPublicKeyParam) MarshalJSON() (data []byte, err error)
 // Timeout configures the environment timeout
 type EnvironmentSpecTimeoutParam struct {
 	// inacitivity is the maximum time of disconnection before the environment is
-	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable. value
+	// must be 0s (disabled) or at least 1800s (30 minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	Disconnected param.Field[string] `json:"disconnected" format:"regex"`
 }
 
@@ -2115,7 +2220,7 @@ func (r VetoExecParam) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentNewResponse struct {
 	// +resource get environment
-	Environment Environment                `json:"environment,required"`
+	Environment Environment                `json:"environment" api:"required"`
 	JSON        environmentNewResponseJSON `json:"-"`
 }
 
@@ -2137,7 +2242,7 @@ func (r environmentNewResponseJSON) RawJSON() string {
 
 type EnvironmentGetResponse struct {
 	// +resource get environment
-	Environment Environment                `json:"environment,required"`
+	Environment Environment                `json:"environment" api:"required"`
 	JSON        environmentGetResponseJSON `json:"-"`
 }
 
@@ -2163,7 +2268,7 @@ type EnvironmentDeleteResponse = interface{}
 
 type EnvironmentNewEnvironmentTokenResponse struct {
 	// access_token is the token that can be used for environment authentication
-	AccessToken string                                     `json:"accessToken,required"`
+	AccessToken string                                     `json:"accessToken" api:"required"`
 	JSON        environmentNewEnvironmentTokenResponseJSON `json:"-"`
 }
 
@@ -2185,7 +2290,7 @@ func (r environmentNewEnvironmentTokenResponseJSON) RawJSON() string {
 
 type EnvironmentNewFromProjectResponse struct {
 	// +resource get environment
-	Environment Environment                           `json:"environment,required"`
+	Environment Environment                           `json:"environment" api:"required"`
 	JSON        environmentNewFromProjectResponseJSON `json:"-"`
 }
 
@@ -2207,7 +2312,7 @@ func (r environmentNewFromProjectResponseJSON) RawJSON() string {
 
 type EnvironmentNewLogsTokenResponse struct {
 	// access_token is the token that can be used to access the logs of the environment
-	AccessToken string                              `json:"accessToken,required"`
+	AccessToken string                              `json:"accessToken" api:"required"`
 	JSON        environmentNewLogsTokenResponseJSON `json:"-"`
 }
 
@@ -2239,6 +2344,9 @@ type EnvironmentNewParams struct {
 	// name is a user-defined identifier for the environment. If not specified, the
 	// system will generate a name.
 	Name param.Field[string] `json:"name"`
+	// session_id is the ID of the session this environment belongs to. If empty, a new
+	// session is created implicitly.
+	SessionID param.Field[string] `json:"sessionId" format:"uuid"`
 	// spec is the configuration of the environment that's required for the to start
 	// the environment
 	Spec param.Field[EnvironmentSpecParam] `json:"spec"`
@@ -2250,7 +2358,7 @@ func (r EnvironmentNewParams) MarshalJSON() (data []byte, err error) {
 
 type EnvironmentGetParams struct {
 	// environment_id specifies the environment to get
-	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
+	EnvironmentID param.Field[string] `json:"environmentId" api:"required" format:"uuid"`
 }
 
 func (r EnvironmentGetParams) MarshalJSON() (data []byte, err error) {
@@ -2398,7 +2506,12 @@ func (r EnvironmentUpdateParamsSpecSSHPublicKey) MarshalJSON() (data []byte, err
 // Timeout configures the environment timeout
 type EnvironmentUpdateParamsSpecTimeout struct {
 	// inacitivity is the maximum time of disconnection before the environment is
-	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable.
+	// stopped or paused. Minimum duration is 30 minutes. Set to 0 to disable. value
+	// must be 0s (disabled) or at least 1800s (30 minutes):
+	//
+	// ```
+	// this == duration('0s') || this >= duration('1800s')
+	// ```
 	Disconnected param.Field[string] `json:"disconnected" format:"regex"`
 }
 
@@ -2444,6 +2557,9 @@ type EnvironmentListParamsFilter struct {
 	// runner_kinds filters the response to only Environments running on these Runner
 	// Kinds
 	RunnerKinds param.Field[[]RunnerKind] `json:"runnerKinds"`
+	// session_ids filters the response to only environments belonging to the specified
+	// sessions
+	SessionIDs param.Field[[]string] `json:"sessionIds" format:"uuid"`
 	// actual_phases is a list of phases the environment must be in for it to be
 	// returned in the API call
 	StatusPhases param.Field[[]EnvironmentPhase] `json:"statusPhases"`
@@ -2504,7 +2620,7 @@ func (r EnvironmentDeleteParams) MarshalJSON() (data []byte, err error) {
 type EnvironmentNewEnvironmentTokenParams struct {
 	// environment_id specifies the environment for which the access token should be
 	// created.
-	EnvironmentID param.Field[string] `json:"environmentId,required" format:"uuid"`
+	EnvironmentID param.Field[string] `json:"environmentId" api:"required" format:"uuid"`
 }
 
 func (r EnvironmentNewEnvironmentTokenParams) MarshalJSON() (data []byte, err error) {
@@ -2516,6 +2632,9 @@ type EnvironmentNewFromProjectParams struct {
 	// system will generate a name.
 	Name      param.Field[string] `json:"name"`
 	ProjectID param.Field[string] `json:"projectId" format:"uuid"`
+	// session_id is the ID of the session this environment belongs to. If empty, a new
+	// session is created implicitly.
+	SessionID param.Field[string] `json:"sessionId" format:"uuid"`
 	// Spec is the configuration of the environment that's required for the runner to
 	// start the environment Configuration already defined in the Project will override
 	// parts of the spec, if set

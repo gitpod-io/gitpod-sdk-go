@@ -81,7 +81,7 @@ func (r *ProjectService) New(ctx context.Context, body ProjectNewParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific project.
@@ -105,7 +105,7 @@ func (r *ProjectService) Get(ctx context.Context, body ProjectGetParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/GetProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a project's configuration.
@@ -148,7 +148,7 @@ func (r *ProjectService) Update(ctx context.Context, body ProjectUpdateParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists projects with optional filtering.
@@ -229,7 +229,7 @@ func (r *ProjectService) Delete(ctx context.Context, body ProjectDeleteParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProject"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates multiple projects in a single request.
@@ -265,7 +265,7 @@ func (r *ProjectService) BulkNew(ctx context.Context, body ProjectBulkNewParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes multiple projects in a single request.
@@ -293,7 +293,7 @@ func (r *ProjectService) BulkDelete(ctx context.Context, body ProjectBulkDeleteP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/DeleteProjects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates multiple projects in a single request.
@@ -323,7 +323,7 @@ func (r *ProjectService) BulkUpdate(ctx context.Context, body ProjectBulkUpdateP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProjects"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Creates a new project using an existing environment as a template.
@@ -348,7 +348,7 @@ func (r *ProjectService) NewFromEnvironment(ctx context.Context, body ProjectNew
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/CreateProjectFromEnvironment"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // EnvironmentInitializer specifies how an environment is to be initialized
@@ -520,7 +520,7 @@ type Project struct {
 	// Use `environment_classes` instead.
 	//
 	// Deprecated: deprecated
-	EnvironmentClass shared.ProjectEnvironmentClass `json:"environmentClass,required"`
+	EnvironmentClass shared.ProjectEnvironmentClass `json:"environmentClass" api:"required"`
 	// id is the unique identifier for the project
 	ID string `json:"id" format:"uuid"`
 	// automations_file_path is the path to the automations file relative to the repo
@@ -872,7 +872,7 @@ func (r projectPrebuildConfigurationJSON) RawJSON() string {
 type ProjectPrebuildConfigurationTrigger struct {
 	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
 	// actual start time may vary slightly to distribute system load.
-	DailySchedule ProjectPrebuildConfigurationTriggerDailySchedule `json:"dailySchedule,required"`
+	DailySchedule ProjectPrebuildConfigurationTriggerDailySchedule `json:"dailySchedule" api:"required"`
 	JSON          projectPrebuildConfigurationTriggerJSON          `json:"-"`
 }
 
@@ -949,7 +949,7 @@ func (r ProjectPrebuildConfigurationParam) MarshalJSON() (data []byte, err error
 type ProjectPrebuildConfigurationTriggerParam struct {
 	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
 	// actual start time may vary slightly to distribute system load.
-	DailySchedule param.Field[ProjectPrebuildConfigurationTriggerDailyScheduleParam] `json:"dailySchedule,required"`
+	DailySchedule param.Field[ProjectPrebuildConfigurationTriggerDailyScheduleParam] `json:"dailySchedule" api:"required"`
 }
 
 func (r ProjectPrebuildConfigurationTriggerParam) MarshalJSON() (data []byte, err error) {
@@ -1291,7 +1291,7 @@ func (r projectNewFromEnvironmentResponseJSON) RawJSON() string {
 
 type ProjectNewParams struct {
 	// initializer is the content initializer
-	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
+	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer" api:"required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
 	//
@@ -1371,6 +1371,15 @@ type ProjectListParams struct {
 	Filter   param.Field[ProjectListParamsFilter] `json:"filter"`
 	// pagination contains the pagination options for listing organizations
 	Pagination param.Field[ProjectListParamsPagination] `json:"pagination"`
+	// sort specifies the order of results. Defaults to popularity descending.
+	//
+	// Supported fields:
+	//
+	//   - "id": Sort by project ID (UUID v7, effectively creation order). Produces a
+	//     stable, deterministic result set suitable for consistent pagination.
+	//   - "popularity": Sort by popularity — a precomputed score based on recent
+	//     environment creation activity. Updated periodically by a background job.
+	Sort param.Field[shared.SortParam] `json:"sort"`
 }
 
 func (r ProjectListParams) MarshalJSON() (data []byte, err error) {
@@ -1436,7 +1445,7 @@ func (r ProjectBulkNewParams) MarshalJSON() (data []byte, err error) {
 
 type ProjectBulkNewParamsProject struct {
 	// initializer is the content initializer
-	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer,required"`
+	Initializer param.Field[EnvironmentInitializerParam] `json:"initializer" api:"required"`
 	// automations_file_path is the path to the automations file relative to the repo
 	// root path must not be absolute (start with a /):
 	//

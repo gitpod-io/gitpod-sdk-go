@@ -8,24 +8,6 @@ import (
 )
 
 type Error = apierror.Error
-type ErrorCode = apierror.ErrorCode
-
-const ErrorCodeCanceled = apierror.ErrorCodeCanceled
-const ErrorCodeUnknown = apierror.ErrorCodeUnknown
-const ErrorCodeInvalidArgument = apierror.ErrorCodeInvalidArgument
-const ErrorCodeDeadlineExceeded = apierror.ErrorCodeDeadlineExceeded
-const ErrorCodeNotFound = apierror.ErrorCodeNotFound
-const ErrorCodeAlreadyExists = apierror.ErrorCodeAlreadyExists
-const ErrorCodePermissionDenied = apierror.ErrorCodePermissionDenied
-const ErrorCodeResourceExhausted = apierror.ErrorCodeResourceExhausted
-const ErrorCodeFailedPrecondition = apierror.ErrorCodeFailedPrecondition
-const ErrorCodeAborted = apierror.ErrorCodeAborted
-const ErrorCodeOutOfRange = apierror.ErrorCodeOutOfRange
-const ErrorCodeUnimplemented = apierror.ErrorCodeUnimplemented
-const ErrorCodeInternal = apierror.ErrorCodeInternal
-const ErrorCodeUnavailable = apierror.ErrorCodeUnavailable
-const ErrorCodeDataLoss = apierror.ErrorCodeDataLoss
-const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
 
 // An AutomationTrigger represents a trigger for an automation action. The `manual`
 // field shows a start button in the UI for manually triggering the automation. The
@@ -64,6 +46,18 @@ type AutomationTrigger = shared.AutomationTrigger
 type AutomationTriggerParam = shared.AutomationTriggerParam
 
 // This is an alias to an internal type.
+type CountResponseRelation = shared.CountResponseRelation
+
+// This is an alias to an internal value.
+const CountResponseRelationUnspecified = shared.CountResponseRelationUnspecified
+
+// This is an alias to an internal value.
+const CountResponseRelationEq = shared.CountResponseRelationEq
+
+// This is an alias to an internal value.
+const CountResponseRelationGte = shared.CountResponseRelationGte
+
+// This is an alias to an internal type.
 type EnvironmentClass = shared.EnvironmentClass
 
 // This is an alias to an internal type.
@@ -90,6 +84,60 @@ type EnvironmentVariableSource = shared.EnvironmentVariableSource
 //
 // This is an alias to an internal type.
 type EnvironmentVariableSourceParam = shared.EnvironmentVariableSourceParam
+
+// The status code, which should be an enum value of
+// [google.rpc.Code][google.rpc.Code].
+//
+// This is an alias to an internal type.
+type ErrorCode = shared.ErrorCode
+
+// This is an alias to an internal value.
+const ErrorCodeCanceled = shared.ErrorCodeCanceled
+
+// This is an alias to an internal value.
+const ErrorCodeUnknown = shared.ErrorCodeUnknown
+
+// This is an alias to an internal value.
+const ErrorCodeInvalidArgument = shared.ErrorCodeInvalidArgument
+
+// This is an alias to an internal value.
+const ErrorCodeDeadlineExceeded = shared.ErrorCodeDeadlineExceeded
+
+// This is an alias to an internal value.
+const ErrorCodeNotFound = shared.ErrorCodeNotFound
+
+// This is an alias to an internal value.
+const ErrorCodeAlreadyExists = shared.ErrorCodeAlreadyExists
+
+// This is an alias to an internal value.
+const ErrorCodePermissionDenied = shared.ErrorCodePermissionDenied
+
+// This is an alias to an internal value.
+const ErrorCodeResourceExhausted = shared.ErrorCodeResourceExhausted
+
+// This is an alias to an internal value.
+const ErrorCodeFailedPrecondition = shared.ErrorCodeFailedPrecondition
+
+// This is an alias to an internal value.
+const ErrorCodeAborted = shared.ErrorCodeAborted
+
+// This is an alias to an internal value.
+const ErrorCodeOutOfRange = shared.ErrorCodeOutOfRange
+
+// This is an alias to an internal value.
+const ErrorCodeUnimplemented = shared.ErrorCodeUnimplemented
+
+// This is an alias to an internal value.
+const ErrorCodeInternal = shared.ErrorCodeInternal
+
+// This is an alias to an internal value.
+const ErrorCodeUnavailable = shared.ErrorCodeUnavailable
+
+// This is an alias to an internal value.
+const ErrorCodeDataLoss = shared.ErrorCodeDataLoss
+
+// This is an alias to an internal value.
+const ErrorCodeUnauthenticated = shared.ErrorCodeUnauthenticated
 
 // This is an alias to an internal type.
 type FieldValue = shared.FieldValue
@@ -156,9 +204,6 @@ const PrincipalServiceAccount = shared.PrincipalServiceAccount
 // This is an alias to an internal value.
 const PrincipalRunnerManager = shared.PrincipalRunnerManager
 
-// This is an alias to an internal value.
-const PrincipalAgentExecution = shared.PrincipalAgentExecution
-
 // This is an alias to an internal type.
 type ProjectEnvironmentClass = shared.ProjectEnvironmentClass
 
@@ -191,6 +236,9 @@ const ResourceRoleOrgAutomationsAdmin = shared.ResourceRoleOrgAutomationsAdmin
 
 // This is an alias to an internal value.
 const ResourceRoleOrgGroupsAdmin = shared.ResourceRoleOrgGroupsAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleOrgAuditLogReader = shared.ResourceRoleOrgAuditLogReader
 
 // This is an alias to an internal value.
 const ResourceRoleGroupAdmin = shared.ResourceRoleGroupAdmin
@@ -286,9 +334,6 @@ const ResourceRoleServiceAccountIdentity = shared.ResourceRoleServiceAccountIden
 const ResourceRoleServiceAccountAdmin = shared.ResourceRoleServiceAccountAdmin
 
 // This is an alias to an internal value.
-const ResourceRoleAgentExecutionIdentity = shared.ResourceRoleAgentExecutionIdentity
-
-// This is an alias to an internal value.
 const ResourceRoleAgentExecutionUser = shared.ResourceRoleAgentExecutionUser
 
 // This is an alias to an internal value.
@@ -299,6 +344,9 @@ const ResourceRoleAgentExecutionRunner = shared.ResourceRoleAgentExecutionRunner
 
 // This is an alias to an internal value.
 const ResourceRoleAgentExecutionOutputsReporter = shared.ResourceRoleAgentExecutionOutputsReporter
+
+// This is an alias to an internal value.
+const ResourceRoleAgentExecutionViewer = shared.ResourceRoleAgentExecutionViewer
 
 // This is an alias to an internal value.
 const ResourceRoleAgentAdmin = shared.ResourceRoleAgentAdmin
@@ -341,6 +389,18 @@ const ResourceRoleWarmpoolAdmin = shared.ResourceRoleWarmpoolAdmin
 
 // This is an alias to an internal value.
 const ResourceRoleWarmpoolViewer = shared.ResourceRoleWarmpoolViewer
+
+// This is an alias to an internal value.
+const ResourceRoleSessionAdmin = shared.ResourceRoleSessionAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleSessionUser = shared.ResourceRoleSessionUser
+
+// This is an alias to an internal value.
+const ResourceRoleTeamAdmin = shared.ResourceRoleTeamAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleTeamViewer = shared.ResourceRoleTeamViewer
 
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
@@ -492,6 +552,9 @@ const ResourceTypeRoleAssignment = shared.ResourceTypeRoleAssignment
 // This is an alias to an internal value.
 const ResourceTypeWarmPool = shared.ResourceTypeWarmPool
 
+// This is an alias to an internal value.
+const ResourceTypeNotification = shared.ResourceTypeNotification
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
@@ -513,6 +576,21 @@ type SecretRef = shared.SecretRef
 //
 // This is an alias to an internal type.
 type SecretRefParam = shared.SecretRefParam
+
+// This is an alias to an internal type.
+type SortParam = shared.SortParam
+
+// This is an alias to an internal type.
+type SortOrder = shared.SortOrder
+
+// This is an alias to an internal value.
+const SortOrderUnspecified = shared.SortOrderUnspecified
+
+// This is an alias to an internal value.
+const SortOrderAsc = shared.SortOrderAsc
+
+// This is an alias to an internal value.
+const SortOrderDesc = shared.SortOrderDesc
 
 // Current state of the pull request
 //

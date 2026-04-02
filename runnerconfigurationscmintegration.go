@@ -60,7 +60,7 @@ func (r *RunnerConfigurationScmIntegrationService) New(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific SCM integration.
@@ -84,7 +84,7 @@ func (r *RunnerConfigurationScmIntegrationService) Get(ctx context.Context, body
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing SCM integration.
@@ -110,7 +110,7 @@ func (r *RunnerConfigurationScmIntegrationService) Update(ctx context.Context, b
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists SCM integrations for a runner.
@@ -195,14 +195,14 @@ func (r *RunnerConfigurationScmIntegrationService) Delete(ctx context.Context, b
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteSCMIntegration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type ScmIntegration struct {
 	// id is the unique identifier of the SCM integration
 	ID       string                    `json:"id"`
 	Host     string                    `json:"host"`
-	OAuth    ScmIntegrationOAuthConfig `json:"oauth,nullable"`
+	OAuth    ScmIntegrationOAuthConfig `json:"oauth" api:"nullable"`
 	Pat      bool                      `json:"pat"`
 	RunnerID string                    `json:"runnerId"`
 	// scm_id references the scm_id in the runner's configuration schema that this
@@ -212,7 +212,7 @@ type ScmIntegration struct {
 	// "/tfs"). This field is only used for Azure DevOps Server SCM integrations and
 	// should be empty for other SCM types. Azure DevOps Server APIs work without
 	// collection when PAT scope is 'All accessible organizations'.
-	VirtualDirectory string             `json:"virtualDirectory,nullable"`
+	VirtualDirectory string             `json:"virtualDirectory" api:"nullable"`
 	JSON             scmIntegrationJSON `json:"-"`
 }
 

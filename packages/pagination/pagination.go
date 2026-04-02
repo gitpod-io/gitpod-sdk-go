@@ -1754,6 +1754,130 @@ func (r *MembersPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type OutputsPagePagination struct {
+	NextToken string                    `json:"nextToken"`
+	JSON      outputsPagePaginationJSON `json:"-"`
+}
+
+// outputsPagePaginationJSON contains the JSON metadata for the struct
+// [OutputsPagePagination]
+type outputsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OutputsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r outputsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type OutputsPage[T any] struct {
+	Outputs    []T                   `json:"outputs"`
+	Pagination OutputsPagePagination `json:"pagination"`
+	JSON       outputsPageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// outputsPageJSON contains the JSON metadata for the struct [OutputsPage[T]]
+type outputsPageJSON struct {
+	Outputs     apijson.Field
+	Pagination  apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *OutputsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r outputsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *OutputsPage[T]) GetNextPage() (res *OutputsPage[T], err error) {
+	if len(r.Outputs) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *OutputsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &OutputsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type OutputsPageAutoPager[T any] struct {
+	page *OutputsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewOutputsPageAutoPager[T any](page *OutputsPage[T], err error) *OutputsPageAutoPager[T] {
+	return &OutputsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *OutputsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Outputs) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Outputs) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Outputs) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Outputs[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *OutputsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *OutputsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *OutputsPageAutoPager[T]) Index() int {
+	return r.run
+}
+
 type PersonalAccessTokensPagePagination struct {
 	NextToken string                                 `json:"nextToken"`
 	JSON      personalAccessTokensPagePaginationJSON `json:"-"`
@@ -3741,5 +3865,503 @@ func (r *TokensPageAutoPager[T]) Err() error {
 }
 
 func (r *TokensPageAutoPager[T]) Index() int {
+	return r.run
+}
+
+type WarmPoolsPagePagination struct {
+	NextToken string                      `json:"nextToken"`
+	JSON      warmPoolsPagePaginationJSON `json:"-"`
+}
+
+// warmPoolsPagePaginationJSON contains the JSON metadata for the struct
+// [WarmPoolsPagePagination]
+type warmPoolsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WarmPoolsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type WarmPoolsPage[T any] struct {
+	Pagination WarmPoolsPagePagination `json:"pagination"`
+	WarmPools  []T                     `json:"warmPools"`
+	JSON       warmPoolsPageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// warmPoolsPageJSON contains the JSON metadata for the struct [WarmPoolsPage[T]]
+type warmPoolsPageJSON struct {
+	Pagination  apijson.Field
+	WarmPools   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WarmPoolsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r warmPoolsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *WarmPoolsPage[T]) GetNextPage() (res *WarmPoolsPage[T], err error) {
+	if len(r.WarmPools) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *WarmPoolsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &WarmPoolsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type WarmPoolsPageAutoPager[T any] struct {
+	page *WarmPoolsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewWarmPoolsPageAutoPager[T any](page *WarmPoolsPage[T], err error) *WarmPoolsPageAutoPager[T] {
+	return &WarmPoolsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.WarmPools) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.WarmPools) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.WarmPools) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.WarmPools[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *WarmPoolsPageAutoPager[T]) Index() int {
+	return r.run
+}
+
+type WorkflowExecutionActionsPagePagination struct {
+	NextToken string                                     `json:"nextToken"`
+	JSON      workflowExecutionActionsPagePaginationJSON `json:"-"`
+}
+
+// workflowExecutionActionsPagePaginationJSON contains the JSON metadata for the
+// struct [WorkflowExecutionActionsPagePagination]
+type workflowExecutionActionsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WorkflowExecutionActionsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowExecutionActionsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type WorkflowExecutionActionsPage[T any] struct {
+	Pagination               WorkflowExecutionActionsPagePagination `json:"pagination"`
+	WorkflowExecutionActions []T                                    `json:"workflowExecutionActions"`
+	JSON                     workflowExecutionActionsPageJSON       `json:"-"`
+	cfg                      *requestconfig.RequestConfig
+	res                      *http.Response
+}
+
+// workflowExecutionActionsPageJSON contains the JSON metadata for the struct
+// [WorkflowExecutionActionsPage[T]]
+type workflowExecutionActionsPageJSON struct {
+	Pagination               apijson.Field
+	WorkflowExecutionActions apijson.Field
+	raw                      string
+	ExtraFields              map[string]apijson.Field
+}
+
+func (r *WorkflowExecutionActionsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowExecutionActionsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *WorkflowExecutionActionsPage[T]) GetNextPage() (res *WorkflowExecutionActionsPage[T], err error) {
+	if len(r.WorkflowExecutionActions) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *WorkflowExecutionActionsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &WorkflowExecutionActionsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type WorkflowExecutionActionsPageAutoPager[T any] struct {
+	page *WorkflowExecutionActionsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewWorkflowExecutionActionsPageAutoPager[T any](page *WorkflowExecutionActionsPage[T], err error) *WorkflowExecutionActionsPageAutoPager[T] {
+	return &WorkflowExecutionActionsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *WorkflowExecutionActionsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.WorkflowExecutionActions) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.WorkflowExecutionActions) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.WorkflowExecutionActions) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.WorkflowExecutionActions[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *WorkflowExecutionActionsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *WorkflowExecutionActionsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *WorkflowExecutionActionsPageAutoPager[T]) Index() int {
+	return r.run
+}
+
+type WorkflowExecutionsPagePagination struct {
+	NextToken string                               `json:"nextToken"`
+	JSON      workflowExecutionsPagePaginationJSON `json:"-"`
+}
+
+// workflowExecutionsPagePaginationJSON contains the JSON metadata for the struct
+// [WorkflowExecutionsPagePagination]
+type workflowExecutionsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WorkflowExecutionsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowExecutionsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type WorkflowExecutionsPage[T any] struct {
+	Pagination         WorkflowExecutionsPagePagination `json:"pagination"`
+	WorkflowExecutions []T                              `json:"workflowExecutions"`
+	JSON               workflowExecutionsPageJSON       `json:"-"`
+	cfg                *requestconfig.RequestConfig
+	res                *http.Response
+}
+
+// workflowExecutionsPageJSON contains the JSON metadata for the struct
+// [WorkflowExecutionsPage[T]]
+type workflowExecutionsPageJSON struct {
+	Pagination         apijson.Field
+	WorkflowExecutions apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *WorkflowExecutionsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowExecutionsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *WorkflowExecutionsPage[T]) GetNextPage() (res *WorkflowExecutionsPage[T], err error) {
+	if len(r.WorkflowExecutions) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *WorkflowExecutionsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &WorkflowExecutionsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type WorkflowExecutionsPageAutoPager[T any] struct {
+	page *WorkflowExecutionsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewWorkflowExecutionsPageAutoPager[T any](page *WorkflowExecutionsPage[T], err error) *WorkflowExecutionsPageAutoPager[T] {
+	return &WorkflowExecutionsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *WorkflowExecutionsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.WorkflowExecutions) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.WorkflowExecutions) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.WorkflowExecutions) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.WorkflowExecutions[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *WorkflowExecutionsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *WorkflowExecutionsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *WorkflowExecutionsPageAutoPager[T]) Index() int {
+	return r.run
+}
+
+type WorkflowsPagePagination struct {
+	NextToken string                      `json:"nextToken"`
+	JSON      workflowsPagePaginationJSON `json:"-"`
+}
+
+// workflowsPagePaginationJSON contains the JSON metadata for the struct
+// [WorkflowsPagePagination]
+type workflowsPagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WorkflowsPagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowsPagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type WorkflowsPage[T any] struct {
+	Pagination WorkflowsPagePagination `json:"pagination"`
+	Workflows  []T                     `json:"workflows"`
+	JSON       workflowsPageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// workflowsPageJSON contains the JSON metadata for the struct [WorkflowsPage[T]]
+type workflowsPageJSON struct {
+	Pagination  apijson.Field
+	Workflows   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *WorkflowsPage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r workflowsPageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *WorkflowsPage[T]) GetNextPage() (res *WorkflowsPage[T], err error) {
+	if len(r.Workflows) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *WorkflowsPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &WorkflowsPage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type WorkflowsPageAutoPager[T any] struct {
+	page *WorkflowsPage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewWorkflowsPageAutoPager[T any](page *WorkflowsPage[T], err error) *WorkflowsPageAutoPager[T] {
+	return &WorkflowsPageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *WorkflowsPageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.Workflows) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.Workflows) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.Workflows) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.Workflows[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *WorkflowsPageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *WorkflowsPageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *WorkflowsPageAutoPager[T]) Index() int {
 	return r.run
 }

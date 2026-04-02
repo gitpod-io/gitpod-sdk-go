@@ -14,7 +14,7 @@ import (
 )
 
 func TestGroupNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -41,7 +41,7 @@ func TestGroupNewWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -54,7 +54,9 @@ func TestGroupGetWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Groups.Get(context.TODO(), gitpod.GroupGetParams{
-		GroupID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		ID:      gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		GroupID: gitpod.F("groupId"),
+		Name:    gitpod.F("xxx"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -66,7 +68,7 @@ func TestGroupGetWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -93,7 +95,7 @@ func TestGroupUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -108,6 +110,12 @@ func TestGroupListWithOptionalParams(t *testing.T) {
 	_, err := client.Groups.List(context.TODO(), gitpod.GroupListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
+		Filter: gitpod.F(gitpod.GroupListParamsFilter{
+			DirectShare:   gitpod.F(true),
+			GroupIDs:      gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			Search:        gitpod.F("search"),
+			SystemManaged: gitpod.F(true),
+		}),
 		Pagination: gitpod.F(gitpod.GroupListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
@@ -123,7 +131,7 @@ func TestGroupListWithOptionalParams(t *testing.T) {
 }
 
 func TestGroupDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

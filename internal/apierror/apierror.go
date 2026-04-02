@@ -23,7 +23,7 @@ type Error struct {
 	// [google.rpc.Status.details][google.rpc.Status.details] field, or localized by
 	// the client.
 	Message     string                 `json:"message"`
-	ExtraFields map[string]interface{} `json:"-,extras"`
+	ExtraFields map[string]interface{} `json:"-" api:"extrafields"`
 	JSON        errorJSON              `json:"-"`
 	StatusCode  int
 	Request     *http.Request
@@ -62,4 +62,35 @@ func (r *Error) DumpRequest(body bool) []byte {
 func (r *Error) DumpResponse(body bool) []byte {
 	out, _ := httputil.DumpResponse(r.Response, body)
 	return out
+}
+
+// The status code, which should be an enum value of
+// [google.rpc.Code][google.rpc.Code].
+type ErrorCode string
+
+const (
+	ErrorCodeCanceled           ErrorCode = "canceled"
+	ErrorCodeUnknown            ErrorCode = "unknown"
+	ErrorCodeInvalidArgument    ErrorCode = "invalid_argument"
+	ErrorCodeDeadlineExceeded   ErrorCode = "deadline_exceeded"
+	ErrorCodeNotFound           ErrorCode = "not_found"
+	ErrorCodeAlreadyExists      ErrorCode = "already_exists"
+	ErrorCodePermissionDenied   ErrorCode = "permission_denied"
+	ErrorCodeResourceExhausted  ErrorCode = "resource_exhausted"
+	ErrorCodeFailedPrecondition ErrorCode = "failed_precondition"
+	ErrorCodeAborted            ErrorCode = "aborted"
+	ErrorCodeOutOfRange         ErrorCode = "out_of_range"
+	ErrorCodeUnimplemented      ErrorCode = "unimplemented"
+	ErrorCodeInternal           ErrorCode = "internal"
+	ErrorCodeUnavailable        ErrorCode = "unavailable"
+	ErrorCodeDataLoss           ErrorCode = "data_loss"
+	ErrorCodeUnauthenticated    ErrorCode = "unauthenticated"
+)
+
+func (r ErrorCode) IsKnown() bool {
+	switch r {
+	case ErrorCodeCanceled, ErrorCodeUnknown, ErrorCodeInvalidArgument, ErrorCodeDeadlineExceeded, ErrorCodeNotFound, ErrorCodeAlreadyExists, ErrorCodePermissionDenied, ErrorCodeResourceExhausted, ErrorCodeFailedPrecondition, ErrorCodeAborted, ErrorCodeOutOfRange, ErrorCodeUnimplemented, ErrorCodeInternal, ErrorCodeUnavailable, ErrorCodeDataLoss, ErrorCodeUnauthenticated:
+		return true
+	}
+	return false
 }

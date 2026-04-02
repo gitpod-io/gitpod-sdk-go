@@ -73,7 +73,7 @@ func (r *OrganizationSSOConfigurationService) New(ctx context.Context, body Orga
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a specific SSO configuration.
@@ -97,7 +97,7 @@ func (r *OrganizationSSOConfigurationService) Get(ctx context.Context, body Orga
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates SSO provider settings and authentication rules.
@@ -134,7 +134,7 @@ func (r *OrganizationSSOConfigurationService) Update(ctx context.Context, body O
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists and filters SSO configurations for an organization.
@@ -241,7 +241,7 @@ func (r *OrganizationSSOConfigurationService) Delete(ctx context.Context, body O
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteSSOConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // AdditionalScopesUpdate wraps a list of OIDC scopes so that the update request
@@ -273,19 +273,25 @@ func (r ProviderType) IsKnown() bool {
 
 type SSOConfiguration struct {
 	// id is the unique identifier of the SSO configuration
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// issuer_url is the URL of the IdP issuer
-	IssuerURL      string `json:"issuerUrl,required"`
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	IssuerURL      string `json:"issuerUrl" api:"required"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// provider_type defines the type of the SSO configuration
-	ProviderType ProviderType `json:"providerType,required"`
+	ProviderType ProviderType `json:"providerType" api:"required"`
 	// state is the state of the SSO configuration
-	State SSOConfigurationState `json:"state,required"`
+	State SSOConfigurationState `json:"state" api:"required"`
 	// additional_scopes are extra OIDC scopes requested from the identity provider
 	// during sign-in.
 	AdditionalScopes []string `json:"additionalScopes"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims map[string]string `json:"claims"`
+	// claims_expression is a CEL (Common Expression Language) expression evaluated
+	// against the OIDC token claims during login. When set, the expression must
+	// evaluate to true for the login to succeed. The expression has access to a
+	// `claims` variable containing all token claims as a map. Example:
+	// `claims.email_verified && claims.email.endsWith("@example.com")`
+	ClaimsExpression string `json:"claimsExpression"`
 	// client_id is the client ID of the OIDC application set on the IdP
 	ClientID     string               `json:"clientId"`
 	DisplayName  string               `json:"displayName"`
@@ -304,6 +310,7 @@ type ssoConfigurationJSON struct {
 	State            apijson.Field
 	AdditionalScopes apijson.Field
 	Claims           apijson.Field
+	ClaimsExpression apijson.Field
 	ClientID         apijson.Field
 	DisplayName      apijson.Field
 	EmailDomain      apijson.Field
@@ -338,7 +345,7 @@ func (r SSOConfigurationState) IsKnown() bool {
 
 type OrganizationSSOConfigurationNewResponse struct {
 	// sso_configuration is the created SSO configuration
-	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration,required"`
+	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration" api:"required"`
 	JSON             organizationSSOConfigurationNewResponseJSON `json:"-"`
 }
 
@@ -360,7 +367,7 @@ func (r organizationSSOConfigurationNewResponseJSON) RawJSON() string {
 
 type OrganizationSSOConfigurationGetResponse struct {
 	// sso_configuration is the SSO configuration identified by the ID
-	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration,required"`
+	SSOConfiguration SSOConfiguration                            `json:"ssoConfiguration" api:"required"`
 	JSON             organizationSSOConfigurationGetResponseJSON `json:"-"`
 }
 
@@ -386,17 +393,22 @@ type OrganizationSSOConfigurationDeleteResponse = interface{}
 
 type OrganizationSSOConfigurationNewParams struct {
 	// client_id is the client ID of the OIDC application set on the IdP
-	ClientID param.Field[string] `json:"clientId,required"`
+	ClientID param.Field[string] `json:"clientId" api:"required"`
 	// client_secret is the client secret of the OIDC application set on the IdP
-	ClientSecret param.Field[string] `json:"clientSecret,required"`
+	ClientSecret param.Field[string] `json:"clientSecret" api:"required"`
 	// issuer_url is the URL of the IdP issuer
-	IssuerURL      param.Field[string] `json:"issuerUrl,required" format:"uri"`
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	IssuerURL      param.Field[string] `json:"issuerUrl" api:"required" format:"uri"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// additional_scopes are extra OIDC scopes to request from the identity provider
 	// during sign-in. These are appended to the default scopes (openid, email,
 	// profile).
 	AdditionalScopes param.Field[[]string] `json:"additionalScopes"`
-	DisplayName      param.Field[string]   `json:"displayName"`
+	// claims_expression is an optional CEL expression evaluated against OIDC token
+	// claims during login. When set, the expression must evaluate to true for the
+	// login to succeed. Example:
+	// `claims.email_verified && claims.email.endsWith("@example.com")`
+	ClaimsExpression param.Field[string] `json:"claimsExpression"`
+	DisplayName      param.Field[string] `json:"displayName"`
 	// email_domain is the domain that is allowed to sign in to the organization
 	EmailDomain  param.Field[string]   `json:"emailDomain"`
 	EmailDomains param.Field[[]string] `json:"emailDomains"`
@@ -408,7 +420,7 @@ func (r OrganizationSSOConfigurationNewParams) MarshalJSON() (data []byte, err e
 
 type OrganizationSSOConfigurationGetParams struct {
 	// sso_configuration_id is the ID of the SSO configuration to get
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err error) {
@@ -417,13 +429,17 @@ func (r OrganizationSSOConfigurationGetParams) MarshalJSON() (data []byte, err e
 
 type OrganizationSSOConfigurationUpdateParams struct {
 	// sso_configuration_id is the ID of the SSO configuration to update
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 	// additional_scopes replaces the configured OIDC scopes when present. When absent
 	// (nil), scopes are left unchanged. When present with an empty scopes list, all
 	// additional scopes are cleared.
 	AdditionalScopes param.Field[AdditionalScopesUpdateParam] `json:"additionalScopes"`
 	// claims are key/value pairs that defines a mapping of claims issued by the IdP.
 	Claims param.Field[map[string]string] `json:"claims"`
+	// claims_expression is a CEL expression evaluated against OIDC token claims during
+	// login. When set, the expression must evaluate to true for the login to succeed.
+	// When present with an empty string, the expression is cleared.
+	ClaimsExpression param.Field[string] `json:"claimsExpression"`
 	// client_id is the client ID of the SSO provider
 	ClientID param.Field[string] `json:"clientId"`
 	// client_secret is the client secret of the SSO provider
@@ -443,7 +459,7 @@ func (r OrganizationSSOConfigurationUpdateParams) MarshalJSON() (data []byte, er
 
 type OrganizationSSOConfigurationListParams struct {
 	// organization_id is the ID of the organization to list SSO configurations for.
-	OrganizationID param.Field[string]                                           `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string]                                           `json:"organizationId" api:"required" format:"uuid"`
 	Token          param.Field[string]                                           `query:"token"`
 	PageSize       param.Field[int64]                                            `query:"pageSize"`
 	Pagination     param.Field[OrganizationSSOConfigurationListParamsPagination] `json:"pagination"`
@@ -476,7 +492,7 @@ func (r OrganizationSSOConfigurationListParamsPagination) MarshalJSON() (data []
 }
 
 type OrganizationSSOConfigurationDeleteParams struct {
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationSSOConfigurationDeleteParams) MarshalJSON() (data []byte, err error) {

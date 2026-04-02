@@ -84,7 +84,7 @@ func (r *SecretService) New(ctx context.Context, body SecretNewParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/CreateSecret"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists secrets
@@ -192,7 +192,7 @@ func (r *SecretService) Delete(ctx context.Context, body SecretDeleteParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/DeleteSecret"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets the value of a secret. Only available to environments that are authorized
@@ -216,7 +216,7 @@ func (r *SecretService) GetValue(ctx context.Context, body SecretGetValueParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/GetSecretValue"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates the value of an existing secret.
@@ -240,7 +240,7 @@ func (r *SecretService) UpdateValue(ctx context.Context, body SecretUpdateValueP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.SecretService/UpdateSecretValue"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type Secret struct {

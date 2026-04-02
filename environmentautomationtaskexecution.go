@@ -59,7 +59,7 @@ func (r *EnvironmentAutomationTaskExecutionService) Get(ctx context.Context, bod
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/GetTaskExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists executions of automation tasks.
@@ -166,11 +166,11 @@ func (r *EnvironmentAutomationTaskExecutionService) Stop(ctx context.Context, bo
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.EnvironmentAutomationService/StopTaskExecution"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type EnvironmentAutomationTaskExecutionGetResponse struct {
-	TaskExecution shared.TaskExecution                              `json:"taskExecution,required"`
+	TaskExecution shared.TaskExecution                              `json:"taskExecution" api:"required"`
 	JSON          environmentAutomationTaskExecutionGetResponseJSON `json:"-"`
 }
 

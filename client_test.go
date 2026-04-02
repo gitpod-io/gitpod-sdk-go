@@ -38,7 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Identity.GetAuthenticatedIdentity(context.Background(), gitpod.IdentityGetAuthenticatedIdentityParams{})
+	_, _ = client.Identity.GetAuthenticatedIdentity(context.Background(), gitpod.IdentityGetAuthenticatedIdentityParams{})
 	if userAgent != fmt.Sprintf("Gitpod/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}

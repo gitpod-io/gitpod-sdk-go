@@ -65,7 +65,7 @@ func (r *RunnerConfigurationEnvironmentClassService) New(ctx context.Context, bo
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateEnvironmentClass"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific environment class.
@@ -89,7 +89,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Get(ctx context.Context, bo
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetEnvironmentClass"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an environment class.
@@ -116,7 +116,7 @@ func (r *RunnerConfigurationEnvironmentClassService) Update(ctx context.Context,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateEnvironmentClass"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists environment classes with optional filtering.

@@ -14,7 +14,7 @@ import (
 )
 
 func TestOrganizationPolicyGet(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -39,7 +39,7 @@ func TestOrganizationPolicyGet(t *testing.T) {
 }
 
 func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -54,10 +54,12 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Organizations.Policies.Update(context.TODO(), gitpod.OrganizationPolicyUpdateParams{
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		AgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsAgentPolicy{
-			CommandDenyList:        gitpod.F([]string{"string"}),
-			McpDisabled:            gitpod.F(true),
-			ScmToolsAllowedGroupID: gitpod.F("scmToolsAllowedGroupId"),
-			ScmToolsDisabled:       gitpod.F(true),
+			CommandDenyList:            gitpod.F([]string{"string"}),
+			ConversationSharingPolicy:  gitpod.F(gitpod.ConversationSharingPolicyUnspecified),
+			MaxSubagentsPerEnvironment: gitpod.F(int64(10)),
+			McpDisabled:                gitpod.F(true),
+			ScmToolsAllowedGroupID:     gitpod.F("scmToolsAllowedGroupId"),
+			ScmToolsDisabled:           gitpod.F(true),
 		}),
 		AllowedEditorIDs:                gitpod.F([]string{"string"}),
 		AllowLocalRunners:               gitpod.F(true),
@@ -68,11 +70,6 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 			"foo": {
 				AllowedVersions: gitpod.F([]string{"string"}),
 			},
-		}),
-		ExecutableDenyList: gitpod.F(gitpod.VetoExecPolicyParam{
-			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
-			Enabled:     gitpod.F(true),
-			Executables: gitpod.F([]string{"string"}),
 		}),
 		MaximumEnvironmentLifetime:        gitpod.F("+9125115.360s"),
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
@@ -93,6 +90,11 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				Image:       gitpod.F("image"),
 				Tags:        gitpod.F("tags"),
 			}),
+		}),
+		VetoExecPolicy: gitpod.F(gitpod.VetoExecPolicyParam{
+			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
+			Enabled:     gitpod.F(true),
+			Executables: gitpod.F([]string{"string"}),
 		}),
 	})
 	if err != nil {

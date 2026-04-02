@@ -59,7 +59,7 @@ func (r *AccountService) Get(ctx context.Context, body AccountGetParams, opts ..
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/GetAccount"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Deletes an account permanently.
@@ -85,7 +85,7 @@ func (r *AccountService) Delete(ctx context.Context, body AccountDeleteParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/DeleteAccount"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets the SSO login URL for a specific email domain.
@@ -118,7 +118,7 @@ func (r *AccountService) GetSSOLoginURL(ctx context.Context, body AccountGetSSOL
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.AccountService/GetSSOLoginURL"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists organizations that the currently authenticated account can join.
@@ -279,7 +279,7 @@ func (r *AccountService) ListSSOLoginsAutoPaging(ctx context.Context, params Acc
 }
 
 type Account struct {
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -368,9 +368,9 @@ type Account struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
-	Email     string    `json:"email,required"`
-	Name      string    `json:"name,required"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
+	Email     string    `json:"email" api:"required"`
+	Name      string    `json:"name" api:"required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -459,7 +459,7 @@ type Account struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	AvatarURL string    `json:"avatarUrl"`
 	// joinables is deprecated. Use ListJoinableOrganizations instead.
 	//
@@ -468,7 +468,7 @@ type Account struct {
 	Memberships []AccountMembership    `json:"memberships"`
 	// organization_id is the ID of the organization the account is owned by if it's
 	// created through custom SSO
-	OrganizationID string `json:"organizationId,nullable"`
+	OrganizationID string `json:"organizationId" api:"nullable"`
 	// public_email_provider is true if the email for the Account matches a known
 	// public email provider
 	PublicEmailProvider bool        `json:"publicEmailProvider"`
@@ -501,13 +501,13 @@ func (r accountJSON) RawJSON() string {
 
 type AccountMembership struct {
 	// organization_id is the id of the organization the user is a member of
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// organization_name is the name of the organization the user is a member of
-	OrganizationName string `json:"organizationName,required"`
+	OrganizationName string `json:"organizationName" api:"required"`
 	// user_id is the ID the user has in the organization
-	UserID string `json:"userId,required" format:"uuid"`
+	UserID string `json:"userId" api:"required" format:"uuid"`
 	// user_role is the role the user has in the organization
-	UserRole shared.OrganizationRole `json:"userRole,required"`
+	UserRole shared.OrganizationRole `json:"userRole" api:"required"`
 	// organization_member_count is the member count of the organization the user is a
 	// member of
 	OrganizationMemberCount int64 `json:"organizationMemberCount"`
@@ -539,9 +539,9 @@ func (r accountMembershipJSON) RawJSON() string {
 
 type JoinableOrganization struct {
 	// organization_id is the id of the organization the user can join
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// organization_name is the name of the organization the user can join
-	OrganizationName string `json:"organizationName,required"`
+	OrganizationName string `json:"organizationName" api:"required"`
 	// organization_member_count is the member count of the organization the user can
 	// join
 	OrganizationMemberCount int64                    `json:"organizationMemberCount"`
@@ -569,7 +569,7 @@ func (r joinableOrganizationJSON) RawJSON() string {
 type LoginProvider struct {
 	// provider is the provider used by this login method, e.g. "github", "google",
 	// "custom"
-	Provider string `json:"provider,required"`
+	Provider string `json:"provider" api:"required"`
 	// login_url is the URL to redirect the browser agent to for login, when provider
 	// is "custom"
 	LoginURL string            `json:"loginUrl"`
@@ -593,7 +593,7 @@ func (r loginProviderJSON) RawJSON() string {
 }
 
 type AccountGetResponse struct {
-	Account Account                `json:"account,required"`
+	Account Account                `json:"account" api:"required"`
 	JSON    accountGetResponseJSON `json:"-"`
 }
 
@@ -617,7 +617,7 @@ type AccountDeleteResponse = interface{}
 
 type AccountGetSSOLoginURLResponse struct {
 	// login_url is the URL to redirect the user to for SSO login
-	LoginURL string                            `json:"loginUrl,required"`
+	LoginURL string                            `json:"loginUrl" api:"required"`
 	JSON     accountGetSSOLoginURLResponseJSON `json:"-"`
 }
 
@@ -640,9 +640,9 @@ func (r accountGetSSOLoginURLResponseJSON) RawJSON() string {
 type AccountListSSOLoginsResponse struct {
 	// provider is the provider used by this login method, e.g. "github", "google",
 	// "custom"
-	DisplayName string `json:"displayName,required"`
+	DisplayName string `json:"displayName" api:"required"`
 	// login_url is the URL to redirect the user to for SSO login
-	LoginURL string                           `json:"loginUrl,required"`
+	LoginURL string                           `json:"loginUrl" api:"required"`
 	JSON     accountListSSOLoginsResponseJSON `json:"-"`
 }
 
@@ -672,7 +672,7 @@ func (r AccountGetParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AccountDeleteParams struct {
-	AccountID param.Field[string] `json:"accountId,required" format:"uuid"`
+	AccountID param.Field[string] `json:"accountId" api:"required" format:"uuid"`
 	// reason is an optional field for the reason for account deletion
 	Reason param.Field[string] `json:"reason"`
 }
@@ -683,7 +683,7 @@ func (r AccountDeleteParams) MarshalJSON() (data []byte, err error) {
 
 type AccountGetSSOLoginURLParams struct {
 	// email is the email the user wants to login with
-	Email param.Field[string] `json:"email,required" format:"email"`
+	Email param.Field[string] `json:"email" api:"required" format:"email"`
 	// return_to is the URL the user will be redirected to after login
 	ReturnTo param.Field[string] `json:"returnTo" format:"uri"`
 }
@@ -776,7 +776,7 @@ func (r AccountListLoginProvidersParamsPagination) MarshalJSON() (data []byte, e
 
 type AccountListSSOLoginsParams struct {
 	// email is the email the user wants to login with
-	Email    param.Field[string] `json:"email,required" format:"email"`
+	Email    param.Field[string] `json:"email" api:"required" format:"email"`
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
 	// pagination contains the pagination options for listing SSO logins

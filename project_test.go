@@ -15,7 +15,7 @@ import (
 )
 
 func TestProjectNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -72,7 +72,7 @@ func TestProjectNewWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectGetWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -97,7 +97,7 @@ func TestProjectGetWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -162,7 +162,7 @@ func TestProjectUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectListWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -187,6 +187,10 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
+		Sort: gitpod.F(shared.SortParam{
+			Field: gitpod.F("field"),
+			Order: gitpod.F(shared.SortOrderUnspecified),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -198,7 +202,7 @@ func TestProjectListWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -223,7 +227,7 @@ func TestProjectDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectBulkNewWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -316,7 +320,7 @@ func TestProjectBulkNewWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectBulkDeleteWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -341,7 +345,7 @@ func TestProjectBulkDeleteWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectBulkUpdateWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -450,7 +454,7 @@ func TestProjectBulkUpdateWithOptionalParams(t *testing.T) {
 }
 
 func TestProjectNewFromEnvironmentWithOptionalParams(t *testing.T) {
-	t.Skip("Prism tests are disabled")
+	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL

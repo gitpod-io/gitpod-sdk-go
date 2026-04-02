@@ -69,7 +69,7 @@ func (r *OrganizationScimConfigurationService) New(ctx context.Context, body Org
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/CreateSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves a specific SCIM configuration.
@@ -93,7 +93,7 @@ func (r *OrganizationScimConfigurationService) Get(ctx context.Context, body Org
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/GetSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates a SCIM configuration.
@@ -127,7 +127,7 @@ func (r *OrganizationScimConfigurationService) Update(ctx context.Context, body 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/UpdateSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists SCIM configurations for an organization.
@@ -208,7 +208,7 @@ func (r *OrganizationScimConfigurationService) Delete(ctx context.Context, body 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/DeleteSCIMConfiguration"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Regenerates the bearer token for a SCIM configuration.
@@ -242,21 +242,21 @@ func (r *OrganizationScimConfigurationService) RegenerateToken(ctx context.Conte
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.OrganizationService/RegenerateSCIMToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // SCIMConfiguration represents a SCIM 2.0 provisioning configuration
 type ScimConfiguration struct {
 	// id is the unique identifier of the SCIM configuration
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// created_at is when the SCIM configuration was created
-	CreatedAt time.Time `json:"createdAt,required" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" api:"required" format:"date-time"`
 	// organization_id is the ID of the organization this SCIM configuration belongs to
-	OrganizationID string `json:"organizationId,required" format:"uuid"`
+	OrganizationID string `json:"organizationId" api:"required" format:"uuid"`
 	// token_expires_at is when the current SCIM token expires
-	TokenExpiresAt time.Time `json:"tokenExpiresAt,required" format:"date-time"`
+	TokenExpiresAt time.Time `json:"tokenExpiresAt" api:"required" format:"date-time"`
 	// updated_at is when the SCIM configuration was last updated
-	UpdatedAt time.Time `json:"updatedAt,required" format:"date-time"`
+	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
 	// enabled indicates if SCIM provisioning is active
 	Enabled bool `json:"enabled"`
 	// name is a human-readable name for the SCIM configuration
@@ -292,11 +292,11 @@ func (r scimConfigurationJSON) RawJSON() string {
 type OrganizationScimConfigurationNewResponse struct {
 	// token is the bearer token for SCIM API authentication. This is only returned
 	// once during creation - store it securely.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// scim_configuration is the created SCIM configuration
-	ScimConfiguration ScimConfiguration `json:"scimConfiguration,required"`
+	ScimConfiguration ScimConfiguration `json:"scimConfiguration" api:"required"`
 	// token_expires_at is when the token will expire
-	TokenExpiresAt time.Time                                    `json:"tokenExpiresAt,required" format:"date-time"`
+	TokenExpiresAt time.Time                                    `json:"tokenExpiresAt" api:"required" format:"date-time"`
 	JSON           organizationScimConfigurationNewResponseJSON `json:"-"`
 }
 
@@ -320,7 +320,7 @@ func (r organizationScimConfigurationNewResponseJSON) RawJSON() string {
 
 type OrganizationScimConfigurationGetResponse struct {
 	// scim_configuration is the SCIM configuration identified by the ID
-	ScimConfiguration ScimConfiguration                            `json:"scimConfiguration,required"`
+	ScimConfiguration ScimConfiguration                            `json:"scimConfiguration" api:"required"`
 	JSON              organizationScimConfigurationGetResponseJSON `json:"-"`
 }
 
@@ -342,7 +342,7 @@ func (r organizationScimConfigurationGetResponseJSON) RawJSON() string {
 
 type OrganizationScimConfigurationUpdateResponse struct {
 	// scim_configuration is the updated SCIM configuration
-	ScimConfiguration ScimConfiguration                               `json:"scimConfiguration,required"`
+	ScimConfiguration ScimConfiguration                               `json:"scimConfiguration" api:"required"`
 	JSON              organizationScimConfigurationUpdateResponseJSON `json:"-"`
 }
 
@@ -367,9 +367,9 @@ type OrganizationScimConfigurationDeleteResponse = interface{}
 type OrganizationScimConfigurationRegenerateTokenResponse struct {
 	// token is the new bearer token for SCIM API authentication. This invalidates the
 	// previous token - store it securely.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// token_expires_at is when the new token will expire
-	TokenExpiresAt time.Time                                                `json:"tokenExpiresAt,required" format:"date-time"`
+	TokenExpiresAt time.Time                                                `json:"tokenExpiresAt" api:"required" format:"date-time"`
 	JSON           organizationScimConfigurationRegenerateTokenResponseJSON `json:"-"`
 }
 
@@ -393,10 +393,10 @@ func (r organizationScimConfigurationRegenerateTokenResponseJSON) RawJSON() stri
 type OrganizationScimConfigurationNewParams struct {
 	// organization_id is the ID of the organization to create the SCIM configuration
 	// for
-	OrganizationID param.Field[string] `json:"organizationId,required" format:"uuid"`
+	OrganizationID param.Field[string] `json:"organizationId" api:"required" format:"uuid"`
 	// sso_configuration_id is the SSO configuration to link (required for user
 	// provisioning)
-	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId,required" format:"uuid"`
+	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
 	// name is a human-readable name for the SCIM configuration
 	Name param.Field[string] `json:"name"`
 	// token_expires_in is the duration until the token expires. Defaults to 1 year.
@@ -410,7 +410,7 @@ func (r OrganizationScimConfigurationNewParams) MarshalJSON() (data []byte, err 
 
 type OrganizationScimConfigurationGetParams struct {
 	// scim_configuration_id is the ID of the SCIM configuration to get
-	ScimConfigurationID param.Field[string] `json:"scimConfigurationId,required" format:"uuid"`
+	ScimConfigurationID param.Field[string] `json:"scimConfigurationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationScimConfigurationGetParams) MarshalJSON() (data []byte, err error) {
@@ -419,7 +419,7 @@ func (r OrganizationScimConfigurationGetParams) MarshalJSON() (data []byte, err 
 
 type OrganizationScimConfigurationUpdateParams struct {
 	// scim_configuration_id is the ID of the SCIM configuration to update
-	ScimConfigurationID param.Field[string] `json:"scimConfigurationId,required" format:"uuid"`
+	ScimConfigurationID param.Field[string] `json:"scimConfigurationId" api:"required" format:"uuid"`
 	// enabled controls whether SCIM provisioning is active
 	Enabled param.Field[bool] `json:"enabled"`
 	// name is a human-readable name for the SCIM configuration
@@ -466,7 +466,7 @@ func (r OrganizationScimConfigurationListParamsPagination) MarshalJSON() (data [
 
 type OrganizationScimConfigurationDeleteParams struct {
 	// scim_configuration_id is the ID of the SCIM configuration to delete
-	ScimConfigurationID param.Field[string] `json:"scimConfigurationId,required" format:"uuid"`
+	ScimConfigurationID param.Field[string] `json:"scimConfigurationId" api:"required" format:"uuid"`
 }
 
 func (r OrganizationScimConfigurationDeleteParams) MarshalJSON() (data []byte, err error) {
@@ -476,7 +476,7 @@ func (r OrganizationScimConfigurationDeleteParams) MarshalJSON() (data []byte, e
 type OrganizationScimConfigurationRegenerateTokenParams struct {
 	// scim_configuration_id is the ID of the SCIM configuration to regenerate token
 	// for
-	ScimConfigurationID param.Field[string] `json:"scimConfigurationId,required" format:"uuid"`
+	ScimConfigurationID param.Field[string] `json:"scimConfigurationId" api:"required" format:"uuid"`
 	// token_expires_in is the duration until the new token expires. If not specified,
 	// uses the same duration as the previous token.
 	TokenExpiresIn param.Field[string] `json:"tokenExpiresIn" format:"regex"`

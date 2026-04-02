@@ -60,7 +60,7 @@ func (r *ProjectEnvironmentClaseService) Update(ctx context.Context, body Projec
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ProjectService/UpdateProjectEnvironmentClasses"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists environment classes of a project.

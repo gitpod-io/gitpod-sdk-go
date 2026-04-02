@@ -54,7 +54,7 @@ func (r *IdentityService) ExchangeToken(ctx context.Context, body IdentityExchan
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.IdentityService/ExchangeToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieves information about the currently authenticated identity.
@@ -79,7 +79,7 @@ func (r *IdentityService) GetAuthenticatedIdentity(ctx context.Context, body Ide
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.IdentityService/GetAuthenticatedIdentity"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets an ID token for authenticating with other services.
@@ -114,7 +114,7 @@ func (r *IdentityService) GetIDToken(ctx context.Context, body IdentityGetIDToke
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.IdentityService/GetIDToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type IDTokenVersion string
@@ -156,7 +156,8 @@ func (r identityExchangeTokenResponseJSON) RawJSON() string {
 }
 
 type IdentityGetAuthenticatedIdentityResponse struct {
-	OrganizationID string `json:"organizationId"`
+	OrganizationID   string `json:"organizationId"`
+	OrganizationTier string `json:"organizationTier"`
 	// subject is the identity of the current user
 	Subject shared.Subject                               `json:"subject"`
 	JSON    identityGetAuthenticatedIdentityResponseJSON `json:"-"`
@@ -165,10 +166,11 @@ type IdentityGetAuthenticatedIdentityResponse struct {
 // identityGetAuthenticatedIdentityResponseJSON contains the JSON metadata for the
 // struct [IdentityGetAuthenticatedIdentityResponse]
 type identityGetAuthenticatedIdentityResponseJSON struct {
-	OrganizationID apijson.Field
-	Subject        apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	OrganizationID   apijson.Field
+	OrganizationTier apijson.Field
+	Subject          apijson.Field
+	raw              string
+	ExtraFields      map[string]apijson.Field
 }
 
 func (r *IdentityGetAuthenticatedIdentityResponse) UnmarshalJSON(data []byte) (err error) {

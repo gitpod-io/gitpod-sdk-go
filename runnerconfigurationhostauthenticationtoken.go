@@ -65,7 +65,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) New(ctx context.Cont
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/CreateHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets details about a specific host authentication token.
@@ -89,7 +89,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Get(ctx context.Cont
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/GetHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Updates an existing host authentication token.
@@ -116,7 +116,7 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Update(ctx context.C
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/UpdateHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Lists host authentication tokens with optional filtering.
@@ -219,11 +219,11 @@ func (r *RunnerConfigurationHostAuthenticationTokenService) Delete(ctx context.C
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.RunnerConfigurationService/DeleteHostAuthenticationToken"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type HostAuthenticationToken struct {
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -373,7 +373,7 @@ func (r HostAuthenticationTokenSource) IsKnown() bool {
 }
 
 type RunnerConfigurationHostAuthenticationTokenNewResponse struct {
-	Token HostAuthenticationToken                                   `json:"token,required"`
+	Token HostAuthenticationToken                                   `json:"token" api:"required"`
 	JSON  runnerConfigurationHostAuthenticationTokenNewResponseJSON `json:"-"`
 }
 
@@ -394,7 +394,7 @@ func (r runnerConfigurationHostAuthenticationTokenNewResponseJSON) RawJSON() str
 }
 
 type RunnerConfigurationHostAuthenticationTokenGetResponse struct {
-	Token HostAuthenticationToken                                   `json:"token,required"`
+	Token HostAuthenticationToken                                   `json:"token" api:"required"`
 	JSON  runnerConfigurationHostAuthenticationTokenGetResponseJSON `json:"-"`
 }
 

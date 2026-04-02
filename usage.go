@@ -17,6 +17,8 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/packages/pagination"
 )
 
+// UsageService provides usage information about environments, users, and projects.
+//
 // UsageService contains methods and other services that help with interacting with
 // the gitpod API.
 //
@@ -181,7 +183,7 @@ func (r UsageListEnvironmentRuntimeRecordsParams) URLQuery() (v url.Values) {
 // Filter options.
 type UsageListEnvironmentRuntimeRecordsParamsFilter struct {
 	// Date range to query runtime records within.
-	DateRange param.Field[UsageListEnvironmentRuntimeRecordsParamsFilterDateRange] `json:"dateRange,required"`
+	DateRange param.Field[UsageListEnvironmentRuntimeRecordsParamsFilterDateRange] `json:"dateRange" api:"required"`
 	// Optional project ID to filter runtime records by.
 	ProjectID param.Field[string] `json:"projectId"`
 }
@@ -193,9 +195,9 @@ func (r UsageListEnvironmentRuntimeRecordsParamsFilter) MarshalJSON() (data []by
 // Date range to query runtime records within.
 type UsageListEnvironmentRuntimeRecordsParamsFilterDateRange struct {
 	// End time of the date range (exclusive).
-	EndTime param.Field[time.Time] `json:"endTime,required" format:"date-time"`
+	EndTime param.Field[time.Time] `json:"endTime" api:"required" format:"date-time"`
 	// Start time of the date range (inclusive).
-	StartTime param.Field[time.Time] `json:"startTime,required" format:"date-time"`
+	StartTime param.Field[time.Time] `json:"startTime" api:"required" format:"date-time"`
 }
 
 func (r UsageListEnvironmentRuntimeRecordsParamsFilterDateRange) MarshalJSON() (data []byte, err error) {

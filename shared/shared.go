@@ -81,12 +81,28 @@ func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
+type CountResponseRelation string
+
+const (
+	CountResponseRelationUnspecified CountResponseRelation = "COUNT_RESPONSE_RELATION_UNSPECIFIED"
+	CountResponseRelationEq          CountResponseRelation = "COUNT_RESPONSE_RELATION_EQ"
+	CountResponseRelationGte         CountResponseRelation = "COUNT_RESPONSE_RELATION_GTE"
+)
+
+func (r CountResponseRelation) IsKnown() bool {
+	switch r {
+	case CountResponseRelationUnspecified, CountResponseRelationEq, CountResponseRelationGte:
+		return true
+	}
+	return false
+}
+
 type EnvironmentClass struct {
 	// id is the unique identifier of the environment class
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
-	RunnerID string `json:"runnerId,required"`
+	RunnerID string `json:"runnerId" api:"required"`
 	// configuration describes the configuration of the environment class
 	Configuration []FieldValue `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -122,10 +138,10 @@ func (r environmentClassJSON) RawJSON() string {
 
 type EnvironmentClassParam struct {
 	// id is the unique identifier of the environment class
-	ID param.Field[string] `json:"id,required"`
+	ID param.Field[string] `json:"id" api:"required"`
 	// runner_id is the unique identifier of the runner the environment class belongs
 	// to
-	RunnerID param.Field[string] `json:"runnerId,required"`
+	RunnerID param.Field[string] `json:"runnerId" api:"required"`
 	// configuration describes the configuration of the environment class
 	Configuration param.Field[[]FieldValueParam] `json:"configuration"`
 	// description is a human readable description of the environment class
@@ -189,7 +205,7 @@ func (r EnvironmentVariableItemParam) MarshalJSON() (data []byte, err error) {
 // EnvironmentVariableSource specifies a source for an environment variable value.
 type EnvironmentVariableSource struct {
 	// secret_ref references a secret by ID.
-	SecretRef SecretRef                     `json:"secretRef,required"`
+	SecretRef SecretRef                     `json:"secretRef" api:"required"`
 	JSON      environmentVariableSourceJSON `json:"-"`
 }
 
@@ -212,11 +228,42 @@ func (r environmentVariableSourceJSON) RawJSON() string {
 // EnvironmentVariableSource specifies a source for an environment variable value.
 type EnvironmentVariableSourceParam struct {
 	// secret_ref references a secret by ID.
-	SecretRef param.Field[SecretRefParam] `json:"secretRef,required"`
+	SecretRef param.Field[SecretRefParam] `json:"secretRef" api:"required"`
 }
 
 func (r EnvironmentVariableSourceParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+// The status code, which should be an enum value of
+// [google.rpc.Code][google.rpc.Code].
+type ErrorCode string
+
+const (
+	ErrorCodeCanceled           ErrorCode = "canceled"
+	ErrorCodeUnknown            ErrorCode = "unknown"
+	ErrorCodeInvalidArgument    ErrorCode = "invalid_argument"
+	ErrorCodeDeadlineExceeded   ErrorCode = "deadline_exceeded"
+	ErrorCodeNotFound           ErrorCode = "not_found"
+	ErrorCodeAlreadyExists      ErrorCode = "already_exists"
+	ErrorCodePermissionDenied   ErrorCode = "permission_denied"
+	ErrorCodeResourceExhausted  ErrorCode = "resource_exhausted"
+	ErrorCodeFailedPrecondition ErrorCode = "failed_precondition"
+	ErrorCodeAborted            ErrorCode = "aborted"
+	ErrorCodeOutOfRange         ErrorCode = "out_of_range"
+	ErrorCodeUnimplemented      ErrorCode = "unimplemented"
+	ErrorCodeInternal           ErrorCode = "internal"
+	ErrorCodeUnavailable        ErrorCode = "unavailable"
+	ErrorCodeDataLoss           ErrorCode = "data_loss"
+	ErrorCodeUnauthenticated    ErrorCode = "unauthenticated"
+)
+
+func (r ErrorCode) IsKnown() bool {
+	switch r {
+	case ErrorCodeCanceled, ErrorCodeUnknown, ErrorCodeInvalidArgument, ErrorCodeDeadlineExceeded, ErrorCodeNotFound, ErrorCodeAlreadyExists, ErrorCodePermissionDenied, ErrorCodeResourceExhausted, ErrorCodeFailedPrecondition, ErrorCodeAborted, ErrorCodeOutOfRange, ErrorCodeUnimplemented, ErrorCodeInternal, ErrorCodeUnavailable, ErrorCodeDataLoss, ErrorCodeUnauthenticated:
+		return true
+	}
+	return false
 }
 
 type FieldValue struct {
@@ -254,9 +301,9 @@ func (r FieldValueParam) MarshalJSON() (data []byte, err error) {
 type Gateway struct {
 	// name is the human-readable name of the gateway. name is unique across all
 	// gateways.
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// url of the gateway
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// region is the geographical region where the gateway is located
 	Region string      `json:"region"`
 	JSON   gatewayJSON `json:"-"`
@@ -323,12 +370,11 @@ const (
 	PrincipalEnvironment    Principal = "PRINCIPAL_ENVIRONMENT"
 	PrincipalServiceAccount Principal = "PRINCIPAL_SERVICE_ACCOUNT"
 	PrincipalRunnerManager  Principal = "PRINCIPAL_RUNNER_MANAGER"
-	PrincipalAgentExecution Principal = "PRINCIPAL_AGENT_EXECUTION"
 )
 
 func (r Principal) IsKnown() bool {
 	switch r {
-	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager, PrincipalAgentExecution:
+	case PrincipalUnspecified, PrincipalAccount, PrincipalUser, PrincipalRunner, PrincipalEnvironment, PrincipalServiceAccount, PrincipalRunnerManager:
 		return true
 	}
 	return false
@@ -389,6 +435,7 @@ const (
 	ResourceRoleOrgProjectsAdmin               ResourceRole = "RESOURCE_ROLE_ORG_PROJECTS_ADMIN"
 	ResourceRoleOrgAutomationsAdmin            ResourceRole = "RESOURCE_ROLE_ORG_AUTOMATIONS_ADMIN"
 	ResourceRoleOrgGroupsAdmin                 ResourceRole = "RESOURCE_ROLE_ORG_GROUPS_ADMIN"
+	ResourceRoleOrgAuditLogReader              ResourceRole = "RESOURCE_ROLE_ORG_AUDIT_LOG_READER"
 	ResourceRoleGroupAdmin                     ResourceRole = "RESOURCE_ROLE_GROUP_ADMIN"
 	ResourceRoleGroupViewer                    ResourceRole = "RESOURCE_ROLE_GROUP_VIEWER"
 	ResourceRoleUserIdentity                   ResourceRole = "RESOURCE_ROLE_USER_IDENTITY"
@@ -420,11 +467,11 @@ const (
 	ResourceRoleEnvironmentTaskEnv             ResourceRole = "RESOURCE_ROLE_ENVIRONMENT_TASK_ENV"
 	ResourceRoleServiceAccountIdentity         ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_IDENTITY"
 	ResourceRoleServiceAccountAdmin            ResourceRole = "RESOURCE_ROLE_SERVICE_ACCOUNT_ADMIN"
-	ResourceRoleAgentExecutionIdentity         ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_IDENTITY"
 	ResourceRoleAgentExecutionUser             ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_USER"
 	ResourceRoleAgentExecutionAdmin            ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_ADMIN"
 	ResourceRoleAgentExecutionRunner           ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_RUNNER"
 	ResourceRoleAgentExecutionOutputsReporter  ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_OUTPUTS_REPORTER"
+	ResourceRoleAgentExecutionViewer           ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTION_VIEWER"
 	ResourceRoleAgentAdmin                     ResourceRole = "RESOURCE_ROLE_AGENT_ADMIN"
 	ResourceRoleAgentViewer                    ResourceRole = "RESOURCE_ROLE_AGENT_VIEWER"
 	ResourceRoleAgentExecutor                  ResourceRole = "RESOURCE_ROLE_AGENT_EXECUTOR"
@@ -439,11 +486,15 @@ const (
 	ResourceRoleWarmpoolRunner                 ResourceRole = "RESOURCE_ROLE_WARMPOOL_RUNNER"
 	ResourceRoleWarmpoolAdmin                  ResourceRole = "RESOURCE_ROLE_WARMPOOL_ADMIN"
 	ResourceRoleWarmpoolViewer                 ResourceRole = "RESOURCE_ROLE_WARMPOOL_VIEWER"
+	ResourceRoleSessionAdmin                   ResourceRole = "RESOURCE_ROLE_SESSION_ADMIN"
+	ResourceRoleSessionUser                    ResourceRole = "RESOURCE_ROLE_SESSION_USER"
+	ResourceRoleTeamAdmin                      ResourceRole = "RESOURCE_ROLE_TEAM_ADMIN"
+	ResourceRoleTeamViewer                     ResourceRole = "RESOURCE_ROLE_TEAM_VIEWER"
 )
 
 func (r ResourceRole) IsKnown() bool {
 	switch r {
-	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionIdentity, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner, ResourceRoleWarmpoolAdmin, ResourceRoleWarmpoolViewer:
+	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleOrgAuditLogReader, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentExecutionViewer, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner, ResourceRoleWarmpoolAdmin, ResourceRoleWarmpoolViewer, ResourceRoleSessionAdmin, ResourceRoleSessionUser, ResourceRoleTeamAdmin, ResourceRoleTeamViewer:
 		return true
 	}
 	return false
@@ -501,11 +552,12 @@ const (
 	ResourceTypeServiceAccountToken        ResourceType = "RESOURCE_TYPE_SERVICE_ACCOUNT_TOKEN"
 	ResourceTypeRoleAssignment             ResourceType = "RESOURCE_TYPE_ROLE_ASSIGNMENT"
 	ResourceTypeWarmPool                   ResourceType = "RESOURCE_TYPE_WARM_POOL"
+	ResourceTypeNotification               ResourceType = "RESOURCE_TYPE_NOTIFICATION"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret, ResourceTypeAnnouncementBanner, ResourceTypeServiceAccountToken, ResourceTypeRoleAssignment, ResourceTypeWarmPool:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret, ResourceTypeAnnouncementBanner, ResourceTypeServiceAccountToken, ResourceTypeRoleAssignment, ResourceTypeWarmPool, ResourceTypeNotification:
 		return true
 	}
 	return false
@@ -515,13 +567,17 @@ type RunsOn struct {
 	Docker RunsOnDocker `json:"docker"`
 	// Machine runs the service/task directly on the VM/machine level.
 	Machine interface{} `json:"machine"`
-	JSON    runsOnJSON  `json:"-"`
+	// Terminal runs the service inside a managed PTY terminal in the devcontainer.
+	// Users can attach to the terminal interactively via the terminal API.
+	Terminal interface{} `json:"terminal"`
+	JSON     runsOnJSON  `json:"-"`
 }
 
 // runsOnJSON contains the JSON metadata for the struct [RunsOn]
 type runsOnJSON struct {
 	Docker      apijson.Field
 	Machine     apijson.Field
+	Terminal    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -560,6 +616,9 @@ type RunsOnParam struct {
 	Docker param.Field[RunsOnDockerParam] `json:"docker"`
 	// Machine runs the service/task directly on the VM/machine level.
 	Machine param.Field[interface{}] `json:"machine"`
+	// Terminal runs the service inside a managed PTY terminal in the devcontainer.
+	// Users can attach to the terminal interactively via the terminal API.
+	Terminal param.Field[interface{}] `json:"terminal"`
 }
 
 func (r RunsOnParam) MarshalJSON() (data []byte, err error) {
@@ -605,6 +664,32 @@ type SecretRefParam struct {
 
 func (r SecretRefParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
+}
+
+type SortParam struct {
+	// Field name to sort by, in camelCase.
+	Field param.Field[string]    `json:"field"`
+	Order param.Field[SortOrder] `json:"order"`
+}
+
+func (r SortParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type SortOrder string
+
+const (
+	SortOrderUnspecified SortOrder = "SORT_ORDER_UNSPECIFIED"
+	SortOrderAsc         SortOrder = "SORT_ORDER_ASC"
+	SortOrderDesc        SortOrder = "SORT_ORDER_DESC"
+)
+
+func (r SortOrder) IsKnown() bool {
+	switch r {
+	case SortOrderUnspecified, SortOrderAsc, SortOrderDesc:
+		return true
+	}
+	return false
 }
 
 // Current state of the pull request
@@ -661,7 +746,7 @@ func (r SubjectParam) MarshalJSON() (data []byte, err error) {
 }
 
 type Task struct {
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// dependencies specifies the IDs of the automations this task depends on.
 	DependsOn     []string     `json:"dependsOn" format:"uuid"`
 	EnvironmentID string       `json:"environmentId" format:"uuid"`
@@ -690,7 +775,7 @@ func (r taskJSON) RawJSON() string {
 }
 
 type TaskExecution struct {
-	ID       string                `json:"id,required" format:"uuid"`
+	ID       string                `json:"id" api:"required" format:"uuid"`
 	Metadata TaskExecutionMetadata `json:"metadata"`
 	Spec     TaskExecutionSpec     `json:"spec"`
 	Status   TaskExecutionStatus   `json:"status"`

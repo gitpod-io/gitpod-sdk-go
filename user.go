@@ -44,7 +44,7 @@ func (r *UserService) DeleteUser(ctx context.Context, body UserDeleteUserParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/DeleteUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets information about the currently authenticated user.
@@ -69,7 +69,7 @@ func (r *UserService) GetAuthenticatedUser(ctx context.Context, body UserGetAuth
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetAuthenticatedUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Gets basic information about a specific user by their ID.
@@ -93,7 +93,7 @@ func (r *UserService) GetUser(ctx context.Context, body UserGetUserParams, opts 
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/GetUser"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Sets whether a user account is suspended.
@@ -127,12 +127,12 @@ func (r *UserService) SetSuspended(ctx context.Context, body UserSetSuspendedPar
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.UserService/SetSuspended"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type User struct {
 	// id is a UUID of the user
-	ID string `json:"id,required" format:"uuid"`
+	ID string `json:"id" api:"required" format:"uuid"`
 	// avatar_url is a link to the user avatar
 	AvatarURL string `json:"avatarUrl"`
 	// created_at is the creation time
@@ -174,7 +174,7 @@ func (r userJSON) RawJSON() string {
 type UserDeleteUserResponse = interface{}
 
 type UserGetAuthenticatedUserResponse struct {
-	User User                                 `json:"user,required"`
+	User User                                 `json:"user" api:"required"`
 	JSON userGetAuthenticatedUserResponseJSON `json:"-"`
 }
 
@@ -195,7 +195,7 @@ func (r userGetAuthenticatedUserResponseJSON) RawJSON() string {
 }
 
 type UserGetUserResponse struct {
-	User User                    `json:"user,required"`
+	User User                    `json:"user" api:"required"`
 	JSON userGetUserResponseJSON `json:"-"`
 }
 

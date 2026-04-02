@@ -14,6 +14,9 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
+// ErrorsService provides endpoints for clients to report errors that will be sent
+// to error reporting systems.
+//
 // ErrorService contains methods and other services that help with interacting with
 // the gitpod API.
 //
@@ -53,7 +56,7 @@ func (r *ErrorService) ReportErrors(ctx context.Context, body ErrorReportErrorsP
 	opts = slices.Concat(r.Options, opts)
 	path := "gitpod.v1.ErrorsService/ReportErrors"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Breadcrumb information (Sentry-compatible)
