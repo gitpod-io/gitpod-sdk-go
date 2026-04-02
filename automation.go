@@ -2496,7 +2496,6 @@ type WorkflowStep struct {
 	Agent WorkflowStepAgent `json:"agent"`
 	// WorkflowPullRequestStep represents a pull request creation step.
 	PullRequest WorkflowStepPullRequest `json:"pullRequest"`
-	Report      WorkflowStepReport      `json:"report"`
 	// WorkflowTaskStep represents a task step that executes a command.
 	Task WorkflowStepTask `json:"task"`
 	JSON workflowStepJSON `json:"-"`
@@ -2506,7 +2505,6 @@ type WorkflowStep struct {
 type workflowStepJSON struct {
 	Agent       apijson.Field
 	PullRequest apijson.Field
-	Report      apijson.Field
 	Task        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -2590,51 +2588,6 @@ func (r workflowStepPullRequestJSON) RawJSON() string {
 	return r.raw
 }
 
-type WorkflowStepReport struct {
-	// Report must have at least one output:
-	//
-	// ```
-	// size(this) >= 1
-	// ```
-	Outputs []WorkflowStepReportOutput `json:"outputs"`
-	JSON    workflowStepReportJSON     `json:"-"`
-}
-
-// workflowStepReportJSON contains the JSON metadata for the struct
-// [WorkflowStepReport]
-type workflowStepReportJSON struct {
-	Outputs     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WorkflowStepReport) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r workflowStepReportJSON) RawJSON() string {
-	return r.raw
-}
-
-type WorkflowStepReportOutput struct {
-	JSON workflowStepReportOutputJSON `json:"-"`
-}
-
-// workflowStepReportOutputJSON contains the JSON metadata for the struct
-// [WorkflowStepReportOutput]
-type workflowStepReportOutputJSON struct {
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WorkflowStepReportOutput) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r workflowStepReportOutputJSON) RawJSON() string {
-	return r.raw
-}
-
 // WorkflowTaskStep represents a task step that executes a command.
 type WorkflowStepTask struct {
 	// Command must be between 1 and 20,000 characters:
@@ -2668,7 +2621,6 @@ type WorkflowStepParam struct {
 	Agent param.Field[WorkflowStepAgentParam] `json:"agent"`
 	// WorkflowPullRequestStep represents a pull request creation step.
 	PullRequest param.Field[WorkflowStepPullRequestParam] `json:"pullRequest"`
-	Report      param.Field[WorkflowStepReportParam]      `json:"report"`
 	// WorkflowTaskStep represents a task step that executes a command.
 	Task param.Field[WorkflowStepTaskParam] `json:"task"`
 }
@@ -2715,26 +2667,6 @@ type WorkflowStepPullRequestParam struct {
 }
 
 func (r WorkflowStepPullRequestParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type WorkflowStepReportParam struct {
-	// Report must have at least one output:
-	//
-	// ```
-	// size(this) >= 1
-	// ```
-	Outputs param.Field[[]WorkflowStepReportOutputParam] `json:"outputs"`
-}
-
-func (r WorkflowStepReportParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type WorkflowStepReportOutputParam struct {
-}
-
-func (r WorkflowStepReportOutputParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
