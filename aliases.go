@@ -39,8 +39,8 @@ const ErrorCodeUnauthenticated = apierror.ErrorCodeUnauthenticated
 // automation during a prebuild of an environment. This phase does not have user
 // secrets available. The `before_snapshot` field triggers the automation after all
 // prebuild tasks complete but before the snapshot is taken. This is used for tasks
-// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
-// and before_snapshot triggers can only be used with tasks, not services.
+// that need to run last during prebuilds, such as IDE warmup. Note: The
+// before_snapshot trigger can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTrigger = shared.AutomationTrigger
@@ -57,8 +57,8 @@ type AutomationTrigger = shared.AutomationTrigger
 // automation during a prebuild of an environment. This phase does not have user
 // secrets available. The `before_snapshot` field triggers the automation after all
 // prebuild tasks complete but before the snapshot is taken. This is used for tasks
-// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
-// and before_snapshot triggers can only be used with tasks, not services.
+// that need to run last during prebuilds, such as IDE warmup. Note: The
+// before_snapshot trigger can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTriggerParam = shared.AutomationTriggerParam
