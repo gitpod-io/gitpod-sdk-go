@@ -1628,6 +1628,9 @@ func (r environmentStatusContentGitJSON) RawJSON() string {
 type EnvironmentStatusContentGitChangedFile struct {
 	// ChangeType is the type of change that happened to the file
 	ChangeType EnvironmentStatusContentGitChangedFilesChangeType `json:"changeType"`
+	// old_path is the previous path of the file before a rename or copy. Only set when
+	// change_type is RENAMED or COPIED.
+	OldPath string `json:"oldPath"`
 	// path is the path of the file
 	Path string                                     `json:"path"`
 	JSON environmentStatusContentGitChangedFileJSON `json:"-"`
@@ -1637,6 +1640,7 @@ type EnvironmentStatusContentGitChangedFile struct {
 // struct [EnvironmentStatusContentGitChangedFile]
 type environmentStatusContentGitChangedFileJSON struct {
 	ChangeType  apijson.Field
+	OldPath     apijson.Field
 	Path        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
