@@ -153,11 +153,12 @@ const (
 	AutomationsFileServicesTriggeredByManual                AutomationsFileServicesTriggeredBy = "manual"
 	AutomationsFileServicesTriggeredByPostEnvironmentStart  AutomationsFileServicesTriggeredBy = "postEnvironmentStart"
 	AutomationsFileServicesTriggeredByPostDevcontainerStart AutomationsFileServicesTriggeredBy = "postDevcontainerStart"
+	AutomationsFileServicesTriggeredByPrebuild              AutomationsFileServicesTriggeredBy = "prebuild"
 )
 
 func (r AutomationsFileServicesTriggeredBy) IsKnown() bool {
 	switch r {
-	case AutomationsFileServicesTriggeredByManual, AutomationsFileServicesTriggeredByPostEnvironmentStart, AutomationsFileServicesTriggeredByPostDevcontainerStart:
+	case AutomationsFileServicesTriggeredByManual, AutomationsFileServicesTriggeredByPostEnvironmentStart, AutomationsFileServicesTriggeredByPostDevcontainerStart, AutomationsFileServicesTriggeredByPrebuild:
 		return true
 	}
 	return false
