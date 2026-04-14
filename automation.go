@@ -2749,6 +2749,10 @@ func (r workflowTriggerJSON) RawJSON() string {
 // for PRs in repositories matching the trigger context.
 type WorkflowTriggerPullRequest struct {
 	Events []WorkflowTriggerPullRequestEvent `json:"events"`
+	// integration_id is the optional ID of an integration that acts as the source of
+	// webhook events. When set, the trigger will be activated when the webhook
+	// receives events.
+	IntegrationID string `json:"integrationId" api:"nullable" format:"uuid"`
 	// webhook_id is the optional ID of a webhook that this trigger is bound to. When
 	// set, the trigger will be activated when the webhook receives events. This allows
 	// multiple workflows to share a single webhook endpoint.
@@ -2759,10 +2763,11 @@ type WorkflowTriggerPullRequest struct {
 // workflowTriggerPullRequestJSON contains the JSON metadata for the struct
 // [WorkflowTriggerPullRequest]
 type workflowTriggerPullRequestJSON struct {
-	Events      apijson.Field
-	WebhookID   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Events        apijson.Field
+	IntegrationID apijson.Field
+	WebhookID     apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
 }
 
 func (r *WorkflowTriggerPullRequest) UnmarshalJSON(data []byte) (err error) {
@@ -2872,6 +2877,10 @@ func (r WorkflowTriggerParam) MarshalJSON() (data []byte, err error) {
 // for PRs in repositories matching the trigger context.
 type WorkflowTriggerPullRequestParam struct {
 	Events param.Field[[]WorkflowTriggerPullRequestEvent] `json:"events"`
+	// integration_id is the optional ID of an integration that acts as the source of
+	// webhook events. When set, the trigger will be activated when the webhook
+	// receives events.
+	IntegrationID param.Field[string] `json:"integrationId" format:"uuid"`
 	// webhook_id is the optional ID of a webhook that this trigger is bound to. When
 	// set, the trigger will be activated when the webhook receives events. This allows
 	// multiple workflows to share a single webhook endpoint.

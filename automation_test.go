@@ -103,8 +103,9 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 			}),
 			Manual: gitpod.F[any](map[string]interface{}{}),
 			PullRequest: gitpod.F(gitpod.WorkflowTriggerPullRequestParam{
-				Events:    gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
-				WebhookID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Events:        gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
+				IntegrationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				WebhookID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			}),
 			Time: gitpod.F(gitpod.WorkflowTriggerTimeParam{
 				CronExpression: gitpod.F("cronExpression"),
@@ -234,8 +235,9 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 			}),
 			Manual: gitpod.F[any](map[string]interface{}{}),
 			PullRequest: gitpod.F(gitpod.WorkflowTriggerPullRequestParam{
-				Events:    gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
-				WebhookID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Events:        gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
+				IntegrationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				WebhookID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			}),
 			Time: gitpod.F(gitpod.WorkflowTriggerTimeParam{
 				CronExpression: gitpod.F("cronExpression"),
