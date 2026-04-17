@@ -2782,18 +2782,19 @@ func (r workflowTriggerPullRequestJSON) RawJSON() string {
 type WorkflowTriggerPullRequestEvent string
 
 const (
-	WorkflowTriggerPullRequestEventPullRequestEventUnspecified    WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UNSPECIFIED"
-	WorkflowTriggerPullRequestEventPullRequestEventOpened         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_OPENED"
-	WorkflowTriggerPullRequestEventPullRequestEventUpdated        WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UPDATED"
-	WorkflowTriggerPullRequestEventPullRequestEventApproved       WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_APPROVED"
-	WorkflowTriggerPullRequestEventPullRequestEventMerged         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_MERGED"
-	WorkflowTriggerPullRequestEventPullRequestEventClosed         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_CLOSED"
-	WorkflowTriggerPullRequestEventPullRequestEventReadyForReview WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_READY_FOR_REVIEW"
+	WorkflowTriggerPullRequestEventPullRequestEventUnspecified     WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UNSPECIFIED"
+	WorkflowTriggerPullRequestEventPullRequestEventOpened          WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_OPENED"
+	WorkflowTriggerPullRequestEventPullRequestEventUpdated         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UPDATED"
+	WorkflowTriggerPullRequestEventPullRequestEventApproved        WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_APPROVED"
+	WorkflowTriggerPullRequestEventPullRequestEventMerged          WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_MERGED"
+	WorkflowTriggerPullRequestEventPullRequestEventClosed          WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_CLOSED"
+	WorkflowTriggerPullRequestEventPullRequestEventReadyForReview  WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_READY_FOR_REVIEW"
+	WorkflowTriggerPullRequestEventPullRequestEventReviewRequested WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_REVIEW_REQUESTED"
 )
 
 func (r WorkflowTriggerPullRequestEvent) IsKnown() bool {
 	switch r {
-	case WorkflowTriggerPullRequestEventPullRequestEventUnspecified, WorkflowTriggerPullRequestEventPullRequestEventOpened, WorkflowTriggerPullRequestEventPullRequestEventUpdated, WorkflowTriggerPullRequestEventPullRequestEventApproved, WorkflowTriggerPullRequestEventPullRequestEventMerged, WorkflowTriggerPullRequestEventPullRequestEventClosed, WorkflowTriggerPullRequestEventPullRequestEventReadyForReview:
+	case WorkflowTriggerPullRequestEventPullRequestEventUnspecified, WorkflowTriggerPullRequestEventPullRequestEventOpened, WorkflowTriggerPullRequestEventPullRequestEventUpdated, WorkflowTriggerPullRequestEventPullRequestEventApproved, WorkflowTriggerPullRequestEventPullRequestEventMerged, WorkflowTriggerPullRequestEventPullRequestEventClosed, WorkflowTriggerPullRequestEventPullRequestEventReadyForReview, WorkflowTriggerPullRequestEventPullRequestEventReviewRequested:
 		return true
 	}
 	return false
