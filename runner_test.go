@@ -313,6 +313,11 @@ func TestRunnerListScmOrganizationsWithOptionalParams(t *testing.T) {
 	_, err := client.Runners.ListScmOrganizations(context.TODO(), gitpod.RunnerListScmOrganizationsParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.RunnerListScmOrganizationsParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
+		Query:    gitpod.F("query"),
 		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		ScmHost:  gitpod.F("github.com"),
 	})
