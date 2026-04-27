@@ -36,9 +36,10 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 						Start: gitpod.F("npm run dev"),
 						Stop:  gitpod.F("stop"),
 					}),
-					Description: gitpod.F("Development web server"),
-					Name:        gitpod.F("Web Server"),
-					Role:        gitpod.F(gitpod.AutomationsFileServicesRoleEmpty),
+					Description:      gitpod.F("Development web server"),
+					Name:             gitpod.F("Web Server"),
+					ReadinessTimeout: gitpod.F("+9125115.360s"),
+					Role:             gitpod.F(gitpod.AutomationsFileServicesRoleEmpty),
 					RunsOn: gitpod.F(shared.RunsOnParam{
 						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),
