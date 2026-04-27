@@ -65,6 +65,7 @@ func TestEnvironmentAutomationServiceNewWithOptionalParams(t *testing.T) {
 					}),
 				}),
 			}}),
+			ReadinessTimeout: gitpod.F("+9125115.360s"),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
@@ -155,6 +156,7 @@ func TestEnvironmentAutomationServiceUpdateWithOptionalParams(t *testing.T) {
 					}),
 				}),
 			}}),
+			ReadinessTimeout: gitpod.F("+9125115.360s"),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
