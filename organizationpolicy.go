@@ -483,6 +483,11 @@ type OrganizationPolicyUpdateParams struct {
 	// maximum_running_environments_per_user limits simultaneously running environments
 	// per user
 	MaximumRunningEnvironmentsPerUser param.Field[string] `json:"maximumRunningEnvironmentsPerUser"`
+	// max_port_admission_level caps the maximum admission level a user-opened port may
+	// use. UNSPECIFIED means no cap (any AdmissionLevel value is allowed). System
+	// ports (VS Code Browser, agents) are exempt. The legacy port_sharing_disabled
+	// field, when true, takes precedence and blocks all user-initiated port sharing.
+	MaxPortAdmissionLevel param.Field[AdmissionLevel] `json:"maxPortAdmissionLevel"`
 	// members_create_projects controls whether members can create projects
 	MembersCreateProjects param.Field[bool] `json:"membersCreateProjects"`
 	// members_require_projects controls whether environments can only be created from
