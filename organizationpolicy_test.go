@@ -75,6 +75,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
 		MaximumEnvironmentTimeout:         gitpod.F("3600s"),
 		MaximumRunningEnvironmentsPerUser: gitpod.F("5"),
+		MaxPortAdmissionLevel:             gitpod.F(gitpod.AdmissionLevelUnspecified),
 		MembersCreateProjects:             gitpod.F(true),
 		MembersRequireProjects:            gitpod.F(true),
 		PortSharingDisabled:               gitpod.F(true),
