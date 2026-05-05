@@ -2711,9 +2711,11 @@ type WorkflowTrigger struct {
 	//
 	// Context Usage by Trigger Type:
 	//
-	// - Manual: Can use any context type
-	// - Time: Typically uses Projects or Repositories context
-	// - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Manual: Can use any context type
+	//   - Time: Typically uses Projects or Repositories context
+	//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+	//     context)
 	Context WorkflowTriggerContext `json:"context" api:"required"`
 	// Manual trigger - executed when StartWorkflow RPC is called. No additional
 	// configuration needed.
@@ -2855,9 +2857,11 @@ type WorkflowTriggerParam struct {
 	//
 	// Context Usage by Trigger Type:
 	//
-	// - Manual: Can use any context type
-	// - Time: Typically uses Projects or Repositories context
-	// - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Manual: Can use any context type
+	//   - Time: Typically uses Projects or Repositories context
+	//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+	//     context)
 	Context param.Field[WorkflowTriggerContextParam] `json:"context" api:"required"`
 	// Manual trigger - executed when StartWorkflow RPC is called. No additional
 	// configuration needed.
@@ -2918,9 +2922,11 @@ func (r WorkflowTriggerTimeParam) MarshalJSON() (data []byte, err error) {
 //
 // Context Usage by Trigger Type:
 //
-// - Manual: Can use any context type
-// - Time: Typically uses Projects or Repositories context
-// - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Manual: Can use any context type
+//   - Time: Typically uses Projects or Repositories context
+//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+//     context)
 type WorkflowTriggerContext struct {
 	// Execute workflow in agent-managed environments. Agent receives the specified
 	// prompt and manages execution context.
@@ -3102,9 +3108,11 @@ func (r workflowTriggerContextRepositoriesRepositoryURLsJSON) RawJSON() string {
 //
 // Context Usage by Trigger Type:
 //
-// - Manual: Can use any context type
-// - Time: Typically uses Projects or Repositories context
-// - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Manual: Can use any context type
+//   - Time: Typically uses Projects or Repositories context
+//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+//     context)
 type WorkflowTriggerContextParam struct {
 	// Execute workflow in agent-managed environments. Agent receives the specified
 	// prompt and manages execution context.
