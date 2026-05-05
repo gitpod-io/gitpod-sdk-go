@@ -990,6 +990,10 @@ func (r UpdateWindowParam) MarshalJSON() (data []byte, err error) {
 
 type RunnerNewResponse struct {
 	Runner Runner `json:"runner" api:"required"`
+	// deprecated, will be removed. Use exchange_token instead.
+	//
+	// Deprecated: deprecated
+	AccessToken string `json:"accessToken"`
 	// exchange_token is a one-time use token that should be exchanged by the runner
 	// for an access token, using the IdentityService.ExchangeToken rpc. The token
 	// expires after 24 hours.
@@ -1001,6 +1005,7 @@ type RunnerNewResponse struct {
 // [RunnerNewResponse]
 type runnerNewResponseJSON struct {
 	Runner        apijson.Field
+	AccessToken   apijson.Field
 	ExchangeToken apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
@@ -1190,6 +1195,10 @@ func (r runnerNewLogsTokenResponseJSON) RawJSON() string {
 }
 
 type RunnerNewRunnerTokenResponse struct {
+	// deprecated, will be removed. Use exchange_token instead.
+	//
+	// Deprecated: deprecated
+	AccessToken string `json:"accessToken"`
 	// exchange_token is a one-time use token that should be exchanged by the runner
 	// for an access token, using the IdentityService.ExchangeToken rpc. The token
 	// expires after 24 hours.
@@ -1200,6 +1209,7 @@ type RunnerNewRunnerTokenResponse struct {
 // runnerNewRunnerTokenResponseJSON contains the JSON metadata for the struct
 // [RunnerNewRunnerTokenResponse]
 type runnerNewRunnerTokenResponseJSON struct {
+	AccessToken   apijson.Field
 	ExchangeToken apijson.Field
 	raw           string
 	ExtraFields   map[string]apijson.Field
