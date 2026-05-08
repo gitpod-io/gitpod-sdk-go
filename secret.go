@@ -340,6 +340,13 @@ type Secret struct {
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the secret
 	Creator shared.Subject `json:"creator"`
+	// credential_proxy configures transparent credential injection via the credential
+	// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+	// hosts and replaces the dummy mounted value with the real value in the specified
+	// HTTP header. The real secret value is never exposed in the environment. This
+	// field is orthogonal to mount — a secret can be both mounted and proxied at the
+	// same time.
+	CredentialProxy SecretCredentialProxy `json:"credentialProxy"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable bool `json:"environmentVariable"`
@@ -451,6 +458,7 @@ type secretJSON struct {
 	ContainerRegistryBasicAuthHost apijson.Field
 	CreatedAt                      apijson.Field
 	Creator                        apijson.Field
+	CredentialProxy                apijson.Field
 	EnvironmentVariable            apijson.Field
 	FilePath                       apijson.Field
 	Name                           apijson.Field
@@ -466,6 +474,38 @@ func (r *Secret) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r secretJSON) RawJSON() string {
+	return r.raw
+}
+
+// credential_proxy configures transparent credential injection via the credential
+// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+// hosts and replaces the dummy mounted value with the real value in the specified
+// HTTP header. The real secret value is never exposed in the environment. This
+// field is orthogonal to mount — a secret can be both mounted and proxied at the
+// same time.
+type SecretCredentialProxy struct {
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header string `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts []string                  `json:"targetHosts"`
+	JSON        secretCredentialProxyJSON `json:"-"`
+}
+
+// secretCredentialProxyJSON contains the JSON metadata for the struct
+// [SecretCredentialProxy]
+type secretCredentialProxyJSON struct {
+	Header      apijson.Field
+	TargetHosts apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretCredentialProxy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretCredentialProxyJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -568,6 +608,13 @@ type SecretNewParams struct {
 	// secret will be mounted as a docker config in the environment VM, mount will have
 	// the docker registry host
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
+	// credential_proxy configures transparent credential injection when environments
+	// materialize this secret. When set, the credential proxy intercepts HTTPS traffic
+	// to the target hosts and replaces the dummy mounted value with the real value in
+	// the specified HTTP header. The real secret value is never exposed in the
+	// environment. This field is orthogonal to mount — a secret can be both mounted
+	// and proxied at the same time.
+	CredentialProxy param.Field[SecretNewParamsCredentialProxy] `json:"credentialProxy"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable param.Field[bool] `json:"environmentVariable"`
@@ -588,6 +635,24 @@ type SecretNewParams struct {
 }
 
 func (r SecretNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// credential_proxy configures transparent credential injection when environments
+// materialize this secret. When set, the credential proxy intercepts HTTPS traffic
+// to the target hosts and replaces the dummy mounted value with the real value in
+// the specified HTTP header. The real secret value is never exposed in the
+// environment. This field is orthogonal to mount — a secret can be both mounted
+// and proxied at the same time.
+type SecretNewParamsCredentialProxy struct {
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header param.Field[string] `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts param.Field[[]string] `json:"targetHosts"`
+}
+
+func (r SecretNewParamsCredentialProxy) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
