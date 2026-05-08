@@ -98,7 +98,6 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				APIOnly:                        gitpod.F(true),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				CredentialProxy: gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyParam{
-					Format:      gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified),
 					Header:      gitpod.F("header"),
 					TargetHosts: gitpod.F([]string{"string"}),
 				}),
@@ -411,7 +410,6 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				APIOnly:                        gitpod.F(true),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				CredentialProxy: gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyParam{
-					Format:      gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified),
 					Header:      gitpod.F("header"),
 					TargetHosts: gitpod.F([]string{"string"}),
 				}),
