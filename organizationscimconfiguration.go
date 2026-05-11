@@ -257,6 +257,10 @@ type ScimConfiguration struct {
 	TokenExpiresAt time.Time `json:"tokenExpiresAt" api:"required" format:"date-time"`
 	// updated_at is when the SCIM configuration was last updated
 	UpdatedAt time.Time `json:"updatedAt" api:"required" format:"date-time"`
+	// allow_unverified_email_account_linking allows SCIM to link provisioned users to
+	// existing accounts when the identity provider does not mark the email address as
+	// verified
+	AllowUnverifiedEmailAccountLinking bool `json:"allowUnverifiedEmailAccountLinking"`
 	// enabled indicates if SCIM provisioning is active
 	Enabled bool `json:"enabled"`
 	// name is a human-readable name for the SCIM configuration
@@ -269,16 +273,17 @@ type ScimConfiguration struct {
 // scimConfigurationJSON contains the JSON metadata for the struct
 // [ScimConfiguration]
 type scimConfigurationJSON struct {
-	ID                 apijson.Field
-	CreatedAt          apijson.Field
-	OrganizationID     apijson.Field
-	TokenExpiresAt     apijson.Field
-	UpdatedAt          apijson.Field
-	Enabled            apijson.Field
-	Name               apijson.Field
-	SSOConfigurationID apijson.Field
-	raw                string
-	ExtraFields        map[string]apijson.Field
+	ID                                 apijson.Field
+	CreatedAt                          apijson.Field
+	OrganizationID                     apijson.Field
+	TokenExpiresAt                     apijson.Field
+	UpdatedAt                          apijson.Field
+	AllowUnverifiedEmailAccountLinking apijson.Field
+	Enabled                            apijson.Field
+	Name                               apijson.Field
+	SSOConfigurationID                 apijson.Field
+	raw                                string
+	ExtraFields                        map[string]apijson.Field
 }
 
 func (r *ScimConfiguration) UnmarshalJSON(data []byte) (err error) {
@@ -397,6 +402,10 @@ type OrganizationScimConfigurationNewParams struct {
 	// sso_configuration_id is the SSO configuration to link (required for user
 	// provisioning)
 	SSOConfigurationID param.Field[string] `json:"ssoConfigurationId" api:"required" format:"uuid"`
+	// allow_unverified_email_account_linking allows SCIM to link provisioned users to
+	// existing accounts when the identity provider does not mark the email address as
+	// verified
+	AllowUnverifiedEmailAccountLinking param.Field[bool] `json:"allowUnverifiedEmailAccountLinking"`
 	// name is a human-readable name for the SCIM configuration
 	Name param.Field[string] `json:"name"`
 	// token_expires_in is the duration until the token expires. Defaults to 1 year.
@@ -420,6 +429,10 @@ func (r OrganizationScimConfigurationGetParams) MarshalJSON() (data []byte, err 
 type OrganizationScimConfigurationUpdateParams struct {
 	// scim_configuration_id is the ID of the SCIM configuration to update
 	ScimConfigurationID param.Field[string] `json:"scimConfigurationId" api:"required" format:"uuid"`
+	// allow_unverified_email_account_linking allows SCIM to link provisioned users to
+	// existing accounts when the identity provider does not mark the email address as
+	// verified
+	AllowUnverifiedEmailAccountLinking param.Field[bool] `json:"allowUnverifiedEmailAccountLinking"`
 	// enabled controls whether SCIM provisioning is active
 	Enabled param.Field[bool] `json:"enabled"`
 	// name is a human-readable name for the SCIM configuration

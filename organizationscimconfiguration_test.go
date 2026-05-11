@@ -27,10 +27,11 @@ func TestOrganizationScimConfigurationNewWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.ScimConfigurations.New(context.TODO(), gitpod.OrganizationScimConfigurationNewParams{
-		OrganizationID:     gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		SSOConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		Name:               gitpod.F("name"),
-		TokenExpiresIn:     gitpod.F("+9125115.360s"),
+		OrganizationID:                     gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		SSOConfigurationID:                 gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		AllowUnverifiedEmailAccountLinking: gitpod.F(true),
+		Name:                               gitpod.F("name"),
+		TokenExpiresIn:                     gitpod.F("+9125115.360s"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -80,10 +81,11 @@ func TestOrganizationScimConfigurationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBearerToken("My Bearer Token"),
 	)
 	_, err := client.Organizations.ScimConfigurations.Update(context.TODO(), gitpod.OrganizationScimConfigurationUpdateParams{
-		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		Enabled:             gitpod.F(false),
-		Name:                gitpod.F("name"),
-		SSOConfigurationID:  gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		ScimConfigurationID:                gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		AllowUnverifiedEmailAccountLinking: gitpod.F(true),
+		Enabled:                            gitpod.F(false),
+		Name:                               gitpod.F("name"),
+		SSOConfigurationID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
