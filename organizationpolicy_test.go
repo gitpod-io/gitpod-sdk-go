@@ -79,8 +79,11 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		MembersCreateProjects:             gitpod.F(true),
 		MembersRequireProjects:            gitpod.F(true),
 		PortSharingDisabled:               gitpod.F(true),
-		RequireCustomDomainAccess:         gitpod.F(true),
-		RestrictAccountCreationToScim:     gitpod.F(true),
+		ProjectCreationDefaults: gitpod.F(gitpod.OrganizationPolicyUpdateParamsProjectCreationDefaults{
+			InsightsEnabled: gitpod.F(true),
+		}),
+		RequireCustomDomainAccess:     gitpod.F(true),
+		RestrictAccountCreationToScim: gitpod.F(true),
 		SecurityAgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicy{
 			Crowdstrike: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicyCrowdstrike{
 				AdditionalOptions: gitpod.F(map[string]string{
