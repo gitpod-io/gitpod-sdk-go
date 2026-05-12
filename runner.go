@@ -656,11 +656,12 @@ const (
 	RunnerCapabilityAsgWarmPool                    RunnerCapability = "RUNNER_CAPABILITY_ASG_WARM_POOL"
 	RunnerCapabilityPortAuthentication             RunnerCapability = "RUNNER_CAPABILITY_PORT_AUTHENTICATION"
 	RunnerCapabilityHorizontalScaling              RunnerCapability = "RUNNER_CAPABILITY_HORIZONTAL_SCALING"
+	RunnerCapabilityAgentExecutionCnf              RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION_CNF"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool, RunnerCapabilityPortAuthentication, RunnerCapabilityHorizontalScaling:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool, RunnerCapabilityPortAuthentication, RunnerCapabilityHorizontalScaling, RunnerCapabilityAgentExecutionCnf:
 		return true
 	}
 	return false
