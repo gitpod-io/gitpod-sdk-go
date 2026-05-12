@@ -911,9 +911,11 @@ type AgentExecutionStatus struct {
 	// failure_message contains the reason the agent run failed to operate.
 	FailureMessage string `json:"failureMessage"`
 	// failure_reason contains a structured reason code for the failure.
-	FailureReason   AgentExecutionStatusFailureReason `json:"failureReason"`
-	InputTokensUsed string                            `json:"inputTokensUsed"`
-	Iterations      string                            `json:"iterations"`
+	FailureReason AgentExecutionStatusFailureReason `json:"failureReason"`
+	// goal projects the current native Codex thread goal, if any.
+	Goal            AgentExecutionStatusGoal `json:"goal"`
+	InputTokensUsed string                   `json:"inputTokensUsed"`
+	Iterations      string                   `json:"iterations"`
 	// judgement is the judgement of the agent run produced by the judgement prompt.
 	Judgement string `json:"judgement"`
 	// mcp_integration_statuses contains the status of all MCP integrations used by
@@ -957,6 +959,7 @@ type agentExecutionStatusJSON struct {
 	CurrentOperation         apijson.Field
 	FailureMessage           apijson.Field
 	FailureReason            apijson.Field
+	Goal                     apijson.Field
 	InputTokensUsed          apijson.Field
 	Iterations               apijson.Field
 	Judgement                apijson.Field
@@ -1071,6 +1074,55 @@ const (
 func (r AgentExecutionStatusFailureReason) IsKnown() bool {
 	switch r {
 	case AgentExecutionStatusFailureReasonAgentExecutionFailureReasonUnspecified, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonEnvironment, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonService, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonLlmIntegration, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonInternal, AgentExecutionStatusFailureReasonAgentExecutionFailureReasonAgentExecution:
+		return true
+	}
+	return false
+}
+
+// goal projects the current native Codex thread goal, if any.
+type AgentExecutionStatusGoal struct {
+	// objective is the current goal text tracked by the native Codex thread-goal
+	// subsystem.
+	Objective string `json:"objective"`
+	// status is the lifecycle state of the current goal.
+	Status AgentExecutionStatusGoalStatus `json:"status"`
+	// updated_at is the most recent native goal update timestamp, when available.
+	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
+	JSON      agentExecutionStatusGoalJSON `json:"-"`
+}
+
+// agentExecutionStatusGoalJSON contains the JSON metadata for the struct
+// [AgentExecutionStatusGoal]
+type agentExecutionStatusGoalJSON struct {
+	Objective   apijson.Field
+	Status      apijson.Field
+	UpdatedAt   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AgentExecutionStatusGoal) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r agentExecutionStatusGoalJSON) RawJSON() string {
+	return r.raw
+}
+
+// status is the lifecycle state of the current goal.
+type AgentExecutionStatusGoalStatus string
+
+const (
+	AgentExecutionStatusGoalStatusGoalStatusUnspecified     AgentExecutionStatusGoalStatus = "GOAL_STATUS_UNSPECIFIED"
+	AgentExecutionStatusGoalStatusGoalStatusActive          AgentExecutionStatusGoalStatus = "GOAL_STATUS_ACTIVE"
+	AgentExecutionStatusGoalStatusGoalStatusPaused          AgentExecutionStatusGoalStatus = "GOAL_STATUS_PAUSED"
+	AgentExecutionStatusGoalStatusGoalStatusCompleted       AgentExecutionStatusGoalStatus = "GOAL_STATUS_COMPLETED"
+	AgentExecutionStatusGoalStatusGoalStatusBudgetExhausted AgentExecutionStatusGoalStatus = "GOAL_STATUS_BUDGET_EXHAUSTED"
+)
+
+func (r AgentExecutionStatusGoalStatus) IsKnown() bool {
+	switch r {
+	case AgentExecutionStatusGoalStatusGoalStatusUnspecified, AgentExecutionStatusGoalStatusGoalStatusActive, AgentExecutionStatusGoalStatusGoalStatusPaused, AgentExecutionStatusGoalStatusGoalStatusCompleted, AgentExecutionStatusGoalStatusGoalStatusBudgetExhausted:
 		return true
 	}
 	return false
