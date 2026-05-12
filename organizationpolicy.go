@@ -271,6 +271,9 @@ type OrganizationPolicies struct {
 	// this == duration('0s') || this >= duration('1800s')
 	// ```
 	MaximumEnvironmentTimeout string `json:"maximumEnvironmentTimeout" format:"regex"`
+	// project_creation_defaults contains default settings applied to newly created
+	// projects.
+	ProjectCreationDefaults ProjectCreationDefaults `json:"projectCreationDefaults"`
 	// security_agent_policy contains security agent configuration for the
 	// organization. When configured, security agents are automatically deployed to all
 	// environments.
@@ -300,6 +303,7 @@ type organizationPoliciesJSON struct {
 	EditorVersionRestrictions         apijson.Field
 	MaximumEnvironmentLifetime        apijson.Field
 	MaximumEnvironmentTimeout         apijson.Field
+	ProjectCreationDefaults           apijson.Field
 	SecurityAgentPolicy               apijson.Field
 	VetoExecPolicy                    apijson.Field
 	raw                               string
@@ -337,6 +341,31 @@ func (r *OrganizationPoliciesEditorVersionRestriction) UnmarshalJSON(data []byte
 }
 
 func (r organizationPoliciesEditorVersionRestrictionJSON) RawJSON() string {
+	return r.raw
+}
+
+// ProjectCreationDefaults contains default settings applied to newly created
+// projects.
+type ProjectCreationDefaults struct {
+	// insights_enabled controls whether Insights (co-author attribution) is
+	// automatically enabled on newly created projects.
+	InsightsEnabled bool                        `json:"insightsEnabled"`
+	JSON            projectCreationDefaultsJSON `json:"-"`
+}
+
+// projectCreationDefaultsJSON contains the JSON metadata for the struct
+// [ProjectCreationDefaults]
+type projectCreationDefaultsJSON struct {
+	InsightsEnabled apijson.Field
+	raw             string
+	ExtraFields     map[string]apijson.Field
+}
+
+func (r *ProjectCreationDefaults) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectCreationDefaultsJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -497,6 +526,9 @@ type OrganizationPolicyUpdateParams struct {
 	// in the organization. System ports (VS Code Browser, agents) are always exempt
 	// from this policy.
 	PortSharingDisabled param.Field[bool] `json:"portSharingDisabled"`
+	// project_creation_defaults contains updates to default settings applied to newly
+	// created projects.
+	ProjectCreationDefaults param.Field[OrganizationPolicyUpdateParamsProjectCreationDefaults] `json:"projectCreationDefaults"`
 	// require_custom_domain_access controls whether users must access via custom
 	// domain when one is configured. When true, access via app.gitpod.io is blocked.
 	RequireCustomDomainAccess param.Field[bool] `json:"requireCustomDomainAccess"`
@@ -550,6 +582,18 @@ type OrganizationPolicyUpdateParamsEditorVersionRestrictions struct {
 }
 
 func (r OrganizationPolicyUpdateParamsEditorVersionRestrictions) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// project_creation_defaults contains updates to default settings applied to newly
+// created projects.
+type OrganizationPolicyUpdateParamsProjectCreationDefaults struct {
+	// insights_enabled controls whether Insights (co-author attribution) is
+	// automatically enabled on newly created projects.
+	InsightsEnabled param.Field[bool] `json:"insightsEnabled"`
+}
+
+func (r OrganizationPolicyUpdateParamsProjectCreationDefaults) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
