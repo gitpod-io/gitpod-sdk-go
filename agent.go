@@ -1954,7 +1954,10 @@ func (r AgentListExecutionsParams) URLQuery() (v url.Values) {
 }
 
 type AgentListExecutionsParamsFilter struct {
-	AgentIDs param.Field[[]string] `json:"agentIds"`
+	// agent_execution_ids filters the response to only the specified executions.
+	// Useful for checking existence of a known set of execution IDs.
+	AgentExecutionIDs param.Field[[]string] `json:"agentExecutionIds" format:"uuid"`
+	AgentIDs          param.Field[[]string] `json:"agentIds"`
 	// annotations filters by key-value pairs. Only executions containing all specified
 	// annotations (with matching values) are returned.
 	Annotations    param.Field[map[string]string]                     `json:"annotations"`

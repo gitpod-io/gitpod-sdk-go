@@ -138,7 +138,8 @@ func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.AgentListExecutionsParamsFilter{
-			AgentIDs: gitpod.F([]string{"b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"}),
+			AgentExecutionIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			AgentIDs:          gitpod.F([]string{"b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"}),
 			Annotations: gitpod.F(map[string]string{
 				"foo": "string",
 			}),
