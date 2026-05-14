@@ -657,11 +657,12 @@ const (
 	RunnerCapabilityPortAuthentication             RunnerCapability = "RUNNER_CAPABILITY_PORT_AUTHENTICATION"
 	RunnerCapabilityHorizontalScaling              RunnerCapability = "RUNNER_CAPABILITY_HORIZONTAL_SCALING"
 	RunnerCapabilityAgentExecutionCnf              RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION_CNF"
+	RunnerCapabilityRedisStream                    RunnerCapability = "RUNNER_CAPABILITY_REDIS_STREAM"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool, RunnerCapabilityPortAuthentication, RunnerCapabilityHorizontalScaling, RunnerCapabilityAgentExecutionCnf:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool, RunnerCapabilityPortAuthentication, RunnerCapabilityHorizontalScaling, RunnerCapabilityAgentExecutionCnf, RunnerCapabilityRedisStream:
 		return true
 	}
 	return false
