@@ -249,6 +249,9 @@ type OrganizationPolicies struct {
 	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
 	// the organization, only users provisioned via SCIM can create accounts.
 	RestrictAccountCreationToScim bool `json:"restrictAccountCreationToScim" api:"required"`
+	// web_browser_disabled controls whether users can open the built-in web browser
+	// from environment pages. This does not affect VS Code Browser.
+	WebBrowserDisabled bool `json:"webBrowserDisabled" api:"required"`
 	// delete_archived_environments_after controls how long archived environments are
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
@@ -299,6 +302,7 @@ type organizationPoliciesJSON struct {
 	PortSharingDisabled               apijson.Field
 	RequireCustomDomainAccess         apijson.Field
 	RestrictAccountCreationToScim     apijson.Field
+	WebBrowserDisabled                apijson.Field
 	DeleteArchivedEnvironmentsAfter   apijson.Field
 	EditorVersionRestrictions         apijson.Field
 	MaximumEnvironmentLifetime        apijson.Field
@@ -540,6 +544,9 @@ type OrganizationPolicyUpdateParams struct {
 	SecurityAgentPolicy param.Field[OrganizationPolicyUpdateParamsSecurityAgentPolicy] `json:"securityAgentPolicy"`
 	// veto_exec_policy contains the veto exec policy for environments.
 	VetoExecPolicy param.Field[VetoExecPolicyParam] `json:"vetoExecPolicy"`
+	// web_browser_disabled controls whether users can open the built-in web browser
+	// from environment pages. This does not affect VS Code Browser.
+	WebBrowserDisabled param.Field[bool] `json:"webBrowserDisabled"`
 }
 
 func (r OrganizationPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
