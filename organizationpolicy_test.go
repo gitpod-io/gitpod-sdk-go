@@ -66,6 +66,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		DefaultEditorID:                 gitpod.F("defaultEditorId"),
 		DefaultEnvironmentImage:         gitpod.F("defaultEnvironmentImage"),
 		DeleteArchivedEnvironmentsAfter: gitpod.F("+9125115.360s"),
+		DisableFromScratch:              gitpod.F(true),
 		EditorVersionRestrictions: gitpod.F(map[string]gitpod.OrganizationPolicyUpdateParamsEditorVersionRestrictions{
 			"foo": {
 				AllowedVersions: gitpod.F([]string{"string"}),

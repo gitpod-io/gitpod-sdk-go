@@ -225,6 +225,9 @@ type OrganizationPolicies struct {
 	// default_environment_image is the default container image when none is defined in
 	// repo
 	DefaultEnvironmentImage string `json:"defaultEnvironmentImage" api:"required"`
+	// disable_from_scratch controls whether non-admin users can create blank
+	// environments without a Git or URL initializer.
+	DisableFromScratch bool `json:"disableFromScratch" api:"required"`
 	// maximum_environments_per_user limits total environments (running or stopped) per
 	// user
 	MaximumEnvironmentsPerUser string `json:"maximumEnvironmentsPerUser" api:"required"`
@@ -294,6 +297,7 @@ type organizationPoliciesJSON struct {
 	AllowLocalRunners                 apijson.Field
 	DefaultEditorID                   apijson.Field
 	DefaultEnvironmentImage           apijson.Field
+	DisableFromScratch                apijson.Field
 	MaximumEnvironmentsPerUser        apijson.Field
 	MaximumRunningEnvironmentsPerUser apijson.Field
 	MembersCreateProjects             apijson.Field
@@ -494,6 +498,9 @@ type OrganizationPolicyUpdateParams struct {
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
 	DeleteArchivedEnvironmentsAfter param.Field[string] `json:"deleteArchivedEnvironmentsAfter" format:"regex"`
+	// disable_from_scratch controls whether non-admin users can create blank
+	// environments without a Git or URL initializer.
+	DisableFromScratch param.Field[bool] `json:"disableFromScratch"`
 	// editor_version_restrictions restricts which editor versions can be used. Maps
 	// editor ID to version policy with allowed major versions.
 	EditorVersionRestrictions param.Field[map[string]OrganizationPolicyUpdateParamsEditorVersionRestrictions] `json:"editorVersionRestrictions"`
