@@ -100,6 +100,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 			Enabled:     gitpod.F(true),
 			Executables: gitpod.F([]string{"string"}),
 		}),
+		WebBrowserDisabled: gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
