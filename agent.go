@@ -1708,7 +1708,8 @@ func (r UserInputBlockTextParam) MarshalJSON() (data []byte, err error) {
 // WakeEvent is sent by the backend to wake an agent when a registered interest
 // fires. Delivered via SendToAgentExecution as a new oneof variant.
 type WakeEventParam struct {
-	Environment param.Field[WakeEventEnvironmentParam] `json:"environment"`
+	DevcontainerRebuild param.Field[WakeEventDevcontainerRebuildParam] `json:"devcontainerRebuild"`
+	Environment         param.Field[WakeEventEnvironmentParam]         `json:"environment"`
 	// The interest ID that fired (from WaitingInfo.Interest.id).
 	InterestID    param.Field[string]                      `json:"interestId"`
 	LoopRetrigger param.Field[WakeEventLoopRetriggerParam] `json:"loopRetrigger"`
@@ -1716,6 +1717,18 @@ type WakeEventParam struct {
 }
 
 func (r WakeEventParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventDevcontainerRebuildParam struct {
+	EnvironmentID  param.Field[string]   `json:"environmentId"`
+	FailureMessage param.Field[[]string] `json:"failureMessage"`
+	// The devcontainer phase reached by the target session.
+	Phase     param.Field[string] `json:"phase"`
+	SessionID param.Field[string] `json:"sessionId"`
+}
+
+func (r WakeEventDevcontainerRebuildParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

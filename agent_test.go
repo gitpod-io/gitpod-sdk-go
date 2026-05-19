@@ -293,6 +293,12 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			}),
 		}),
 		WakeEvent: gitpod.F(gitpod.WakeEventParam{
+			DevcontainerRebuild: gitpod.F(gitpod.WakeEventDevcontainerRebuildParam{
+				EnvironmentID:  gitpod.F("environmentId"),
+				FailureMessage: gitpod.F([]string{"string"}),
+				Phase:          gitpod.F("phase"),
+				SessionID:      gitpod.F("sessionId"),
+			}),
 			Environment: gitpod.F(gitpod.WakeEventEnvironmentParam{
 				EnvironmentID:  gitpod.F("environmentId"),
 				FailureMessage: gitpod.F([]string{"string"}),
