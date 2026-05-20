@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 // OrganizationPolicyService contains methods and other services that help with
@@ -352,21 +353,131 @@ func (r organizationPoliciesEditorVersionRestrictionJSON) RawJSON() string {
 	return r.raw
 }
 
+// ProjectCreationDefaultEnvironmentClass configures a single environment class in
+// the project creation defaults.
+type ProjectCreationDefaultEnvironmentClass struct {
+	// environment_class_id is the ID of the environment class.
+	EnvironmentClassID string `json:"environmentClassId" format:"uuid"`
+	// order is the priority of this entry (lower = higher priority).
+	Order int64 `json:"order"`
+	// prebuild controls whether prebuilds are enabled for this environment class on
+	// newly created projects.
+	Prebuild bool `json:"prebuild"`
+	// warm_pool configures the warm pool for this environment class on newly created
+	// projects. Only meaningful when prebuild is true.
+	WarmPool ProjectCreationDefaultEnvironmentClassWarmPool `json:"warmPool"`
+	JSON     projectCreationDefaultEnvironmentClassJSON     `json:"-"`
+}
+
+// projectCreationDefaultEnvironmentClassJSON contains the JSON metadata for the
+// struct [ProjectCreationDefaultEnvironmentClass]
+type projectCreationDefaultEnvironmentClassJSON struct {
+	EnvironmentClassID apijson.Field
+	Order              apijson.Field
+	Prebuild           apijson.Field
+	WarmPool           apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
+}
+
+func (r *ProjectCreationDefaultEnvironmentClass) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectCreationDefaultEnvironmentClassJSON) RawJSON() string {
+	return r.raw
+}
+
+// ProjectCreationDefaultEnvironmentClass configures a single environment class in
+// the project creation defaults.
+type ProjectCreationDefaultEnvironmentClassParam struct {
+	// environment_class_id is the ID of the environment class.
+	EnvironmentClassID param.Field[string] `json:"environmentClassId" format:"uuid"`
+	// order is the priority of this entry (lower = higher priority).
+	Order param.Field[int64] `json:"order"`
+	// prebuild controls whether prebuilds are enabled for this environment class on
+	// newly created projects.
+	Prebuild param.Field[bool] `json:"prebuild"`
+	// warm_pool configures the warm pool for this environment class on newly created
+	// projects. Only meaningful when prebuild is true.
+	WarmPool param.Field[ProjectCreationDefaultEnvironmentClassWarmPoolParam] `json:"warmPool"`
+}
+
+func (r ProjectCreationDefaultEnvironmentClassParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// ProjectCreationDefaultEnvironmentClassWarmPool configures warm pool defaults for
+// an environment class in the project creation defaults.
+type ProjectCreationDefaultEnvironmentClassWarmPool struct {
+	// enabled controls whether a warm pool is created for this environment class.
+	Enabled bool `json:"enabled"`
+	// max_size is the maximum number of warm instances. Must be >= min_size and <= 20.
+	MaxSize int64 `json:"maxSize"`
+	// min_size is the minimum number of warm instances. Must be >= 0 and <= max_size.
+	MinSize int64                                              `json:"minSize"`
+	JSON    projectCreationDefaultEnvironmentClassWarmPoolJSON `json:"-"`
+}
+
+// projectCreationDefaultEnvironmentClassWarmPoolJSON contains the JSON metadata
+// for the struct [ProjectCreationDefaultEnvironmentClassWarmPool]
+type projectCreationDefaultEnvironmentClassWarmPoolJSON struct {
+	Enabled     apijson.Field
+	MaxSize     apijson.Field
+	MinSize     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectCreationDefaultEnvironmentClassWarmPool) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectCreationDefaultEnvironmentClassWarmPoolJSON) RawJSON() string {
+	return r.raw
+}
+
+// ProjectCreationDefaultEnvironmentClassWarmPool configures warm pool defaults for
+// an environment class in the project creation defaults.
+type ProjectCreationDefaultEnvironmentClassWarmPoolParam struct {
+	// enabled controls whether a warm pool is created for this environment class.
+	Enabled param.Field[bool] `json:"enabled"`
+	// max_size is the maximum number of warm instances. Must be >= min_size and <= 20.
+	MaxSize param.Field[int64] `json:"maxSize"`
+	// min_size is the minimum number of warm instances. Must be >= 0 and <= max_size.
+	MinSize param.Field[int64] `json:"minSize"`
+}
+
+func (r ProjectCreationDefaultEnvironmentClassWarmPoolParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 // ProjectCreationDefaults contains default settings applied to newly created
 // projects.
 type ProjectCreationDefaults struct {
+	// environment_classes specifies default environment classes and their per-class
+	// settings (order, prebuild, warm pool) for newly created projects. Each entry
+	// must reference an existing, enabled, non-local-runner environment class in the
+	// organization.
+	EnvironmentClasses []ProjectCreationDefaultEnvironmentClass `json:"environmentClasses"`
 	// insights_enabled controls whether Insights (co-author attribution) is
 	// automatically enabled on newly created projects.
-	InsightsEnabled bool                        `json:"insightsEnabled"`
-	JSON            projectCreationDefaultsJSON `json:"-"`
+	InsightsEnabled bool `json:"insightsEnabled"`
+	// prebuilds configures default prebuild settings for newly created projects. When
+	// set, prebuilds can be enabled per environment class via the environment_classes
+	// entries. When absent, prebuilds are not enabled by default.
+	Prebuilds ProjectCreationDefaultsPrebuilds `json:"prebuilds"`
+	JSON      projectCreationDefaultsJSON      `json:"-"`
 }
 
 // projectCreationDefaultsJSON contains the JSON metadata for the struct
 // [ProjectCreationDefaults]
 type projectCreationDefaultsJSON struct {
-	InsightsEnabled apijson.Field
-	raw             string
-	ExtraFields     map[string]apijson.Field
+	EnvironmentClasses apijson.Field
+	InsightsEnabled    apijson.Field
+	Prebuilds          apijson.Field
+	raw                string
+	ExtraFields        map[string]apijson.Field
 }
 
 func (r *ProjectCreationDefaults) UnmarshalJSON(data []byte) (err error) {
@@ -375,6 +486,136 @@ func (r *ProjectCreationDefaults) UnmarshalJSON(data []byte) (err error) {
 
 func (r projectCreationDefaultsJSON) RawJSON() string {
 	return r.raw
+}
+
+// ProjectCreationDefaultsPrebuilds configures default prebuild settings. Presence
+// of this message means prebuilds can be enabled for the default environment
+// classes.
+type ProjectCreationDefaultsPrebuilds struct {
+	// enable_jetbrains_warmup controls whether JetBrains IDE warmup runs during
+	// prebuilds on newly created projects.
+	EnableJetbrainsWarmup bool `json:"enableJetbrainsWarmup"`
+	// prebuild_executor is the service account used to run prebuilds on newly created
+	// projects. Must be a service account (not a user).
+	PrebuildExecutor shared.Subject `json:"prebuildExecutor"`
+	// timeout is the maximum duration allowed for a prebuild to complete. If not
+	// specified, defaults to 1 hour. Must be between 5 minutes and 2 hours.
+	Timeout string `json:"timeout" format:"regex"`
+	// trigger defines when prebuilds should be created on newly created projects.
+	Trigger ProjectCreationDefaultsPrebuildsTrigger `json:"trigger"`
+	JSON    projectCreationDefaultsPrebuildsJSON    `json:"-"`
+}
+
+// projectCreationDefaultsPrebuildsJSON contains the JSON metadata for the struct
+// [ProjectCreationDefaultsPrebuilds]
+type projectCreationDefaultsPrebuildsJSON struct {
+	EnableJetbrainsWarmup apijson.Field
+	PrebuildExecutor      apijson.Field
+	Timeout               apijson.Field
+	Trigger               apijson.Field
+	raw                   string
+	ExtraFields           map[string]apijson.Field
+}
+
+func (r *ProjectCreationDefaultsPrebuilds) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectCreationDefaultsPrebuildsJSON) RawJSON() string {
+	return r.raw
+}
+
+// trigger defines when prebuilds should be created on newly created projects.
+type ProjectCreationDefaultsPrebuildsTrigger struct {
+	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+	// actual start time may vary slightly to distribute system load.
+	DailySchedule ProjectCreationDefaultsPrebuildsTriggerDailySchedule `json:"dailySchedule" api:"required"`
+	JSON          projectCreationDefaultsPrebuildsTriggerJSON          `json:"-"`
+}
+
+// projectCreationDefaultsPrebuildsTriggerJSON contains the JSON metadata for the
+// struct [ProjectCreationDefaultsPrebuildsTrigger]
+type projectCreationDefaultsPrebuildsTriggerJSON struct {
+	DailySchedule apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
+}
+
+func (r *ProjectCreationDefaultsPrebuildsTrigger) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectCreationDefaultsPrebuildsTriggerJSON) RawJSON() string {
+	return r.raw
+}
+
+// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+// actual start time may vary slightly to distribute system load.
+type ProjectCreationDefaultsPrebuildsTriggerDailySchedule struct {
+	// hour_utc is the hour of day (0-23) in UTC when the prebuild should start. The
+	// actual start time may be adjusted by a few minutes to balance system load.
+	HourUtc int64                                                    `json:"hourUtc"`
+	JSON    projectCreationDefaultsPrebuildsTriggerDailyScheduleJSON `json:"-"`
+}
+
+// projectCreationDefaultsPrebuildsTriggerDailyScheduleJSON contains the JSON
+// metadata for the struct [ProjectCreationDefaultsPrebuildsTriggerDailySchedule]
+type projectCreationDefaultsPrebuildsTriggerDailyScheduleJSON struct {
+	HourUtc     apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *ProjectCreationDefaultsPrebuildsTriggerDailySchedule) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r projectCreationDefaultsPrebuildsTriggerDailyScheduleJSON) RawJSON() string {
+	return r.raw
+}
+
+// ProjectCreationDefaultsPrebuilds configures default prebuild settings. Presence
+// of this message means prebuilds can be enabled for the default environment
+// classes.
+type ProjectCreationDefaultsPrebuildsParam struct {
+	// enable_jetbrains_warmup controls whether JetBrains IDE warmup runs during
+	// prebuilds on newly created projects.
+	EnableJetbrainsWarmup param.Field[bool] `json:"enableJetbrainsWarmup"`
+	// prebuild_executor is the service account used to run prebuilds on newly created
+	// projects. Must be a service account (not a user).
+	PrebuildExecutor param.Field[shared.SubjectParam] `json:"prebuildExecutor"`
+	// timeout is the maximum duration allowed for a prebuild to complete. If not
+	// specified, defaults to 1 hour. Must be between 5 minutes and 2 hours.
+	Timeout param.Field[string] `json:"timeout" format:"regex"`
+	// trigger defines when prebuilds should be created on newly created projects.
+	Trigger param.Field[ProjectCreationDefaultsPrebuildsTriggerParam] `json:"trigger"`
+}
+
+func (r ProjectCreationDefaultsPrebuildsParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// trigger defines when prebuilds should be created on newly created projects.
+type ProjectCreationDefaultsPrebuildsTriggerParam struct {
+	// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+	// actual start time may vary slightly to distribute system load.
+	DailySchedule param.Field[ProjectCreationDefaultsPrebuildsTriggerDailyScheduleParam] `json:"dailySchedule" api:"required"`
+}
+
+func (r ProjectCreationDefaultsPrebuildsTriggerParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// daily_schedule triggers a prebuild once per day at the specified hour (UTC). The
+// actual start time may vary slightly to distribute system load.
+type ProjectCreationDefaultsPrebuildsTriggerDailyScheduleParam struct {
+	// hour_utc is the hour of day (0-23) in UTC when the prebuild should start. The
+	// actual start time may be adjusted by a few minutes to balance system load.
+	HourUtc param.Field[int64] `json:"hourUtc"`
+}
+
+func (r ProjectCreationDefaultsPrebuildsTriggerDailyScheduleParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // SecurityAgentPolicy contains security agent configuration for an organization.
@@ -602,9 +843,16 @@ func (r OrganizationPolicyUpdateParamsEditorVersionRestrictions) MarshalJSON() (
 // project_creation_defaults contains updates to default settings applied to newly
 // created projects.
 type OrganizationPolicyUpdateParamsProjectCreationDefaults struct {
+	// environment_classes replaces the full list of default environment classes and
+	// their per-class settings. Send an empty list to clear defaults.
+	EnvironmentClasses param.Field[[]ProjectCreationDefaultEnvironmentClassParam] `json:"environmentClasses"`
 	// insights_enabled controls whether Insights (co-author attribution) is
 	// automatically enabled on newly created projects.
 	InsightsEnabled param.Field[bool] `json:"insightsEnabled"`
+	// prebuilds configures default prebuild settings for newly created projects. Set
+	// to enable/update prebuild defaults. Prebuilds are disabled by default when this
+	// field is absent.
+	Prebuilds param.Field[ProjectCreationDefaultsPrebuildsParam] `json:"prebuilds"`
 }
 
 func (r OrganizationPolicyUpdateParamsProjectCreationDefaults) MarshalJSON() (data []byte, err error) {
