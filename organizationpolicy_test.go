@@ -93,16 +93,19 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				}),
 			}}),
 			InsightsEnabled: gitpod.F(true),
-			Prebuilds: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsParam{
-				EnableJetbrainsWarmup: gitpod.F(true),
-				PrebuildExecutor: gitpod.F(shared.SubjectParam{
-					ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-					Principal: gitpod.F(shared.PrincipalUnspecified),
-				}),
-				Timeout: gitpod.F("+9125115.360s"),
-				Trigger: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsTriggerParam{
-					DailySchedule: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsTriggerDailyScheduleParam{
-						HourUtc: gitpod.F(int64(23)),
+			Prebuilds: gitpod.F(gitpod.OrganizationPolicyUpdateParamsProjectCreationDefaultsPrebuilds{
+				Disabled: gitpod.F[any](map[string]interface{}{}),
+				Enabled: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsParam{
+					EnableJetbrainsWarmup: gitpod.F(true),
+					PrebuildExecutor: gitpod.F(shared.SubjectParam{
+						ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+						Principal: gitpod.F(shared.PrincipalUnspecified),
+					}),
+					Timeout: gitpod.F("+9125115.360s"),
+					Trigger: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsTriggerParam{
+						DailySchedule: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsTriggerDailyScheduleParam{
+							HourUtc: gitpod.F(int64(23)),
+						}),
 					}),
 				}),
 			}),

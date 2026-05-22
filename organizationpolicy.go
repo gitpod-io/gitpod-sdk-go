@@ -849,13 +849,25 @@ type OrganizationPolicyUpdateParamsProjectCreationDefaults struct {
 	// insights_enabled controls whether Insights (co-author attribution) is
 	// automatically enabled on newly created projects.
 	InsightsEnabled param.Field[bool] `json:"insightsEnabled"`
-	// prebuilds configures default prebuild settings for newly created projects. Set
-	// to enable/update prebuild defaults. Prebuilds are disabled by default when this
-	// field is absent.
-	Prebuilds param.Field[ProjectCreationDefaultsPrebuildsParam] `json:"prebuilds"`
+	// prebuilds updates default prebuild settings for newly created projects. When
+	// absent, prebuild defaults are left unchanged.
+	Prebuilds param.Field[OrganizationPolicyUpdateParamsProjectCreationDefaultsPrebuilds] `json:"prebuilds"`
 }
 
 func (r OrganizationPolicyUpdateParamsProjectCreationDefaults) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// prebuilds updates default prebuild settings for newly created projects. When
+// absent, prebuild defaults are left unchanged.
+type OrganizationPolicyUpdateParamsProjectCreationDefaultsPrebuilds struct {
+	// disabled clears persisted prebuild defaults.
+	Disabled param.Field[interface{}] `json:"disabled"`
+	// enabled sets or updates persisted prebuild defaults.
+	Enabled param.Field[ProjectCreationDefaultsPrebuildsParam] `json:"enabled"`
+}
+
+func (r OrganizationPolicyUpdateParamsProjectCreationDefaultsPrebuilds) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
