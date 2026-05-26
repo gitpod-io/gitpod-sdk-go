@@ -52,10 +52,11 @@ func TestEnvironmentAutomationUpsertWithOptionalParams(t *testing.T) {
 			}),
 			Tasks: gitpod.F(map[string]gitpod.AutomationsFileTaskParam{
 				"build": {
-					Command:     gitpod.F("npm run build"),
-					DependsOn:   gitpod.F([]string{"string"}),
-					Description: gitpod.F("Builds the project artifacts"),
-					Name:        gitpod.F("Build Project"),
+					Command:                 gitpod.F("npm run build"),
+					DependsOn:               gitpod.F([]string{"string"}),
+					Description:             gitpod.F("Builds the project artifacts"),
+					Name:                    gitpod.F("Build Project"),
+					PrebuildRequiresSuccess: gitpod.F(true),
 					RunsOn: gitpod.F(shared.RunsOnParam{
 						Docker: gitpod.F(shared.RunsOnDockerParam{
 							Environment: gitpod.F([]string{"string"}),

@@ -1100,6 +1100,12 @@ type TaskSpec struct {
 	Command string `json:"command"`
 	// env specifies environment variables for the task.
 	Env []EnvironmentVariableItem `json:"env"`
+	// prebuild_requires_success controls whether a non-successful outcome of this task
+	// should fail the prebuild. When true and the task is triggered by a prebuild or
+	// before_snapshot trigger, any terminal phase other than SUCCEEDED (i.e. FAILED or
+	// STOPPED) will cause the prebuild to fail instead of just recording a warning.
+	// Defaults to false (existing behavior: task failures produce warnings only).
+	PrebuildRequiresSuccess bool `json:"prebuildRequiresSuccess"`
 	// runs_on specifies the environment the task should run on.
 	RunsOn RunsOn       `json:"runsOn"`
 	JSON   taskSpecJSON `json:"-"`
@@ -1107,11 +1113,12 @@ type TaskSpec struct {
 
 // taskSpecJSON contains the JSON metadata for the struct [TaskSpec]
 type taskSpecJSON struct {
-	Command     apijson.Field
-	Env         apijson.Field
-	RunsOn      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Command                 apijson.Field
+	Env                     apijson.Field
+	PrebuildRequiresSuccess apijson.Field
+	RunsOn                  apijson.Field
+	raw                     string
+	ExtraFields             map[string]apijson.Field
 }
 
 func (r *TaskSpec) UnmarshalJSON(data []byte) (err error) {
@@ -1127,6 +1134,12 @@ type TaskSpecParam struct {
 	Command param.Field[string] `json:"command"`
 	// env specifies environment variables for the task.
 	Env param.Field[[]EnvironmentVariableItemParam] `json:"env"`
+	// prebuild_requires_success controls whether a non-successful outcome of this task
+	// should fail the prebuild. When true and the task is triggered by a prebuild or
+	// before_snapshot trigger, any terminal phase other than SUCCEEDED (i.e. FAILED or
+	// STOPPED) will cause the prebuild to fail instead of just recording a warning.
+	// Defaults to false (existing behavior: task failures produce warnings only).
+	PrebuildRequiresSuccess param.Field[bool] `json:"prebuildRequiresSuccess"`
 	// runs_on specifies the environment the task should run on.
 	RunsOn param.Field[RunsOnParam] `json:"runsOn"`
 }

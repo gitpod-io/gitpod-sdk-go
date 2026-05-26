@@ -223,12 +223,17 @@ func (r AutomationsFileServicesTriggeredBy) IsKnown() bool {
 }
 
 type AutomationsFileTaskParam struct {
-	Command     param.Field[string]                            `json:"command"`
-	DependsOn   param.Field[[]string]                          `json:"dependsOn"`
-	Description param.Field[string]                            `json:"description"`
-	Name        param.Field[string]                            `json:"name"`
-	RunsOn      param.Field[shared.RunsOnParam]                `json:"runsOn"`
-	TriggeredBy param.Field[[]AutomationsFileTasksTriggeredBy] `json:"triggeredBy"`
+	Command     param.Field[string]   `json:"command"`
+	DependsOn   param.Field[[]string] `json:"dependsOn"`
+	Description param.Field[string]   `json:"description"`
+	Name        param.Field[string]   `json:"name"`
+	// prebuild_requires_success controls whether a non-successful outcome of this task
+	// should fail the prebuild. When true and the task is triggered by a prebuild
+	// trigger, any terminal phase other than SUCCEEDED will cause the prebuild to
+	// fail. Defaults to false.
+	PrebuildRequiresSuccess param.Field[bool]                              `json:"prebuildRequiresSuccess"`
+	RunsOn                  param.Field[shared.RunsOnParam]                `json:"runsOn"`
+	TriggeredBy             param.Field[[]AutomationsFileTasksTriggeredBy] `json:"triggeredBy"`
 }
 
 func (r AutomationsFileTaskParam) MarshalJSON() (data []byte, err error) {

@@ -60,6 +60,7 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 					}),
 				}),
 			}}),
+			PrebuildRequiresSuccess: gitpod.F(true),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
@@ -144,6 +145,7 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 					}),
 				}),
 			}}),
+			PrebuildRequiresSuccess: gitpod.F(true),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
