@@ -1320,6 +1320,62 @@ func (r AgentMode) IsKnown() bool {
 	return false
 }
 
+// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
+// Codex app runtime can select through Ona's Codex picker.
+type CodexOpenAIModel string
+
+const (
+	CodexOpenAIModelUnspecified      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_UNSPECIFIED"
+	CodexOpenAIModelGpt5_5           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_5"
+	CodexOpenAIModelGpt5_4           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_4"
+	CodexOpenAIModelGpt5_4Mini       CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_4_MINI"
+	CodexOpenAIModelGpt5_3Codex      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX"
+	CodexOpenAIModelGpt5_3CodexSpark CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK"
+	CodexOpenAIModelGpt5_2           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_2"
+)
+
+func (r CodexOpenAIModel) IsKnown() bool {
+	switch r {
+	case CodexOpenAIModelUnspecified, CodexOpenAIModelGpt5_5, CodexOpenAIModelGpt5_4, CodexOpenAIModelGpt5_4Mini, CodexOpenAIModelGpt5_3Codex, CodexOpenAIModelGpt5_3CodexSpark, CodexOpenAIModelGpt5_2:
+		return true
+	}
+	return false
+}
+
+// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
+// the Codex app runtime.
+type CodexReasoningEffort string
+
+const (
+	CodexReasoningEffortUnspecified CodexReasoningEffort = "CODEX_REASONING_EFFORT_UNSPECIFIED"
+	CodexReasoningEffortLow         CodexReasoningEffort = "CODEX_REASONING_EFFORT_LOW"
+	CodexReasoningEffortMedium      CodexReasoningEffort = "CODEX_REASONING_EFFORT_MEDIUM"
+	CodexReasoningEffortHigh        CodexReasoningEffort = "CODEX_REASONING_EFFORT_HIGH"
+	CodexReasoningEffortExtraHigh   CodexReasoningEffort = "CODEX_REASONING_EFFORT_EXTRA_HIGH"
+)
+
+func (r CodexReasoningEffort) IsKnown() bool {
+	switch r {
+	case CodexReasoningEffortUnspecified, CodexReasoningEffortLow, CodexReasoningEffortMedium, CodexReasoningEffortHigh, CodexReasoningEffortExtraHigh:
+		return true
+	}
+	return false
+}
+
+// CodexSettings contains settings consumed only by the Codex app agent.
+type CodexSettingsParam struct {
+	// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
+	// Codex app runtime can select through Ona's Codex picker.
+	Model param.Field[CodexOpenAIModel] `json:"model"`
+	// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
+	// the Codex app runtime.
+	ReasoningEffort param.Field[CodexReasoningEffort] `json:"reasoningEffort"`
+}
+
+func (r CodexSettingsParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
 type Prompt struct {
 	ID       string         `json:"id"`
 	Metadata PromptMetadata `json:"metadata"`
@@ -2107,8 +2163,11 @@ type AgentSendToExecutionParams struct {
 	AgentExecutionID param.Field[string] `json:"agentExecutionId" format:"uuid"`
 	// AgentMessage is a message sent between agents (e.g. from a parent agent to a
 	// child agent execution, or vice versa).
-	AgentMessage param.Field[AgentMessageParam]   `json:"agentMessage"`
-	UserInput    param.Field[UserInputBlockParam] `json:"userInput"`
+	AgentMessage param.Field[AgentMessageParam] `json:"agentMessage"`
+	// codex_settings contains per-turn desired settings for Codex app user_input
+	// sends.
+	CodexSettings param.Field[CodexSettingsParam]  `json:"codexSettings"`
+	UserInput     param.Field[UserInputBlockParam] `json:"userInput"`
 	// WakeEvent is sent by the backend to wake an agent when a registered interest
 	// fires. Delivered via SendToAgentExecution as a new oneof variant.
 	WakeEvent param.Field[WakeEventParam] `json:"wakeEvent"`
@@ -2125,6 +2184,8 @@ type AgentStartExecutionParams struct {
 	// (e.g., "agent-client-session/id").
 	Annotations param.Field[map[string]string]     `json:"annotations"`
 	CodeContext param.Field[AgentCodeContextParam] `json:"codeContext"`
+	// codex_settings contains desired manual settings for the Codex app agent.
+	CodexSettings param.Field[CodexSettingsParam] `json:"codexSettings"`
 	// mode specifies the operational mode for this agent execution If not specified,
 	// defaults to AGENT_MODE_EXECUTION
 	Mode param.Field[AgentMode] `json:"mode"`
