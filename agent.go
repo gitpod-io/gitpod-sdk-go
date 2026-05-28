@@ -2198,6 +2198,9 @@ func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AgentStartExecutionParams struct {
+	// agent_id identifies the agent to start. If omitted, the backend uses the
+	// configured default agent ID, or the Ona in-environment agent when no default is
+	// configured.
 	AgentID param.Field[string] `json:"agentId" format:"uuid"`
 	// annotations are key-value pairs for tracking external context (e.g., integration
 	// session IDs, GitHub issue references). Keys should follow domain/name convention
