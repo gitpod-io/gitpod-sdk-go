@@ -1362,6 +1362,23 @@ func (r CodexReasoningEffort) IsKnown() bool {
 	return false
 }
 
+// CodexServiceTier is the static allowlist of service tiers supported by the Codex
+// app runtime.
+type CodexServiceTier string
+
+const (
+	CodexServiceTierUnspecified CodexServiceTier = "CODEX_SERVICE_TIER_UNSPECIFIED"
+	CodexServiceTierFast        CodexServiceTier = "CODEX_SERVICE_TIER_FAST"
+)
+
+func (r CodexServiceTier) IsKnown() bool {
+	switch r {
+	case CodexServiceTierUnspecified, CodexServiceTierFast:
+		return true
+	}
+	return false
+}
+
 // CodexSettings contains settings consumed only by the Codex app agent.
 type CodexSettingsParam struct {
 	// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
@@ -1370,6 +1387,9 @@ type CodexSettingsParam struct {
 	// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
 	// the Codex app runtime.
 	ReasoningEffort param.Field[CodexReasoningEffort] `json:"reasoningEffort"`
+	// CodexServiceTier is the static allowlist of service tiers supported by the Codex
+	// app runtime.
+	ServiceTier param.Field[CodexServiceTier] `json:"serviceTier"`
 }
 
 func (r CodexSettingsParam) MarshalJSON() (data []byte, err error) {

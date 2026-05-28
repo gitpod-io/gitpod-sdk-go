@@ -275,6 +275,7 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 		CodexSettings: gitpod.F(gitpod.CodexSettingsParam{
 			Model:           gitpod.F(gitpod.CodexOpenAIModelUnspecified),
 			ReasoningEffort: gitpod.F(gitpod.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(gitpod.CodexServiceTierUnspecified),
 		}),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
 			ID:        gitpod.F("id"),
@@ -381,6 +382,7 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 		CodexSettings: gitpod.F(gitpod.CodexSettingsParam{
 			Model:           gitpod.F(gitpod.CodexOpenAIModelUnspecified),
 			ReasoningEffort: gitpod.F(gitpod.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(gitpod.CodexServiceTierUnspecified),
 		}),
 		Mode:             gitpod.F(gitpod.AgentModeUnspecified),
 		Name:             gitpod.F("name"),
