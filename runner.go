@@ -53,12 +53,12 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 //
 // ### Examples
 //
-// - Create cloud runner:
+// - Create an AWS runner:
 //
 //	Creates a new runner in AWS EC2.
 //
 //	```yaml
-//	name: "Production Runner"
+//	name: "AWS Runner"
 //	provider: RUNNER_PROVIDER_AWS_EC2
 //	spec:
 //	  desiredPhase: RUNNER_PHASE_ACTIVE
@@ -68,9 +68,25 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 //	    autoUpdate: true
 //	```
 //
-// - Create local runner:
+// - Create a GCP runner:
 //
-//	Creates a new local runner on Linux.
+//	Creates a new runner on Google Cloud Platform.
+//
+//	```yaml
+//	name: "GCP Runner"
+//	provider: RUNNER_PROVIDER_GCP
+//	spec:
+//	  desiredPhase: RUNNER_PHASE_ACTIVE
+//	  configuration:
+//	    region: "us-central1"
+//	    releaseChannel: RUNNER_RELEASE_CHANNEL_STABLE
+//	    autoUpdate: true
+//	```
+//
+// - Create local runner (deprecated):
+//
+//	Creates a new local runner on Linux. Local runners are deprecated; use
+//	RUNNER_PROVIDER_AWS_EC2 or RUNNER_PROVIDER_GCP instead.
 //
 //	```yaml
 //	name: "Local Development Runner"
