@@ -912,7 +912,7 @@ type AgentExecutionStatus struct {
 	FailureMessage string `json:"failureMessage"`
 	// failure_reason contains a structured reason code for the failure.
 	FailureReason AgentExecutionStatusFailureReason `json:"failureReason"`
-	// goal projects the current native Codex thread goal, if any.
+	// goal projects the current agent goal, if any.
 	Goal            AgentExecutionStatusGoal `json:"goal"`
 	InputTokensUsed string                   `json:"inputTokensUsed"`
 	Iterations      string                   `json:"iterations"`
@@ -1079,14 +1079,13 @@ func (r AgentExecutionStatusFailureReason) IsKnown() bool {
 	return false
 }
 
-// goal projects the current native Codex thread goal, if any.
+// goal projects the current agent goal, if any.
 type AgentExecutionStatusGoal struct {
-	// objective is the current goal text tracked by the native Codex thread-goal
-	// subsystem.
+	// objective is the current goal text tracked by the agent.
 	Objective string `json:"objective"`
 	// status is the lifecycle state of the current goal.
 	Status AgentExecutionStatusGoalStatus `json:"status"`
-	// updated_at is the most recent native goal update timestamp, when available.
+	// updated_at is the most recent goal update timestamp, when available.
 	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
 	JSON      agentExecutionStatusGoalJSON `json:"-"`
 }
@@ -1311,11 +1310,12 @@ const (
 	AgentModePlanning    AgentMode = "AGENT_MODE_PLANNING"
 	AgentModeRalph       AgentMode = "AGENT_MODE_RALPH"
 	AgentModeSpec        AgentMode = "AGENT_MODE_SPEC"
+	AgentModeGoal        AgentMode = "AGENT_MODE_GOAL"
 )
 
 func (r AgentMode) IsKnown() bool {
 	switch r {
-	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec:
+	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec, AgentModeGoal:
 		return true
 	}
 	return false
