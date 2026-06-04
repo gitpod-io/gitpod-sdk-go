@@ -1,6 +1,10 @@
 # Shared Params Types
 
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#AutomationTriggerParam">AutomationTriggerParam</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexOpenAIModel">CodexOpenAIModel</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexReasoningEffort">CodexReasoningEffort</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexServiceTier">CodexServiceTier</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexSettingsParam">CodexSettingsParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CountResponseRelation">CountResponseRelation</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentClassParam">EnvironmentClassParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentVariableItemParam">EnvironmentVariableItemParam</a>
@@ -27,6 +31,9 @@
 # Shared Response Types
 
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#AutomationTrigger">AutomationTrigger</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexOpenAIModel">CodexOpenAIModel</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexReasoningEffort">CodexReasoningEffort</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CodexServiceTier">CodexServiceTier</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#CountResponseRelation">CountResponseRelation</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentClass">EnvironmentClass</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentVariableItem">EnvironmentVariableItem</a>
@@ -84,10 +91,6 @@ Params Types:
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentCodeContextParam">AgentCodeContextParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentMessageParam">AgentMessageParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentMode">AgentMode</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CodexOpenAIModel">CodexOpenAIModel</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CodexReasoningEffort">CodexReasoningEffort</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CodexServiceTier">CodexServiceTier</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CodexSettingsParam">CodexSettingsParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#Type">Type</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#UserInputBlockParam">UserInputBlockParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#WakeEventParam">WakeEventParam</a>
