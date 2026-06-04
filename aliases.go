@@ -250,6 +250,9 @@ const ResourceRoleOrgBillingViewer = shared.ResourceRoleOrgBillingViewer
 const ResourceRoleOrgInsightsViewer = shared.ResourceRoleOrgInsightsViewer
 
 // This is an alias to an internal value.
+const ResourceRoleOrgSecurityAdmin = shared.ResourceRoleOrgSecurityAdmin
+
+// This is an alias to an internal value.
 const ResourceRoleGroupAdmin = shared.ResourceRoleGroupAdmin
 
 // This is an alias to an internal value.
@@ -411,6 +414,12 @@ const ResourceRoleTeamAdmin = shared.ResourceRoleTeamAdmin
 // This is an alias to an internal value.
 const ResourceRoleTeamViewer = shared.ResourceRoleTeamViewer
 
+// This is an alias to an internal value.
+const ResourceRoleSecurityPolicyAdmin = shared.ResourceRoleSecurityPolicyAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleSecurityPolicyViewer = shared.ResourceRoleSecurityPolicyViewer
+
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
 
@@ -563,6 +572,9 @@ const ResourceTypeWarmPool = shared.ResourceTypeWarmPool
 
 // This is an alias to an internal value.
 const ResourceTypeNotification = shared.ResourceTypeNotification
+
+// This is an alias to an internal value.
+const ResourceTypeSecurityPolicy = shared.ResourceTypeSecurityPolicy
 
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
