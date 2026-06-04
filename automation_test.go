@@ -52,6 +52,11 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 				}),
 			}}),
 		}),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
+		}),
 		Description: gitpod.F("description"),
 		Executor: gitpod.F(shared.SubjectParam{
 			ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
@@ -182,6 +187,11 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 					Command: gitpod.F("command"),
 				}),
 			}}),
+		}),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
 		}),
 		Description: gitpod.F("description"),
 		Disabled:    gitpod.F(true),

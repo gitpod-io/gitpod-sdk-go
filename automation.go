@@ -3390,6 +3390,9 @@ func (r automationStartExecutionResponseJSON) RawJSON() string {
 type AutomationNewParams struct {
 	// WorkflowAction defines the actions to be executed in a workflow.
 	Action param.Field[WorkflowActionParam] `json:"action" api:"required"`
+	// Codex app agent settings. Only meaningful when agent_id refers to the Codex app
+	// agent.
+	CodexSettings param.Field[shared.CodexSettingsParam] `json:"codexSettings"`
 	// Description must be at most 500 characters:
 	//
 	// ```
@@ -3430,6 +3433,9 @@ func (r AutomationGetParams) MarshalJSON() (data []byte, err error) {
 type AutomationUpdateParams struct {
 	// WorkflowAction defines the actions to be executed in a workflow.
 	Action param.Field[WorkflowActionParam] `json:"action"`
+	// Codex app agent settings. Only meaningful when agent_id refers to the Codex app
+	// agent.
+	CodexSettings param.Field[shared.CodexSettingsParam] `json:"codexSettings"`
 	// Description must be at most 500 characters:
 	//
 	// ```

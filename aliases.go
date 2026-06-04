@@ -45,6 +45,71 @@ type AutomationTrigger = shared.AutomationTrigger
 // This is an alias to an internal type.
 type AutomationTriggerParam = shared.AutomationTriggerParam
 
+// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
+// Codex app runtime can select through Ona's Codex picker.
+//
+// This is an alias to an internal type.
+type CodexOpenAIModel = shared.CodexOpenAIModel
+
+// This is an alias to an internal value.
+const CodexOpenAIModelUnspecified = shared.CodexOpenAIModelUnspecified
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_5 = shared.CodexOpenAIModelGpt5_5
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_4 = shared.CodexOpenAIModelGpt5_4
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_4Mini = shared.CodexOpenAIModelGpt5_4Mini
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_3Codex = shared.CodexOpenAIModelGpt5_3Codex
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_3CodexSpark = shared.CodexOpenAIModelGpt5_3CodexSpark
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_2 = shared.CodexOpenAIModelGpt5_2
+
+// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
+// the Codex app runtime.
+//
+// This is an alias to an internal type.
+type CodexReasoningEffort = shared.CodexReasoningEffort
+
+// This is an alias to an internal value.
+const CodexReasoningEffortUnspecified = shared.CodexReasoningEffortUnspecified
+
+// This is an alias to an internal value.
+const CodexReasoningEffortLow = shared.CodexReasoningEffortLow
+
+// This is an alias to an internal value.
+const CodexReasoningEffortMedium = shared.CodexReasoningEffortMedium
+
+// This is an alias to an internal value.
+const CodexReasoningEffortHigh = shared.CodexReasoningEffortHigh
+
+// This is an alias to an internal value.
+const CodexReasoningEffortExtraHigh = shared.CodexReasoningEffortExtraHigh
+
+// CodexServiceTier is the static allowlist of service tiers supported by the Codex
+// app runtime.
+//
+// This is an alias to an internal type.
+type CodexServiceTier = shared.CodexServiceTier
+
+// This is an alias to an internal value.
+const CodexServiceTierUnspecified = shared.CodexServiceTierUnspecified
+
+// This is an alias to an internal value.
+const CodexServiceTierFast = shared.CodexServiceTierFast
+
+// CodexSettings contains settings consumed only by the Codex app agent.
+//
+// This is an alias to an internal type.
+type CodexSettingsParam = shared.CodexSettingsParam
+
 // This is an alias to an internal type.
 type CountResponseRelation = shared.CountResponseRelation
 

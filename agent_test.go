@@ -272,10 +272,10 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			Payload: gitpod.F("payload"),
 			Type:    gitpod.F(gitpod.TypeUnspecified),
 		}),
-		CodexSettings: gitpod.F(gitpod.CodexSettingsParam{
-			Model:           gitpod.F(gitpod.CodexOpenAIModelUnspecified),
-			ReasoningEffort: gitpod.F(gitpod.CodexReasoningEffortUnspecified),
-			ServiceTier:     gitpod.F(gitpod.CodexServiceTierUnspecified),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
 		}),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
 			ID:        gitpod.F("id"),
@@ -379,10 +379,10 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 				URL:      gitpod.F("url"),
 			}),
 		}),
-		CodexSettings: gitpod.F(gitpod.CodexSettingsParam{
-			Model:           gitpod.F(gitpod.CodexOpenAIModelUnspecified),
-			ReasoningEffort: gitpod.F(gitpod.CodexReasoningEffortUnspecified),
-			ServiceTier:     gitpod.F(gitpod.CodexServiceTierUnspecified),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
 		}),
 		Mode:             gitpod.F(gitpod.AgentModeUnspecified),
 		Name:             gitpod.F("name"),
