@@ -108,6 +108,20 @@ type AgentPolicy struct {
 	// scm_tools_disabled controls whether SCM (Source Control Management) tools are
 	// disabled for agents
 	ScmToolsDisabled bool `json:"scmToolsDisabled" api:"required"`
+	// allowed_agent_ids contains the agent IDs users may select when the codex_rollout
+	// feature flag is enabled. Empty means all agents are allowed.
+	AllowedAgentIDs []string `json:"allowedAgentIds"`
+	// allowed_codex_models contains the Codex models users may select when the
+	// codex_rollout feature flag is enabled. Empty means all Codex models are allowed.
+	AllowedCodexModels []shared.CodexOpenAIModel `json:"allowedCodexModels"`
+	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users may
+	// select when the codex_rollout feature flag is enabled. Empty means all Codex
+	// reasoning efforts are allowed.
+	AllowedCodexReasoningEfforts []shared.CodexReasoningEffort `json:"allowedCodexReasoningEfforts"`
+	// allowed_codex_service_tiers contains the Codex service tiers users may select
+	// when the codex_rollout feature flag is enabled. Empty means all Codex service
+	// tiers are allowed.
+	AllowedCodexServiceTiers []shared.CodexServiceTier `json:"allowedCodexServiceTiers"`
 	// conversation_sharing_policy controls whether agent conversations can be shared
 	ConversationSharingPolicy ConversationSharingPolicy `json:"conversationSharingPolicy"`
 	// max_subagents_per_environment limits the number of non-terminal sub-agents a
@@ -122,14 +136,18 @@ type AgentPolicy struct {
 
 // agentPolicyJSON contains the JSON metadata for the struct [AgentPolicy]
 type agentPolicyJSON struct {
-	CommandDenyList            apijson.Field
-	McpDisabled                apijson.Field
-	ScmToolsDisabled           apijson.Field
-	ConversationSharingPolicy  apijson.Field
-	MaxSubagentsPerEnvironment apijson.Field
-	ScmToolsAllowedGroupID     apijson.Field
-	raw                        string
-	ExtraFields                map[string]apijson.Field
+	CommandDenyList              apijson.Field
+	McpDisabled                  apijson.Field
+	ScmToolsDisabled             apijson.Field
+	AllowedAgentIDs              apijson.Field
+	AllowedCodexModels           apijson.Field
+	AllowedCodexReasoningEfforts apijson.Field
+	AllowedCodexServiceTiers     apijson.Field
+	ConversationSharingPolicy    apijson.Field
+	MaxSubagentsPerEnvironment   apijson.Field
+	ScmToolsAllowedGroupID       apijson.Field
+	raw                          string
+	ExtraFields                  map[string]apijson.Field
 }
 
 func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
@@ -803,6 +821,20 @@ func (r OrganizationPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
 
 // agent_policy contains agent-specific policy settings
 type OrganizationPolicyUpdateParamsAgentPolicy struct {
+	// allowed_agent_ids contains the agent IDs users may select when the codex_rollout
+	// feature flag is enabled. Empty means all agents are allowed.
+	AllowedAgentIDs param.Field[[]string] `json:"allowedAgentIds"`
+	// allowed_codex_models contains the Codex models users may select when the
+	// codex_rollout feature flag is enabled. Empty means all Codex models are allowed.
+	AllowedCodexModels param.Field[[]shared.CodexOpenAIModel] `json:"allowedCodexModels"`
+	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users may
+	// select when the codex_rollout feature flag is enabled. Empty means all Codex
+	// reasoning efforts are allowed.
+	AllowedCodexReasoningEfforts param.Field[[]shared.CodexReasoningEffort] `json:"allowedCodexReasoningEfforts"`
+	// allowed_codex_service_tiers contains the Codex service tiers users may select
+	// when the codex_rollout feature flag is enabled. Empty means all Codex service
+	// tiers are allowed.
+	AllowedCodexServiceTiers param.Field[[]shared.CodexServiceTier] `json:"allowedCodexServiceTiers"`
 	// command_deny_list contains a list of commands that agents are not allowed to
 	// execute
 	CommandDenyList param.Field[[]string] `json:"commandDenyList"`
