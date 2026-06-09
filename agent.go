@@ -1081,10 +1081,19 @@ func (r AgentExecutionStatusFailureReason) IsKnown() bool {
 
 // goal projects the current agent goal, if any.
 type AgentExecutionStatusGoal struct {
+	// created_at is when the current goal was created, when available.
+	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// objective is the current goal text tracked by the agent.
 	Objective string `json:"objective"`
 	// status is the lifecycle state of the current goal.
-	Status AgentExecutionStatusGoalStatus `json:"status"`
+	Status GoalStatus `json:"status"`
+	// time_used is the elapsed wall-clock time reported by the agent for this goal.
+	TimeUsed string `json:"timeUsed" format:"regex"`
+	// token_budget is the token budget reported by the agent for this goal, when one
+	// exists.
+	TokenBudget string `json:"tokenBudget" api:"nullable"`
+	// tokens_used is the token usage reported by the agent for this goal.
+	TokensUsed string `json:"tokensUsed"`
 	// updated_at is the most recent goal update timestamp, when available.
 	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
 	JSON      agentExecutionStatusGoalJSON `json:"-"`
@@ -1093,8 +1102,12 @@ type AgentExecutionStatusGoal struct {
 // agentExecutionStatusGoalJSON contains the JSON metadata for the struct
 // [AgentExecutionStatusGoal]
 type agentExecutionStatusGoalJSON struct {
+	CreatedAt   apijson.Field
 	Objective   apijson.Field
 	Status      apijson.Field
+	TimeUsed    apijson.Field
+	TokenBudget apijson.Field
+	TokensUsed  apijson.Field
 	UpdatedAt   apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -1106,25 +1119,6 @@ func (r *AgentExecutionStatusGoal) UnmarshalJSON(data []byte) (err error) {
 
 func (r agentExecutionStatusGoalJSON) RawJSON() string {
 	return r.raw
-}
-
-// status is the lifecycle state of the current goal.
-type AgentExecutionStatusGoalStatus string
-
-const (
-	AgentExecutionStatusGoalStatusGoalStatusUnspecified     AgentExecutionStatusGoalStatus = "GOAL_STATUS_UNSPECIFIED"
-	AgentExecutionStatusGoalStatusGoalStatusActive          AgentExecutionStatusGoalStatus = "GOAL_STATUS_ACTIVE"
-	AgentExecutionStatusGoalStatusGoalStatusPaused          AgentExecutionStatusGoalStatus = "GOAL_STATUS_PAUSED"
-	AgentExecutionStatusGoalStatusGoalStatusCompleted       AgentExecutionStatusGoalStatus = "GOAL_STATUS_COMPLETED"
-	AgentExecutionStatusGoalStatusGoalStatusBudgetExhausted AgentExecutionStatusGoalStatus = "GOAL_STATUS_BUDGET_EXHAUSTED"
-)
-
-func (r AgentExecutionStatusGoalStatus) IsKnown() bool {
-	switch r {
-	case AgentExecutionStatusGoalStatusGoalStatusUnspecified, AgentExecutionStatusGoalStatusGoalStatusActive, AgentExecutionStatusGoalStatusGoalStatusPaused, AgentExecutionStatusGoalStatusGoalStatusCompleted, AgentExecutionStatusGoalStatusGoalStatusBudgetExhausted:
-		return true
-	}
-	return false
 }
 
 // MCPIntegrationStatus represents the status of a single MCP integration within an
@@ -1316,6 +1310,26 @@ const (
 func (r AgentMode) IsKnown() bool {
 	switch r {
 	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec, AgentModeGoal:
+		return true
+	}
+	return false
+}
+
+type GoalStatus string
+
+const (
+	GoalStatusUnspecified     GoalStatus = "GOAL_STATUS_UNSPECIFIED"
+	GoalStatusActive          GoalStatus = "GOAL_STATUS_ACTIVE"
+	GoalStatusPaused          GoalStatus = "GOAL_STATUS_PAUSED"
+	GoalStatusCompleted       GoalStatus = "GOAL_STATUS_COMPLETED"
+	GoalStatusBudgetExhausted GoalStatus = "GOAL_STATUS_BUDGET_EXHAUSTED"
+	GoalStatusBlocked         GoalStatus = "GOAL_STATUS_BLOCKED"
+	GoalStatusUsageLimited    GoalStatus = "GOAL_STATUS_USAGE_LIMITED"
+)
+
+func (r GoalStatus) IsKnown() bool {
+	switch r {
+	case GoalStatusUnspecified, GoalStatusActive, GoalStatusPaused, GoalStatusCompleted, GoalStatusBudgetExhausted, GoalStatusBlocked, GoalStatusUsageLimited:
 		return true
 	}
 	return false

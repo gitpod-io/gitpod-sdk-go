@@ -100,6 +100,7 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentCodeContext">AgentCodeContext</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentExecution">AgentExecution</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#AgentMode">AgentMode</a>
+- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#GoalStatus">GoalStatus</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#Prompt">Prompt</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#PromptMetadata">PromptMetadata</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#PromptSpec">PromptSpec</a>
