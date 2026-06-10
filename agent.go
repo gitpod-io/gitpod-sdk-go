@@ -794,10 +794,9 @@ type AgentExecutionSpec struct {
 	AgentID     string           `json:"agentId" format:"uuid"`
 	CodeContext AgentCodeContext `json:"codeContext"`
 	// desired_phase is the desired phase of the agent run
-	DesiredPhase   AgentExecutionSpecDesiredPhase    `json:"desiredPhase"`
-	Limits         AgentExecutionSpecLimits          `json:"limits"`
-	LoopConditions []AgentExecutionSpecLoopCondition `json:"loopConditions"`
-	Session        string                            `json:"session"`
+	DesiredPhase AgentExecutionSpecDesiredPhase `json:"desiredPhase"`
+	Limits       AgentExecutionSpecLimits       `json:"limits"`
+	Session      string                         `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -808,15 +807,14 @@ type AgentExecutionSpec struct {
 // agentExecutionSpecJSON contains the JSON metadata for the struct
 // [AgentExecutionSpec]
 type agentExecutionSpecJSON struct {
-	AgentID        apijson.Field
-	CodeContext    apijson.Field
-	DesiredPhase   apijson.Field
-	Limits         apijson.Field
-	LoopConditions apijson.Field
-	Session        apijson.Field
-	SpecVersion    apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	AgentID      apijson.Field
+	CodeContext  apijson.Field
+	DesiredPhase apijson.Field
+	Limits       apijson.Field
+	Session      apijson.Field
+	SpecVersion  apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *AgentExecutionSpec) UnmarshalJSON(data []byte) (err error) {
@@ -868,31 +866,6 @@ func (r *AgentExecutionSpecLimits) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r agentExecutionSpecLimitsJSON) RawJSON() string {
-	return r.raw
-}
-
-type AgentExecutionSpecLoopCondition struct {
-	ID          string                              `json:"id"`
-	Description string                              `json:"description"`
-	Expression  string                              `json:"expression"`
-	JSON        agentExecutionSpecLoopConditionJSON `json:"-"`
-}
-
-// agentExecutionSpecLoopConditionJSON contains the JSON metadata for the struct
-// [AgentExecutionSpecLoopCondition]
-type agentExecutionSpecLoopConditionJSON struct {
-	ID          apijson.Field
-	Description apijson.Field
-	Expression  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AgentExecutionSpecLoopCondition) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r agentExecutionSpecLoopConditionJSON) RawJSON() string {
 	return r.raw
 }
 
