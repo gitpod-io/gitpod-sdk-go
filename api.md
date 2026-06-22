@@ -549,9 +549,6 @@ Params Types:
 
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ConversationSharingPolicy">ConversationSharingPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#KernelControlsAction">KernelControlsAction</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaultEnvironmentClassParam">ProjectCreationDefaultEnvironmentClassParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaultEnvironmentClassWarmPoolParam">ProjectCreationDefaultEnvironmentClassWarmPoolParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaultsPrebuildsParam">ProjectCreationDefaultsPrebuildsParam</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#VetoExecPolicyParam">VetoExecPolicyParam</a>
 
 Response Types:
@@ -561,10 +558,6 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#CrowdStrikeConfig">CrowdStrikeConfig</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#KernelControlsAction">KernelControlsAction</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationPolicies">OrganizationPolicies</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaultEnvironmentClass">ProjectCreationDefaultEnvironmentClass</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaultEnvironmentClassWarmPool">ProjectCreationDefaultEnvironmentClassWarmPool</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaults">ProjectCreationDefaults</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ProjectCreationDefaultsPrebuilds">ProjectCreationDefaultsPrebuilds</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#SecurityAgentPolicy">SecurityAgentPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#VetoExecPolicy">VetoExecPolicy</a>
 - <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#OrganizationPolicyGetResponse">OrganizationPolicyGetResponse</a>

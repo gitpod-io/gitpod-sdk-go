@@ -85,37 +85,8 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		MembersCreateProjects:             gitpod.F(true),
 		MembersRequireProjects:            gitpod.F(true),
 		PortSharingDisabled:               gitpod.F(true),
-		ProjectCreationDefaults: gitpod.F(gitpod.OrganizationPolicyUpdateParamsProjectCreationDefaults{
-			EnvironmentClasses: gitpod.F([]gitpod.ProjectCreationDefaultEnvironmentClassParam{{
-				EnvironmentClassID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-				Order:              gitpod.F(int64(0)),
-				Prebuild:           gitpod.F(true),
-				WarmPool: gitpod.F(gitpod.ProjectCreationDefaultEnvironmentClassWarmPoolParam{
-					Enabled: gitpod.F(true),
-					MaxSize: gitpod.F(int64(20)),
-					MinSize: gitpod.F(int64(20)),
-				}),
-			}}),
-			InsightsEnabled: gitpod.F(true),
-			Prebuilds: gitpod.F(gitpod.OrganizationPolicyUpdateParamsProjectCreationDefaultsPrebuilds{
-				Disabled: gitpod.F[any](map[string]interface{}{}),
-				Enabled: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsParam{
-					EnableJetbrainsWarmup: gitpod.F(true),
-					PrebuildExecutor: gitpod.F(shared.SubjectParam{
-						ID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
-						Principal: gitpod.F(shared.PrincipalUnspecified),
-					}),
-					Timeout: gitpod.F("+9125115.360s"),
-					Trigger: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsTriggerParam{
-						DailySchedule: gitpod.F(gitpod.ProjectCreationDefaultsPrebuildsTriggerDailyScheduleParam{
-							HourUtc: gitpod.F(int64(23)),
-						}),
-					}),
-				}),
-			}),
-		}),
-		RequireCustomDomainAccess:     gitpod.F(true),
-		RestrictAccountCreationToScim: gitpod.F(true),
+		RequireCustomDomainAccess:         gitpod.F(true),
+		RestrictAccountCreationToScim:     gitpod.F(true),
 		SecurityAgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicy{
 			Crowdstrike: gitpod.F(gitpod.OrganizationPolicyUpdateParamsSecurityAgentPolicyCrowdstrike{
 				AdditionalOptions: gitpod.F(map[string]string{
