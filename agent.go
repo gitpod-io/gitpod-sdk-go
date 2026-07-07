@@ -909,7 +909,7 @@ type AgentExecutionStatus struct {
 	// order. If a.status_version < b.status_version then a was the status before b.
 	StatusVersion string `json:"statusVersion"`
 	// supported_model is the LLM model being used by the agent execution.
-	SupportedModel AgentExecutionStatusSupportedModel `json:"supportedModel"`
+	SupportedModel SupportedModel `json:"supportedModel"`
 	// transcript_url is the URL to the LLM transcript (all messages exchanged between
 	// the agent and the LLM) of the agent run.
 	TranscriptURL string `json:"transcriptUrl"`
@@ -1190,45 +1190,6 @@ const (
 func (r AgentExecutionStatusPhase) IsKnown() bool {
 	switch r {
 	case AgentExecutionStatusPhasePhaseUnspecified, AgentExecutionStatusPhasePhasePending, AgentExecutionStatusPhasePhaseRunning, AgentExecutionStatusPhasePhaseWaitingForInput, AgentExecutionStatusPhasePhaseStopped:
-		return true
-	}
-	return false
-}
-
-// supported_model is the LLM model being used by the agent execution.
-type AgentExecutionStatusSupportedModel string
-
-const (
-	AgentExecutionStatusSupportedModelSupportedModelUnspecified       AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_UNSPECIFIED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet3_5         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_3_5"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet3_7         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_3_7"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet3_7Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_3_7_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_5         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_5"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_5_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_6         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_6"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_6Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_6_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet5           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_5"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4             AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4Extended     AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_5           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_5"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_5_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_6           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_6"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_6_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_7           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_7"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_8           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_8"
-	AgentExecutionStatusSupportedModelSupportedModelHaiku4_5          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_HAIKU_4_5"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAI4O          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_4O"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini      AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_4O_MINI"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAIO1          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_O1"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAIO1Mini      AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_O1_MINI"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAIAuto        AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_AUTO"
-)
-
-func (r AgentExecutionStatusSupportedModel) IsKnown() bool {
-	switch r {
-	case AgentExecutionStatusSupportedModelSupportedModelUnspecified, AgentExecutionStatusSupportedModelSupportedModelSonnet3_5, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4, AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_6, AgentExecutionStatusSupportedModelSupportedModelSonnet4_6Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet5, AgentExecutionStatusSupportedModelSupportedModelOpus4, AgentExecutionStatusSupportedModelSupportedModelOpus4Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_5, AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_6, AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_7, AgentExecutionStatusSupportedModelSupportedModelOpus4_8, AgentExecutionStatusSupportedModelSupportedModelHaiku4_5, AgentExecutionStatusSupportedModelSupportedModelOpenAI4O, AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1Mini, AgentExecutionStatusSupportedModelSupportedModelOpenAIAuto:
 		return true
 	}
 	return false
