@@ -17,10 +17,12 @@ import (
 // interacting with the gitpod API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options      []option.RequestOption
-	Accounts     *AccountService
-	Agents       *AgentService
-	Automations  *AutomationService
+	Options     []option.RequestOption
+	Accounts    *AccountService
+	Agents      *AgentService
+	Automations *AutomationService
+	// BillingService provides billing and subscription management functionality.
+	Billing      *BillingService
 	Editors      *EditorService
 	Environments *EnvironmentService
 	// ErrorsService provides endpoints for clients to report errors that will be sent
@@ -76,6 +78,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Accounts = NewAccountService(opts...)
 	r.Agents = NewAgentService(opts...)
 	r.Automations = NewAutomationService(opts...)
+	r.Billing = NewBillingService(opts...)
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
 	r.Errors = NewErrorService(opts...)

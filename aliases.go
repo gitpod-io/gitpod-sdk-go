@@ -72,6 +72,15 @@ const CodexOpenAIModelGpt5_3CodexSpark = shared.CodexOpenAIModelGpt5_3CodexSpark
 // This is an alias to an internal value.
 const CodexOpenAIModelGpt5_2 = shared.CodexOpenAIModelGpt5_2
 
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_6Sol = shared.CodexOpenAIModelGpt5_6Sol
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_6Terra = shared.CodexOpenAIModelGpt5_6Terra
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_6Luna = shared.CodexOpenAIModelGpt5_6Luna
+
 // CodexReasoningEffort is the static allowlist of reasoning efforts supported by
 // the Codex app runtime.
 //
@@ -121,6 +130,11 @@ const CountResponseRelationEq = shared.CountResponseRelationEq
 
 // This is an alias to an internal value.
 const CountResponseRelationGte = shared.CountResponseRelationGte
+
+// DateRange specifies a time period for queries.
+//
+// This is an alias to an internal type.
+type DateRangeParam = shared.DateRangeParam
 
 // This is an alias to an internal type.
 type EnvironmentClass = shared.EnvironmentClass

@@ -3869,6 +3869,130 @@ func (r *TasksPageAutoPager[T]) Index() int {
 	return r.run
 }
 
+type TeamUsagePagePagination struct {
+	NextToken string                      `json:"nextToken"`
+	JSON      teamUsagePagePaginationJSON `json:"-"`
+}
+
+// teamUsagePagePaginationJSON contains the JSON metadata for the struct
+// [TeamUsagePagePagination]
+type teamUsagePagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TeamUsagePagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r teamUsagePagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type TeamUsagePage[T any] struct {
+	Pagination TeamUsagePagePagination `json:"pagination"`
+	TeamUsage  []T                     `json:"teamUsage"`
+	JSON       teamUsagePageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// teamUsagePageJSON contains the JSON metadata for the struct [TeamUsagePage[T]]
+type teamUsagePageJSON struct {
+	Pagination  apijson.Field
+	TeamUsage   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *TeamUsagePage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r teamUsagePageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *TeamUsagePage[T]) GetNextPage() (res *TeamUsagePage[T], err error) {
+	if len(r.TeamUsage) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *TeamUsagePage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &TeamUsagePage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type TeamUsagePageAutoPager[T any] struct {
+	page *TeamUsagePage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewTeamUsagePageAutoPager[T any](page *TeamUsagePage[T], err error) *TeamUsagePageAutoPager[T] {
+	return &TeamUsagePageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *TeamUsagePageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.TeamUsage) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.TeamUsage) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.TeamUsage) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.TeamUsage[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *TeamUsagePageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *TeamUsagePageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *TeamUsagePageAutoPager[T]) Index() int {
+	return r.run
+}
+
 type TokensPagePagination struct {
 	NextToken string                   `json:"nextToken"`
 	JSON      tokensPagePaginationJSON `json:"-"`
@@ -3990,6 +4114,130 @@ func (r *TokensPageAutoPager[T]) Err() error {
 }
 
 func (r *TokensPageAutoPager[T]) Index() int {
+	return r.run
+}
+
+type UserUsagePagePagination struct {
+	NextToken string                      `json:"nextToken"`
+	JSON      userUsagePagePaginationJSON `json:"-"`
+}
+
+// userUsagePagePaginationJSON contains the JSON metadata for the struct
+// [UserUsagePagePagination]
+type userUsagePagePaginationJSON struct {
+	NextToken   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *UserUsagePagePagination) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r userUsagePagePaginationJSON) RawJSON() string {
+	return r.raw
+}
+
+type UserUsagePage[T any] struct {
+	Pagination UserUsagePagePagination `json:"pagination"`
+	UserUsage  []T                     `json:"userUsage"`
+	JSON       userUsagePageJSON       `json:"-"`
+	cfg        *requestconfig.RequestConfig
+	res        *http.Response
+}
+
+// userUsagePageJSON contains the JSON metadata for the struct [UserUsagePage[T]]
+type userUsagePageJSON struct {
+	Pagination  apijson.Field
+	UserUsage   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *UserUsagePage[T]) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r userUsagePageJSON) RawJSON() string {
+	return r.raw
+}
+
+// GetNextPage returns the next page as defined by this pagination style. When
+// there is no next page, this function will return a 'nil' for the page value, but
+// will not return an error
+func (r *UserUsagePage[T]) GetNextPage() (res *UserUsagePage[T], err error) {
+	if len(r.UserUsage) == 0 {
+		return nil, nil
+	}
+	next := r.Pagination.NextToken
+	if len(next) == 0 {
+		return nil, nil
+	}
+	cfg := r.cfg.Clone(r.cfg.Context)
+	err = cfg.Apply(option.WithQuery("token", next))
+	if err != nil {
+		return nil, err
+	}
+	var raw *http.Response
+	cfg.ResponseInto = &raw
+	cfg.ResponseBodyInto = &res
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+func (r *UserUsagePage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+	if r == nil {
+		r = &UserUsagePage[T]{}
+	}
+	r.cfg = cfg
+	r.res = res
+}
+
+type UserUsagePageAutoPager[T any] struct {
+	page *UserUsagePage[T]
+	cur  T
+	idx  int
+	run  int
+	err  error
+}
+
+func NewUserUsagePageAutoPager[T any](page *UserUsagePage[T], err error) *UserUsagePageAutoPager[T] {
+	return &UserUsagePageAutoPager[T]{
+		page: page,
+		err:  err,
+	}
+}
+
+func (r *UserUsagePageAutoPager[T]) Next() bool {
+	if r.page == nil || len(r.page.UserUsage) == 0 {
+		return false
+	}
+	if r.idx >= len(r.page.UserUsage) {
+		r.idx = 0
+		r.page, r.err = r.page.GetNextPage()
+		if r.err != nil || r.page == nil || len(r.page.UserUsage) == 0 {
+			return false
+		}
+	}
+	r.cur = r.page.UserUsage[r.idx]
+	r.run += 1
+	r.idx += 1
+	return true
+}
+
+func (r *UserUsagePageAutoPager[T]) Current() T {
+	return r.cur
+}
+
+func (r *UserUsagePageAutoPager[T]) Err() error {
+	return r.err
+}
+
+func (r *UserUsagePageAutoPager[T]) Index() int {
 	return r.run
 }
 
