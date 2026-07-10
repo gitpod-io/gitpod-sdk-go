@@ -15,6 +15,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 	"github.com/gitpod-io/gitpod-sdk-go/packages/pagination"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 // UsageService provides usage information about environments, users, and projects.
@@ -519,18 +520,6 @@ func (r CoAuthorTool) IsKnown() bool {
 	return false
 }
 
-// DateRange specifies a time period for queries.
-type DateRangeParam struct {
-	// End time of the date range (exclusive).
-	EndTime param.Field[time.Time] `json:"endTime" api:"required" format:"date-time"`
-	// Start time of the date range (inclusive).
-	StartTime param.Field[time.Time] `json:"startTime" api:"required" format:"date-time"`
-}
-
-func (r DateRangeParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
 // EnvironmentUsageRecord represents a record of an environment from start to stop.
 type EnvironmentUsageRecord struct {
 	// Environment usage record ID.
@@ -972,7 +961,7 @@ func (r usageGetPrTimeSeriesResponseJSON) RawJSON() string {
 
 type UsageGetAdoptionUsageSummaryParams struct {
 	// Date range to query metrics within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to filter metrics by.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Optional team ID to scope results to members of a specific team.
@@ -987,7 +976,7 @@ func (r UsageGetAdoptionUsageSummaryParams) MarshalJSON() (data []byte, err erro
 
 type UsageGetAgentTraceSummaryParams struct {
 	// Date range to query within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to scope results.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Optional team ID to scope results to a specific team. Mutually exclusive with
@@ -1004,7 +993,7 @@ func (r UsageGetAgentTraceSummaryParams) MarshalJSON() (data []byte, err error) 
 
 type UsageGetAgentTraceTimeSeriesParams struct {
 	// Date range to query within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to scope results.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Time resolution for the series data.
@@ -1023,7 +1012,7 @@ func (r UsageGetAgentTraceTimeSeriesParams) MarshalJSON() (data []byte, err erro
 
 type UsageGetCoAuthorSummaryParams struct {
 	// Date range to query within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to scope results.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Optional team ID to scope results to a specific team. Mutually exclusive with
@@ -1040,7 +1029,7 @@ func (r UsageGetCoAuthorSummaryParams) MarshalJSON() (data []byte, err error) {
 
 type UsageGetCoAuthorTimeSeriesParams struct {
 	// Date range to query within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to scope results.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Time resolution for the series data.
@@ -1059,7 +1048,7 @@ func (r UsageGetCoAuthorTimeSeriesParams) MarshalJSON() (data []byte, err error)
 
 type UsageGetPrSummaryParams struct {
 	// Date range to query within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to scope results.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Optional team ID to scope results to a specific team. Mutually exclusive with
@@ -1076,7 +1065,7 @@ func (r UsageGetPrSummaryParams) MarshalJSON() (data []byte, err error) {
 
 type UsageGetPrTimeSeriesParams struct {
 	// Date range to query within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to scope results.
 	ProjectID param.Field[string] `json:"projectId"`
 	// Time resolution for the series data.
@@ -1118,7 +1107,7 @@ func (r UsageListEnvironmentRuntimeRecordsParams) URLQuery() (v url.Values) {
 // Filter options.
 type UsageListEnvironmentRuntimeRecordsParamsFilter struct {
 	// Date range to query runtime records within.
-	DateRange param.Field[DateRangeParam] `json:"dateRange" api:"required"`
+	DateRange param.Field[shared.DateRangeParam] `json:"dateRange" api:"required"`
 	// Optional project ID to filter runtime records by.
 	ProjectID param.Field[string] `json:"projectId"`
 }

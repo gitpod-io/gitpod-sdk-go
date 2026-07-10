@@ -93,11 +93,14 @@ const (
 	CodexOpenAIModelGpt5_3Codex      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX"
 	CodexOpenAIModelGpt5_3CodexSpark CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK"
 	CodexOpenAIModelGpt5_2           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_2"
+	CodexOpenAIModelGpt5_6Sol        CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_6_SOL"
+	CodexOpenAIModelGpt5_6Terra      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA"
+	CodexOpenAIModelGpt5_6Luna       CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA"
 )
 
 func (r CodexOpenAIModel) IsKnown() bool {
 	switch r {
-	case CodexOpenAIModelUnspecified, CodexOpenAIModelGpt5_5, CodexOpenAIModelGpt5_4, CodexOpenAIModelGpt5_4Mini, CodexOpenAIModelGpt5_3Codex, CodexOpenAIModelGpt5_3CodexSpark, CodexOpenAIModelGpt5_2:
+	case CodexOpenAIModelUnspecified, CodexOpenAIModelGpt5_5, CodexOpenAIModelGpt5_4, CodexOpenAIModelGpt5_4Mini, CodexOpenAIModelGpt5_3Codex, CodexOpenAIModelGpt5_3CodexSpark, CodexOpenAIModelGpt5_2, CodexOpenAIModelGpt5_6Sol, CodexOpenAIModelGpt5_6Terra, CodexOpenAIModelGpt5_6Luna:
 		return true
 	}
 	return false
@@ -171,6 +174,18 @@ func (r CountResponseRelation) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// DateRange specifies a time period for queries.
+type DateRangeParam struct {
+	// End time of the date range (exclusive).
+	EndTime param.Field[time.Time] `json:"endTime" api:"required" format:"date-time"`
+	// Start time of the date range (inclusive).
+	StartTime param.Field[time.Time] `json:"startTime" api:"required" format:"date-time"`
+}
+
+func (r DateRangeParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type EnvironmentClass struct {
