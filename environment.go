@@ -672,15 +672,16 @@ func (r EnvironmentPhase) IsKnown() bool {
 type EnvironmentRole string
 
 const (
-	EnvironmentRoleUnspecified EnvironmentRole = "ENVIRONMENT_ROLE_UNSPECIFIED"
-	EnvironmentRoleDefault     EnvironmentRole = "ENVIRONMENT_ROLE_DEFAULT"
-	EnvironmentRolePrebuild    EnvironmentRole = "ENVIRONMENT_ROLE_PREBUILD"
-	EnvironmentRoleWorkflow    EnvironmentRole = "ENVIRONMENT_ROLE_WORKFLOW"
+	EnvironmentRoleUnspecified       EnvironmentRole = "ENVIRONMENT_ROLE_UNSPECIFIED"
+	EnvironmentRoleDefault           EnvironmentRole = "ENVIRONMENT_ROLE_DEFAULT"
+	EnvironmentRolePrebuild          EnvironmentRole = "ENVIRONMENT_ROLE_PREBUILD"
+	EnvironmentRoleWorkflow          EnvironmentRole = "ENVIRONMENT_ROLE_WORKFLOW"
+	EnvironmentRoleBaseSnapshotBuild EnvironmentRole = "ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD"
 )
 
 func (r EnvironmentRole) IsKnown() bool {
 	switch r {
-	case EnvironmentRoleUnspecified, EnvironmentRoleDefault, EnvironmentRolePrebuild, EnvironmentRoleWorkflow:
+	case EnvironmentRoleUnspecified, EnvironmentRoleDefault, EnvironmentRolePrebuild, EnvironmentRoleWorkflow, EnvironmentRoleBaseSnapshotBuild:
 		return true
 	}
 	return false
