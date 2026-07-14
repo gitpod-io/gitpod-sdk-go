@@ -359,6 +359,8 @@ type Secret struct {
 	// Deprecated: deprecated
 	ProjectID string      `json:"projectId" format:"uuid"`
 	Scope     SecretScope `json:"scope"`
+	// Source of the secret
+	Source SecretSource `json:"source"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -464,6 +466,7 @@ type secretJSON struct {
 	Name                           apijson.Field
 	ProjectID                      apijson.Field
 	Scope                          apijson.Field
+	Source                         apijson.Field
 	UpdatedAt                      apijson.Field
 	raw                            string
 	ExtraFields                    map[string]apijson.Field
@@ -506,6 +509,57 @@ func (r *SecretCredentialProxy) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r secretCredentialProxyJSON) RawJSON() string {
+	return r.raw
+}
+
+// Source of the secret
+type SecretSource struct {
+	OidcJfrog SecretSourceOidcJfrog `json:"oidcJfrog"`
+	Verbatim  bool                  `json:"verbatim"`
+	JSON      secretSourceJSON      `json:"-"`
+}
+
+// secretSourceJSON contains the JSON metadata for the struct [SecretSource]
+type secretSourceJSON struct {
+	OidcJfrog   apijson.Field
+	Verbatim    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretSource) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretSourceJSON) RawJSON() string {
+	return r.raw
+}
+
+type SecretSourceOidcJfrog struct {
+	// host must be a hostname or IP address with optional port:
+	//
+	// ```
+	// this.matches("^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?[.])*[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(:([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$")
+	// ```
+	Host         string                    `json:"host"`
+	ProviderName string                    `json:"providerName"`
+	JSON         secretSourceOidcJfrogJSON `json:"-"`
+}
+
+// secretSourceOidcJfrogJSON contains the JSON metadata for the struct
+// [SecretSourceOidcJfrog]
+type secretSourceOidcJfrogJSON struct {
+	Host         apijson.Field
+	ProviderName apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *SecretSourceOidcJfrog) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretSourceOidcJfrogJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -630,7 +684,10 @@ type SecretNewParams struct {
 	ProjectID param.Field[string] `json:"projectId"`
 	// scope is the scope of the secret
 	Scope param.Field[SecretScopeParam] `json:"scope"`
-	// value is the plaintext value of the secret
+	// source is the source of the secret, possibly verbatim value
+	Source param.Field[SecretNewParamsSource] `json:"source"`
+	// value is the plaintext value of the secret. When set, source must be unset or
+	// verbatim.
 	Value param.Field[string] `json:"value"`
 }
 
@@ -653,6 +710,30 @@ type SecretNewParamsCredentialProxy struct {
 }
 
 func (r SecretNewParamsCredentialProxy) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// source is the source of the secret, possibly verbatim value
+type SecretNewParamsSource struct {
+	OidcJfrog param.Field[SecretNewParamsSourceOidcJfrog] `json:"oidcJfrog"`
+	Verbatim  param.Field[bool]                           `json:"verbatim"`
+}
+
+func (r SecretNewParamsSource) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type SecretNewParamsSourceOidcJfrog struct {
+	// host must be a hostname or IP address with optional port:
+	//
+	// ```
+	// this.matches("^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?[.])*[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(:([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$")
+	// ```
+	Host         param.Field[string] `json:"host"`
+	ProviderName param.Field[string] `json:"providerName"`
+}
+
+func (r SecretNewParamsSourceOidcJfrog) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

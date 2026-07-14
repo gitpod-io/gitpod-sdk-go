@@ -43,6 +43,13 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 			ServiceAccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			UserID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		}),
+		Source: gitpod.F(gitpod.SecretNewParamsSource{
+			OidcJfrog: gitpod.F(gitpod.SecretNewParamsSourceOidcJfrog{
+				Host:         gitpod.F("x"),
+				ProviderName: gitpod.F("x"),
+			}),
+			Verbatim: gitpod.F(true),
+		}),
 		Value: gitpod.F("postgresql://user:pass@localhost:5432/db"),
 	})
 	if err != nil {
