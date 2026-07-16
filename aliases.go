@@ -655,6 +655,12 @@ const ResourceTypeNotification = shared.ResourceTypeNotification
 // This is an alias to an internal value.
 const ResourceTypeSecurityPolicy = shared.ResourceTypeSecurityPolicy
 
+// This is an alias to an internal value.
+const ResourceTypeBaseSnapshot = shared.ResourceTypeBaseSnapshot
+
+// This is an alias to an internal value.
+const ResourceTypeBaseSnapshotConfig = shared.ResourceTypeBaseSnapshotConfig
+
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn
 
