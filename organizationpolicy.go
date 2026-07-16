@@ -111,8 +111,11 @@ type AgentPolicy struct {
 	// allowed_agent_ids contains the agent IDs users may select when the codex_rollout
 	// feature flag is enabled. Empty means all agents are allowed.
 	AllowedAgentIDs []string `json:"allowedAgentIds"`
-	// allowed_codex_models contains the Codex models users may select when the
-	// codex_rollout feature flag is enabled. Empty means all Codex models are allowed.
+	// Deprecated: use codex_model_policy. This legacy allowlist cannot distinguish
+	// omitted from intentionally empty on update requests. Empty means all Codex
+	// models are allowed.
+	//
+	// Deprecated: deprecated
 	AllowedCodexModels []shared.CodexOpenAIModel `json:"allowedCodexModels"`
 	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users may
 	// select when the codex_rollout feature flag is enabled. Empty means all Codex
@@ -122,6 +125,9 @@ type AgentPolicy struct {
 	// when the codex_rollout feature flag is enabled. Empty means all Codex service
 	// tiers are allowed.
 	AllowedCodexServiceTiers []shared.CodexServiceTier `json:"allowedCodexServiceTiers"`
+	// codex_model_policy contains explicit per-model Codex availability states.
+	// Missing policy or missing model entries mean allowed.
+	CodexModelPolicy CodexModelPolicy `json:"codexModelPolicy"`
 	// conversation_sharing_policy controls whether agent conversations can be shared
 	ConversationSharingPolicy ConversationSharingPolicy `json:"conversationSharingPolicy"`
 	// max_subagents_per_environment limits the number of non-terminal sub-agents a
@@ -143,6 +149,7 @@ type agentPolicyJSON struct {
 	AllowedCodexModels           apijson.Field
 	AllowedCodexReasoningEfforts apijson.Field
 	AllowedCodexServiceTiers     apijson.Field
+	CodexModelPolicy             apijson.Field
 	ConversationSharingPolicy    apijson.Field
 	MaxSubagentsPerEnvironment   apijson.Field
 	ScmToolsAllowedGroupID       apijson.Field
@@ -156,6 +163,59 @@ func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
 
 func (r agentPolicyJSON) RawJSON() string {
 	return r.raw
+}
+
+// CodexModelPolicy controls per-model availability for Codex.
+type CodexModelPolicy struct {
+	// model_states maps CodexOpenAIModel enum names to explicit policy states. Missing
+	// entries are treated as allowed.
+	ModelStates map[string]CodexModelPolicyModelState `json:"modelStates"`
+	JSON        codexModelPolicyJSON                  `json:"-"`
+}
+
+// codexModelPolicyJSON contains the JSON metadata for the struct
+// [CodexModelPolicy]
+type codexModelPolicyJSON struct {
+	ModelStates apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *CodexModelPolicy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r codexModelPolicyJSON) RawJSON() string {
+	return r.raw
+}
+
+// CodexModelPolicyState describes an explicit per-model Codex availability
+// override.
+type CodexModelPolicyModelState string
+
+const (
+	CodexModelPolicyModelStateCodexModelPolicyStateUnspecified CodexModelPolicyModelState = "CODEX_MODEL_POLICY_STATE_UNSPECIFIED"
+	CodexModelPolicyModelStateCodexModelPolicyStateAllowed     CodexModelPolicyModelState = "CODEX_MODEL_POLICY_STATE_ALLOWED"
+	CodexModelPolicyModelStateCodexModelPolicyStateDisabled    CodexModelPolicyModelState = "CODEX_MODEL_POLICY_STATE_DISABLED"
+)
+
+func (r CodexModelPolicyModelState) IsKnown() bool {
+	switch r {
+	case CodexModelPolicyModelStateCodexModelPolicyStateUnspecified, CodexModelPolicyModelStateCodexModelPolicyStateAllowed, CodexModelPolicyModelStateCodexModelPolicyStateDisabled:
+		return true
+	}
+	return false
+}
+
+// CodexModelPolicy controls per-model availability for Codex.
+type CodexModelPolicyParam struct {
+	// model_states maps CodexOpenAIModel enum names to explicit policy states. Missing
+	// entries are treated as allowed.
+	ModelStates param.Field[map[string]CodexModelPolicyModelState] `json:"modelStates"`
+}
+
+func (r CodexModelPolicyParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // ConversationSharingPolicy controls how agent conversations can be shared.
@@ -552,8 +612,11 @@ type OrganizationPolicyUpdateParamsAgentPolicy struct {
 	// allowed_agent_ids contains the agent IDs users may select when the codex_rollout
 	// feature flag is enabled. Empty means all agents are allowed.
 	AllowedAgentIDs param.Field[[]string] `json:"allowedAgentIds"`
-	// allowed_codex_models contains the Codex models users may select when the
-	// codex_rollout feature flag is enabled. Empty means all Codex models are allowed.
+	// Deprecated: use codex_model_policy. This legacy allowlist cannot distinguish
+	// omitted from intentionally empty on update requests. Empty means all Codex
+	// models are allowed.
+	//
+	// Deprecated: deprecated
 	AllowedCodexModels param.Field[[]shared.CodexOpenAIModel] `json:"allowedCodexModels"`
 	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users may
 	// select when the codex_rollout feature flag is enabled. Empty means all Codex
@@ -563,6 +626,10 @@ type OrganizationPolicyUpdateParamsAgentPolicy struct {
 	// when the codex_rollout feature flag is enabled. Empty means all Codex service
 	// tiers are allowed.
 	AllowedCodexServiceTiers param.Field[[]shared.CodexServiceTier] `json:"allowedCodexServiceTiers"`
+	// codex_model_policy contains explicit per-model Codex availability states. Omit
+	// to leave the current model policy unchanged. Send an empty policy to clear
+	// explicit model states.
+	CodexModelPolicy param.Field[CodexModelPolicyParam] `json:"codexModelPolicy"`
 	// command_deny_list contains a list of commands that agents are not allowed to
 	// execute
 	CommandDenyList param.Field[[]string] `json:"commandDenyList"`
