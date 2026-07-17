@@ -271,7 +271,10 @@ type EventListResponse struct {
 	// Joda Time's
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
-	CreatedAt   time.Time             `json:"createdAt" format:"date-time"`
+	CreatedAt time.Time `json:"createdAt" format:"date-time"`
+	// AuditLogEntryKind identifies the typed details associated with an audit-log
+	// entry. No concrete kinds are defined yet.
+	Kind        EventListResponseKind `json:"kind"`
 	SubjectID   string                `json:"subjectId"`
 	SubjectType shared.ResourceType   `json:"subjectType"`
 	JSON        eventListResponseJSON `json:"-"`
@@ -285,6 +288,7 @@ type eventListResponseJSON struct {
 	ActorID        apijson.Field
 	ActorPrincipal apijson.Field
 	CreatedAt      apijson.Field
+	Kind           apijson.Field
 	SubjectID      apijson.Field
 	SubjectType    apijson.Field
 	raw            string
@@ -297,6 +301,22 @@ func (r *EventListResponse) UnmarshalJSON(data []byte) (err error) {
 
 func (r eventListResponseJSON) RawJSON() string {
 	return r.raw
+}
+
+// AuditLogEntryKind identifies the typed details associated with an audit-log
+// entry. No concrete kinds are defined yet.
+type EventListResponseKind string
+
+const (
+	EventListResponseKindAuditLogEntryKindUnspecified EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_UNSPECIFIED"
+)
+
+func (r EventListResponseKind) IsKnown() bool {
+	switch r {
+	case EventListResponseKindAuditLogEntryKindUnspecified:
+		return true
+	}
+	return false
 }
 
 type EventWatchResponse struct {
