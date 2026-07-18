@@ -360,6 +360,12 @@ type OrganizationPolicies struct {
 	// organization. When configured, security agents are automatically deployed to all
 	// environments.
 	SecurityAgentPolicy SecurityAgentPolicy `json:"securityAgentPolicy"`
+	// security_policy_id references the Veto Exec SecurityPolicy assigned to newly
+	// created environments. The public GA contract accepts policies that use only
+	// SecurityPolicy.Spec.executables. Assignment validates materializability and
+	// rejects unsupported executable selectors or effects. If empty, new environments
+	// have no SecurityPolicy by default.
+	SecurityPolicyID string `json:"securityPolicyId" format:"uuid"`
 	// veto_exec_policy contains the veto exec policy for environments.
 	VetoExecPolicy VetoExecPolicy           `json:"vetoExecPolicy"`
 	JSON           organizationPoliciesJSON `json:"-"`
@@ -388,6 +394,7 @@ type organizationPoliciesJSON struct {
 	MaximumEnvironmentLifetime        apijson.Field
 	MaximumEnvironmentTimeout         apijson.Field
 	SecurityAgentPolicy               apijson.Field
+	SecurityPolicyID                  apijson.Field
 	VetoExecPolicy                    apijson.Field
 	raw                               string
 	ExtraFields                       map[string]apijson.Field
@@ -596,6 +603,12 @@ type OrganizationPolicyUpdateParams struct {
 	RestrictAccountCreationToScim param.Field[bool] `json:"restrictAccountCreationToScim"`
 	// security_agent_policy contains security agent configuration updates
 	SecurityAgentPolicy param.Field[OrganizationPolicyUpdateParamsSecurityAgentPolicy] `json:"securityAgentPolicy"`
+	// security_policy_id assigns a Veto Exec SecurityPolicy to newly created
+	// environments. The public GA contract accepts policies that use only
+	// SecurityPolicy.Spec.executables. Assignment validates materializability and
+	// rejects unsupported executable selectors or effects. Set this field to an empty
+	// string to clear the default assignment.
+	SecurityPolicyID param.Field[string] `json:"securityPolicyId" format:"uuid"`
 	// veto_exec_policy contains the veto exec policy for environments.
 	VetoExecPolicy param.Field[VetoExecPolicyParam] `json:"vetoExecPolicy"`
 	// web_browser_disabled controls whether users can open the built-in web browser
