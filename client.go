@@ -36,10 +36,11 @@ type Client struct {
 	// PrebuildService manages prebuilds for projects to enable faster environment
 	// startup times. Prebuilds create snapshots of environments that can be used to
 	// provision new environments quickly.
-	Prebuilds *PrebuildService
-	Projects  *ProjectService
-	Runners   *RunnerService
-	Secrets   *SecretService
+	Prebuilds        *PrebuildService
+	Projects         *ProjectService
+	Runners          *RunnerService
+	Secrets          *SecretService
+	SecurityPolicies *SecurityPolicyService
 	// UsageService provides usage information about environments, users, and projects.
 	Usage *UsageService
 	Users *UserService
@@ -91,6 +92,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Projects = NewProjectService(opts...)
 	r.Runners = NewRunnerService(opts...)
 	r.Secrets = NewSecretService(opts...)
+	r.SecurityPolicies = NewSecurityPolicyService(opts...)
 	r.Usage = NewUsageService(opts...)
 	r.Users = NewUserService(opts...)
 
