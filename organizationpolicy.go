@@ -272,23 +272,6 @@ func (r crowdStrikeConfigJSON) RawJSON() string {
 	return r.raw
 }
 
-// KernelControlsAction defines how a kernel-level policy violation is handled.
-type KernelControlsAction string
-
-const (
-	KernelControlsActionUnspecified KernelControlsAction = "KERNEL_CONTROLS_ACTION_UNSPECIFIED"
-	KernelControlsActionBlock       KernelControlsAction = "KERNEL_CONTROLS_ACTION_BLOCK"
-	KernelControlsActionAudit       KernelControlsAction = "KERNEL_CONTROLS_ACTION_AUDIT"
-)
-
-func (r KernelControlsAction) IsKnown() bool {
-	switch r {
-	case KernelControlsActionUnspecified, KernelControlsActionBlock, KernelControlsActionAudit:
-		return true
-	}
-	return false
-}
-
 type OrganizationPolicies struct {
 	// agent_policy contains agent-specific policy settings
 	AgentPolicy AgentPolicy `json:"agentPolicy" api:"required"`
@@ -462,7 +445,7 @@ func (r securityAgentPolicyJSON) RawJSON() string {
 // in environments.
 type VetoExecPolicy struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action KernelControlsAction `json:"action"`
+	Action shared.KernelControlsAction `json:"action"`
 	// enabled controls whether executable blocking is active
 	Enabled bool `json:"enabled"`
 	// executables is the list of executable paths or names to block
@@ -491,7 +474,7 @@ func (r vetoExecPolicyJSON) RawJSON() string {
 // in environments.
 type VetoExecPolicyParam struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action param.Field[KernelControlsAction] `json:"action"`
+	Action param.Field[shared.KernelControlsAction] `json:"action"`
 	// enabled controls whether executable blocking is active
 	Enabled param.Field[bool] `json:"enabled"`
 	// executables is the list of executable paths or names to block

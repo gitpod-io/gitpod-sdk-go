@@ -2149,7 +2149,7 @@ func (r vetoJSON) RawJSON() string {
 // exec controls executable blocking
 type VetoExec struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action KernelControlsAction `json:"action"`
+	Action shared.KernelControlsAction `json:"action"`
 	// denylist is the list of executable paths or names to block
 	Denylist []string `json:"denylist"`
 	// enabled controls whether executable blocking is active
@@ -2187,7 +2187,7 @@ func (r VetoParam) MarshalJSON() (data []byte, err error) {
 // exec controls executable blocking
 type VetoExecParam struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action param.Field[KernelControlsAction] `json:"action"`
+	Action param.Field[shared.KernelControlsAction] `json:"action"`
 	// denylist is the list of executable paths or names to block
 	Denylist param.Field[[]string] `json:"denylist"`
 	// enabled controls whether executable blocking is active
