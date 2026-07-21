@@ -247,6 +247,20 @@ type FieldValueParam = shared.FieldValueParam
 // This is an alias to an internal type.
 type Gateway = shared.Gateway
 
+// KernelControlsAction defines how a kernel-level policy violation is handled.
+//
+// This is an alias to an internal type.
+type KernelControlsAction = shared.KernelControlsAction
+
+// This is an alias to an internal value.
+const KernelControlsActionUnspecified = shared.KernelControlsActionUnspecified
+
+// This is an alias to an internal value.
+const KernelControlsActionBlock = shared.KernelControlsActionBlock
+
+// This is an alias to an internal value.
+const KernelControlsActionAudit = shared.KernelControlsActionAudit
+
 // This is an alias to an internal type.
 type OrganizationRole = shared.OrganizationRole
 

@@ -417,6 +417,23 @@ func (r gatewayJSON) RawJSON() string {
 	return r.raw
 }
 
+// KernelControlsAction defines how a kernel-level policy violation is handled.
+type KernelControlsAction string
+
+const (
+	KernelControlsActionUnspecified KernelControlsAction = "KERNEL_CONTROLS_ACTION_UNSPECIFIED"
+	KernelControlsActionBlock       KernelControlsAction = "KERNEL_CONTROLS_ACTION_BLOCK"
+	KernelControlsActionAudit       KernelControlsAction = "KERNEL_CONTROLS_ACTION_AUDIT"
+)
+
+func (r KernelControlsAction) IsKnown() bool {
+	switch r {
+	case KernelControlsActionUnspecified, KernelControlsActionBlock, KernelControlsActionAudit:
+		return true
+	}
+	return false
+}
+
 type OrganizationRole string
 
 const (
