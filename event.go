@@ -430,8 +430,8 @@ type EventGetResponseEntry struct {
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
-	// AuditLogEntryKind identifies the semantic event represented by an audit-log
-	// entry.
+	// AuditLogEntryKind identifies the coarse query and rendering family of an
+	// audit-log entry.
 	Kind        EventGetResponseEntryKind `json:"kind"`
 	SubjectID   string                    `json:"subjectId"`
 	SubjectType shared.ResourceType       `json:"subjectType"`
@@ -461,19 +461,22 @@ func (r eventGetResponseEntryJSON) RawJSON() string {
 	return r.raw
 }
 
-// AuditLogEntryKind identifies the semantic event represented by an audit-log
-// entry.
+// AuditLogEntryKind identifies the coarse query and rendering family of an
+// audit-log entry.
 type EventGetResponseEntryKind string
 
 const (
 	EventGetResponseEntryKindAuditLogEntryKindUnspecified              EventGetResponseEntryKind = "AUDIT_LOG_ENTRY_KIND_UNSPECIFIED"
 	EventGetResponseEntryKindAuditLogEntryKindAgentSecurityExecBlocked EventGetResponseEntryKind = "AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_BLOCKED"
 	EventGetResponseEntryKindAuditLogEntryKindAgentSecurityExecAudited EventGetResponseEntryKind = "AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_AUDITED"
+	EventGetResponseEntryKindAuditLogEntryKindResourceChange           EventGetResponseEntryKind = "AUDIT_LOG_ENTRY_KIND_RESOURCE_CHANGE"
+	EventGetResponseEntryKindAuditLogEntryKindCredentialAccess         EventGetResponseEntryKind = "AUDIT_LOG_ENTRY_KIND_CREDENTIAL_ACCESS"
+	EventGetResponseEntryKindAuditLogEntryKindEnvironmentVeto          EventGetResponseEntryKind = "AUDIT_LOG_ENTRY_KIND_ENVIRONMENT_VETO"
 )
 
 func (r EventGetResponseEntryKind) IsKnown() bool {
 	switch r {
-	case EventGetResponseEntryKindAuditLogEntryKindUnspecified, EventGetResponseEntryKindAuditLogEntryKindAgentSecurityExecBlocked, EventGetResponseEntryKindAuditLogEntryKindAgentSecurityExecAudited:
+	case EventGetResponseEntryKindAuditLogEntryKindUnspecified, EventGetResponseEntryKindAuditLogEntryKindAgentSecurityExecBlocked, EventGetResponseEntryKindAuditLogEntryKindAgentSecurityExecAudited, EventGetResponseEntryKindAuditLogEntryKindResourceChange, EventGetResponseEntryKindAuditLogEntryKindCredentialAccess, EventGetResponseEntryKindAuditLogEntryKindEnvironmentVeto:
 		return true
 	}
 	return false
@@ -573,8 +576,8 @@ type EventListResponse struct {
 	// [`ISODateTimeFormat.dateTime()`](<http://joda-time.sourceforge.net/apidocs/org/joda/time/format/ISODateTimeFormat.html#dateTime()>)
 	// to obtain a formatter capable of generating timestamps in this format.
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
-	// AuditLogEntryKind identifies the semantic event represented by an audit-log
-	// entry.
+	// AuditLogEntryKind identifies the coarse query and rendering family of an
+	// audit-log entry.
 	Kind        EventListResponseKind `json:"kind"`
 	SubjectID   string                `json:"subjectId"`
 	SubjectType shared.ResourceType   `json:"subjectType"`
@@ -604,19 +607,22 @@ func (r eventListResponseJSON) RawJSON() string {
 	return r.raw
 }
 
-// AuditLogEntryKind identifies the semantic event represented by an audit-log
-// entry.
+// AuditLogEntryKind identifies the coarse query and rendering family of an
+// audit-log entry.
 type EventListResponseKind string
 
 const (
 	EventListResponseKindAuditLogEntryKindUnspecified              EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_UNSPECIFIED"
 	EventListResponseKindAuditLogEntryKindAgentSecurityExecBlocked EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_BLOCKED"
 	EventListResponseKindAuditLogEntryKindAgentSecurityExecAudited EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_AGENT_SECURITY_EXEC_AUDITED"
+	EventListResponseKindAuditLogEntryKindResourceChange           EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_RESOURCE_CHANGE"
+	EventListResponseKindAuditLogEntryKindCredentialAccess         EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_CREDENTIAL_ACCESS"
+	EventListResponseKindAuditLogEntryKindEnvironmentVeto          EventListResponseKind = "AUDIT_LOG_ENTRY_KIND_ENVIRONMENT_VETO"
 )
 
 func (r EventListResponseKind) IsKnown() bool {
 	switch r {
-	case EventListResponseKindAuditLogEntryKindUnspecified, EventListResponseKindAuditLogEntryKindAgentSecurityExecBlocked, EventListResponseKindAuditLogEntryKindAgentSecurityExecAudited:
+	case EventListResponseKindAuditLogEntryKindUnspecified, EventListResponseKindAuditLogEntryKindAgentSecurityExecBlocked, EventListResponseKindAuditLogEntryKindAgentSecurityExecAudited, EventListResponseKindAuditLogEntryKindResourceChange, EventListResponseKindAuditLogEntryKindCredentialAccess, EventListResponseKindAuditLogEntryKindEnvironmentVeto:
 		return true
 	}
 	return false
