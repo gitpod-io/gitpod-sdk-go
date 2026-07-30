@@ -1491,6 +1491,8 @@ func (r runnerParseContextURLResponsePullRequestRepositoryJSON) RawJSON() string
 type RunnerSearchRepositoriesResponse struct {
 	// Deprecated: Use pagination token instead. Total pages can be extracted from
 	// token.
+	//
+	// Deprecated: deprecated
 	LastPage int64 `json:"lastPage"`
 	// Pagination information for the response. Token format:
 	// "NEXT_PAGE/TOTAL_PAGES/TOTAL_COUNT" (e.g., "2/40/1000"). Use -1 for unknown

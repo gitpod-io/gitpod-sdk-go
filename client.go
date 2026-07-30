@@ -22,12 +22,9 @@ type Client struct {
 	Agents      *AgentService
 	Automations *AutomationService
 	// BillingService provides billing and subscription management functionality.
-	Billing      *BillingService
-	Editors      *EditorService
-	Environments *EnvironmentService
-	// ErrorsService provides endpoints for clients to report errors that will be sent
-	// to error reporting systems.
-	Errors        *ErrorService
+	Billing       *BillingService
+	Editors       *EditorService
+	Environments  *EnvironmentService
 	Events        *EventService
 	Gateways      *GatewayService
 	Groups        *GroupService
@@ -82,7 +79,6 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Billing = NewBillingService(opts...)
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
-	r.Errors = NewErrorService(opts...)
 	r.Events = NewEventService(opts...)
 	r.Gateways = NewGatewayService(opts...)
 	r.Groups = NewGroupService(opts...)
