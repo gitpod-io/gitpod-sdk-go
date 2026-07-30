@@ -53,12 +53,12 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 //
 // ### Examples
 //
-// - Create cloud runner:
+// - Create an AWS runner:
 //
 //	Creates a new runner in AWS EC2.
 //
 //	```yaml
-//	name: "Production Runner"
+//	name: "AWS Runner"
 //	provider: RUNNER_PROVIDER_AWS_EC2
 //	spec:
 //	  desiredPhase: RUNNER_PHASE_ACTIVE
@@ -68,9 +68,25 @@ func NewRunnerService(opts ...option.RequestOption) (r *RunnerService) {
 //	    autoUpdate: true
 //	```
 //
-// - Create local runner:
+// - Create a GCP runner:
 //
-//	Creates a new local runner on Linux.
+//	Creates a new runner on Google Cloud Platform.
+//
+//	```yaml
+//	name: "GCP Runner"
+//	provider: RUNNER_PROVIDER_GCP
+//	spec:
+//	  desiredPhase: RUNNER_PHASE_ACTIVE
+//	  configuration:
+//	    region: "us-central1"
+//	    releaseChannel: RUNNER_RELEASE_CHANNEL_STABLE
+//	    autoUpdate: true
+//	```
+//
+// - Create local runner (deprecated):
+//
+//	Creates a new local runner on Linux. Local runners are deprecated; use
+//	RUNNER_PROVIDER_AWS_EC2 or RUNNER_PROVIDER_GCP instead.
 //
 //	```yaml
 //	name: "Local Development Runner"
@@ -365,11 +381,66 @@ func (r *RunnerService) NewRunnerToken(ctx context.Context, body RunnerNewRunner
 //	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
 //	scmHost: "github.com"
 //	```
-func (r *RunnerService) ListScmOrganizations(ctx context.Context, params RunnerListScmOrganizationsParams, opts ...option.RequestOption) (res *RunnerListScmOrganizationsResponse, err error) {
+//
+// - Search GitLab groups:
+//
+//	Returns the first page of GitLab groups matching the substring.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	scmHost: "gitlab.com"
+//	query: "platform"
+//	pagination:
+//	  pageSize: 25
+//	```
+func (r *RunnerService) ListScmOrganizations(ctx context.Context, params RunnerListScmOrganizationsParams, opts ...option.RequestOption) (res *pagination.OrganizationsPage[RunnerListScmOrganizationsResponse], err error) {
+	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "gitpod.v1.RunnerService/ListSCMOrganizations"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return res, err
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodPost, path, params, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Lists SCM organizations the user belongs to.
+//
+// Use this method to:
+//
+// - Get all organizations for a user on a specific SCM host
+// - Check organization admin permissions for webhook creation
+//
+// ### Examples
+//
+// - List GitHub organizations:
+//
+//	Lists all organizations the user belongs to on GitHub.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	scmHost: "github.com"
+//	```
+//
+// - Search GitLab groups:
+//
+//	Returns the first page of GitLab groups matching the substring.
+//
+//	```yaml
+//	runnerId: "d2c94c27-3b76-4a42-b88c-95a85e392c68"
+//	scmHost: "gitlab.com"
+//	query: "platform"
+//	pagination:
+//	  pageSize: 25
+//	```
+func (r *RunnerService) ListScmOrganizationsAutoPaging(ctx context.Context, params RunnerListScmOrganizationsParams, opts ...option.RequestOption) *pagination.OrganizationsPageAutoPager[RunnerListScmOrganizationsResponse] {
+	return pagination.NewOrganizationsPageAutoPager(r.ListScmOrganizations(ctx, params, opts...))
 }
 
 // Parses a context URL and returns the parsed result.
@@ -599,11 +670,17 @@ const (
 	RunnerCapabilityRunnerSideAgent                RunnerCapability = "RUNNER_CAPABILITY_RUNNER_SIDE_AGENT"
 	RunnerCapabilityWarmPool                       RunnerCapability = "RUNNER_CAPABILITY_WARM_POOL"
 	RunnerCapabilityAsgWarmPool                    RunnerCapability = "RUNNER_CAPABILITY_ASG_WARM_POOL"
+	RunnerCapabilityPortAuthentication             RunnerCapability = "RUNNER_CAPABILITY_PORT_AUTHENTICATION"
+	RunnerCapabilityHorizontalScaling              RunnerCapability = "RUNNER_CAPABILITY_HORIZONTAL_SCALING"
+	RunnerCapabilityAgentExecutionCnf              RunnerCapability = "RUNNER_CAPABILITY_AGENT_EXECUTION_CNF"
+	RunnerCapabilityRedisStream                    RunnerCapability = "RUNNER_CAPABILITY_REDIS_STREAM"
+	RunnerCapabilityBaseSnapshot                   RunnerCapability = "RUNNER_CAPABILITY_BASE_SNAPSHOT"
+	RunnerCapabilityDynamicLlmRequestHeaders       RunnerCapability = "RUNNER_CAPABILITY_DYNAMIC_LLM_REQUEST_HEADERS"
 )
 
 func (r RunnerCapability) IsKnown() bool {
 	switch r {
-	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool:
+	case RunnerCapabilityUnspecified, RunnerCapabilityFetchLocalScmIntegrations, RunnerCapabilitySecretContainerRegistry, RunnerCapabilityAgentExecution, RunnerCapabilityAllowEnvTokenPopulation, RunnerCapabilityDefaultDevContainerImage, RunnerCapabilityEnvironmentSnapshot, RunnerCapabilityPrebuildsBeforeSnapshotTrigger, RunnerCapabilityListScmOrganizations, RunnerCapabilityCheckRepositoryAccess, RunnerCapabilityRunnerSideAgent, RunnerCapabilityWarmPool, RunnerCapabilityAsgWarmPool, RunnerCapabilityPortAuthentication, RunnerCapabilityHorizontalScaling, RunnerCapabilityAgentExecutionCnf, RunnerCapabilityRedisStream, RunnerCapabilityBaseSnapshot, RunnerCapabilityDynamicLlmRequestHeaders:
 		return true
 	}
 	return false
@@ -1168,41 +1245,26 @@ func (r runnerNewRunnerTokenResponseJSON) RawJSON() string {
 }
 
 type RunnerListScmOrganizationsResponse struct {
-	// List of organizations the user belongs to
-	Organizations []RunnerListScmOrganizationsResponseOrganization `json:"organizations"`
-	JSON          runnerListScmOrganizationsResponseJSON           `json:"-"`
+	// Deprecated: this field is unused by all known consumers and is scheduled for
+	// removal in a future release. Do not read it.
+	//
+	// Originally intended to gate organization-level webhook creation in the
+	// dashboard, but that gating was never implemented. Populating this field on the
+	// GitLab path requires a second fully-paginated ListGroups call, which is the main
+	// reason we are deprecating it.
+	//
+	// Deprecated: deprecated
+	IsAdmin bool `json:"isAdmin"`
+	// Organization name/slug (e.g., "gitpod-io")
+	Name string `json:"name"`
+	// Organization URL (e.g., "https://github.com/gitpod-io")
+	URL  string                                 `json:"url"`
+	JSON runnerListScmOrganizationsResponseJSON `json:"-"`
 }
 
 // runnerListScmOrganizationsResponseJSON contains the JSON metadata for the struct
 // [RunnerListScmOrganizationsResponse]
 type runnerListScmOrganizationsResponseJSON struct {
-	Organizations apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *RunnerListScmOrganizationsResponse) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runnerListScmOrganizationsResponseJSON) RawJSON() string {
-	return r.raw
-}
-
-type RunnerListScmOrganizationsResponseOrganization struct {
-	// Whether the user has admin permissions in this organization. Admin permissions
-	// typically allow creating organization-level webhooks.
-	IsAdmin bool `json:"isAdmin"`
-	// Organization name/slug (e.g., "gitpod-io")
-	Name string `json:"name"`
-	// Organization URL (e.g., "https://github.com/gitpod-io")
-	URL  string                                             `json:"url"`
-	JSON runnerListScmOrganizationsResponseOrganizationJSON `json:"-"`
-}
-
-// runnerListScmOrganizationsResponseOrganizationJSON contains the JSON metadata
-// for the struct [RunnerListScmOrganizationsResponseOrganization]
-type runnerListScmOrganizationsResponseOrganizationJSON struct {
 	IsAdmin     apijson.Field
 	Name        apijson.Field
 	URL         apijson.Field
@@ -1210,11 +1272,11 @@ type runnerListScmOrganizationsResponseOrganizationJSON struct {
 	ExtraFields map[string]apijson.Field
 }
 
-func (r *RunnerListScmOrganizationsResponseOrganization) UnmarshalJSON(data []byte) (err error) {
+func (r *RunnerListScmOrganizationsResponse) UnmarshalJSON(data []byte) (err error) {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r runnerListScmOrganizationsResponseOrganizationJSON) RawJSON() string {
+func (r runnerListScmOrganizationsResponseJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -1429,6 +1491,8 @@ func (r runnerParseContextURLResponsePullRequestRepositoryJSON) RawJSON() string
 type RunnerSearchRepositoriesResponse struct {
 	// Deprecated: Use pagination token instead. Total pages can be extracted from
 	// token.
+	//
+	// Deprecated: deprecated
 	LastPage int64 `json:"lastPage"`
 	// Pagination information for the response. Token format:
 	// "NEXT_PAGE/TOTAL_PAGES/TOTAL_COUNT" (e.g., "2/40/1000"). Use -1 for unknown
@@ -1715,6 +1779,16 @@ func (r RunnerNewRunnerTokenParams) MarshalJSON() (data []byte, err error) {
 type RunnerListScmOrganizationsParams struct {
 	Token    param.Field[string] `query:"token"`
 	PageSize param.Field[int64]  `query:"pageSize"`
+	// Pagination parameters. When unset, defaults to the standard PaginationRequest
+	// defaults (page_size 25, max 100). Tokens are opaque and provider-specific.
+	Pagination param.Field[RunnerListScmOrganizationsParamsPagination] `json:"pagination"`
+	// Optional substring filter applied to the organization name.
+	//
+	//   - GitLab: forwarded to the upstream `search` parameter (server-side,
+	//     case-insensitive substring on name/path).
+	//   - GitHub and Bitbucket: not implemented as they don't support searching Empty
+	//     value means no filter.
+	Query    param.Field[string] `json:"query"`
 	RunnerID param.Field[string] `json:"runnerId" format:"uuid"`
 	// The SCM host to list organizations from (e.g., "github.com", "gitlab.com")
 	ScmHost param.Field[string] `json:"scmHost"`
@@ -1731,6 +1805,21 @@ func (r RunnerListScmOrganizationsParams) URLQuery() (v url.Values) {
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
+}
+
+// Pagination parameters. When unset, defaults to the standard PaginationRequest
+// defaults (page_size 25, max 100). Tokens are opaque and provider-specific.
+type RunnerListScmOrganizationsParamsPagination struct {
+	// Token for the next set of results that was returned as next_token of a
+	// PaginationResponse
+	Token param.Field[string] `json:"token"`
+	// Page size is the maximum number of results to retrieve per page. Defaults to 25.
+	// Maximum 100.
+	PageSize param.Field[int64] `json:"pageSize"`
+}
+
+func (r RunnerListScmOrganizationsParamsPagination) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type RunnerParseContextURLParams struct {

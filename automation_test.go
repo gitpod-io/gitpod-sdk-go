@@ -47,13 +47,15 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
 				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
-				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
 				}),
 			}}),
+		}),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
 		}),
 		Description: gitpod.F("description"),
 		Executor: gitpod.F(shared.SubjectParam{
@@ -78,9 +80,6 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 					Description: gitpod.F("description"),
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
-				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
 				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
@@ -109,8 +108,9 @@ func TestAutomationNewWithOptionalParams(t *testing.T) {
 			}),
 			Manual: gitpod.F[any](map[string]interface{}{}),
 			PullRequest: gitpod.F(gitpod.WorkflowTriggerPullRequestParam{
-				Events:    gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
-				WebhookID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Events:        gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
+				IntegrationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				WebhookID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			}),
 			Time: gitpod.F(gitpod.WorkflowTriggerTimeParam{
 				CronExpression: gitpod.F("cronExpression"),
@@ -183,13 +183,15 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
 				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
-				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
 				}),
 			}}),
+		}),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
 		}),
 		Description: gitpod.F("description"),
 		Disabled:    gitpod.F(true),
@@ -215,9 +217,6 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 					Description: gitpod.F("description"),
 					Draft:       gitpod.F(true),
 					Title:       gitpod.F("title"),
-				}),
-				Report: gitpod.F(gitpod.WorkflowStepReportParam{
-					Outputs: gitpod.F([]gitpod.WorkflowStepReportOutputParam{{}}),
 				}),
 				Task: gitpod.F(gitpod.WorkflowStepTaskParam{
 					Command: gitpod.F("command"),
@@ -246,8 +245,9 @@ func TestAutomationUpdateWithOptionalParams(t *testing.T) {
 			}),
 			Manual: gitpod.F[any](map[string]interface{}{}),
 			PullRequest: gitpod.F(gitpod.WorkflowTriggerPullRequestParam{
-				Events:    gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
-				WebhookID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				Events:        gitpod.F([]gitpod.WorkflowTriggerPullRequestEvent{gitpod.WorkflowTriggerPullRequestEventPullRequestEventUnspecified}),
+				IntegrationID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+				WebhookID:     gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			}),
 			Time: gitpod.F(gitpod.WorkflowTriggerTimeParam{
 				CronExpression: gitpod.F("cronExpression"),

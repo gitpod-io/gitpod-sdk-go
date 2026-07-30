@@ -29,15 +29,26 @@ func TestSecretNewWithOptionalParams(t *testing.T) {
 	_, err := client.Secrets.New(context.TODO(), gitpod.SecretNewParams{
 		APIOnly:                        gitpod.F(true),
 		ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
-		EnvironmentVariable:            gitpod.F(true),
-		FilePath:                       gitpod.F("filePath"),
-		Name:                           gitpod.F("DATABASE_URL"),
-		ProjectID:                      gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+		CredentialProxy: gitpod.F(gitpod.SecretNewParamsCredentialProxy{
+			Header:      gitpod.F("header"),
+			TargetHosts: gitpod.F([]string{"string"}),
+		}),
+		EnvironmentVariable: gitpod.F(true),
+		FilePath:            gitpod.F("filePath"),
+		Name:                gitpod.F("DATABASE_URL"),
+		ProjectID:           gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		Scope: gitpod.F(gitpod.SecretScopeParam{
 			OrganizationID:   gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			ProjectID:        gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			ServiceAccountID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 			UserID:           gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+		}),
+		Source: gitpod.F(gitpod.SecretNewParamsSource{
+			OidcJfrog: gitpod.F(gitpod.SecretNewParamsSourceOidcJfrog{
+				Host:         gitpod.F("x"),
+				ProviderName: gitpod.F("x"),
+			}),
+			Verbatim: gitpod.F(true),
 		}),
 		Value: gitpod.F("postgresql://user:pass@localhost:5432/db"),
 	})

@@ -794,10 +794,9 @@ type AgentExecutionSpec struct {
 	AgentID     string           `json:"agentId" format:"uuid"`
 	CodeContext AgentCodeContext `json:"codeContext"`
 	// desired_phase is the desired phase of the agent run
-	DesiredPhase   AgentExecutionSpecDesiredPhase    `json:"desiredPhase"`
-	Limits         AgentExecutionSpecLimits          `json:"limits"`
-	LoopConditions []AgentExecutionSpecLoopCondition `json:"loopConditions"`
-	Session        string                            `json:"session"`
+	DesiredPhase AgentExecutionSpecDesiredPhase `json:"desiredPhase"`
+	Limits       AgentExecutionSpecLimits       `json:"limits"`
+	Session      string                         `json:"session"`
 	// version of the spec. The value of this field has no semantic meaning (e.g. don't
 	// interpret it as as a timestamp), but it can be used to impose a partial order.
 	// If a.spec_version < b.spec_version then a was the spec before b.
@@ -808,15 +807,14 @@ type AgentExecutionSpec struct {
 // agentExecutionSpecJSON contains the JSON metadata for the struct
 // [AgentExecutionSpec]
 type agentExecutionSpecJSON struct {
-	AgentID        apijson.Field
-	CodeContext    apijson.Field
-	DesiredPhase   apijson.Field
-	Limits         apijson.Field
-	LoopConditions apijson.Field
-	Session        apijson.Field
-	SpecVersion    apijson.Field
-	raw            string
-	ExtraFields    map[string]apijson.Field
+	AgentID      apijson.Field
+	CodeContext  apijson.Field
+	DesiredPhase apijson.Field
+	Limits       apijson.Field
+	Session      apijson.Field
+	SpecVersion  apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
 }
 
 func (r *AgentExecutionSpec) UnmarshalJSON(data []byte) (err error) {
@@ -871,31 +869,6 @@ func (r agentExecutionSpecLimitsJSON) RawJSON() string {
 	return r.raw
 }
 
-type AgentExecutionSpecLoopCondition struct {
-	ID          string                              `json:"id"`
-	Description string                              `json:"description"`
-	Expression  string                              `json:"expression"`
-	JSON        agentExecutionSpecLoopConditionJSON `json:"-"`
-}
-
-// agentExecutionSpecLoopConditionJSON contains the JSON metadata for the struct
-// [AgentExecutionSpecLoopCondition]
-type agentExecutionSpecLoopConditionJSON struct {
-	ID          apijson.Field
-	Description apijson.Field
-	Expression  apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *AgentExecutionSpecLoopCondition) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r agentExecutionSpecLoopConditionJSON) RawJSON() string {
-	return r.raw
-}
-
 // Status is the current status of the agent
 type AgentExecutionStatus struct {
 	CachedCreationTokensUsed string `json:"cachedCreationTokensUsed"`
@@ -911,9 +884,11 @@ type AgentExecutionStatus struct {
 	// failure_message contains the reason the agent run failed to operate.
 	FailureMessage string `json:"failureMessage"`
 	// failure_reason contains a structured reason code for the failure.
-	FailureReason   AgentExecutionStatusFailureReason `json:"failureReason"`
-	InputTokensUsed string                            `json:"inputTokensUsed"`
-	Iterations      string                            `json:"iterations"`
+	FailureReason AgentExecutionStatusFailureReason `json:"failureReason"`
+	// goal projects the current agent goal, if any.
+	Goal            AgentExecutionStatusGoal `json:"goal"`
+	InputTokensUsed string                   `json:"inputTokensUsed"`
+	Iterations      string                   `json:"iterations"`
 	// judgement is the judgement of the agent run produced by the judgement prompt.
 	Judgement string `json:"judgement"`
 	// mcp_integration_statuses contains the status of all MCP integrations used by
@@ -934,7 +909,7 @@ type AgentExecutionStatus struct {
 	// order. If a.status_version < b.status_version then a was the status before b.
 	StatusVersion string `json:"statusVersion"`
 	// supported_model is the LLM model being used by the agent execution.
-	SupportedModel AgentExecutionStatusSupportedModel `json:"supportedModel"`
+	SupportedModel SupportedModel `json:"supportedModel"`
 	// transcript_url is the URL to the LLM transcript (all messages exchanged between
 	// the agent and the LLM) of the agent run.
 	TranscriptURL string `json:"transcriptUrl"`
@@ -957,6 +932,7 @@ type agentExecutionStatusJSON struct {
 	CurrentOperation         apijson.Field
 	FailureMessage           apijson.Field
 	FailureReason            apijson.Field
+	Goal                     apijson.Field
 	InputTokensUsed          apijson.Field
 	Iterations               apijson.Field
 	Judgement                apijson.Field
@@ -1076,6 +1052,48 @@ func (r AgentExecutionStatusFailureReason) IsKnown() bool {
 	return false
 }
 
+// goal projects the current agent goal, if any.
+type AgentExecutionStatusGoal struct {
+	// created_at is when the current goal was created, when available.
+	CreatedAt time.Time `json:"createdAt" format:"date-time"`
+	// objective is the current goal text tracked by the agent.
+	Objective string `json:"objective"`
+	// status is the lifecycle state of the current goal.
+	Status GoalStatus `json:"status"`
+	// time_used is the elapsed wall-clock time reported by the agent for this goal.
+	TimeUsed string `json:"timeUsed" format:"regex"`
+	// token_budget is the token budget reported by the agent for this goal, when one
+	// exists.
+	TokenBudget string `json:"tokenBudget" api:"nullable"`
+	// tokens_used is the token usage reported by the agent for this goal.
+	TokensUsed string `json:"tokensUsed"`
+	// updated_at is the most recent goal update timestamp, when available.
+	UpdatedAt time.Time                    `json:"updatedAt" format:"date-time"`
+	JSON      agentExecutionStatusGoalJSON `json:"-"`
+}
+
+// agentExecutionStatusGoalJSON contains the JSON metadata for the struct
+// [AgentExecutionStatusGoal]
+type agentExecutionStatusGoalJSON struct {
+	CreatedAt   apijson.Field
+	Objective   apijson.Field
+	Status      apijson.Field
+	TimeUsed    apijson.Field
+	TokenBudget apijson.Field
+	TokensUsed  apijson.Field
+	UpdatedAt   apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *AgentExecutionStatusGoal) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r agentExecutionStatusGoalJSON) RawJSON() string {
+	return r.raw
+}
+
 // MCPIntegrationStatus represents the status of a single MCP integration within an
 // agent execution context
 type AgentExecutionStatusMcpIntegrationStatus struct {
@@ -1177,41 +1195,6 @@ func (r AgentExecutionStatusPhase) IsKnown() bool {
 	return false
 }
 
-// supported_model is the LLM model being used by the agent execution.
-type AgentExecutionStatusSupportedModel string
-
-const (
-	AgentExecutionStatusSupportedModelSupportedModelUnspecified       AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_UNSPECIFIED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet3_5         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_3_5"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet3_7         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_3_7"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet3_7Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_3_7_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_5         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_5"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_5_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_6         AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_6"
-	AgentExecutionStatusSupportedModelSupportedModelSonnet4_6Extended AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_SONNET_4_6_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4             AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4Extended     AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_5           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_5"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_5_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_6           AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_6"
-	AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended   AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPUS_4_6_EXTENDED"
-	AgentExecutionStatusSupportedModelSupportedModelHaiku4_5          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_HAIKU_4_5"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAI4O          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_4O"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini      AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_4O_MINI"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAIO1          AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_O1"
-	AgentExecutionStatusSupportedModelSupportedModelOpenAIO1Mini      AgentExecutionStatusSupportedModel = "SUPPORTED_MODEL_OPENAI_O1_MINI"
-)
-
-func (r AgentExecutionStatusSupportedModel) IsKnown() bool {
-	switch r {
-	case AgentExecutionStatusSupportedModelSupportedModelUnspecified, AgentExecutionStatusSupportedModelSupportedModelSonnet3_5, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7, AgentExecutionStatusSupportedModelSupportedModelSonnet3_7Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4, AgentExecutionStatusSupportedModelSupportedModelSonnet4Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5, AgentExecutionStatusSupportedModelSupportedModelSonnet4_5Extended, AgentExecutionStatusSupportedModelSupportedModelSonnet4_6, AgentExecutionStatusSupportedModelSupportedModelSonnet4_6Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4, AgentExecutionStatusSupportedModelSupportedModelOpus4Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_5, AgentExecutionStatusSupportedModelSupportedModelOpus4_5Extended, AgentExecutionStatusSupportedModelSupportedModelOpus4_6, AgentExecutionStatusSupportedModelSupportedModelOpus4_6Extended, AgentExecutionStatusSupportedModelSupportedModelHaiku4_5, AgentExecutionStatusSupportedModelSupportedModelOpenAI4O, AgentExecutionStatusSupportedModelSupportedModelOpenAI4OMini, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1, AgentExecutionStatusSupportedModelSupportedModelOpenAIO1Mini:
-		return true
-	}
-	return false
-}
-
 type AgentExecutionStatusUsedEnvironment struct {
 	CreatedByAgent bool                                    `json:"createdByAgent"`
 	EnvironmentID  string                                  `json:"environmentId" format:"uuid"`
@@ -1256,11 +1239,32 @@ const (
 	AgentModePlanning    AgentMode = "AGENT_MODE_PLANNING"
 	AgentModeRalph       AgentMode = "AGENT_MODE_RALPH"
 	AgentModeSpec        AgentMode = "AGENT_MODE_SPEC"
+	AgentModeGoal        AgentMode = "AGENT_MODE_GOAL"
 )
 
 func (r AgentMode) IsKnown() bool {
 	switch r {
-	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec:
+	case AgentModeUnspecified, AgentModeExecution, AgentModePlanning, AgentModeRalph, AgentModeSpec, AgentModeGoal:
+		return true
+	}
+	return false
+}
+
+type GoalStatus string
+
+const (
+	GoalStatusUnspecified     GoalStatus = "GOAL_STATUS_UNSPECIFIED"
+	GoalStatusActive          GoalStatus = "GOAL_STATUS_ACTIVE"
+	GoalStatusPaused          GoalStatus = "GOAL_STATUS_PAUSED"
+	GoalStatusCompleted       GoalStatus = "GOAL_STATUS_COMPLETED"
+	GoalStatusBudgetExhausted GoalStatus = "GOAL_STATUS_BUDGET_EXHAUSTED"
+	GoalStatusBlocked         GoalStatus = "GOAL_STATUS_BLOCKED"
+	GoalStatusUsageLimited    GoalStatus = "GOAL_STATUS_USAGE_LIMITED"
+)
+
+func (r GoalStatus) IsKnown() bool {
+	switch r {
+	case GoalStatusUnspecified, GoalStatusActive, GoalStatusPaused, GoalStatusCompleted, GoalStatusBudgetExhausted, GoalStatusBlocked, GoalStatusUsageLimited:
 		return true
 	}
 	return false
@@ -1654,7 +1658,8 @@ func (r UserInputBlockTextParam) MarshalJSON() (data []byte, err error) {
 // WakeEvent is sent by the backend to wake an agent when a registered interest
 // fires. Delivered via SendToAgentExecution as a new oneof variant.
 type WakeEventParam struct {
-	Environment param.Field[WakeEventEnvironmentParam] `json:"environment"`
+	DevcontainerRebuild param.Field[WakeEventDevcontainerRebuildParam] `json:"devcontainerRebuild"`
+	Environment         param.Field[WakeEventEnvironmentParam]         `json:"environment"`
 	// The interest ID that fired (from WaitingInfo.Interest.id).
 	InterestID    param.Field[string]                      `json:"interestId"`
 	LoopRetrigger param.Field[WakeEventLoopRetriggerParam] `json:"loopRetrigger"`
@@ -1662,6 +1667,18 @@ type WakeEventParam struct {
 }
 
 func (r WakeEventParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type WakeEventDevcontainerRebuildParam struct {
+	EnvironmentID  param.Field[string]   `json:"environmentId"`
+	FailureMessage param.Field[[]string] `json:"failureMessage"`
+	// The devcontainer phase reached by the target session.
+	Phase     param.Field[string] `json:"phase"`
+	SessionID param.Field[string] `json:"sessionId"`
+}
+
+func (r WakeEventDevcontainerRebuildParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -1900,7 +1917,10 @@ func (r AgentListExecutionsParams) URLQuery() (v url.Values) {
 }
 
 type AgentListExecutionsParamsFilter struct {
-	AgentIDs param.Field[[]string] `json:"agentIds"`
+	// agent_execution_ids filters the response to only the specified executions.
+	// Useful for checking existence of a known set of execution IDs.
+	AgentExecutionIDs param.Field[[]string] `json:"agentExecutionIds" format:"uuid"`
+	AgentIDs          param.Field[[]string] `json:"agentIds"`
 	// annotations filters by key-value pairs. Only executions containing all specified
 	// annotations (with matching values) are returned.
 	Annotations    param.Field[map[string]string]                     `json:"annotations"`
@@ -2037,8 +2057,11 @@ type AgentSendToExecutionParams struct {
 	AgentExecutionID param.Field[string] `json:"agentExecutionId" format:"uuid"`
 	// AgentMessage is a message sent between agents (e.g. from a parent agent to a
 	// child agent execution, or vice versa).
-	AgentMessage param.Field[AgentMessageParam]   `json:"agentMessage"`
-	UserInput    param.Field[UserInputBlockParam] `json:"userInput"`
+	AgentMessage param.Field[AgentMessageParam] `json:"agentMessage"`
+	// codex_settings contains per-turn desired settings for Codex app user_input
+	// sends.
+	CodexSettings param.Field[shared.CodexSettingsParam] `json:"codexSettings"`
+	UserInput     param.Field[UserInputBlockParam]       `json:"userInput"`
 	// WakeEvent is sent by the backend to wake an agent when a registered interest
 	// fires. Delivered via SendToAgentExecution as a new oneof variant.
 	WakeEvent param.Field[WakeEventParam] `json:"wakeEvent"`
@@ -2049,12 +2072,17 @@ func (r AgentSendToExecutionParams) MarshalJSON() (data []byte, err error) {
 }
 
 type AgentStartExecutionParams struct {
+	// agent_id identifies the agent to start. If omitted, the backend uses the
+	// configured default agent ID, or the Ona in-environment agent when no default is
+	// configured.
 	AgentID param.Field[string] `json:"agentId" format:"uuid"`
 	// annotations are key-value pairs for tracking external context (e.g., integration
 	// session IDs, GitHub issue references). Keys should follow domain/name convention
 	// (e.g., "agent-client-session/id").
 	Annotations param.Field[map[string]string]     `json:"annotations"`
 	CodeContext param.Field[AgentCodeContextParam] `json:"codeContext"`
+	// codex_settings contains desired manual settings for the Codex app agent.
+	CodexSettings param.Field[shared.CodexSettingsParam] `json:"codexSettings"`
 	// mode specifies the operational mode for this agent execution If not specified,
 	// defaults to AGENT_MODE_EXECUTION
 	Mode param.Field[AgentMode] `json:"mode"`

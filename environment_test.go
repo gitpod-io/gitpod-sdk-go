@@ -77,7 +77,7 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
 				Veto: gitpod.F(gitpod.VetoParam{
 					Exec: gitpod.F(gitpod.VetoExecParam{
-						Action:   gitpod.F(gitpod.KernelControlsActionUnspecified),
+						Action:   gitpod.F(shared.KernelControlsActionUnspecified),
 						Denylist: gitpod.F([]string{"string"}),
 						Enabled:  gitpod.F(true),
 					}),
@@ -98,7 +98,6 @@ func TestEnvironmentNewWithOptionalParams(t *testing.T) {
 				APIOnly:                        gitpod.F(true),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				CredentialProxy: gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyParam{
-					Format:      gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified),
 					Header:      gitpod.F("header"),
 					TargetHosts: gitpod.F([]string{"string"}),
 				}),
@@ -205,7 +204,7 @@ func TestEnvironmentUpdateWithOptionalParams(t *testing.T) {
 			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
 				Veto: gitpod.F(gitpod.VetoParam{
 					Exec: gitpod.F(gitpod.VetoExecParam{
-						Action:   gitpod.F(gitpod.KernelControlsActionUnspecified),
+						Action:   gitpod.F(shared.KernelControlsActionUnspecified),
 						Denylist: gitpod.F([]string{"string"}),
 						Enabled:  gitpod.F(true),
 					}),
@@ -390,7 +389,7 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 			KernelControlsConfig: gitpod.F(gitpod.KernelControlsConfigParam{
 				Veto: gitpod.F(gitpod.VetoParam{
 					Exec: gitpod.F(gitpod.VetoExecParam{
-						Action:   gitpod.F(gitpod.KernelControlsActionUnspecified),
+						Action:   gitpod.F(shared.KernelControlsActionUnspecified),
 						Denylist: gitpod.F([]string{"string"}),
 						Enabled:  gitpod.F(true),
 					}),
@@ -411,7 +410,6 @@ func TestEnvironmentNewFromProjectWithOptionalParams(t *testing.T) {
 				APIOnly:                        gitpod.F(true),
 				ContainerRegistryBasicAuthHost: gitpod.F("containerRegistryBasicAuthHost"),
 				CredentialProxy: gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyParam{
-					Format:      gitpod.F(gitpod.EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified),
 					Header:      gitpod.F("header"),
 					TargetHosts: gitpod.F([]string{"string"}),
 				}),

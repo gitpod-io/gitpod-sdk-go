@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"slices"
+	"strings"
 
 	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
@@ -16,15 +17,14 @@ import (
 // interacting with the gitpod API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options      []option.RequestOption
-	Accounts     *AccountService
-	Agents       *AgentService
-	Automations  *AutomationService
-	Editors      *EditorService
-	Environments *EnvironmentService
-	// ErrorsService provides endpoints for clients to report errors that will be sent
-	// to error reporting systems.
-	Errors        *ErrorService
+	Options     []option.RequestOption
+	Accounts    *AccountService
+	Agents      *AgentService
+	Automations *AutomationService
+	// BillingService provides billing and subscription management functionality.
+	Billing       *BillingService
+	Editors       *EditorService
+	Environments  *EnvironmentService
 	Events        *EventService
 	Gateways      *GatewayService
 	Groups        *GroupService
@@ -33,10 +33,11 @@ type Client struct {
 	// PrebuildService manages prebuilds for projects to enable faster environment
 	// startup times. Prebuilds create snapshots of environments that can be used to
 	// provision new environments quickly.
-	Prebuilds *PrebuildService
-	Projects  *ProjectService
-	Runners   *RunnerService
-	Secrets   *SecretService
+	Prebuilds        *PrebuildService
+	Projects         *ProjectService
+	Runners          *RunnerService
+	Secrets          *SecretService
+	SecurityPolicies *SecurityPolicyService
 	// UsageService provides usage information about environments, users, and projects.
 	Usage *UsageService
 	Users *UserService
@@ -45,12 +46,20 @@ type Client struct {
 // DefaultClientOptions read from the environment (GITPOD_API_KEY,
 // GITPOD_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
-	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
+	defaults := []option.RequestOption{option.WithHTTPClient(defaultHTTPClient()), option.WithEnvironmentProduction()}
 	if o, ok := os.LookupEnv("GITPOD_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
 	if o, ok := os.LookupEnv("GITPOD_API_KEY"); ok {
 		defaults = append(defaults, option.WithBearerToken(o))
+	}
+	if o, ok := os.LookupEnv("GITPOD_CUSTOM_HEADERS"); ok {
+		for _, line := range strings.Split(o, "\n") {
+			colon := strings.Index(line, ":")
+			if colon >= 0 {
+				defaults = append(defaults, option.WithHeader(strings.TrimSpace(line[:colon]), strings.TrimSpace(line[colon+1:])))
+			}
+		}
 	}
 	return defaults
 }
@@ -67,9 +76,9 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Accounts = NewAccountService(opts...)
 	r.Agents = NewAgentService(opts...)
 	r.Automations = NewAutomationService(opts...)
+	r.Billing = NewBillingService(opts...)
 	r.Editors = NewEditorService(opts...)
 	r.Environments = NewEnvironmentService(opts...)
-	r.Errors = NewErrorService(opts...)
 	r.Events = NewEventService(opts...)
 	r.Gateways = NewGatewayService(opts...)
 	r.Groups = NewGroupService(opts...)
@@ -79,6 +88,7 @@ func NewClient(opts ...option.RequestOption) (r *Client) {
 	r.Projects = NewProjectService(opts...)
 	r.Runners = NewRunnerService(opts...)
 	r.Secrets = NewSecretService(opts...)
+	r.SecurityPolicies = NewSecurityPolicyService(opts...)
 	r.Usage = NewUsageService(opts...)
 	r.Users = NewUserService(opts...)
 

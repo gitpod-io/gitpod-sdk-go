@@ -60,13 +60,13 @@ func TestEnvironmentAutomationTaskNewWithOptionalParams(t *testing.T) {
 					}),
 				}),
 			}}),
+			PrebuildRequiresSuccess: gitpod.F(true),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
-				Machine:  gitpod.F[any](map[string]interface{}{}),
-				Terminal: gitpod.F[any](map[string]interface{}{}),
+				Machine: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 	})
@@ -145,13 +145,13 @@ func TestEnvironmentAutomationTaskUpdateWithOptionalParams(t *testing.T) {
 					}),
 				}),
 			}}),
+			PrebuildRequiresSuccess: gitpod.F(true),
 			RunsOn: gitpod.F(shared.RunsOnParam{
 				Docker: gitpod.F(shared.RunsOnDockerParam{
 					Environment: gitpod.F([]string{"string"}),
 					Image:       gitpod.F("x"),
 				}),
-				Machine:  gitpod.F[any](map[string]interface{}{}),
-				Terminal: gitpod.F[any](map[string]interface{}{}),
+				Machine: gitpod.F[any](map[string]interface{}{}),
 			}),
 		}),
 	})

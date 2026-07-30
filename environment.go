@@ -672,15 +672,16 @@ func (r EnvironmentPhase) IsKnown() bool {
 type EnvironmentRole string
 
 const (
-	EnvironmentRoleUnspecified EnvironmentRole = "ENVIRONMENT_ROLE_UNSPECIFIED"
-	EnvironmentRoleDefault     EnvironmentRole = "ENVIRONMENT_ROLE_DEFAULT"
-	EnvironmentRolePrebuild    EnvironmentRole = "ENVIRONMENT_ROLE_PREBUILD"
-	EnvironmentRoleWorkflow    EnvironmentRole = "ENVIRONMENT_ROLE_WORKFLOW"
+	EnvironmentRoleUnspecified       EnvironmentRole = "ENVIRONMENT_ROLE_UNSPECIFIED"
+	EnvironmentRoleDefault           EnvironmentRole = "ENVIRONMENT_ROLE_DEFAULT"
+	EnvironmentRolePrebuild          EnvironmentRole = "ENVIRONMENT_ROLE_PREBUILD"
+	EnvironmentRoleWorkflow          EnvironmentRole = "ENVIRONMENT_ROLE_WORKFLOW"
+	EnvironmentRoleBaseSnapshotBuild EnvironmentRole = "ENVIRONMENT_ROLE_BASE_SNAPSHOT_BUILD"
 )
 
 func (r EnvironmentRole) IsKnown() bool {
 	switch r {
-	case EnvironmentRoleUnspecified, EnvironmentRoleDefault, EnvironmentRolePrebuild, EnvironmentRoleWorkflow:
+	case EnvironmentRoleUnspecified, EnvironmentRoleDefault, EnvironmentRolePrebuild, EnvironmentRoleWorkflow, EnvironmentRoleBaseSnapshotBuild:
 		return true
 	}
 	return false
@@ -1043,9 +1044,6 @@ func (r environmentSpecSecretJSON) RawJSON() string {
 // field is orthogonal to mount — a secret can be both mounted (e.g. as a git
 // credential) and proxied at the same time.
 type EnvironmentSpecSecretsCredentialProxy struct {
-	// format describes how the secret value is encoded. The proxy uses this to decode
-	// the value before injecting it into the header.
-	Format EnvironmentSpecSecretsCredentialProxyFormat `json:"format"`
 	// header is the HTTP header name to inject (e.g. "Authorization").
 	Header string `json:"header"`
 	// target_hosts lists the hostnames to intercept (for example "github.com" or
@@ -1057,7 +1055,6 @@ type EnvironmentSpecSecretsCredentialProxy struct {
 // environmentSpecSecretsCredentialProxyJSON contains the JSON metadata for the
 // struct [EnvironmentSpecSecretsCredentialProxy]
 type environmentSpecSecretsCredentialProxyJSON struct {
-	Format      apijson.Field
 	Header      apijson.Field
 	TargetHosts apijson.Field
 	raw         string
@@ -1070,24 +1067,6 @@ func (r *EnvironmentSpecSecretsCredentialProxy) UnmarshalJSON(data []byte) (err 
 
 func (r environmentSpecSecretsCredentialProxyJSON) RawJSON() string {
 	return r.raw
-}
-
-// format describes how the secret value is encoded. The proxy uses this to decode
-// the value before injecting it into the header.
-type EnvironmentSpecSecretsCredentialProxyFormat string
-
-const (
-	EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_UNSPECIFIED"
-	EnvironmentSpecSecretsCredentialProxyFormatFormatPlain       EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_PLAIN"
-	EnvironmentSpecSecretsCredentialProxyFormatFormatBase64      EnvironmentSpecSecretsCredentialProxyFormat = "FORMAT_BASE64"
-)
-
-func (r EnvironmentSpecSecretsCredentialProxyFormat) IsKnown() bool {
-	switch r {
-	case EnvironmentSpecSecretsCredentialProxyFormatFormatUnspecified, EnvironmentSpecSecretsCredentialProxyFormatFormatPlain, EnvironmentSpecSecretsCredentialProxyFormatFormatBase64:
-		return true
-	}
-	return false
 }
 
 // scope indicates where this secret originated from. Used to filter secrets during
@@ -1346,9 +1325,6 @@ func (r EnvironmentSpecSecretParam) MarshalJSON() (data []byte, err error) {
 // field is orthogonal to mount — a secret can be both mounted (e.g. as a git
 // credential) and proxied at the same time.
 type EnvironmentSpecSecretsCredentialProxyParam struct {
-	// format describes how the secret value is encoded. The proxy uses this to decode
-	// the value before injecting it into the header.
-	Format param.Field[EnvironmentSpecSecretsCredentialProxyFormat] `json:"format"`
 	// header is the HTTP header name to inject (e.g. "Authorization").
 	Header param.Field[string] `json:"header"`
 	// target_hosts lists the hostnames to intercept (for example "github.com" or
@@ -1628,6 +1604,9 @@ func (r environmentStatusContentGitJSON) RawJSON() string {
 type EnvironmentStatusContentGitChangedFile struct {
 	// ChangeType is the type of change that happened to the file
 	ChangeType EnvironmentStatusContentGitChangedFilesChangeType `json:"changeType"`
+	// old_path is the previous path of the file before a rename or copy. Only set when
+	// change_type is RENAMED or COPIED.
+	OldPath string `json:"oldPath"`
 	// path is the path of the file
 	Path string                                     `json:"path"`
 	JSON environmentStatusContentGitChangedFileJSON `json:"-"`
@@ -1637,6 +1616,7 @@ type EnvironmentStatusContentGitChangedFile struct {
 // struct [EnvironmentStatusContentGitChangedFile]
 type environmentStatusContentGitChangedFileJSON struct {
 	ChangeType  apijson.Field
+	OldPath     apijson.Field
 	Path        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -2169,7 +2149,7 @@ func (r vetoJSON) RawJSON() string {
 // exec controls executable blocking
 type VetoExec struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action KernelControlsAction `json:"action"`
+	Action shared.KernelControlsAction `json:"action"`
 	// denylist is the list of executable paths or names to block
 	Denylist []string `json:"denylist"`
 	// enabled controls whether executable blocking is active
@@ -2207,7 +2187,7 @@ func (r VetoParam) MarshalJSON() (data []byte, err error) {
 // exec controls executable blocking
 type VetoExecParam struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action param.Field[KernelControlsAction] `json:"action"`
+	Action param.Field[shared.KernelControlsAction] `json:"action"`
 	// denylist is the list of executable paths or names to block
 	Denylist param.Field[[]string] `json:"denylist"`
 	// enabled controls whether executable blocking is active

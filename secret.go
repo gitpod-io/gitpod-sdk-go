@@ -340,6 +340,13 @@ type Secret struct {
 	CreatedAt time.Time `json:"createdAt" format:"date-time"`
 	// creator is the identity of the creator of the secret
 	Creator shared.Subject `json:"creator"`
+	// credential_proxy configures transparent credential injection via the credential
+	// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+	// hosts and replaces the dummy mounted value with the real value in the specified
+	// HTTP header. The real secret value is never exposed in the environment. This
+	// field is orthogonal to mount — a secret can be both mounted and proxied at the
+	// same time.
+	CredentialProxy SecretCredentialProxy `json:"credentialProxy"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable bool `json:"environmentVariable"`
@@ -352,6 +359,8 @@ type Secret struct {
 	// Deprecated: deprecated
 	ProjectID string      `json:"projectId" format:"uuid"`
 	Scope     SecretScope `json:"scope"`
+	// Source of the secret
+	Source SecretSource `json:"source"`
 	// A Timestamp represents a point in time independent of any time zone or local
 	// calendar, encoded as a count of seconds and fractions of seconds at nanosecond
 	// resolution. The count is relative to an epoch at UTC midnight on January 1,
@@ -451,11 +460,13 @@ type secretJSON struct {
 	ContainerRegistryBasicAuthHost apijson.Field
 	CreatedAt                      apijson.Field
 	Creator                        apijson.Field
+	CredentialProxy                apijson.Field
 	EnvironmentVariable            apijson.Field
 	FilePath                       apijson.Field
 	Name                           apijson.Field
 	ProjectID                      apijson.Field
 	Scope                          apijson.Field
+	Source                         apijson.Field
 	UpdatedAt                      apijson.Field
 	raw                            string
 	ExtraFields                    map[string]apijson.Field
@@ -466,6 +477,89 @@ func (r *Secret) UnmarshalJSON(data []byte) (err error) {
 }
 
 func (r secretJSON) RawJSON() string {
+	return r.raw
+}
+
+// credential_proxy configures transparent credential injection via the credential
+// proxy. When set, the credential proxy intercepts HTTPS traffic to the target
+// hosts and replaces the dummy mounted value with the real value in the specified
+// HTTP header. The real secret value is never exposed in the environment. This
+// field is orthogonal to mount — a secret can be both mounted and proxied at the
+// same time.
+type SecretCredentialProxy struct {
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header string `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts []string                  `json:"targetHosts"`
+	JSON        secretCredentialProxyJSON `json:"-"`
+}
+
+// secretCredentialProxyJSON contains the JSON metadata for the struct
+// [SecretCredentialProxy]
+type secretCredentialProxyJSON struct {
+	Header      apijson.Field
+	TargetHosts apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretCredentialProxy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretCredentialProxyJSON) RawJSON() string {
+	return r.raw
+}
+
+// Source of the secret
+type SecretSource struct {
+	OidcJfrog SecretSourceOidcJfrog `json:"oidcJfrog"`
+	Verbatim  bool                  `json:"verbatim"`
+	JSON      secretSourceJSON      `json:"-"`
+}
+
+// secretSourceJSON contains the JSON metadata for the struct [SecretSource]
+type secretSourceJSON struct {
+	OidcJfrog   apijson.Field
+	Verbatim    apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *SecretSource) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretSourceJSON) RawJSON() string {
+	return r.raw
+}
+
+type SecretSourceOidcJfrog struct {
+	// host must be a hostname or IP address with optional port:
+	//
+	// ```
+	// this.matches("^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?[.])*[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(:([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$")
+	// ```
+	Host         string                    `json:"host"`
+	ProviderName string                    `json:"providerName"`
+	JSON         secretSourceOidcJfrogJSON `json:"-"`
+}
+
+// secretSourceOidcJfrogJSON contains the JSON metadata for the struct
+// [SecretSourceOidcJfrog]
+type secretSourceOidcJfrogJSON struct {
+	Host         apijson.Field
+	ProviderName apijson.Field
+	raw          string
+	ExtraFields  map[string]apijson.Field
+}
+
+func (r *SecretSourceOidcJfrog) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r secretSourceOidcJfrogJSON) RawJSON() string {
 	return r.raw
 }
 
@@ -568,6 +662,13 @@ type SecretNewParams struct {
 	// secret will be mounted as a docker config in the environment VM, mount will have
 	// the docker registry host
 	ContainerRegistryBasicAuthHost param.Field[string] `json:"containerRegistryBasicAuthHost"`
+	// credential_proxy configures transparent credential injection when environments
+	// materialize this secret. When set, the credential proxy intercepts HTTPS traffic
+	// to the target hosts and replaces the dummy mounted value with the real value in
+	// the specified HTTP header. The real secret value is never exposed in the
+	// environment. This field is orthogonal to mount — a secret can be both mounted
+	// and proxied at the same time.
+	CredentialProxy param.Field[SecretNewParamsCredentialProxy] `json:"credentialProxy"`
 	// secret will be created as an Environment Variable with the same name as the
 	// secret
 	EnvironmentVariable param.Field[bool] `json:"environmentVariable"`
@@ -583,11 +684,56 @@ type SecretNewParams struct {
 	ProjectID param.Field[string] `json:"projectId"`
 	// scope is the scope of the secret
 	Scope param.Field[SecretScopeParam] `json:"scope"`
-	// value is the plaintext value of the secret
+	// source is the source of the secret, possibly verbatim value
+	Source param.Field[SecretNewParamsSource] `json:"source"`
+	// value is the plaintext value of the secret. When set, source must be unset or
+	// verbatim.
 	Value param.Field[string] `json:"value"`
 }
 
 func (r SecretNewParams) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// credential_proxy configures transparent credential injection when environments
+// materialize this secret. When set, the credential proxy intercepts HTTPS traffic
+// to the target hosts and replaces the dummy mounted value with the real value in
+// the specified HTTP header. The real secret value is never exposed in the
+// environment. This field is orthogonal to mount — a secret can be both mounted
+// and proxied at the same time.
+type SecretNewParamsCredentialProxy struct {
+	// header is the HTTP header name to inject (e.g. "Authorization").
+	Header param.Field[string] `json:"header"`
+	// target_hosts lists the hostnames to intercept (for example "github.com" or
+	// "\*.github.com"). Wildcards are subdomain-only and do not match the apex domain.
+	TargetHosts param.Field[[]string] `json:"targetHosts"`
+}
+
+func (r SecretNewParamsCredentialProxy) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// source is the source of the secret, possibly verbatim value
+type SecretNewParamsSource struct {
+	OidcJfrog param.Field[SecretNewParamsSourceOidcJfrog] `json:"oidcJfrog"`
+	Verbatim  param.Field[bool]                           `json:"verbatim"`
+}
+
+func (r SecretNewParamsSource) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+type SecretNewParamsSourceOidcJfrog struct {
+	// host must be a hostname or IP address with optional port:
+	//
+	// ```
+	// this.matches("^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?[.])*[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(:([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$")
+	// ```
+	Host         param.Field[string] `json:"host"`
+	ProviderName param.Field[string] `json:"providerName"`
+}
+
+func (r SecretNewParamsSourceOidcJfrog) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 

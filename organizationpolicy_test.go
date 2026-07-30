@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/testutil"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 func TestOrganizationPolicyGet(t *testing.T) {
@@ -54,6 +55,15 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 	_, err := client.Organizations.Policies.Update(context.TODO(), gitpod.OrganizationPolicyUpdateParams{
 		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 		AgentPolicy: gitpod.F(gitpod.OrganizationPolicyUpdateParamsAgentPolicy{
+			AllowedAgentIDs:              gitpod.F([]string{"string"}),
+			AllowedCodexModels:           gitpod.F([]shared.CodexOpenAIModel{shared.CodexOpenAIModelUnspecified}),
+			AllowedCodexReasoningEfforts: gitpod.F([]shared.CodexReasoningEffort{shared.CodexReasoningEffortUnspecified}),
+			AllowedCodexServiceTiers:     gitpod.F([]shared.CodexServiceTier{shared.CodexServiceTierUnspecified}),
+			CodexModelPolicy: gitpod.F(gitpod.CodexModelPolicyParam{
+				ModelStates: gitpod.F(map[string]gitpod.CodexModelPolicyModelState{
+					"foo": gitpod.CodexModelPolicyModelStateCodexModelPolicyStateUnspecified,
+				}),
+			}),
 			CommandDenyList:            gitpod.F([]string{"string"}),
 			ConversationSharingPolicy:  gitpod.F(gitpod.ConversationSharingPolicyUnspecified),
 			MaxSubagentsPerEnvironment: gitpod.F(int64(10)),
@@ -66,6 +76,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		DefaultEditorID:                 gitpod.F("defaultEditorId"),
 		DefaultEnvironmentImage:         gitpod.F("defaultEnvironmentImage"),
 		DeleteArchivedEnvironmentsAfter: gitpod.F("+9125115.360s"),
+		DisableFromScratch:              gitpod.F(true),
 		EditorVersionRestrictions: gitpod.F(map[string]gitpod.OrganizationPolicyUpdateParamsEditorVersionRestrictions{
 			"foo": {
 				AllowedVersions: gitpod.F([]string{"string"}),
@@ -75,6 +86,7 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 		MaximumEnvironmentsPerUser:        gitpod.F("20"),
 		MaximumEnvironmentTimeout:         gitpod.F("3600s"),
 		MaximumRunningEnvironmentsPerUser: gitpod.F("5"),
+		MaxPortAdmissionLevel:             gitpod.F(gitpod.AdmissionLevelUnspecified),
 		MembersCreateProjects:             gitpod.F(true),
 		MembersRequireProjects:            gitpod.F(true),
 		PortSharingDisabled:               gitpod.F(true),
@@ -91,11 +103,13 @@ func TestOrganizationPolicyUpdateWithOptionalParams(t *testing.T) {
 				Tags:        gitpod.F("tags"),
 			}),
 		}),
+		SecurityPolicyID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		VetoExecPolicy: gitpod.F(gitpod.VetoExecPolicyParam{
-			Action:      gitpod.F(gitpod.KernelControlsActionUnspecified),
+			Action:      gitpod.F(shared.KernelControlsActionUnspecified),
 			Enabled:     gitpod.F(true),
 			Executables: gitpod.F([]string{"string"}),
 		}),
+		WebBrowserDisabled: gitpod.F(true),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

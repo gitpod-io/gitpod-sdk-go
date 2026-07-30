@@ -28,8 +28,8 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Runners.New(context.TODO(), gitpod.RunnerNewParams{
 		Kind:            gitpod.F(gitpod.RunnerKindUnspecified),
-		Name:            gitpod.F("Production Runner"),
-		Provider:        gitpod.F(gitpod.RunnerProviderAwsEc2),
+		Name:            gitpod.F("GCP Runner"),
+		Provider:        gitpod.F(gitpod.RunnerProviderGcp),
 		RunnerManagerID: gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
 		Spec: gitpod.F(gitpod.RunnerSpecParam{
 			Configuration: gitpod.F(gitpod.RunnerConfigurationParam{
@@ -43,7 +43,7 @@ func TestRunnerNewWithOptionalParams(t *testing.T) {
 					URL:                   gitpod.F("url"),
 					Username:              gitpod.F("username"),
 				}),
-				Region:         gitpod.F("us-west"),
+				Region:         gitpod.F("us-central1"),
 				ReleaseChannel: gitpod.F(gitpod.RunnerReleaseChannelStable),
 				UpdateWindow: gitpod.F(gitpod.UpdateWindowParam{
 					EndHour:   gitpod.F(int64(0)),
@@ -313,6 +313,11 @@ func TestRunnerListScmOrganizationsWithOptionalParams(t *testing.T) {
 	_, err := client.Runners.ListScmOrganizations(context.TODO(), gitpod.RunnerListScmOrganizationsParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
+		Pagination: gitpod.F(gitpod.RunnerListScmOrganizationsParamsPagination{
+			Token:    gitpod.F("token"),
+			PageSize: gitpod.F(int64(100)),
+		}),
+		Query:    gitpod.F("query"),
 		RunnerID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 		ScmHost:  gitpod.F("github.com"),
 	})

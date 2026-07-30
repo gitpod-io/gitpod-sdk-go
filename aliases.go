@@ -21,8 +21,8 @@ type Error = apierror.Error
 // automation during a prebuild of an environment. This phase does not have user
 // secrets available. The `before_snapshot` field triggers the automation after all
 // prebuild tasks complete but before the snapshot is taken. This is used for tasks
-// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
-// and before_snapshot triggers can only be used with tasks, not services.
+// that need to run last during prebuilds, such as IDE warmup. Note: The
+// before_snapshot trigger can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTrigger = shared.AutomationTrigger
@@ -39,11 +39,85 @@ type AutomationTrigger = shared.AutomationTrigger
 // automation during a prebuild of an environment. This phase does not have user
 // secrets available. The `before_snapshot` field triggers the automation after all
 // prebuild tasks complete but before the snapshot is taken. This is used for tasks
-// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
-// and before_snapshot triggers can only be used with tasks, not services.
+// that need to run last during prebuilds, such as IDE warmup. Note: The
+// before_snapshot trigger can only be used with tasks, not services.
 //
 // This is an alias to an internal type.
 type AutomationTriggerParam = shared.AutomationTriggerParam
+
+// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
+// Codex app runtime can select through Ona's Codex picker.
+//
+// This is an alias to an internal type.
+type CodexOpenAIModel = shared.CodexOpenAIModel
+
+// This is an alias to an internal value.
+const CodexOpenAIModelUnspecified = shared.CodexOpenAIModelUnspecified
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_5 = shared.CodexOpenAIModelGpt5_5
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_4 = shared.CodexOpenAIModelGpt5_4
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_4Mini = shared.CodexOpenAIModelGpt5_4Mini
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_3Codex = shared.CodexOpenAIModelGpt5_3Codex
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_3CodexSpark = shared.CodexOpenAIModelGpt5_3CodexSpark
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_2 = shared.CodexOpenAIModelGpt5_2
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_6Sol = shared.CodexOpenAIModelGpt5_6Sol
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_6Terra = shared.CodexOpenAIModelGpt5_6Terra
+
+// This is an alias to an internal value.
+const CodexOpenAIModelGpt5_6Luna = shared.CodexOpenAIModelGpt5_6Luna
+
+// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
+// the Codex app runtime.
+//
+// This is an alias to an internal type.
+type CodexReasoningEffort = shared.CodexReasoningEffort
+
+// This is an alias to an internal value.
+const CodexReasoningEffortUnspecified = shared.CodexReasoningEffortUnspecified
+
+// This is an alias to an internal value.
+const CodexReasoningEffortLow = shared.CodexReasoningEffortLow
+
+// This is an alias to an internal value.
+const CodexReasoningEffortMedium = shared.CodexReasoningEffortMedium
+
+// This is an alias to an internal value.
+const CodexReasoningEffortHigh = shared.CodexReasoningEffortHigh
+
+// This is an alias to an internal value.
+const CodexReasoningEffortExtraHigh = shared.CodexReasoningEffortExtraHigh
+
+// CodexServiceTier is the static allowlist of service tiers supported by the Codex
+// app runtime.
+//
+// This is an alias to an internal type.
+type CodexServiceTier = shared.CodexServiceTier
+
+// This is an alias to an internal value.
+const CodexServiceTierUnspecified = shared.CodexServiceTierUnspecified
+
+// This is an alias to an internal value.
+const CodexServiceTierFast = shared.CodexServiceTierFast
+
+// CodexSettings contains settings consumed only by the Codex app agent.
+//
+// This is an alias to an internal type.
+type CodexSettingsParam = shared.CodexSettingsParam
 
 // This is an alias to an internal type.
 type CountResponseRelation = shared.CountResponseRelation
@@ -56,6 +130,11 @@ const CountResponseRelationEq = shared.CountResponseRelationEq
 
 // This is an alias to an internal value.
 const CountResponseRelationGte = shared.CountResponseRelationGte
+
+// DateRange specifies a time period for queries.
+//
+// This is an alias to an internal type.
+type DateRangeParam = shared.DateRangeParam
 
 // This is an alias to an internal type.
 type EnvironmentClass = shared.EnvironmentClass
@@ -150,6 +229,20 @@ type FieldValueParam = shared.FieldValueParam
 // This is an alias to an internal type.
 type Gateway = shared.Gateway
 
+// KernelControlsAction defines how a kernel-level policy violation is handled.
+//
+// This is an alias to an internal type.
+type KernelControlsAction = shared.KernelControlsAction
+
+// This is an alias to an internal value.
+const KernelControlsActionUnspecified = shared.KernelControlsActionUnspecified
+
+// This is an alias to an internal value.
+const KernelControlsActionBlock = shared.KernelControlsActionBlock
+
+// This is an alias to an internal value.
+const KernelControlsActionAudit = shared.KernelControlsActionAudit
+
 // This is an alias to an internal type.
 type OrganizationRole = shared.OrganizationRole
 
@@ -238,7 +331,19 @@ const ResourceRoleOrgAutomationsAdmin = shared.ResourceRoleOrgAutomationsAdmin
 const ResourceRoleOrgGroupsAdmin = shared.ResourceRoleOrgGroupsAdmin
 
 // This is an alias to an internal value.
+const ResourceRoleOrgEnvironmentsReader = shared.ResourceRoleOrgEnvironmentsReader
+
+// This is an alias to an internal value.
 const ResourceRoleOrgAuditLogReader = shared.ResourceRoleOrgAuditLogReader
+
+// This is an alias to an internal value.
+const ResourceRoleOrgBillingViewer = shared.ResourceRoleOrgBillingViewer
+
+// This is an alias to an internal value.
+const ResourceRoleOrgInsightsViewer = shared.ResourceRoleOrgInsightsViewer
+
+// This is an alias to an internal value.
+const ResourceRoleOrgSecurityAdmin = shared.ResourceRoleOrgSecurityAdmin
 
 // This is an alias to an internal value.
 const ResourceRoleGroupAdmin = shared.ResourceRoleGroupAdmin
@@ -402,6 +507,12 @@ const ResourceRoleTeamAdmin = shared.ResourceRoleTeamAdmin
 // This is an alias to an internal value.
 const ResourceRoleTeamViewer = shared.ResourceRoleTeamViewer
 
+// This is an alias to an internal value.
+const ResourceRoleSecurityPolicyAdmin = shared.ResourceRoleSecurityPolicyAdmin
+
+// This is an alias to an internal value.
+const ResourceRoleSecurityPolicyViewer = shared.ResourceRoleSecurityPolicyViewer
+
 // This is an alias to an internal type.
 type ResourceType = shared.ResourceType
 
@@ -554,6 +665,15 @@ const ResourceTypeWarmPool = shared.ResourceTypeWarmPool
 
 // This is an alias to an internal value.
 const ResourceTypeNotification = shared.ResourceTypeNotification
+
+// This is an alias to an internal value.
+const ResourceTypeSecurityPolicy = shared.ResourceTypeSecurityPolicy
+
+// This is an alias to an internal value.
+const ResourceTypeBaseSnapshot = shared.ResourceTypeBaseSnapshot
+
+// This is an alias to an internal value.
+const ResourceTypeBaseSnapshotConfig = shared.ResourceTypeBaseSnapshotConfig
 
 // This is an alias to an internal type.
 type RunsOn = shared.RunsOn

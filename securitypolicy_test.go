@@ -13,7 +13,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/option"
 )
 
-func TestOrganizationScimConfigurationNewWithOptionalParams(t *testing.T) {
+func TestSecurityPolicyNewWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,12 +26,23 @@ func TestOrganizationScimConfigurationNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Organizations.ScimConfigurations.New(context.TODO(), gitpod.OrganizationScimConfigurationNewParams{
-		OrganizationID:                     gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
-		SSOConfigurationID:                 gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		AllowUnverifiedEmailAccountLinking: gitpod.F(true),
-		Name:                               gitpod.F("name"),
-		TokenExpiresIn:                     gitpod.F("+9125115.360s"),
+	_, err := client.SecurityPolicies.New(context.TODO(), gitpod.SecurityPolicyNewParams{
+		Metadata: gitpod.F(gitpod.SecurityPolicyNewParamsMetadata{
+			Name: gitpod.F("Veto Exec audit-first"),
+		}),
+		Spec: gitpod.F(gitpod.SecurityPolicyNewParamsSpec{
+			Executables: gitpod.F(gitpod.SecurityPolicyNewParamsSpecExecutables{
+				DefaultEffect: gitpod.F(gitpod.SecurityPolicyNewParamsSpecExecutablesDefaultEffectEffectAllow),
+				Rules: gitpod.F([]gitpod.SecurityPolicyNewParamsSpecExecutablesRule{{
+					Effect: gitpod.F(gitpod.SecurityPolicyNewParamsSpecExecutablesRulesEffectEffectAudit),
+					Path:   gitpod.F("npx"),
+				}, {
+					Effect: gitpod.F(gitpod.SecurityPolicyNewParamsSpecExecutablesRulesEffectEffectBlock),
+					Path:   gitpod.F("/usr/bin/curl"),
+				}}),
+			}),
+		}),
+		OrganizationID: gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -42,7 +53,7 @@ func TestOrganizationScimConfigurationNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationScimConfigurationGet(t *testing.T) {
+func TestSecurityPolicyGetWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -55,8 +66,8 @@ func TestOrganizationScimConfigurationGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Organizations.ScimConfigurations.Get(context.TODO(), gitpod.OrganizationScimConfigurationGetParams{
-		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+	_, err := client.SecurityPolicies.Get(context.TODO(), gitpod.SecurityPolicyGetParams{
+		SecurityPolicyID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -67,7 +78,7 @@ func TestOrganizationScimConfigurationGet(t *testing.T) {
 	}
 }
 
-func TestOrganizationScimConfigurationUpdateWithOptionalParams(t *testing.T) {
+func TestSecurityPolicyUpdateWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -80,12 +91,23 @@ func TestOrganizationScimConfigurationUpdateWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Organizations.ScimConfigurations.Update(context.TODO(), gitpod.OrganizationScimConfigurationUpdateParams{
-		ScimConfigurationID:                gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		AllowUnverifiedEmailAccountLinking: gitpod.F(true),
-		Enabled:                            gitpod.F(false),
-		Name:                               gitpod.F("name"),
-		SSOConfigurationID:                 gitpod.F("182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"),
+	_, err := client.SecurityPolicies.Update(context.TODO(), gitpod.SecurityPolicyUpdateParams{
+		Metadata: gitpod.F(gitpod.SecurityPolicyUpdateParamsMetadata{
+			Name: gitpod.F("x"),
+		}),
+		SecurityPolicyID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
+		Spec: gitpod.F(gitpod.SecurityPolicyUpdateParamsSpec{
+			Executables: gitpod.F(gitpod.SecurityPolicyUpdateParamsSpecExecutables{
+				DefaultEffect: gitpod.F(gitpod.SecurityPolicyUpdateParamsSpecExecutablesDefaultEffectEffectAllow),
+				Rules: gitpod.F([]gitpod.SecurityPolicyUpdateParamsSpecExecutablesRule{{
+					Effect: gitpod.F(gitpod.SecurityPolicyUpdateParamsSpecExecutablesRulesEffectEffectBlock),
+					Path:   gitpod.F("npx"),
+				}, {
+					Effect: gitpod.F(gitpod.SecurityPolicyUpdateParamsSpecExecutablesRulesEffectEffectBlock),
+					Path:   gitpod.F("/usr/bin/curl"),
+				}}),
+			}),
+		}),
 	})
 	if err != nil {
 		var apierr *gitpod.Error
@@ -96,7 +118,7 @@ func TestOrganizationScimConfigurationUpdateWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationScimConfigurationListWithOptionalParams(t *testing.T) {
+func TestSecurityPolicyListWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -109,10 +131,15 @@ func TestOrganizationScimConfigurationListWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Organizations.ScimConfigurations.List(context.TODO(), gitpod.OrganizationScimConfigurationListParams{
+	_, err := client.SecurityPolicies.List(context.TODO(), gitpod.SecurityPolicyListParams{
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
-		Pagination: gitpod.F(gitpod.OrganizationScimConfigurationListParamsPagination{
+		Filter: gitpod.F(gitpod.SecurityPolicyListParamsFilter{
+			OrganizationID:    gitpod.F("b0e12f6c-4c67-429d-a4a6-d9838b5da047"),
+			Search:            gitpod.F("search"),
+			SecurityPolicyIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+		}),
+		Pagination: gitpod.F(gitpod.SecurityPolicyListParamsPagination{
 			Token:    gitpod.F("token"),
 			PageSize: gitpod.F(int64(20)),
 		}),
@@ -126,7 +153,7 @@ func TestOrganizationScimConfigurationListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestOrganizationScimConfigurationDelete(t *testing.T) {
+func TestSecurityPolicyDeleteWithOptionalParams(t *testing.T) {
 	t.Skip("Mock server tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -139,34 +166,8 @@ func TestOrganizationScimConfigurationDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithBearerToken("My Bearer Token"),
 	)
-	_, err := client.Organizations.ScimConfigurations.Delete(context.TODO(), gitpod.OrganizationScimConfigurationDeleteParams{
-		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-	})
-	if err != nil {
-		var apierr *gitpod.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestOrganizationScimConfigurationRegenerateTokenWithOptionalParams(t *testing.T) {
-	t.Skip("Mock server tests are disabled")
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := gitpod.NewClient(
-		option.WithBaseURL(baseURL),
-		option.WithBearerToken("My Bearer Token"),
-	)
-	_, err := client.Organizations.ScimConfigurations.RegenerateToken(context.TODO(), gitpod.OrganizationScimConfigurationRegenerateTokenParams{
-		ScimConfigurationID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
-		TokenExpiresIn:      gitpod.F("+9125115.360s"),
+	_, err := client.SecurityPolicies.Delete(context.TODO(), gitpod.SecurityPolicyDeleteParams{
+		SecurityPolicyID: gitpod.F("d2c94c27-3b76-4a42-b88c-95a85e392c68"),
 	})
 	if err != nil {
 		var apierr *gitpod.Error

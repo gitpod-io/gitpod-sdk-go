@@ -2496,7 +2496,6 @@ type WorkflowStep struct {
 	Agent WorkflowStepAgent `json:"agent"`
 	// WorkflowPullRequestStep represents a pull request creation step.
 	PullRequest WorkflowStepPullRequest `json:"pullRequest"`
-	Report      WorkflowStepReport      `json:"report"`
 	// WorkflowTaskStep represents a task step that executes a command.
 	Task WorkflowStepTask `json:"task"`
 	JSON workflowStepJSON `json:"-"`
@@ -2506,7 +2505,6 @@ type WorkflowStep struct {
 type workflowStepJSON struct {
 	Agent       apijson.Field
 	PullRequest apijson.Field
-	Report      apijson.Field
 	Task        apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
@@ -2590,51 +2588,6 @@ func (r workflowStepPullRequestJSON) RawJSON() string {
 	return r.raw
 }
 
-type WorkflowStepReport struct {
-	// Report must have at least one output:
-	//
-	// ```
-	// size(this) >= 1
-	// ```
-	Outputs []WorkflowStepReportOutput `json:"outputs"`
-	JSON    workflowStepReportJSON     `json:"-"`
-}
-
-// workflowStepReportJSON contains the JSON metadata for the struct
-// [WorkflowStepReport]
-type workflowStepReportJSON struct {
-	Outputs     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WorkflowStepReport) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r workflowStepReportJSON) RawJSON() string {
-	return r.raw
-}
-
-type WorkflowStepReportOutput struct {
-	JSON workflowStepReportOutputJSON `json:"-"`
-}
-
-// workflowStepReportOutputJSON contains the JSON metadata for the struct
-// [WorkflowStepReportOutput]
-type workflowStepReportOutputJSON struct {
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *WorkflowStepReportOutput) UnmarshalJSON(data []byte) (err error) {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r workflowStepReportOutputJSON) RawJSON() string {
-	return r.raw
-}
-
 // WorkflowTaskStep represents a task step that executes a command.
 type WorkflowStepTask struct {
 	// Command must be between 1 and 20,000 characters:
@@ -2668,7 +2621,6 @@ type WorkflowStepParam struct {
 	Agent param.Field[WorkflowStepAgentParam] `json:"agent"`
 	// WorkflowPullRequestStep represents a pull request creation step.
 	PullRequest param.Field[WorkflowStepPullRequestParam] `json:"pullRequest"`
-	Report      param.Field[WorkflowStepReportParam]      `json:"report"`
 	// WorkflowTaskStep represents a task step that executes a command.
 	Task param.Field[WorkflowStepTaskParam] `json:"task"`
 }
@@ -2718,26 +2670,6 @@ func (r WorkflowStepPullRequestParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
-type WorkflowStepReportParam struct {
-	// Report must have at least one output:
-	//
-	// ```
-	// size(this) >= 1
-	// ```
-	Outputs param.Field[[]WorkflowStepReportOutputParam] `json:"outputs"`
-}
-
-func (r WorkflowStepReportParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-type WorkflowStepReportOutputParam struct {
-}
-
-func (r WorkflowStepReportOutputParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
 // WorkflowTaskStep represents a task step that executes a command.
 type WorkflowStepTaskParam struct {
 	// Command must be between 1 and 20,000 characters:
@@ -2779,9 +2711,11 @@ type WorkflowTrigger struct {
 	//
 	// Context Usage by Trigger Type:
 	//
-	// - Manual: Can use any context type
-	// - Time: Typically uses Projects or Repositories context
-	// - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Manual: Can use any context type
+	//   - Time: Typically uses Projects or Repositories context
+	//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+	//     context)
 	Context WorkflowTriggerContext `json:"context" api:"required"`
 	// Manual trigger - executed when StartWorkflow RPC is called. No additional
 	// configuration needed.
@@ -2817,6 +2751,10 @@ func (r workflowTriggerJSON) RawJSON() string {
 // for PRs in repositories matching the trigger context.
 type WorkflowTriggerPullRequest struct {
 	Events []WorkflowTriggerPullRequestEvent `json:"events"`
+	// integration_id is the optional ID of an integration that acts as the source of
+	// webhook events. When set, the trigger will be activated when the webhook
+	// receives events.
+	IntegrationID string `json:"integrationId" api:"nullable" format:"uuid"`
 	// webhook_id is the optional ID of a webhook that this trigger is bound to. When
 	// set, the trigger will be activated when the webhook receives events. This allows
 	// multiple workflows to share a single webhook endpoint.
@@ -2827,10 +2765,11 @@ type WorkflowTriggerPullRequest struct {
 // workflowTriggerPullRequestJSON contains the JSON metadata for the struct
 // [WorkflowTriggerPullRequest]
 type workflowTriggerPullRequestJSON struct {
-	Events      apijson.Field
-	WebhookID   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Events        apijson.Field
+	IntegrationID apijson.Field
+	WebhookID     apijson.Field
+	raw           string
+	ExtraFields   map[string]apijson.Field
 }
 
 func (r *WorkflowTriggerPullRequest) UnmarshalJSON(data []byte) (err error) {
@@ -2845,18 +2784,19 @@ func (r workflowTriggerPullRequestJSON) RawJSON() string {
 type WorkflowTriggerPullRequestEvent string
 
 const (
-	WorkflowTriggerPullRequestEventPullRequestEventUnspecified    WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UNSPECIFIED"
-	WorkflowTriggerPullRequestEventPullRequestEventOpened         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_OPENED"
-	WorkflowTriggerPullRequestEventPullRequestEventUpdated        WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UPDATED"
-	WorkflowTriggerPullRequestEventPullRequestEventApproved       WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_APPROVED"
-	WorkflowTriggerPullRequestEventPullRequestEventMerged         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_MERGED"
-	WorkflowTriggerPullRequestEventPullRequestEventClosed         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_CLOSED"
-	WorkflowTriggerPullRequestEventPullRequestEventReadyForReview WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_READY_FOR_REVIEW"
+	WorkflowTriggerPullRequestEventPullRequestEventUnspecified     WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UNSPECIFIED"
+	WorkflowTriggerPullRequestEventPullRequestEventOpened          WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_OPENED"
+	WorkflowTriggerPullRequestEventPullRequestEventUpdated         WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_UPDATED"
+	WorkflowTriggerPullRequestEventPullRequestEventApproved        WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_APPROVED"
+	WorkflowTriggerPullRequestEventPullRequestEventMerged          WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_MERGED"
+	WorkflowTriggerPullRequestEventPullRequestEventClosed          WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_CLOSED"
+	WorkflowTriggerPullRequestEventPullRequestEventReadyForReview  WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_READY_FOR_REVIEW"
+	WorkflowTriggerPullRequestEventPullRequestEventReviewRequested WorkflowTriggerPullRequestEvent = "PULL_REQUEST_EVENT_REVIEW_REQUESTED"
 )
 
 func (r WorkflowTriggerPullRequestEvent) IsKnown() bool {
 	switch r {
-	case WorkflowTriggerPullRequestEventPullRequestEventUnspecified, WorkflowTriggerPullRequestEventPullRequestEventOpened, WorkflowTriggerPullRequestEventPullRequestEventUpdated, WorkflowTriggerPullRequestEventPullRequestEventApproved, WorkflowTriggerPullRequestEventPullRequestEventMerged, WorkflowTriggerPullRequestEventPullRequestEventClosed, WorkflowTriggerPullRequestEventPullRequestEventReadyForReview:
+	case WorkflowTriggerPullRequestEventPullRequestEventUnspecified, WorkflowTriggerPullRequestEventPullRequestEventOpened, WorkflowTriggerPullRequestEventPullRequestEventUpdated, WorkflowTriggerPullRequestEventPullRequestEventApproved, WorkflowTriggerPullRequestEventPullRequestEventMerged, WorkflowTriggerPullRequestEventPullRequestEventClosed, WorkflowTriggerPullRequestEventPullRequestEventReadyForReview, WorkflowTriggerPullRequestEventPullRequestEventReviewRequested:
 		return true
 	}
 	return false
@@ -2917,9 +2857,11 @@ type WorkflowTriggerParam struct {
 	//
 	// Context Usage by Trigger Type:
 	//
-	// - Manual: Can use any context type
-	// - Time: Typically uses Projects or Repositories context
-	// - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Manual: Can use any context type
+	//   - Time: Typically uses Projects or Repositories context
+	//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+	//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+	//     context)
 	Context param.Field[WorkflowTriggerContextParam] `json:"context" api:"required"`
 	// Manual trigger - executed when StartWorkflow RPC is called. No additional
 	// configuration needed.
@@ -2940,6 +2882,10 @@ func (r WorkflowTriggerParam) MarshalJSON() (data []byte, err error) {
 // for PRs in repositories matching the trigger context.
 type WorkflowTriggerPullRequestParam struct {
 	Events param.Field[[]WorkflowTriggerPullRequestEvent] `json:"events"`
+	// integration_id is the optional ID of an integration that acts as the source of
+	// webhook events. When set, the trigger will be activated when the webhook
+	// receives events.
+	IntegrationID param.Field[string] `json:"integrationId" format:"uuid"`
 	// webhook_id is the optional ID of a webhook that this trigger is bound to. When
 	// set, the trigger will be activated when the webhook receives events. This allows
 	// multiple workflows to share a single webhook endpoint.
@@ -2976,9 +2922,11 @@ func (r WorkflowTriggerTimeParam) MarshalJSON() (data []byte, err error) {
 //
 // Context Usage by Trigger Type:
 //
-// - Manual: Can use any context type
-// - Time: Typically uses Projects or Repositories context
-// - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Manual: Can use any context type
+//   - Time: Typically uses Projects or Repositories context
+//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+//     context)
 type WorkflowTriggerContext struct {
 	// Execute workflow in agent-managed environments. Agent receives the specified
 	// prompt and manages execution context.
@@ -3160,9 +3108,11 @@ func (r workflowTriggerContextRepositoriesRepositoryURLsJSON) RawJSON() string {
 //
 // Context Usage by Trigger Type:
 //
-// - Manual: Can use any context type
-// - Time: Typically uses Projects or Repositories context
-// - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Manual: Can use any context type
+//   - Time: Typically uses Projects or Repositories context
+//   - PullRequest: Can use any context, FromTrigger uses PR repository context
+//   - Incident: Typically uses Projects or Repositories context (no inherent repo
+//     context)
 type WorkflowTriggerContextParam struct {
 	// Execute workflow in agent-managed environments. Agent receives the specified
 	// prompt and manages execution context.
@@ -3440,6 +3390,9 @@ func (r automationStartExecutionResponseJSON) RawJSON() string {
 type AutomationNewParams struct {
 	// WorkflowAction defines the actions to be executed in a workflow.
 	Action param.Field[WorkflowActionParam] `json:"action" api:"required"`
+	// Codex app agent settings. Only meaningful when agent_id refers to the Codex app
+	// agent.
+	CodexSettings param.Field[shared.CodexSettingsParam] `json:"codexSettings"`
 	// Description must be at most 500 characters:
 	//
 	// ```
@@ -3480,6 +3433,9 @@ func (r AutomationGetParams) MarshalJSON() (data []byte, err error) {
 type AutomationUpdateParams struct {
 	// WorkflowAction defines the actions to be executed in a workflow.
 	Action param.Field[WorkflowActionParam] `json:"action"`
+	// Codex app agent settings. Only meaningful when agent_id refers to the Codex app
+	// agent.
+	CodexSettings param.Field[shared.CodexSettingsParam] `json:"codexSettings"`
 	// Description must be at most 500 characters:
 	//
 	// ```

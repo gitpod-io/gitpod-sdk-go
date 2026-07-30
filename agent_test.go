@@ -138,7 +138,8 @@ func TestAgentListExecutionsWithOptionalParams(t *testing.T) {
 		Token:    gitpod.F("token"),
 		PageSize: gitpod.F(int64(0)),
 		Filter: gitpod.F(gitpod.AgentListExecutionsParamsFilter{
-			AgentIDs: gitpod.F([]string{"b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"}),
+			AgentExecutionIDs: gitpod.F([]string{"182bd5e5-6e1a-4fe4-a799-aa6d9a6ab26e"}),
+			AgentIDs:          gitpod.F([]string{"b8a64cfa-43e2-4b9d-9fb3-07edc63f5971"}),
 			Annotations: gitpod.F(map[string]string{
 				"foo": "string",
 			}),
@@ -271,6 +272,11 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			Payload: gitpod.F("payload"),
 			Type:    gitpod.F(gitpod.TypeUnspecified),
 		}),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
+		}),
 		UserInput: gitpod.F(gitpod.UserInputBlockParam{
 			ID:        gitpod.F("id"),
 			CreatedAt: gitpod.F(time.Now()),
@@ -292,6 +298,12 @@ func TestAgentSendToExecutionWithOptionalParams(t *testing.T) {
 			}),
 		}),
 		WakeEvent: gitpod.F(gitpod.WakeEventParam{
+			DevcontainerRebuild: gitpod.F(gitpod.WakeEventDevcontainerRebuildParam{
+				EnvironmentID:  gitpod.F("environmentId"),
+				FailureMessage: gitpod.F([]string{"string"}),
+				Phase:          gitpod.F("phase"),
+				SessionID:      gitpod.F("sessionId"),
+			}),
 			Environment: gitpod.F(gitpod.WakeEventEnvironmentParam{
 				EnvironmentID:  gitpod.F("environmentId"),
 				FailureMessage: gitpod.F([]string{"string"}),
@@ -366,6 +378,11 @@ func TestAgentStartExecutionWithOptionalParams(t *testing.T) {
 				ToBranch: gitpod.F("toBranch"),
 				URL:      gitpod.F("url"),
 			}),
+		}),
+		CodexSettings: gitpod.F(shared.CodexSettingsParam{
+			Model:           gitpod.F(shared.CodexOpenAIModelUnspecified),
+			ReasoningEffort: gitpod.F(shared.CodexReasoningEffortUnspecified),
+			ServiceTier:     gitpod.F(shared.CodexServiceTierUnspecified),
 		}),
 		Mode:             gitpod.F(gitpod.AgentModeUnspecified),
 		Name:             gitpod.F("name"),

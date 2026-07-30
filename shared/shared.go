@@ -21,8 +21,8 @@ import (
 // automation during a prebuild of an environment. This phase does not have user
 // secrets available. The `before_snapshot` field triggers the automation after all
 // prebuild tasks complete but before the snapshot is taken. This is used for tasks
-// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
-// and before_snapshot triggers can only be used with tasks, not services.
+// that need to run last during prebuilds, such as IDE warmup. Note: The
+// before_snapshot trigger can only be used with tasks, not services.
 type AutomationTrigger struct {
 	BeforeSnapshot        bool                  `json:"beforeSnapshot"`
 	Manual                bool                  `json:"manual"`
@@ -66,8 +66,8 @@ func (r automationTriggerJSON) RawJSON() string {
 // automation during a prebuild of an environment. This phase does not have user
 // secrets available. The `before_snapshot` field triggers the automation after all
 // prebuild tasks complete but before the snapshot is taken. This is used for tasks
-// that need to run last during prebuilds, such as IDE warmup. Note: The prebuild
-// and before_snapshot triggers can only be used with tasks, not services.
+// that need to run last during prebuilds, such as IDE warmup. Note: The
+// before_snapshot trigger can only be used with tasks, not services.
 type AutomationTriggerParam struct {
 	BeforeSnapshot        param.Field[bool] `json:"beforeSnapshot"`
 	Manual                param.Field[bool] `json:"manual"`
@@ -78,6 +78,85 @@ type AutomationTriggerParam struct {
 }
 
 func (r AutomationTriggerParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
+}
+
+// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
+// Codex app runtime can select through Ona's Codex picker.
+type CodexOpenAIModel string
+
+const (
+	CodexOpenAIModelUnspecified      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_UNSPECIFIED"
+	CodexOpenAIModelGpt5_5           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_5"
+	CodexOpenAIModelGpt5_4           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_4"
+	CodexOpenAIModelGpt5_4Mini       CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_4_MINI"
+	CodexOpenAIModelGpt5_3Codex      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX"
+	CodexOpenAIModelGpt5_3CodexSpark CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_3_CODEX_SPARK"
+	CodexOpenAIModelGpt5_2           CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_2"
+	CodexOpenAIModelGpt5_6Sol        CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_6_SOL"
+	CodexOpenAIModelGpt5_6Terra      CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA"
+	CodexOpenAIModelGpt5_6Luna       CodexOpenAIModel = "CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA"
+)
+
+func (r CodexOpenAIModel) IsKnown() bool {
+	switch r {
+	case CodexOpenAIModelUnspecified, CodexOpenAIModelGpt5_5, CodexOpenAIModelGpt5_4, CodexOpenAIModelGpt5_4Mini, CodexOpenAIModelGpt5_3Codex, CodexOpenAIModelGpt5_3CodexSpark, CodexOpenAIModelGpt5_2, CodexOpenAIModelGpt5_6Sol, CodexOpenAIModelGpt5_6Terra, CodexOpenAIModelGpt5_6Luna:
+		return true
+	}
+	return false
+}
+
+// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
+// the Codex app runtime.
+type CodexReasoningEffort string
+
+const (
+	CodexReasoningEffortUnspecified CodexReasoningEffort = "CODEX_REASONING_EFFORT_UNSPECIFIED"
+	CodexReasoningEffortLow         CodexReasoningEffort = "CODEX_REASONING_EFFORT_LOW"
+	CodexReasoningEffortMedium      CodexReasoningEffort = "CODEX_REASONING_EFFORT_MEDIUM"
+	CodexReasoningEffortHigh        CodexReasoningEffort = "CODEX_REASONING_EFFORT_HIGH"
+	CodexReasoningEffortExtraHigh   CodexReasoningEffort = "CODEX_REASONING_EFFORT_EXTRA_HIGH"
+)
+
+func (r CodexReasoningEffort) IsKnown() bool {
+	switch r {
+	case CodexReasoningEffortUnspecified, CodexReasoningEffortLow, CodexReasoningEffortMedium, CodexReasoningEffortHigh, CodexReasoningEffortExtraHigh:
+		return true
+	}
+	return false
+}
+
+// CodexServiceTier is the static allowlist of service tiers supported by the Codex
+// app runtime.
+type CodexServiceTier string
+
+const (
+	CodexServiceTierUnspecified CodexServiceTier = "CODEX_SERVICE_TIER_UNSPECIFIED"
+	CodexServiceTierFast        CodexServiceTier = "CODEX_SERVICE_TIER_FAST"
+)
+
+func (r CodexServiceTier) IsKnown() bool {
+	switch r {
+	case CodexServiceTierUnspecified, CodexServiceTierFast:
+		return true
+	}
+	return false
+}
+
+// CodexSettings contains settings consumed only by the Codex app agent.
+type CodexSettingsParam struct {
+	// CodexOpenAIModel is the static allowlist of concrete OpenAI models that the
+	// Codex app runtime can select through Ona's Codex picker.
+	Model param.Field[CodexOpenAIModel] `json:"model"`
+	// CodexReasoningEffort is the static allowlist of reasoning efforts supported by
+	// the Codex app runtime.
+	ReasoningEffort param.Field[CodexReasoningEffort] `json:"reasoningEffort"`
+	// CodexServiceTier is the static allowlist of service tiers supported by the Codex
+	// app runtime.
+	ServiceTier param.Field[CodexServiceTier] `json:"serviceTier"`
+}
+
+func (r CodexSettingsParam) MarshalJSON() (data []byte, err error) {
 	return apijson.MarshalRoot(r)
 }
 
@@ -95,6 +174,18 @@ func (r CountResponseRelation) IsKnown() bool {
 		return true
 	}
 	return false
+}
+
+// DateRange specifies a time period for queries.
+type DateRangeParam struct {
+	// End time of the date range (exclusive).
+	EndTime param.Field[time.Time] `json:"endTime" api:"required" format:"date-time"`
+	// Start time of the date range (inclusive).
+	StartTime param.Field[time.Time] `json:"startTime" api:"required" format:"date-time"`
+}
+
+func (r DateRangeParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 type EnvironmentClass struct {
@@ -326,6 +417,23 @@ func (r gatewayJSON) RawJSON() string {
 	return r.raw
 }
 
+// KernelControlsAction defines how a kernel-level policy violation is handled.
+type KernelControlsAction string
+
+const (
+	KernelControlsActionUnspecified KernelControlsAction = "KERNEL_CONTROLS_ACTION_UNSPECIFIED"
+	KernelControlsActionBlock       KernelControlsAction = "KERNEL_CONTROLS_ACTION_BLOCK"
+	KernelControlsActionAudit       KernelControlsAction = "KERNEL_CONTROLS_ACTION_AUDIT"
+)
+
+func (r KernelControlsAction) IsKnown() bool {
+	switch r {
+	case KernelControlsActionUnspecified, KernelControlsActionBlock, KernelControlsActionAudit:
+		return true
+	}
+	return false
+}
+
 type OrganizationRole string
 
 const (
@@ -435,7 +543,11 @@ const (
 	ResourceRoleOrgProjectsAdmin               ResourceRole = "RESOURCE_ROLE_ORG_PROJECTS_ADMIN"
 	ResourceRoleOrgAutomationsAdmin            ResourceRole = "RESOURCE_ROLE_ORG_AUTOMATIONS_ADMIN"
 	ResourceRoleOrgGroupsAdmin                 ResourceRole = "RESOURCE_ROLE_ORG_GROUPS_ADMIN"
+	ResourceRoleOrgEnvironmentsReader          ResourceRole = "RESOURCE_ROLE_ORG_ENVIRONMENTS_READER"
 	ResourceRoleOrgAuditLogReader              ResourceRole = "RESOURCE_ROLE_ORG_AUDIT_LOG_READER"
+	ResourceRoleOrgBillingViewer               ResourceRole = "RESOURCE_ROLE_ORG_BILLING_VIEWER"
+	ResourceRoleOrgInsightsViewer              ResourceRole = "RESOURCE_ROLE_ORG_INSIGHTS_VIEWER"
+	ResourceRoleOrgSecurityAdmin               ResourceRole = "RESOURCE_ROLE_ORG_SECURITY_ADMIN"
 	ResourceRoleGroupAdmin                     ResourceRole = "RESOURCE_ROLE_GROUP_ADMIN"
 	ResourceRoleGroupViewer                    ResourceRole = "RESOURCE_ROLE_GROUP_VIEWER"
 	ResourceRoleUserIdentity                   ResourceRole = "RESOURCE_ROLE_USER_IDENTITY"
@@ -490,11 +602,13 @@ const (
 	ResourceRoleSessionUser                    ResourceRole = "RESOURCE_ROLE_SESSION_USER"
 	ResourceRoleTeamAdmin                      ResourceRole = "RESOURCE_ROLE_TEAM_ADMIN"
 	ResourceRoleTeamViewer                     ResourceRole = "RESOURCE_ROLE_TEAM_VIEWER"
+	ResourceRoleSecurityPolicyAdmin            ResourceRole = "RESOURCE_ROLE_SECURITY_POLICY_ADMIN"
+	ResourceRoleSecurityPolicyViewer           ResourceRole = "RESOURCE_ROLE_SECURITY_POLICY_VIEWER"
 )
 
 func (r ResourceRole) IsKnown() bool {
 	switch r {
-	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleOrgAuditLogReader, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentExecutionViewer, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner, ResourceRoleWarmpoolAdmin, ResourceRoleWarmpoolViewer, ResourceRoleSessionAdmin, ResourceRoleSessionUser, ResourceRoleTeamAdmin, ResourceRoleTeamViewer:
+	case ResourceRoleUnspecified, ResourceRoleOrgAdmin, ResourceRoleOrgMember, ResourceRoleOrgRunnersAdmin, ResourceRoleOrgProjectsAdmin, ResourceRoleOrgAutomationsAdmin, ResourceRoleOrgGroupsAdmin, ResourceRoleOrgEnvironmentsReader, ResourceRoleOrgAuditLogReader, ResourceRoleOrgBillingViewer, ResourceRoleOrgInsightsViewer, ResourceRoleOrgSecurityAdmin, ResourceRoleGroupAdmin, ResourceRoleGroupViewer, ResourceRoleUserIdentity, ResourceRoleUserViewer, ResourceRoleUserAdmin, ResourceRoleEnvironmentIdentity, ResourceRoleEnvironmentAdmin, ResourceRoleEnvironmentUser, ResourceRoleEnvironmentViewer, ResourceRoleEnvironmentRunner, ResourceRoleRunnerIdentity, ResourceRoleRunnerAdmin, ResourceRoleRunnerLocalAdmin, ResourceRoleRunnerManagedAdmin, ResourceRoleRunnerUser, ResourceRoleRunnerConfigurationReader, ResourceRoleHostAuthenticationTokenAdmin, ResourceRoleHostAuthenticationTokenUpdater, ResourceRoleProjectAdmin, ResourceRoleProjectUser, ResourceRoleProjectEditor, ResourceRoleEnvironmentServiceAdmin, ResourceRoleEnvironmentServiceViewer, ResourceRoleEnvironmentServiceUser, ResourceRoleEnvironmentServiceEnv, ResourceRoleEnvironmentTaskAdmin, ResourceRoleEnvironmentTaskViewer, ResourceRoleEnvironmentTaskUser, ResourceRoleEnvironmentTaskEnv, ResourceRoleServiceAccountIdentity, ResourceRoleServiceAccountAdmin, ResourceRoleAgentExecutionUser, ResourceRoleAgentExecutionAdmin, ResourceRoleAgentExecutionRunner, ResourceRoleAgentExecutionOutputsReporter, ResourceRoleAgentExecutionViewer, ResourceRoleAgentAdmin, ResourceRoleAgentViewer, ResourceRoleAgentExecutor, ResourceRoleWorkflowAdmin, ResourceRoleWorkflowUser, ResourceRoleWorkflowViewer, ResourceRoleWorkflowExecutor, ResourceRoleSnapshotAdmin, ResourceRoleSnapshotRunner, ResourceRoleWebhookAdmin, ResourceRoleWebhookViewer, ResourceRoleWarmpoolRunner, ResourceRoleWarmpoolAdmin, ResourceRoleWarmpoolViewer, ResourceRoleSessionAdmin, ResourceRoleSessionUser, ResourceRoleTeamAdmin, ResourceRoleTeamViewer, ResourceRoleSecurityPolicyAdmin, ResourceRoleSecurityPolicyViewer:
 		return true
 	}
 	return false
@@ -553,11 +667,14 @@ const (
 	ResourceTypeRoleAssignment             ResourceType = "RESOURCE_TYPE_ROLE_ASSIGNMENT"
 	ResourceTypeWarmPool                   ResourceType = "RESOURCE_TYPE_WARM_POOL"
 	ResourceTypeNotification               ResourceType = "RESOURCE_TYPE_NOTIFICATION"
+	ResourceTypeSecurityPolicy             ResourceType = "RESOURCE_TYPE_SECURITY_POLICY"
+	ResourceTypeBaseSnapshot               ResourceType = "RESOURCE_TYPE_BASE_SNAPSHOT"
+	ResourceTypeBaseSnapshotConfig         ResourceType = "RESOURCE_TYPE_BASE_SNAPSHOT_CONFIG"
 )
 
 func (r ResourceType) IsKnown() bool {
 	switch r {
-	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret, ResourceTypeAnnouncementBanner, ResourceTypeServiceAccountToken, ResourceTypeRoleAssignment, ResourceTypeWarmPool, ResourceTypeNotification:
+	case ResourceTypeUnspecified, ResourceTypeEnvironment, ResourceTypeRunner, ResourceTypeProject, ResourceTypeTask, ResourceTypeTaskExecution, ResourceTypeService, ResourceTypeOrganization, ResourceTypeUser, ResourceTypeEnvironmentClass, ResourceTypeRunnerScmIntegration, ResourceTypeHostAuthenticationToken, ResourceTypeGroup, ResourceTypePersonalAccessToken, ResourceTypeUserPreference, ResourceTypeServiceAccount, ResourceTypeSecret, ResourceTypeSSOConfig, ResourceTypeDomainVerification, ResourceTypeAgentExecution, ResourceTypeRunnerLlmIntegration, ResourceTypeAgent, ResourceTypeEnvironmentSession, ResourceTypeUserSecret, ResourceTypeOrganizationPolicy, ResourceTypeOrganizationSecret, ResourceTypeProjectEnvironmentClass, ResourceTypeBilling, ResourceTypePrompt, ResourceTypeCoupon, ResourceTypeCouponRedemption, ResourceTypeAccount, ResourceTypeIntegration, ResourceTypeWorkflow, ResourceTypeWorkflowExecution, ResourceTypeWorkflowExecutionAction, ResourceTypeSnapshot, ResourceTypePrebuild, ResourceTypeOrganizationLlmIntegration, ResourceTypeCustomDomain, ResourceTypeRoleAssignmentChanged, ResourceTypeGroupMembershipChanged, ResourceTypeWebhook, ResourceTypeScimConfiguration, ResourceTypeServiceAccountSecret, ResourceTypeAnnouncementBanner, ResourceTypeServiceAccountToken, ResourceTypeRoleAssignment, ResourceTypeWarmPool, ResourceTypeNotification, ResourceTypeSecurityPolicy, ResourceTypeBaseSnapshot, ResourceTypeBaseSnapshotConfig:
 		return true
 	}
 	return false
@@ -567,17 +684,13 @@ type RunsOn struct {
 	Docker RunsOnDocker `json:"docker"`
 	// Machine runs the service/task directly on the VM/machine level.
 	Machine interface{} `json:"machine"`
-	// Terminal runs the service inside a managed PTY terminal in the devcontainer.
-	// Users can attach to the terminal interactively via the terminal API.
-	Terminal interface{} `json:"terminal"`
-	JSON     runsOnJSON  `json:"-"`
+	JSON    runsOnJSON  `json:"-"`
 }
 
 // runsOnJSON contains the JSON metadata for the struct [RunsOn]
 type runsOnJSON struct {
 	Docker      apijson.Field
 	Machine     apijson.Field
-	Terminal    apijson.Field
 	raw         string
 	ExtraFields map[string]apijson.Field
 }
@@ -616,9 +729,6 @@ type RunsOnParam struct {
 	Docker param.Field[RunsOnDockerParam] `json:"docker"`
 	// Machine runs the service/task directly on the VM/machine level.
 	Machine param.Field[interface{}] `json:"machine"`
-	// Terminal runs the service inside a managed PTY terminal in the devcontainer.
-	// Users can attach to the terminal interactively via the terminal API.
-	Terminal param.Field[interface{}] `json:"terminal"`
 }
 
 func (r RunsOnParam) MarshalJSON() (data []byte, err error) {
@@ -1106,6 +1216,12 @@ type TaskSpec struct {
 	Command string `json:"command"`
 	// env specifies environment variables for the task.
 	Env []EnvironmentVariableItem `json:"env"`
+	// prebuild_requires_success controls whether a non-successful outcome of this task
+	// should fail the prebuild. When true and the task is triggered by a prebuild or
+	// before_snapshot trigger, any terminal phase other than SUCCEEDED (i.e. FAILED or
+	// STOPPED) will cause the prebuild to fail instead of just recording a warning.
+	// Defaults to false (existing behavior: task failures produce warnings only).
+	PrebuildRequiresSuccess bool `json:"prebuildRequiresSuccess"`
 	// runs_on specifies the environment the task should run on.
 	RunsOn RunsOn       `json:"runsOn"`
 	JSON   taskSpecJSON `json:"-"`
@@ -1113,11 +1229,12 @@ type TaskSpec struct {
 
 // taskSpecJSON contains the JSON metadata for the struct [TaskSpec]
 type taskSpecJSON struct {
-	Command     apijson.Field
-	Env         apijson.Field
-	RunsOn      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
+	Command                 apijson.Field
+	Env                     apijson.Field
+	PrebuildRequiresSuccess apijson.Field
+	RunsOn                  apijson.Field
+	raw                     string
+	ExtraFields             map[string]apijson.Field
 }
 
 func (r *TaskSpec) UnmarshalJSON(data []byte) (err error) {
@@ -1133,6 +1250,12 @@ type TaskSpecParam struct {
 	Command param.Field[string] `json:"command"`
 	// env specifies environment variables for the task.
 	Env param.Field[[]EnvironmentVariableItemParam] `json:"env"`
+	// prebuild_requires_success controls whether a non-successful outcome of this task
+	// should fail the prebuild. When true and the task is triggered by a prebuild or
+	// before_snapshot trigger, any terminal phase other than SUCCEEDED (i.e. FAILED or
+	// STOPPED) will cause the prebuild to fail instead of just recording a warning.
+	// Defaults to false (existing behavior: task failures produce warnings only).
+	PrebuildRequiresSuccess param.Field[bool] `json:"prebuildRequiresSuccess"`
 	// runs_on specifies the environment the task should run on.
 	RunsOn param.Field[RunsOnParam] `json:"runsOn"`
 }

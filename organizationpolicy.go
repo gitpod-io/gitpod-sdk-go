@@ -11,6 +11,7 @@ import (
 	"github.com/gitpod-io/gitpod-sdk-go/internal/param"
 	"github.com/gitpod-io/gitpod-sdk-go/internal/requestconfig"
 	"github.com/gitpod-io/gitpod-sdk-go/option"
+	"github.com/gitpod-io/gitpod-sdk-go/shared"
 )
 
 // OrganizationPolicyService contains methods and other services that help with
@@ -107,6 +108,26 @@ type AgentPolicy struct {
 	// scm_tools_disabled controls whether SCM (Source Control Management) tools are
 	// disabled for agents
 	ScmToolsDisabled bool `json:"scmToolsDisabled" api:"required"`
+	// allowed_agent_ids contains the agent IDs users may select when the codex_rollout
+	// feature flag is enabled. Empty means all agents are allowed.
+	AllowedAgentIDs []string `json:"allowedAgentIds"`
+	// Deprecated: use codex_model_policy. This legacy allowlist cannot distinguish
+	// omitted from intentionally empty on update requests. Empty means all Codex
+	// models are allowed.
+	//
+	// Deprecated: deprecated
+	AllowedCodexModels []shared.CodexOpenAIModel `json:"allowedCodexModels"`
+	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users may
+	// select when the codex_rollout feature flag is enabled. Empty means all Codex
+	// reasoning efforts are allowed.
+	AllowedCodexReasoningEfforts []shared.CodexReasoningEffort `json:"allowedCodexReasoningEfforts"`
+	// allowed_codex_service_tiers contains the Codex service tiers users may select
+	// when the codex_rollout feature flag is enabled. Empty means all Codex service
+	// tiers are allowed.
+	AllowedCodexServiceTiers []shared.CodexServiceTier `json:"allowedCodexServiceTiers"`
+	// codex_model_policy contains explicit per-model Codex availability states.
+	// Missing policy or missing model entries mean allowed.
+	CodexModelPolicy CodexModelPolicy `json:"codexModelPolicy"`
 	// conversation_sharing_policy controls whether agent conversations can be shared
 	ConversationSharingPolicy ConversationSharingPolicy `json:"conversationSharingPolicy"`
 	// max_subagents_per_environment limits the number of non-terminal sub-agents a
@@ -121,14 +142,19 @@ type AgentPolicy struct {
 
 // agentPolicyJSON contains the JSON metadata for the struct [AgentPolicy]
 type agentPolicyJSON struct {
-	CommandDenyList            apijson.Field
-	McpDisabled                apijson.Field
-	ScmToolsDisabled           apijson.Field
-	ConversationSharingPolicy  apijson.Field
-	MaxSubagentsPerEnvironment apijson.Field
-	ScmToolsAllowedGroupID     apijson.Field
-	raw                        string
-	ExtraFields                map[string]apijson.Field
+	CommandDenyList              apijson.Field
+	McpDisabled                  apijson.Field
+	ScmToolsDisabled             apijson.Field
+	AllowedAgentIDs              apijson.Field
+	AllowedCodexModels           apijson.Field
+	AllowedCodexReasoningEfforts apijson.Field
+	AllowedCodexServiceTiers     apijson.Field
+	CodexModelPolicy             apijson.Field
+	ConversationSharingPolicy    apijson.Field
+	MaxSubagentsPerEnvironment   apijson.Field
+	ScmToolsAllowedGroupID       apijson.Field
+	raw                          string
+	ExtraFields                  map[string]apijson.Field
 }
 
 func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
@@ -137,6 +163,59 @@ func (r *AgentPolicy) UnmarshalJSON(data []byte) (err error) {
 
 func (r agentPolicyJSON) RawJSON() string {
 	return r.raw
+}
+
+// CodexModelPolicy controls per-model availability for Codex.
+type CodexModelPolicy struct {
+	// model_states maps CodexOpenAIModel enum names to explicit policy states. Missing
+	// entries are treated as allowed.
+	ModelStates map[string]CodexModelPolicyModelState `json:"modelStates"`
+	JSON        codexModelPolicyJSON                  `json:"-"`
+}
+
+// codexModelPolicyJSON contains the JSON metadata for the struct
+// [CodexModelPolicy]
+type codexModelPolicyJSON struct {
+	ModelStates apijson.Field
+	raw         string
+	ExtraFields map[string]apijson.Field
+}
+
+func (r *CodexModelPolicy) UnmarshalJSON(data []byte) (err error) {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func (r codexModelPolicyJSON) RawJSON() string {
+	return r.raw
+}
+
+// CodexModelPolicyState describes an explicit per-model Codex availability
+// override.
+type CodexModelPolicyModelState string
+
+const (
+	CodexModelPolicyModelStateCodexModelPolicyStateUnspecified CodexModelPolicyModelState = "CODEX_MODEL_POLICY_STATE_UNSPECIFIED"
+	CodexModelPolicyModelStateCodexModelPolicyStateAllowed     CodexModelPolicyModelState = "CODEX_MODEL_POLICY_STATE_ALLOWED"
+	CodexModelPolicyModelStateCodexModelPolicyStateDisabled    CodexModelPolicyModelState = "CODEX_MODEL_POLICY_STATE_DISABLED"
+)
+
+func (r CodexModelPolicyModelState) IsKnown() bool {
+	switch r {
+	case CodexModelPolicyModelStateCodexModelPolicyStateUnspecified, CodexModelPolicyModelStateCodexModelPolicyStateAllowed, CodexModelPolicyModelStateCodexModelPolicyStateDisabled:
+		return true
+	}
+	return false
+}
+
+// CodexModelPolicy controls per-model availability for Codex.
+type CodexModelPolicyParam struct {
+	// model_states maps CodexOpenAIModel enum names to explicit policy states. Missing
+	// entries are treated as allowed.
+	ModelStates param.Field[map[string]CodexModelPolicyModelState] `json:"modelStates"`
+}
+
+func (r CodexModelPolicyParam) MarshalJSON() (data []byte, err error) {
+	return apijson.MarshalRoot(r)
 }
 
 // ConversationSharingPolicy controls how agent conversations can be shared.
@@ -193,23 +272,6 @@ func (r crowdStrikeConfigJSON) RawJSON() string {
 	return r.raw
 }
 
-// KernelControlsAction defines how a kernel-level policy violation is handled.
-type KernelControlsAction string
-
-const (
-	KernelControlsActionUnspecified KernelControlsAction = "KERNEL_CONTROLS_ACTION_UNSPECIFIED"
-	KernelControlsActionBlock       KernelControlsAction = "KERNEL_CONTROLS_ACTION_BLOCK"
-	KernelControlsActionAudit       KernelControlsAction = "KERNEL_CONTROLS_ACTION_AUDIT"
-)
-
-func (r KernelControlsAction) IsKnown() bool {
-	switch r {
-	case KernelControlsActionUnspecified, KernelControlsActionBlock, KernelControlsActionAudit:
-		return true
-	}
-	return false
-}
-
 type OrganizationPolicies struct {
 	// agent_policy contains agent-specific policy settings
 	AgentPolicy AgentPolicy `json:"agentPolicy" api:"required"`
@@ -225,6 +287,9 @@ type OrganizationPolicies struct {
 	// default_environment_image is the default container image when none is defined in
 	// repo
 	DefaultEnvironmentImage string `json:"defaultEnvironmentImage" api:"required"`
+	// disable_from_scratch controls whether non-admin users can create blank
+	// environments without a Git or URL initializer.
+	DisableFromScratch bool `json:"disableFromScratch" api:"required"`
 	// maximum_environments_per_user limits total environments (running or stopped) per
 	// user
 	MaximumEnvironmentsPerUser string `json:"maximumEnvironmentsPerUser" api:"required"`
@@ -249,6 +314,9 @@ type OrganizationPolicies struct {
 	// restricted to SCIM-provisioned users only. When true and SCIM is configured for
 	// the organization, only users provisioned via SCIM can create accounts.
 	RestrictAccountCreationToScim bool `json:"restrictAccountCreationToScim" api:"required"`
+	// web_browser_disabled controls whether users can open the built-in web browser
+	// from environment pages. This does not affect VS Code Browser.
+	WebBrowserDisabled bool `json:"webBrowserDisabled" api:"required"`
 	// delete_archived_environments_after controls how long archived environments are
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
@@ -275,6 +343,12 @@ type OrganizationPolicies struct {
 	// organization. When configured, security agents are automatically deployed to all
 	// environments.
 	SecurityAgentPolicy SecurityAgentPolicy `json:"securityAgentPolicy"`
+	// security_policy_id references the Veto Exec SecurityPolicy assigned to newly
+	// created environments. The public GA contract accepts policies that use only
+	// SecurityPolicy.Spec.executables. Assignment validates materializability and
+	// rejects unsupported executable selectors or effects. If empty, new environments
+	// have no SecurityPolicy by default.
+	SecurityPolicyID string `json:"securityPolicyId" format:"uuid"`
 	// veto_exec_policy contains the veto exec policy for environments.
 	VetoExecPolicy VetoExecPolicy           `json:"vetoExecPolicy"`
 	JSON           organizationPoliciesJSON `json:"-"`
@@ -288,6 +362,7 @@ type organizationPoliciesJSON struct {
 	AllowLocalRunners                 apijson.Field
 	DefaultEditorID                   apijson.Field
 	DefaultEnvironmentImage           apijson.Field
+	DisableFromScratch                apijson.Field
 	MaximumEnvironmentsPerUser        apijson.Field
 	MaximumRunningEnvironmentsPerUser apijson.Field
 	MembersCreateProjects             apijson.Field
@@ -296,11 +371,13 @@ type organizationPoliciesJSON struct {
 	PortSharingDisabled               apijson.Field
 	RequireCustomDomainAccess         apijson.Field
 	RestrictAccountCreationToScim     apijson.Field
+	WebBrowserDisabled                apijson.Field
 	DeleteArchivedEnvironmentsAfter   apijson.Field
 	EditorVersionRestrictions         apijson.Field
 	MaximumEnvironmentLifetime        apijson.Field
 	MaximumEnvironmentTimeout         apijson.Field
 	SecurityAgentPolicy               apijson.Field
+	SecurityPolicyID                  apijson.Field
 	VetoExecPolicy                    apijson.Field
 	raw                               string
 	ExtraFields                       map[string]apijson.Field
@@ -368,7 +445,7 @@ func (r securityAgentPolicyJSON) RawJSON() string {
 // in environments.
 type VetoExecPolicy struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action KernelControlsAction `json:"action"`
+	Action shared.KernelControlsAction `json:"action"`
 	// enabled controls whether executable blocking is active
 	Enabled bool `json:"enabled"`
 	// executables is the list of executable paths or names to block
@@ -397,7 +474,7 @@ func (r vetoExecPolicyJSON) RawJSON() string {
 // in environments.
 type VetoExecPolicyParam struct {
 	// action specifies what action kernel-level controls take on policy violations
-	Action param.Field[KernelControlsAction] `json:"action"`
+	Action param.Field[shared.KernelControlsAction] `json:"action"`
 	// enabled controls whether executable blocking is active
 	Enabled param.Field[bool] `json:"enabled"`
 	// executables is the list of executable paths or names to block
@@ -461,6 +538,9 @@ type OrganizationPolicyUpdateParams struct {
 	// kept before automatic deletion. 0 means no automatic deletion. Maximum duration
 	// is 4 weeks (2419200 seconds).
 	DeleteArchivedEnvironmentsAfter param.Field[string] `json:"deleteArchivedEnvironmentsAfter" format:"regex"`
+	// disable_from_scratch controls whether non-admin users can create blank
+	// environments without a Git or URL initializer.
+	DisableFromScratch param.Field[bool] `json:"disableFromScratch"`
 	// editor_version_restrictions restricts which editor versions can be used. Maps
 	// editor ID to version policy with allowed major versions.
 	EditorVersionRestrictions param.Field[map[string]OrganizationPolicyUpdateParamsEditorVersionRestrictions] `json:"editorVersionRestrictions"`
@@ -483,6 +563,11 @@ type OrganizationPolicyUpdateParams struct {
 	// maximum_running_environments_per_user limits simultaneously running environments
 	// per user
 	MaximumRunningEnvironmentsPerUser param.Field[string] `json:"maximumRunningEnvironmentsPerUser"`
+	// max_port_admission_level caps the maximum admission level a user-opened port may
+	// use. UNSPECIFIED means no cap (any AdmissionLevel value is allowed). System
+	// ports (VS Code Browser, agents) are exempt. The legacy port_sharing_disabled
+	// field, when true, takes precedence and blocks all user-initiated port sharing.
+	MaxPortAdmissionLevel param.Field[AdmissionLevel] `json:"maxPortAdmissionLevel"`
 	// members_create_projects controls whether members can create projects
 	MembersCreateProjects param.Field[bool] `json:"membersCreateProjects"`
 	// members_require_projects controls whether environments can only be created from
@@ -501,8 +586,17 @@ type OrganizationPolicyUpdateParams struct {
 	RestrictAccountCreationToScim param.Field[bool] `json:"restrictAccountCreationToScim"`
 	// security_agent_policy contains security agent configuration updates
 	SecurityAgentPolicy param.Field[OrganizationPolicyUpdateParamsSecurityAgentPolicy] `json:"securityAgentPolicy"`
+	// security_policy_id assigns a Veto Exec SecurityPolicy to newly created
+	// environments. The public GA contract accepts policies that use only
+	// SecurityPolicy.Spec.executables. Assignment validates materializability and
+	// rejects unsupported executable selectors or effects. Set this field to an empty
+	// string to clear the default assignment.
+	SecurityPolicyID param.Field[string] `json:"securityPolicyId" format:"uuid"`
 	// veto_exec_policy contains the veto exec policy for environments.
 	VetoExecPolicy param.Field[VetoExecPolicyParam] `json:"vetoExecPolicy"`
+	// web_browser_disabled controls whether users can open the built-in web browser
+	// from environment pages. This does not affect VS Code Browser.
+	WebBrowserDisabled param.Field[bool] `json:"webBrowserDisabled"`
 }
 
 func (r OrganizationPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
@@ -511,6 +605,27 @@ func (r OrganizationPolicyUpdateParams) MarshalJSON() (data []byte, err error) {
 
 // agent_policy contains agent-specific policy settings
 type OrganizationPolicyUpdateParamsAgentPolicy struct {
+	// allowed_agent_ids contains the agent IDs users may select when the codex_rollout
+	// feature flag is enabled. Empty means all agents are allowed.
+	AllowedAgentIDs param.Field[[]string] `json:"allowedAgentIds"`
+	// Deprecated: use codex_model_policy. This legacy allowlist cannot distinguish
+	// omitted from intentionally empty on update requests. Empty means all Codex
+	// models are allowed.
+	//
+	// Deprecated: deprecated
+	AllowedCodexModels param.Field[[]shared.CodexOpenAIModel] `json:"allowedCodexModels"`
+	// allowed_codex_reasoning_efforts contains the Codex reasoning efforts users may
+	// select when the codex_rollout feature flag is enabled. Empty means all Codex
+	// reasoning efforts are allowed.
+	AllowedCodexReasoningEfforts param.Field[[]shared.CodexReasoningEffort] `json:"allowedCodexReasoningEfforts"`
+	// allowed_codex_service_tiers contains the Codex service tiers users may select
+	// when the codex_rollout feature flag is enabled. Empty means all Codex service
+	// tiers are allowed.
+	AllowedCodexServiceTiers param.Field[[]shared.CodexServiceTier] `json:"allowedCodexServiceTiers"`
+	// codex_model_policy contains explicit per-model Codex availability states. Omit
+	// to leave the current model policy unchanged. Send an empty policy to clear
+	// explicit model states.
+	CodexModelPolicy param.Field[CodexModelPolicyParam] `json:"codexModelPolicy"`
 	// command_deny_list contains a list of commands that agents are not allowed to
 	// execute
 	CommandDenyList param.Field[[]string] `json:"commandDenyList"`

@@ -1,5 +1,101 @@
 # Changelog
 
+## 0.14.0 (2026-07-30)
+
+Full Changelog: [v0.13.0...v0.14.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.13.0...v0.14.0)
+
+### ⚠ BREAKING CHANGES
+
+* **api:** narrow public SDK surface
+* **agent:** remove loop condition mechanism
+
+### Features
+
+* add base snapshot resource types ([896bc63](https://github.com/gitpod-io/gitpod-sdk-go/commit/896bc6335a2f5b845756174348d49e82d54026cd))
+* **agent:** add devcontainer rebuild wait schema ([3182ece](https://github.com/gitpod-io/gitpod-sdk-go/commit/3182ece8209938e7ac9ac1a668a39b18d138019c))
+* **agents:** add native goal set control ([1a6d658](https://github.com/gitpod-io/gitpod-sdk-go/commit/1a6d6586181d43513cb37ee4d2b6c68589b384d8))
+* **api:** add agent turn controls ([570d9de](https://github.com/gitpod-io/gitpod-sdk-go/commit/570d9ded37b8b7ca4b8e05f7a8a938bdacb6420b))
+* **api:** add agent_execution_cnf value to RunnerCapability enum ([a2b9e42](https://github.com/gitpod-io/gitpod-sdk-go/commit/a2b9e4207c41110bf2bd7b4122cf9266babe1204))
+* **api:** add agent_execution_ids filter to agent list executions ([f5698dd](https://github.com/gitpod-io/gitpod-sdk-go/commit/f5698dd36af6abc0c7a71c3e427d7e53c182d35a))
+* **api:** add allow_unverified_email_scim_fallback_match to scim_configurations ([23c9014](https://github.com/gitpod-io/gitpod-sdk-go/commit/23c90146a14ee8ab1c12135caf0f09c37473d3e6))
+* **api:** add base snapshot build environment role ([aadee26](https://github.com/gitpod-io/gitpod-sdk-go/commit/aadee262c4c70167da3ad1feb44a92f08a686a61))
+* **api:** add base snapshot runner capability ([1cb9b25](https://github.com/gitpod-io/gitpod-sdk-go/commit/1cb9b25ec59d98cc0170d8c70c4891864efae7bc))
+* **api:** add Claude Sonnet 5 model enum ([29243cf](https://github.com/gitpod-io/gitpod-sdk-go/commit/29243cf9ff545b0bffbdc3bcaa7d021225199393))
+* **api:** add Codex agent settings shape ([4ed1e07](https://github.com/gitpod-io/gitpod-sdk-go/commit/4ed1e074c73c1444b752b9fcbbd92c085b6e4a4c))
+* **api:** add Codex fast mode setting ([16756cf](https://github.com/gitpod-io/gitpod-sdk-go/commit/16756cfd0cc71e06e113a4fbfcdf8be2b61ba18c))
+* **api:** add codex model policy states ([d5b77e6](https://github.com/gitpod-io/gitpod-sdk-go/commit/d5b77e64815e2059913bd13e71174f737325b551))
+* **api:** add Codex policy allowlists ([38ad2bb](https://github.com/gitpod-io/gitpod-sdk-go/commit/38ad2bbb80fc7531dd6abb258bc7311ca46e0aab))
+* **api:** add credential_proxy to secrets, remove format from environment secrets ([4cb045e](https://github.com/gitpod-io/gitpod-sdk-go/commit/4cb045ee2a236cdba1f43cf3e28d9abafe434801))
+* **api:** add default environment class IDs to project creation defaults ([ca59a8b](https://github.com/gitpod-io/gitpod-sdk-go/commit/ca59a8bfab949948ee14c51ec14c31711c3a10e9))
+* **api:** add deprecated accessToken field to runner response types ([0a1c411](https://github.com/gitpod-io/gitpod-sdk-go/commit/0a1c4110fbda059d061363db6ef2002b8cf67024))
+* **api:** add disable_from_scratch field to organization policy ([2cfc5d6](https://github.com/gitpod-io/gitpod-sdk-go/commit/2cfc5d60cbe13cae3a36f98cc0ee612d66f80437))
+* **api:** add dynamic LLM header contracts ([8add73b](https://github.com/gitpod-io/gitpod-sdk-go/commit/8add73b06c30395101d4fdbacdf6b7f74c34ac44))
+* **api:** add goal field to agent execution status ([9675b1f](https://github.com/gitpod-io/gitpod-sdk-go/commit/9675b1fe7c27d8780fd798bb2f6300aaef4e57d7))
+* **api:** add incident trigger support to workflow triggers and executions ([2d74b1b](https://github.com/gitpod-io/gitpod-sdk-go/commit/2d74b1b1e2557b899477c2e16de80d3dc200297a))
+* **api:** add integration_id, update webhook_id in pull request trigger ([71d164a](https://github.com/gitpod-io/gitpod-sdk-go/commit/71d164aa1e7e29b16ee8531437e1e9969933aa08))
+* **api:** add MaxPortAdmissionLevel field to organization policy ([395d6af](https://github.com/gitpod-io/gitpod-sdk-go/commit/395d6af87f23155027dc42519e5b7b7245af84e2))
+* **api:** add old_path field to environment git changed file model ([9fe1925](https://github.com/gitpod-io/gitpod-sdk-go/commit/9fe19258fc36ca036af7788f5f6a9999734c2563))
+* **api:** add OpenAI Auto value to AgentExecutionStatusSupportedModel enum ([ebeb95e](https://github.com/gitpod-io/gitpod-sdk-go/commit/ebeb95e3b757fac267685faa725d38a277901fff))
+* **api:** add Opus 4.8 supported model ([0b2c1fb](https://github.com/gitpod-io/gitpod-sdk-go/commit/0b2c1fb482f4daaa582929312fe00918947720d2))
+* **api:** add OPUS_4_7 to agent supported models enum ([d2a744b](https://github.com/gitpod-io/gitpod-sdk-go/commit/d2a744be9876078da2a967eea5b71e6d10709fca))
+* **api:** add pagination support and query parameter to runners.ListScmOrganizations ([c5ba3fd](https://github.com/gitpod-io/gitpod-sdk-go/commit/c5ba3fdd26a149c7cbec69a8e938eabbc4afd85d))
+* **api:** add port_authentication capability to RunnerCapability ([6e3178e](https://github.com/gitpod-io/gitpod-sdk-go/commit/6e3178eff7946662bdd2aede907d7d86b4d003f1))
+* **api:** add prebuild_requires_success field to TaskSpec ([7acaa8f](https://github.com/gitpod-io/gitpod-sdk-go/commit/7acaa8f0604a85a56588a14016ef91b1e3c8fe7b))
+* **api:** add project_creation_defaults field to organization policy ([8c14eb0](https://github.com/gitpod-io/gitpod-sdk-go/commit/8c14eb081e6ee7cd91126d4e0e5a7e6eafc8cf91))
+* **api:** add readinessTimeout parameter to automation services ([71ef113](https://github.com/gitpod-io/gitpod-sdk-go/commit/71ef113396de91acb089a6a04593b780921f877a))
+* **api:** add redis_stream capability to runner ([0ff3d08](https://github.com/gitpod-io/gitpod-sdk-go/commit/0ff3d08535c6a90cae7be6729f1711a4f6a6da2b))
+* **api:** add ResourceRoleOrgEnvironmentsReader to ResourceRole enum ([9693bfa](https://github.com/gitpod-io/gitpod-sdk-go/commit/9693bfa0c4843da9a589b7a46d4680a946631c92))
+* **api:** add review_requested event to workflow trigger pull request events ([ac58c85](https://github.com/gitpod-io/gitpod-sdk-go/commit/ac58c8578b8564674f5204cadbee1a3ce89e5b94))
+* **api:** add security policy CRUD ([22b4985](https://github.com/gitpod-io/gitpod-sdk-go/commit/22b49851741dc41ead2ac8c0f1bfc33d5bcabe29))
+* **api:** add web_browser_disabled field to organization policy ([380a20e](https://github.com/gitpod-io/gitpod-sdk-go/commit/380a20e93b7c60a3fdbb8c46fbb6f1a645e10238))
+* **api:** expose audit log entry kind ([049c177](https://github.com/gitpod-io/gitpod-sdk-go/commit/049c1779cf7fbd4dd1dc2aa6de42fcbe1afc119d))
+* **api:** expose default security policy assignment ([72a8ea5](https://github.com/gitpod-io/gitpod-sdk-go/commit/72a8ea5a8232d2654a6ca4b8427a2e67355977be))
+* **api:** expose usage insights API ([eb4cf35](https://github.com/gitpod-io/gitpod-sdk-go/commit/eb4cf35646fd6f20d9ac72b54520e7ad5cb0baff))
+* **api:** expose Veto Exec security policies ([7c48ec7](https://github.com/gitpod-io/gitpod-sdk-go/commit/7c48ec7282a1ddd976ef196fe6bad0226d4d142f))
+* **api:** remove deprecated AccessToken field from runner responses ([79d8fcf](https://github.com/gitpod-io/gitpod-sdk-go/commit/79d8fcfe9d3591bf13fff2d0f79336242f36e733))
+* **api:** remove Terminal field from RunsOn type ([5b02fe5](https://github.com/gitpod-io/gitpod-sdk-go/commit/5b02fe5111f66ac18a52efb079dcc0a86d82181a))
+* **audit:** curate audit events at their producers ([e86e47b](https://github.com/gitpod-io/gitpod-sdk-go/commit/e86e47b4dbbb9cc0eb5a8e914e4b6ab2ad9927b0))
+* **audit:** store and retrieve Veto Exec details ([b268002](https://github.com/gitpod-io/gitpod-sdk-go/commit/b26800200e449b63b61d18a27612f0f15fd8cae1))
+* **automations:** pin agent and Codex model per automation ([625dcf5](https://github.com/gitpod-io/gitpod-sdk-go/commit/625dcf5893d8b04bb2af8bcc6059b0ad25930776))
+* **codex:** add GPT-5.6 model selection ([ace7d76](https://github.com/gitpod-io/gitpod-sdk-go/commit/ace7d7690d04989e74d396b952f5bccdbed20d38))
+* **go:** add default http client with timeout ([5aa4fca](https://github.com/gitpod-io/gitpod-sdk-go/commit/5aa4fca6ee96b6fc19569aa1f419cbe53517d61e))
+* **rbac:** add billing viewer role ([29562e3](https://github.com/gitpod-io/gitpod-sdk-go/commit/29562e3be0ea996cbe05b201c62e5e430b8ccf38))
+* **rbac:** add insights viewer role ([9d7bc14](https://github.com/gitpod-io/gitpod-sdk-go/commit/9d7bc14ad0192d122ec4e24526d69314b8a6b37d))
+* **secrets:** support JFrog OIDC secret sources ([bd41640](https://github.com/gitpod-io/gitpod-sdk-go/commit/bd416406c95e41ddbfdee43b2ecdd1037ccf9792))
+* **stlc:** configurable CI runner and private-production-repo support in workflow templates ([852cade](https://github.com/gitpod-io/gitpod-sdk-go/commit/852cade5831dcf39436267266556ea1a71b696ae))
+* support setting headers via env ([a05eb6b](https://github.com/gitpod-io/gitpod-sdk-go/commit/a05eb6b7268ba0e12c80549506c4a8a01b6d30b5))
+* **types:** add prebuild value to AutomationsFileServicesTriggeredBy enum ([efe0872](https://github.com/gitpod-io/gitpod-sdk-go/commit/efe08724860d1d93c1782725f688a588b755be40))
+* **types:** extract Report types to top-level from WorkflowStep ([d58de25](https://github.com/gitpod-io/gitpod-sdk-go/commit/d58de258a0f8f2f3e1400778b07b91d4ff5ee91e))
+
+
+### Bug Fixes
+
+* **api:** narrow public SDK surface ([e2a4ec0](https://github.com/gitpod-io/gitpod-sdk-go/commit/e2a4ec0d63fc3262945dee9776f573a3422af66e))
+* **api:** wrap prebuild default updates ([7d0e27a](https://github.com/gitpod-io/gitpod-sdk-go/commit/7d0e27ace5c69cb51ff7c0fa943a3019678b1ca1))
+* **go:** avoid panic when http.DefaultTransport is wrapped ([b5215b9](https://github.com/gitpod-io/gitpod-sdk-go/commit/b5215b91002d11266b5c3eb948c59bc03e115aee))
+
+
+### Chores
+
+* avoid embedding reflect.Type for dead code elimination ([c03525f](https://github.com/gitpod-io/gitpod-sdk-go/commit/c03525f5f6ef24ce53d1af2b4f3995df1d670e14))
+* **internal:** more robust bootstrap script ([7d8a76e](https://github.com/gitpod-io/gitpod-sdk-go/commit/7d8a76ef4e36d2cfba13489347ec03ec5ba83565))
+* **internal:** regenerate SDK with no functional changes ([32e924f](https://github.com/gitpod-io/gitpod-sdk-go/commit/32e924f8ceecdfcf58597b59c671b1489e47cf80))
+* **internal:** regenerate SDK with no functional changes ([f8b376e](https://github.com/gitpod-io/gitpod-sdk-go/commit/f8b376ef7d1eebbdf66252e7ec29893d2fc1541f))
+* redact api-key headers in debug logs ([3ba5280](https://github.com/gitpod-io/gitpod-sdk-go/commit/3ba5280f40993a3b29e630881257c844aca5c06b))
+
+
+### Documentation
+
+* **api:** add customer-facing descriptions to runner enums and fix CreateRunner examples ([a71730b](https://github.com/gitpod-io/gitpod-sdk-go/commit/a71730b1161024a42873d2bd06728dddda2cb8a3))
+* **api:** deprecate isAdmin field in runner list_scm_organizations response ([ed8323d](https://github.com/gitpod-io/gitpod-sdk-go/commit/ed8323d73d95edceb3e445698adde781498a6a58))
+
+
+### Refactors
+
+* **agent:** remove loop condition mechanism ([0c5e903](https://github.com/gitpod-io/gitpod-sdk-go/commit/0c5e9037f7f6c1c414e46b287463ca2157a048c9))
+* **api:** default StartAgent agent ID ([ebc1c49](https://github.com/gitpod-io/gitpod-sdk-go/commit/ebc1c493843892f2dc5db9c972357168175cdc63))
+* **api:** remove project defaults API surface ([37623df](https://github.com/gitpod-io/gitpod-sdk-go/commit/37623df41e541fccc175b00c475b7635fbef1825))
+
 ## 0.13.0 (2026-04-02)
 
 Full Changelog: [v0.12.0...v0.13.0](https://github.com/gitpod-io/gitpod-sdk-go/compare/v0.12.0...v0.13.0)
