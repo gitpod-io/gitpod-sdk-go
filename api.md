@@ -380,26 +380,6 @@ Methods:
 
 - <code title="post /gitpod.v1.EnvironmentService/ListEnvironmentClasses">client.Environments.Classes.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentClassService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#EnvironmentClassListParams">EnvironmentClassListParams</a>) (\*<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/packages/pagination#EnvironmentClassesPage">EnvironmentClassesPage</a>[<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go/shared#EnvironmentClass">EnvironmentClass</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# Errors
-
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#BreadcrumbParam">BreadcrumbParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ErrorEventParam">ErrorEventParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ErrorLevel">ErrorLevel</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ExceptionInfoParam">ExceptionInfoParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ExceptionMechanismParam">ExceptionMechanismParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#RequestInfoParam">RequestInfoParam</a>
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#StackFrameParam">StackFrameParam</a>
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ErrorReportErrorsResponse">ErrorReportErrorsResponse</a>
-
-Methods:
-
-- <code title="post /gitpod.v1.ErrorsService/ReportErrors">client.Errors.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ErrorService.ReportErrors">ReportErrors</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ErrorReportErrorsParams">ErrorReportErrorsParams</a>) (\*<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go">gitpod</a>.<a href="https://pkg.go.dev/github.com/gitpod-io/gitpod-sdk-go#ErrorReportErrorsResponse">ErrorReportErrorsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 # Events
 
 Response Types:
