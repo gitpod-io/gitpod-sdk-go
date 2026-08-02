@@ -108,6 +108,7 @@ type ManagementPlaneMock struct {
 	IdentityService              *mock.MockIdentityServiceClient
 	InsightsService              *mock.MockInsightsServiceClient
 	IntegrationService           *mock.MockIntegrationServiceClient
+	NotificationService          *mock.MockNotificationServiceClient
 	OrganizationService          *mock.MockOrganizationServiceClient
 	PrebuildService              *mock.MockPrebuildServiceClient
 	ProjectService               *mock.MockProjectServiceClient
@@ -118,6 +119,7 @@ type ManagementPlaneMock struct {
 	SecurityService              *mock.MockSecurityServiceClient
 	SecretService                *mock.MockSecretServiceClient
 	ServiceAccountService        *mock.MockServiceAccountServiceClient
+	TeamService                  *mock.MockTeamServiceClient
 	GatewayService               *mock.MockGatewayServiceClient
 	WorkflowService              *mock.MockWorkflowServiceClient
 	WebhookService               *mock.MockWebhookServiceClient
@@ -137,6 +139,7 @@ func (m *ManagementPlaneMock) Client() *ManagementPlane {
 		identityService:              m.IdentityService,
 		insightsService:              m.InsightsService,
 		integrationService:           m.IntegrationService,
+		notificationService:          m.NotificationService,
 		organizationService:          m.OrganizationService,
 		prebuildService:              m.PrebuildService,
 		projectService:               m.ProjectService,
@@ -147,6 +150,7 @@ func (m *ManagementPlaneMock) Client() *ManagementPlane {
 		securityService:              m.SecurityService,
 		secretService:                m.SecretService,
 		serviceAccountService:        m.ServiceAccountService,
+		teamService:                  m.TeamService,
 		gatewayService:               m.GatewayService,
 		workflowService:              m.WorkflowService,
 		webhookService:               m.WebhookService,
@@ -167,6 +171,7 @@ func NewMock(ctrl *gomock.Controller) *ManagementPlaneMock {
 		IdentityService:              mock.NewMockIdentityServiceClient(ctrl),
 		InsightsService:              mock.NewMockInsightsServiceClient(ctrl),
 		IntegrationService:           mock.NewMockIntegrationServiceClient(ctrl),
+		NotificationService:          mock.NewMockNotificationServiceClient(ctrl),
 		OrganizationService:          mock.NewMockOrganizationServiceClient(ctrl),
 		PrebuildService:              mock.NewMockPrebuildServiceClient(ctrl),
 		ProjectService:               mock.NewMockProjectServiceClient(ctrl),
@@ -177,6 +182,7 @@ func NewMock(ctrl *gomock.Controller) *ManagementPlaneMock {
 		SecurityService:              mock.NewMockSecurityServiceClient(ctrl),
 		SecretService:                mock.NewMockSecretServiceClient(ctrl),
 		ServiceAccountService:        mock.NewMockServiceAccountServiceClient(ctrl),
+		TeamService:                  mock.NewMockTeamServiceClient(ctrl),
 		GatewayService:               mock.NewMockGatewayServiceClient(ctrl),
 		WorkflowService:              mock.NewMockWorkflowServiceClient(ctrl),
 		WebhookService:               mock.NewMockWebhookServiceClient(ctrl),
@@ -226,6 +232,7 @@ func New(baseURL string, opts ...Option) (*ManagementPlane, error) {
 		identityService:              v1connect.NewIdentityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		insightsService:              v1connect.NewInsightsServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		integrationService:           v1connect.NewIntegrationServiceClient(o.httpClient, o.baseURL, clientOpts...),
+		notificationService:          v1connect.NewNotificationServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		organizationService:          v1connect.NewOrganizationServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		prebuildService:              v1connect.NewPrebuildServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		projectService:               v1connect.NewProjectServiceClient(o.httpClient, o.baseURL, clientOpts...),
@@ -236,6 +243,7 @@ func New(baseURL string, opts ...Option) (*ManagementPlane, error) {
 		securityService:              v1connect.NewSecurityServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		secretService:                v1connect.NewSecretServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		serviceAccountService:        v1connect.NewServiceAccountServiceClient(o.httpClient, o.baseURL, clientOpts...),
+		teamService:                  v1connect.NewTeamServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		gatewayService:               v1connect.NewGatewayServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		workflowService:              v1connect.NewWorkflowServiceClient(o.httpClient, o.baseURL, clientOpts...),
 		webhookService:               v1connect.NewWebhookServiceClient(o.httpClient, o.baseURL, clientOpts...),
@@ -285,6 +293,7 @@ type ManagementPlane struct {
 	identityService              v1connect.IdentityServiceClient
 	insightsService              v1connect.InsightsServiceClient
 	integrationService           v1connect.IntegrationServiceClient
+	notificationService          v1connect.NotificationServiceClient
 	organizationService          v1connect.OrganizationServiceClient
 	prebuildService              v1connect.PrebuildServiceClient
 	projectService               v1connect.ProjectServiceClient
@@ -295,6 +304,7 @@ type ManagementPlane struct {
 	securityService              v1connect.SecurityServiceClient
 	secretService                v1connect.SecretServiceClient
 	serviceAccountService        v1connect.ServiceAccountServiceClient
+	teamService                  v1connect.TeamServiceClient
 	gatewayService               v1connect.GatewayServiceClient
 	workflowService              v1connect.WorkflowServiceClient
 	webhookService               v1connect.WebhookServiceClient
@@ -343,6 +353,10 @@ func (g *ManagementPlane) IntegrationService() v1connect.IntegrationServiceClien
 	return g.integrationService
 }
 
+func (g *ManagementPlane) NotificationService() v1connect.NotificationServiceClient {
+	return g.notificationService
+}
+
 func (g *ManagementPlane) OrganizationService() v1connect.OrganizationServiceClient {
 	return g.organizationService
 }
@@ -381,6 +395,10 @@ func (g *ManagementPlane) SecretService() v1connect.SecretServiceClient {
 
 func (g *ManagementPlane) ServiceAccountService() v1connect.ServiceAccountServiceClient {
 	return g.serviceAccountService
+}
+
+func (g *ManagementPlane) TeamService() v1connect.TeamServiceClient {
+	return g.teamService
 }
 
 func (g *ManagementPlane) GatewayService() v1connect.GatewayServiceClient {

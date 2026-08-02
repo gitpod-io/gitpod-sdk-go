@@ -6,7 +6,7 @@ Install the module with:
 go get github.com/gitpod-io/gitpod-sdk-go
 ```
 
-Use `github.com/gitpod-io/gitpod-sdk-go/sdk` for task-oriented environment and Codex workflows. Use `github.com/gitpod-io/gitpod-sdk-go/client` and `github.com/gitpod-io/gitpod-sdk-go/v1` for lower-level public API access.
+Use `github.com/gitpod-io/gitpod-sdk-go/sdk` for task-oriented environment and Codex workflows. The same client exposes every public API service through `Client.Services`, with generated protobuf types in `github.com/gitpod-io/gitpod-sdk-go/v1`.
 
 ```go
 package main
@@ -36,6 +36,20 @@ func main() {
     }()
 }
 ```
+
+Call a public RPC with its generated request type:
+
+```go
+response, err := ona.Services.Environment.ListEnvironments(
+    ctx,
+    connect.NewRequest(&v1.ListEnvironmentsRequest{}),
+)
+if err != nil {
+    log.Fatal(err)
+}
+```
+
+This example requires imports for `connectrpc.com/connect` and `github.com/gitpod-io/gitpod-sdk-go/v1`.
 
 `sdk.NewFromEnv` reads `ONA_API_KEY` and falls back to `GITPOD_API_KEY`. If both are set, `ONA_API_KEY` takes precedence. It uses `https://app.ona.com/api` by default and accepts `ONA_BASE_URL` or `sdk.WithBaseURL(...)` for a custom management-plane domain.
 

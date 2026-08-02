@@ -1,8 +1,6 @@
 # Ona Go SDK
 
-The `sdk` package is the task-oriented layer on top of the raw Ona API client. Use it for production-ready workflows that should be easy to compose, such as creating an environment, running a command, reading files, and starting Codex inside an environment.
-
-Use the raw `client` package when you need direct access to backend RPCs that are not part of the stable SDK surface.
+The `sdk` package provides task-oriented workflows and generated clients for every public Ona API service. Use the workflows for tasks such as creating an environment, running a command, reading files, and starting Codex inside an environment. Use `Client.Services` when you need direct access to a public RPC.
 
 For the common Codex workflow, use `RunCodex` to create a repository-backed or scratch environment and start the initial task in one call:
 
@@ -61,6 +59,18 @@ The usual flow is:
 2. Use `ona.Environments()` to create, get, list, stop, or delete environments.
 3. Use an `Environment` handle to run commands, access files, or start Codex.
 4. Clean up environments with `Environments().Delete`.
+
+For direct RPC access, construct requests with the generated `v1` types and call the matching client in `ona.Services`:
+
+```go
+response, err := ona.Services.Environment.ListEnvironments(
+	ctx,
+	connect.NewRequest(&v1.ListEnvironmentsRequest{}),
+)
+if err != nil {
+	return err
+}
+```
 
 The package files follow the same structure:
 

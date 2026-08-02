@@ -9,6 +9,7 @@ import (
 	"time"
 
 	rawclient "github.com/gitpod-io/gitpod-sdk-go/internal/raw"
+	"github.com/gitpod-io/gitpod-sdk-go/v1/v1connect"
 )
 
 const (
@@ -22,8 +23,39 @@ const (
 
 // Client exposes task-oriented Ona workflows on top of the raw API client.
 type Client struct {
-	raw *rawclient.ManagementPlane
-	cfg config
+	Services ServiceClients
+	raw      *rawclient.ManagementPlane
+	cfg      config
+}
+
+// ServiceClients exposes the generated clients for every public API service.
+type ServiceClients struct {
+	Account               v1connect.AccountServiceClient
+	Agent                 v1connect.AgentServiceClient
+	Billing               v1connect.BillingServiceClient
+	Editor                v1connect.EditorServiceClient
+	Environment           v1connect.EnvironmentServiceClient
+	EnvironmentAutomation v1connect.EnvironmentAutomationServiceClient
+	Event                 v1connect.EventServiceClient
+	Gateway               v1connect.GatewayServiceClient
+	Group                 v1connect.GroupServiceClient
+	Identity              v1connect.IdentityServiceClient
+	Insights              v1connect.InsightsServiceClient
+	Integration           v1connect.IntegrationServiceClient
+	Notification          v1connect.NotificationServiceClient
+	Organization          v1connect.OrganizationServiceClient
+	Prebuild              v1connect.PrebuildServiceClient
+	Project               v1connect.ProjectServiceClient
+	Runner                v1connect.RunnerServiceClient
+	RunnerConfiguration   v1connect.RunnerConfigurationServiceClient
+	Secret                v1connect.SecretServiceClient
+	Security              v1connect.SecurityServiceClient
+	ServiceAccount        v1connect.ServiceAccountServiceClient
+	Team                  v1connect.TeamServiceClient
+	Usage                 v1connect.UsageServiceClient
+	User                  v1connect.UserServiceClient
+	Webhook               v1connect.WebhookServiceClient
+	Workflow              v1connect.WorkflowServiceClient
 }
 
 type config struct {
@@ -46,8 +78,9 @@ func New(raw *rawclient.ManagementPlane, opts ...Option) *Client {
 	normalizeConfig(&cfg)
 
 	return &Client{
-		raw: raw,
-		cfg: cfg,
+		Services: newServiceClients(raw),
+		raw:      raw,
+		cfg:      cfg,
 	}
 }
 
@@ -73,7 +106,41 @@ func NewFromEnv(opts ...Option) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Client{raw: raw, cfg: cfg}, nil
+	return &Client{Services: newServiceClients(raw), raw: raw, cfg: cfg}, nil
+}
+
+func newServiceClients(raw *rawclient.ManagementPlane) ServiceClients {
+	if raw == nil {
+		return ServiceClients{}
+	}
+	return ServiceClients{
+		Account:               raw.AccountService(),
+		Agent:                 raw.AgentService(),
+		Billing:               raw.BillingService(),
+		Editor:                raw.EditorService(),
+		Environment:           raw.EnvironmentService(),
+		EnvironmentAutomation: raw.EnvironmentAutomationService(),
+		Event:                 raw.EventService(),
+		Gateway:               raw.GatewayService(),
+		Group:                 raw.GroupService(),
+		Identity:              raw.IdentityService(),
+		Insights:              raw.InsightsService(),
+		Integration:           raw.IntegrationService(),
+		Notification:          raw.NotificationService(),
+		Organization:          raw.OrganizationService(),
+		Prebuild:              raw.PrebuildService(),
+		Project:               raw.ProjectService(),
+		Runner:                raw.RunnerService(),
+		RunnerConfiguration:   raw.RunnerConfigurationService(),
+		Secret:                raw.SecretService(),
+		Security:              raw.SecurityService(),
+		ServiceAccount:        raw.ServiceAccountService(),
+		Team:                  raw.TeamService(),
+		Usage:                 raw.UsageService(),
+		User:                  raw.UserService(),
+		Webhook:               raw.WebhookService(),
+		Workflow:              raw.WorkflowService(),
+	}
 }
 
 func apiKeyFromEnv() string {
