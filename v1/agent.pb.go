@@ -175,6 +175,8 @@ const (
 	CodexReasoningEffort_CODEX_REASONING_EFFORT_MEDIUM      CodexReasoningEffort = 2
 	CodexReasoningEffort_CODEX_REASONING_EFFORT_HIGH        CodexReasoningEffort = 3
 	CodexReasoningEffort_CODEX_REASONING_EFFORT_EXTRA_HIGH  CodexReasoningEffort = 4
+	CodexReasoningEffort_CODEX_REASONING_EFFORT_MAX         CodexReasoningEffort = 5
+	CodexReasoningEffort_CODEX_REASONING_EFFORT_ULTRA       CodexReasoningEffort = 6
 )
 
 // Enum value maps for CodexReasoningEffort.
@@ -185,6 +187,8 @@ var (
 		2: "CODEX_REASONING_EFFORT_MEDIUM",
 		3: "CODEX_REASONING_EFFORT_HIGH",
 		4: "CODEX_REASONING_EFFORT_EXTRA_HIGH",
+		5: "CODEX_REASONING_EFFORT_MAX",
+		6: "CODEX_REASONING_EFFORT_ULTRA",
 	}
 	CodexReasoningEffort_value = map[string]int32{
 		"CODEX_REASONING_EFFORT_UNSPECIFIED": 0,
@@ -192,6 +196,8 @@ var (
 		"CODEX_REASONING_EFFORT_MEDIUM":      2,
 		"CODEX_REASONING_EFFORT_HIGH":        3,
 		"CODEX_REASONING_EFFORT_EXTRA_HIGH":  4,
+		"CODEX_REASONING_EFFORT_MAX":         5,
+		"CODEX_REASONING_EFFORT_ULTRA":       6,
 	}
 )
 
@@ -283,7 +289,7 @@ const (
 	// Disables provider-hosted tool search such as Anthropic server-side tool search.
 	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_SERVER_SIDE_TOOL_SEARCH LLMDisabledCapability = 3
 	// Disables native Codex goal mode.
-	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_GOAL_MODE LLMDisabledCapability = 4 // Disables Codex's Responses Lite request shape for provider compatibility.
+	LLMDisabledCapability_LLM_DISABLED_CAPABILITY_GOAL_MODE LLMDisabledCapability = 4
 )
 
 // Enum value maps for LLMDisabledCapability.
@@ -9830,13 +9836,15 @@ const file_gitpod_v1_agent_proto_rawDesc = "" +
 	"\x1bCODEX_OPEN_AI_MODEL_GPT_5_2\x10\x06\x1a\x02\b\x01\x12#\n" +
 	"\x1fCODEX_OPEN_AI_MODEL_GPT_5_6_SOL\x10\a\x12%\n" +
 	"!CODEX_OPEN_AI_MODEL_GPT_5_6_TERRA\x10\b\x12$\n" +
-	" CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA\x10\t*\xc9\x01\n" +
+	" CODEX_OPEN_AI_MODEL_GPT_5_6_LUNA\x10\t*\x8b\x02\n" +
 	"\x14CodexReasoningEffort\x12&\n" +
 	"\"CODEX_REASONING_EFFORT_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aCODEX_REASONING_EFFORT_LOW\x10\x01\x12!\n" +
 	"\x1dCODEX_REASONING_EFFORT_MEDIUM\x10\x02\x12\x1f\n" +
 	"\x1bCODEX_REASONING_EFFORT_HIGH\x10\x03\x12%\n" +
-	"!CODEX_REASONING_EFFORT_EXTRA_HIGH\x10\x04*S\n" +
+	"!CODEX_REASONING_EFFORT_EXTRA_HIGH\x10\x04\x12\x1e\n" +
+	"\x1aCODEX_REASONING_EFFORT_MAX\x10\x05\x12 \n" +
+	"\x1cCODEX_REASONING_EFFORT_ULTRA\x10\x06*S\n" +
 	"\x10CodexServiceTier\x12\"\n" +
 	"\x1eCODEX_SERVICE_TIER_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17CODEX_SERVICE_TIER_FAST\x10\x01*\xf3\x01\n" +
