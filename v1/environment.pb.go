@@ -5869,7 +5869,8 @@ func (x *EnvironmentStatus_SSHPublicKey) GetPhase() EnvironmentStatus_ContentPha
 
 type EnvironmentStatus_AutomationsFile struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// session is the automations file session that is currently applied in the environment.
+	// session identifies the automations file reconciliation request reflected by this status.
+	// A matching session does not imply completion; use phase to determine whether reconciliation finished.
 	Session string `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
 	// automations_file_path is the path to the automations file relative to the repo root.
 	AutomationsFilePath string `protobuf:"bytes,2,opt,name=automations_file_path,json=automationsFilePath,proto3" json:"automations_file_path,omitempty"`

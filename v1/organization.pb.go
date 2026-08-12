@@ -7867,8 +7867,12 @@ type ListMembersRequest_Filter struct {
 	ExcludeGroupIds []string `protobuf:"bytes,5,rep,name=exclude_group_ids,json=excludeGroupIds,proto3" json:"exclude_group_ids,omitempty"`
 	// exclude_members_in_any_team excludes members who belong to any team in the organization
 	ExcludeMembersInAnyTeam bool `protobuf:"varint,6,opt,name=exclude_members_in_any_team,json=excludeMembersInAnyTeam,proto3" json:"exclude_members_in_any_team,omitempty"`
-	unknownFields           protoimpl.UnknownFields
-	sizeCache               protoimpl.SizeCache
+	// email filters members by exact email address, matched case-insensitively
+	Email string `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
+	// login_provider filters members by the exact provider they use to sign in
+	LoginProvider LoginProviderKind `protobuf:"varint,8,opt,name=login_provider,json=loginProvider,proto3,enum=gitpod.v1.LoginProviderKind" json:"login_provider,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ListMembersRequest_Filter) Reset() {
@@ -7941,6 +7945,20 @@ func (x *ListMembersRequest_Filter) GetExcludeMembersInAnyTeam() bool {
 		return x.ExcludeMembersInAnyTeam
 	}
 	return false
+}
+
+func (x *ListMembersRequest_Filter) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *ListMembersRequest_Filter) GetLoginProvider() LoginProviderKind {
+	if x != nil {
+		return x.LoginProvider
+	}
+	return LoginProviderKind_LOGIN_PROVIDER_KIND_UNSPECIFIED
 }
 
 type ListMembersRequest_Sort struct {
@@ -8296,7 +8314,7 @@ var File_gitpod_v1_organization_proto protoreflect.FileDescriptor
 
 const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\n" +
-	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcc\x01\n" +
+	"\x1cgitpod/v1/organization.proto\x12\tgitpod.v1\x1a\x1bbuf/validate/validate.proto\x1a\x15gitpod/v1/agent.proto\x1a\x15gitpod/v1/count.proto\x1a\x1bgitpod/v1/environment.proto\x1a\x1egitpod/v1/login_provider.proto\x1a\x1agitpod/v1/pagination.proto\x1a\x14gitpod/v1/user.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcc\x01\n" +
 	"\x19UpdateOrganizationRequest\x124\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12\x17\n" +
 	"\x04name\x18\x02 \x01(\tH\x00R\x04name\x88\x01\x01\x12D\n" +
@@ -8328,7 +8346,7 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\forganization\x18\x01 \x01(\v2\x17.gitpod.v1.OrganizationB\x06\xbaH\x03\xc8\x01\x01R\forganization\"Q\n" +
 	"\x19DeleteOrganizationRequest\x124\n" +
 	"\x0forganization_id\x18\x01 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\"\x1c\n" +
-	"\x1aDeleteOrganizationResponse\"\xba\x06\n" +
+	"\x1aDeleteOrganizationResponse\"\xa9\a\n" +
 	"\x12ListMembersRequest\x12<\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2\x1c.gitpod.v1.PaginationRequestR\n" +
@@ -8336,7 +8354,7 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x0forganization_id\x18\x02 \x01(\tB\v\xbaH\b\xc8\x01\x01r\x03\xb0\x01\x01R\x0eorganizationId\x12<\n" +
 	"\x06filter\x18\x03 \x01(\v2$.gitpod.v1.ListMembersRequest.FilterR\x06filter\x126\n" +
 	"\x04sort\x18\x04 \x01(\v2\".gitpod.v1.ListMembersRequest.SortR\x04sort\x12-\n" +
-	"\x05count\x18\x05 \x01(\v2\x17.gitpod.v1.CountRequestR\x05count\x1a\xbd\x02\n" +
+	"\x05count\x18\x05 \x01(\v2\x17.gitpod.v1.CountRequestR\x05count\x1a\xac\x03\n" +
 	"\x06Filter\x12\"\n" +
 	"\x06search\x18\x01 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x00\x18\x80\x02R\x06search\x121\n" +
@@ -8344,7 +8362,9 @@ const file_gitpod_v1_organization_proto_rawDesc = "" +
 	"\x05roles\x18\x03 \x03(\x0e2\x1b.gitpod.v1.OrganizationRoleR\x05roles\x12,\n" +
 	"\buser_ids\x18\x04 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\auserIds\x12=\n" +
 	"\x11exclude_group_ids\x18\x05 \x03(\tB\x11\xbaH\x0e\x92\x01\v\b\x00\x10\x19\"\x05r\x03\xb0\x01\x01R\x0fexcludeGroupIds\x12<\n" +
-	"\x1bexclude_members_in_any_team\x18\x06 \x01(\bR\x17excludeMembersInAnyTeam\x1aq\n" +
+	"\x1bexclude_members_in_any_team\x18\x06 \x01(\bR\x17excludeMembersInAnyTeam\x12\x1e\n" +
+	"\x05email\x18\a \x01(\tB\b\xbaH\x05r\x03\x18\xc0\x02R\x05email\x12M\n" +
+	"\x0elogin_provider\x18\b \x01(\x0e2\x1c.gitpod.v1.LoginProviderKindB\b\xbaH\x05\x82\x01\x02\x10\x01R\rloginProvider\x1aq\n" +
 	"\x04Sort\x12=\n" +
 	"\x05field\x18\x01 \x01(\x0e2'.gitpod.v1.ListMembersRequest.SortFieldR\x05field\x12*\n" +
 	"\x05order\x18\x02 \x01(\x0e2\x14.gitpod.v1.SortOrderR\x05order\"X\n" +
@@ -9202,7 +9222,8 @@ var file_gitpod_v1_organization_proto_goTypes = []any{
 	(CodexOpenAIModel)(0),              // 152: gitpod.v1.CodexOpenAIModel
 	(CodexReasoningEffort)(0),          // 153: gitpod.v1.CodexReasoningEffort
 	(CodexServiceTier)(0),              // 154: gitpod.v1.CodexServiceTier
-	(SortOrder)(0),                     // 155: gitpod.v1.SortOrder
+	(LoginProviderKind)(0),             // 155: gitpod.v1.LoginProviderKind
+	(SortOrder)(0),                     // 156: gitpod.v1.SortOrder
 }
 var file_gitpod_v1_organization_proto_depIdxs = []int32{
 	35,  // 0: gitpod.v1.UpdateOrganizationRequest.invite_domains:type_name -> gitpod.v1.InviteDomains
@@ -9335,112 +9356,113 @@ var file_gitpod_v1_organization_proto_depIdxs = []int32{
 	128, // 127: gitpod.v1.OIDCConfig.v3:type_name -> gitpod.v1.OIDCConfigV3
 	146, // 128: gitpod.v1.ListMembersRequest.Filter.statuses:type_name -> gitpod.v1.UserStatus
 	1,   // 129: gitpod.v1.ListMembersRequest.Filter.roles:type_name -> gitpod.v1.OrganizationRole
-	8,   // 130: gitpod.v1.ListMembersRequest.Sort.field:type_name -> gitpod.v1.ListMembersRequest.SortField
-	155, // 131: gitpod.v1.ListMembersRequest.Sort.order:type_name -> gitpod.v1.SortOrder
-	76,  // 132: gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
-	5,   // 133: gitpod.v1.CodexModelPolicy.ModelStatesEntry.value:type_name -> gitpod.v1.CodexModelPolicyState
-	4,   // 134: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.conversation_sharing_policy:type_name -> gitpod.v1.ConversationSharingPolicy
-	152, // 135: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_models:type_name -> gitpod.v1.CodexOpenAIModel
-	153, // 136: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_reasoning_efforts:type_name -> gitpod.v1.CodexReasoningEffort
-	154, // 137: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_service_tiers:type_name -> gitpod.v1.CodexServiceTier
-	77,  // 138: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.codex_model_policy:type_name -> gitpod.v1.CodexModelPolicy
-	138, // 139: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.crowdstrike:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig
-	81,  // 140: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.custom_agents:type_name -> gitpod.v1.CustomSecurityAgent
-	140, // 141: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.additional_options:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.AdditionalOptionsEntry
-	76,  // 142: gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
-	12,  // 143: gitpod.v1.OrganizationService.CreateOrganization:input_type -> gitpod.v1.CreateOrganizationRequest
-	14,  // 144: gitpod.v1.OrganizationService.JoinOrganization:input_type -> gitpod.v1.JoinOrganizationRequest
-	18,  // 145: gitpod.v1.OrganizationService.GetOrganization:input_type -> gitpod.v1.GetOrganizationRequest
-	10,  // 146: gitpod.v1.OrganizationService.UpdateOrganization:input_type -> gitpod.v1.UpdateOrganizationRequest
-	20,  // 147: gitpod.v1.OrganizationService.DeleteOrganization:input_type -> gitpod.v1.DeleteOrganizationRequest
-	22,  // 148: gitpod.v1.OrganizationService.ListMembers:input_type -> gitpod.v1.ListMembersRequest
-	24,  // 149: gitpod.v1.OrganizationService.SetRole:input_type -> gitpod.v1.SetRoleRequest
-	29,  // 150: gitpod.v1.OrganizationService.CreateOrganizationInvite:input_type -> gitpod.v1.CreateOrganizationInviteRequest
-	26,  // 151: gitpod.v1.OrganizationService.GetOrganizationInvite:input_type -> gitpod.v1.GetOrganizationInviteRequest
-	31,  // 152: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:input_type -> gitpod.v1.GetOrganizationInviteSummaryRequest
-	16,  // 153: gitpod.v1.OrganizationService.LeaveOrganization:input_type -> gitpod.v1.LeaveOrganizationRequest
-	36,  // 154: gitpod.v1.OrganizationService.CreateSSOConfiguration:input_type -> gitpod.v1.CreateSSOConfigurationRequest
-	39,  // 155: gitpod.v1.OrganizationService.GetSSOConfiguration:input_type -> gitpod.v1.GetSSOConfigurationRequest
-	41,  // 156: gitpod.v1.OrganizationService.ListSSOConfigurations:input_type -> gitpod.v1.ListSSOConfigurationsRequest
-	46,  // 157: gitpod.v1.OrganizationService.DeleteSSOConfiguration:input_type -> gitpod.v1.DeleteSSOConfigurationRequest
-	43,  // 158: gitpod.v1.OrganizationService.UpdateSSOConfiguration:input_type -> gitpod.v1.UpdateSSOConfigurationRequest
-	49,  // 159: gitpod.v1.OrganizationService.CreateSCIMConfiguration:input_type -> gitpod.v1.CreateSCIMConfigurationRequest
-	51,  // 160: gitpod.v1.OrganizationService.GetSCIMConfiguration:input_type -> gitpod.v1.GetSCIMConfigurationRequest
-	53,  // 161: gitpod.v1.OrganizationService.ListSCIMConfigurations:input_type -> gitpod.v1.ListSCIMConfigurationsRequest
-	55,  // 162: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:input_type -> gitpod.v1.UpdateSCIMConfigurationRequest
-	57,  // 163: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:input_type -> gitpod.v1.DeleteSCIMConfigurationRequest
-	59,  // 164: gitpod.v1.OrganizationService.RegenerateSCIMToken:input_type -> gitpod.v1.RegenerateSCIMTokenRequest
-	62,  // 165: gitpod.v1.OrganizationService.CreateDomainVerification:input_type -> gitpod.v1.CreateDomainVerificationRequest
-	64,  // 166: gitpod.v1.OrganizationService.GetDomainVerification:input_type -> gitpod.v1.GetDomainVerificationRequest
-	66,  // 167: gitpod.v1.OrganizationService.ListDomainVerifications:input_type -> gitpod.v1.ListDomainVerificationsRequest
-	68,  // 168: gitpod.v1.OrganizationService.VerifyDomain:input_type -> gitpod.v1.VerifyDomainRequest
-	70,  // 169: gitpod.v1.OrganizationService.DeleteDomainVerification:input_type -> gitpod.v1.DeleteDomainVerificationRequest
-	83,  // 170: gitpod.v1.OrganizationService.GetOrganizationPolicies:input_type -> gitpod.v1.GetOrganizationPoliciesRequest
-	85,  // 171: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:input_type -> gitpod.v1.UpdateOrganizationPoliciesRequest
-	122, // 172: gitpod.v1.OrganizationService.GetOIDCConfig:input_type -> gitpod.v1.GetOIDCConfigRequest
-	124, // 173: gitpod.v1.OrganizationService.UpdateOIDCConfig:input_type -> gitpod.v1.UpdateOIDCConfigRequest
-	90,  // 174: gitpod.v1.OrganizationService.GetAnnouncementBanner:input_type -> gitpod.v1.GetAnnouncementBannerRequest
-	92,  // 175: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:input_type -> gitpod.v1.UpdateAnnouncementBannerRequest
-	97,  // 176: gitpod.v1.OrganizationService.GetTermsOfService:input_type -> gitpod.v1.GetTermsOfServiceRequest
-	99,  // 177: gitpod.v1.OrganizationService.UpdateTermsOfService:input_type -> gitpod.v1.UpdateTermsOfServiceRequest
-	101, // 178: gitpod.v1.OrganizationService.AcceptTermsOfService:input_type -> gitpod.v1.AcceptTermsOfServiceRequest
-	104, // 179: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:input_type -> gitpod.v1.ListTermsOfServiceVersionsRequest
-	107, // 180: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:input_type -> gitpod.v1.ListTermsOfServiceAcceptancesRequest
-	109, // 181: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:input_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportRequest
-	111, // 182: gitpod.v1.OrganizationService.SetStripeCustomerID:input_type -> gitpod.v1.SetStripeCustomerIDRequest
-	114, // 183: gitpod.v1.OrganizationService.CreateCustomDomain:input_type -> gitpod.v1.CreateCustomDomainRequest
-	116, // 184: gitpod.v1.OrganizationService.GetCustomDomain:input_type -> gitpod.v1.GetCustomDomainRequest
-	118, // 185: gitpod.v1.OrganizationService.UpdateCustomDomain:input_type -> gitpod.v1.UpdateCustomDomainRequest
-	120, // 186: gitpod.v1.OrganizationService.DeleteCustomDomain:input_type -> gitpod.v1.DeleteCustomDomainRequest
-	13,  // 187: gitpod.v1.OrganizationService.CreateOrganization:output_type -> gitpod.v1.CreateOrganizationResponse
-	15,  // 188: gitpod.v1.OrganizationService.JoinOrganization:output_type -> gitpod.v1.JoinOrganizationResponse
-	19,  // 189: gitpod.v1.OrganizationService.GetOrganization:output_type -> gitpod.v1.GetOrganizationResponse
-	11,  // 190: gitpod.v1.OrganizationService.UpdateOrganization:output_type -> gitpod.v1.UpdateOrganizationResponse
-	21,  // 191: gitpod.v1.OrganizationService.DeleteOrganization:output_type -> gitpod.v1.DeleteOrganizationResponse
-	23,  // 192: gitpod.v1.OrganizationService.ListMembers:output_type -> gitpod.v1.ListMembersResponse
-	25,  // 193: gitpod.v1.OrganizationService.SetRole:output_type -> gitpod.v1.SetRoleResponse
-	30,  // 194: gitpod.v1.OrganizationService.CreateOrganizationInvite:output_type -> gitpod.v1.CreateOrganizationInviteResponse
-	27,  // 195: gitpod.v1.OrganizationService.GetOrganizationInvite:output_type -> gitpod.v1.GetOrganizationInviteResponse
-	32,  // 196: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:output_type -> gitpod.v1.GetOrganizationInviteSummaryResponse
-	17,  // 197: gitpod.v1.OrganizationService.LeaveOrganization:output_type -> gitpod.v1.LeaveOrganizationResponse
-	37,  // 198: gitpod.v1.OrganizationService.CreateSSOConfiguration:output_type -> gitpod.v1.CreateSSOConfigurationResponse
-	40,  // 199: gitpod.v1.OrganizationService.GetSSOConfiguration:output_type -> gitpod.v1.GetSSOConfigurationResponse
-	42,  // 200: gitpod.v1.OrganizationService.ListSSOConfigurations:output_type -> gitpod.v1.ListSSOConfigurationsResponse
-	47,  // 201: gitpod.v1.OrganizationService.DeleteSSOConfiguration:output_type -> gitpod.v1.DeleteSSOConfigurationResponse
-	45,  // 202: gitpod.v1.OrganizationService.UpdateSSOConfiguration:output_type -> gitpod.v1.UpdateSSOConfigurationResponse
-	50,  // 203: gitpod.v1.OrganizationService.CreateSCIMConfiguration:output_type -> gitpod.v1.CreateSCIMConfigurationResponse
-	52,  // 204: gitpod.v1.OrganizationService.GetSCIMConfiguration:output_type -> gitpod.v1.GetSCIMConfigurationResponse
-	54,  // 205: gitpod.v1.OrganizationService.ListSCIMConfigurations:output_type -> gitpod.v1.ListSCIMConfigurationsResponse
-	56,  // 206: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:output_type -> gitpod.v1.UpdateSCIMConfigurationResponse
-	58,  // 207: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:output_type -> gitpod.v1.DeleteSCIMConfigurationResponse
-	60,  // 208: gitpod.v1.OrganizationService.RegenerateSCIMToken:output_type -> gitpod.v1.RegenerateSCIMTokenResponse
-	63,  // 209: gitpod.v1.OrganizationService.CreateDomainVerification:output_type -> gitpod.v1.CreateDomainVerificationResponse
-	65,  // 210: gitpod.v1.OrganizationService.GetDomainVerification:output_type -> gitpod.v1.GetDomainVerificationResponse
-	67,  // 211: gitpod.v1.OrganizationService.ListDomainVerifications:output_type -> gitpod.v1.ListDomainVerificationsResponse
-	69,  // 212: gitpod.v1.OrganizationService.VerifyDomain:output_type -> gitpod.v1.VerifyDomainResponse
-	71,  // 213: gitpod.v1.OrganizationService.DeleteDomainVerification:output_type -> gitpod.v1.DeleteDomainVerificationResponse
-	84,  // 214: gitpod.v1.OrganizationService.GetOrganizationPolicies:output_type -> gitpod.v1.GetOrganizationPoliciesResponse
-	86,  // 215: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:output_type -> gitpod.v1.UpdateOrganizationPoliciesResponse
-	123, // 216: gitpod.v1.OrganizationService.GetOIDCConfig:output_type -> gitpod.v1.GetOIDCConfigResponse
-	125, // 217: gitpod.v1.OrganizationService.UpdateOIDCConfig:output_type -> gitpod.v1.UpdateOIDCConfigResponse
-	91,  // 218: gitpod.v1.OrganizationService.GetAnnouncementBanner:output_type -> gitpod.v1.GetAnnouncementBannerResponse
-	93,  // 219: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:output_type -> gitpod.v1.UpdateAnnouncementBannerResponse
-	98,  // 220: gitpod.v1.OrganizationService.GetTermsOfService:output_type -> gitpod.v1.GetTermsOfServiceResponse
-	100, // 221: gitpod.v1.OrganizationService.UpdateTermsOfService:output_type -> gitpod.v1.UpdateTermsOfServiceResponse
-	102, // 222: gitpod.v1.OrganizationService.AcceptTermsOfService:output_type -> gitpod.v1.AcceptTermsOfServiceResponse
-	105, // 223: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:output_type -> gitpod.v1.ListTermsOfServiceVersionsResponse
-	108, // 224: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:output_type -> gitpod.v1.ListTermsOfServiceAcceptancesResponse
-	110, // 225: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:output_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportResponse
-	112, // 226: gitpod.v1.OrganizationService.SetStripeCustomerID:output_type -> gitpod.v1.SetStripeCustomerIDResponse
-	115, // 227: gitpod.v1.OrganizationService.CreateCustomDomain:output_type -> gitpod.v1.CreateCustomDomainResponse
-	117, // 228: gitpod.v1.OrganizationService.GetCustomDomain:output_type -> gitpod.v1.GetCustomDomainResponse
-	119, // 229: gitpod.v1.OrganizationService.UpdateCustomDomain:output_type -> gitpod.v1.UpdateCustomDomainResponse
-	121, // 230: gitpod.v1.OrganizationService.DeleteCustomDomain:output_type -> gitpod.v1.DeleteCustomDomainResponse
-	187, // [187:231] is the sub-list for method output_type
-	143, // [143:187] is the sub-list for method input_type
-	143, // [143:143] is the sub-list for extension type_name
-	143, // [143:143] is the sub-list for extension extendee
-	0,   // [0:143] is the sub-list for field type_name
+	155, // 130: gitpod.v1.ListMembersRequest.Filter.login_provider:type_name -> gitpod.v1.LoginProviderKind
+	8,   // 131: gitpod.v1.ListMembersRequest.Sort.field:type_name -> gitpod.v1.ListMembersRequest.SortField
+	156, // 132: gitpod.v1.ListMembersRequest.Sort.order:type_name -> gitpod.v1.SortOrder
+	76,  // 133: gitpod.v1.OrganizationPolicies.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
+	5,   // 134: gitpod.v1.CodexModelPolicy.ModelStatesEntry.value:type_name -> gitpod.v1.CodexModelPolicyState
+	4,   // 135: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.conversation_sharing_policy:type_name -> gitpod.v1.ConversationSharingPolicy
+	152, // 136: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_models:type_name -> gitpod.v1.CodexOpenAIModel
+	153, // 137: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_reasoning_efforts:type_name -> gitpod.v1.CodexReasoningEffort
+	154, // 138: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.allowed_codex_service_tiers:type_name -> gitpod.v1.CodexServiceTier
+	77,  // 139: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateAgentPolicy.codex_model_policy:type_name -> gitpod.v1.CodexModelPolicy
+	138, // 140: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.crowdstrike:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig
+	81,  // 141: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateSecurityAgentPolicy.custom_agents:type_name -> gitpod.v1.CustomSecurityAgent
+	140, // 142: gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.additional_options:type_name -> gitpod.v1.UpdateOrganizationPoliciesRequest.UpdateCrowdStrikeConfig.AdditionalOptionsEntry
+	76,  // 143: gitpod.v1.UpdateOrganizationPoliciesRequest.EditorVersionRestrictionsEntry.value:type_name -> gitpod.v1.EditorVersionPolicy
+	12,  // 144: gitpod.v1.OrganizationService.CreateOrganization:input_type -> gitpod.v1.CreateOrganizationRequest
+	14,  // 145: gitpod.v1.OrganizationService.JoinOrganization:input_type -> gitpod.v1.JoinOrganizationRequest
+	18,  // 146: gitpod.v1.OrganizationService.GetOrganization:input_type -> gitpod.v1.GetOrganizationRequest
+	10,  // 147: gitpod.v1.OrganizationService.UpdateOrganization:input_type -> gitpod.v1.UpdateOrganizationRequest
+	20,  // 148: gitpod.v1.OrganizationService.DeleteOrganization:input_type -> gitpod.v1.DeleteOrganizationRequest
+	22,  // 149: gitpod.v1.OrganizationService.ListMembers:input_type -> gitpod.v1.ListMembersRequest
+	24,  // 150: gitpod.v1.OrganizationService.SetRole:input_type -> gitpod.v1.SetRoleRequest
+	29,  // 151: gitpod.v1.OrganizationService.CreateOrganizationInvite:input_type -> gitpod.v1.CreateOrganizationInviteRequest
+	26,  // 152: gitpod.v1.OrganizationService.GetOrganizationInvite:input_type -> gitpod.v1.GetOrganizationInviteRequest
+	31,  // 153: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:input_type -> gitpod.v1.GetOrganizationInviteSummaryRequest
+	16,  // 154: gitpod.v1.OrganizationService.LeaveOrganization:input_type -> gitpod.v1.LeaveOrganizationRequest
+	36,  // 155: gitpod.v1.OrganizationService.CreateSSOConfiguration:input_type -> gitpod.v1.CreateSSOConfigurationRequest
+	39,  // 156: gitpod.v1.OrganizationService.GetSSOConfiguration:input_type -> gitpod.v1.GetSSOConfigurationRequest
+	41,  // 157: gitpod.v1.OrganizationService.ListSSOConfigurations:input_type -> gitpod.v1.ListSSOConfigurationsRequest
+	46,  // 158: gitpod.v1.OrganizationService.DeleteSSOConfiguration:input_type -> gitpod.v1.DeleteSSOConfigurationRequest
+	43,  // 159: gitpod.v1.OrganizationService.UpdateSSOConfiguration:input_type -> gitpod.v1.UpdateSSOConfigurationRequest
+	49,  // 160: gitpod.v1.OrganizationService.CreateSCIMConfiguration:input_type -> gitpod.v1.CreateSCIMConfigurationRequest
+	51,  // 161: gitpod.v1.OrganizationService.GetSCIMConfiguration:input_type -> gitpod.v1.GetSCIMConfigurationRequest
+	53,  // 162: gitpod.v1.OrganizationService.ListSCIMConfigurations:input_type -> gitpod.v1.ListSCIMConfigurationsRequest
+	55,  // 163: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:input_type -> gitpod.v1.UpdateSCIMConfigurationRequest
+	57,  // 164: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:input_type -> gitpod.v1.DeleteSCIMConfigurationRequest
+	59,  // 165: gitpod.v1.OrganizationService.RegenerateSCIMToken:input_type -> gitpod.v1.RegenerateSCIMTokenRequest
+	62,  // 166: gitpod.v1.OrganizationService.CreateDomainVerification:input_type -> gitpod.v1.CreateDomainVerificationRequest
+	64,  // 167: gitpod.v1.OrganizationService.GetDomainVerification:input_type -> gitpod.v1.GetDomainVerificationRequest
+	66,  // 168: gitpod.v1.OrganizationService.ListDomainVerifications:input_type -> gitpod.v1.ListDomainVerificationsRequest
+	68,  // 169: gitpod.v1.OrganizationService.VerifyDomain:input_type -> gitpod.v1.VerifyDomainRequest
+	70,  // 170: gitpod.v1.OrganizationService.DeleteDomainVerification:input_type -> gitpod.v1.DeleteDomainVerificationRequest
+	83,  // 171: gitpod.v1.OrganizationService.GetOrganizationPolicies:input_type -> gitpod.v1.GetOrganizationPoliciesRequest
+	85,  // 172: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:input_type -> gitpod.v1.UpdateOrganizationPoliciesRequest
+	122, // 173: gitpod.v1.OrganizationService.GetOIDCConfig:input_type -> gitpod.v1.GetOIDCConfigRequest
+	124, // 174: gitpod.v1.OrganizationService.UpdateOIDCConfig:input_type -> gitpod.v1.UpdateOIDCConfigRequest
+	90,  // 175: gitpod.v1.OrganizationService.GetAnnouncementBanner:input_type -> gitpod.v1.GetAnnouncementBannerRequest
+	92,  // 176: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:input_type -> gitpod.v1.UpdateAnnouncementBannerRequest
+	97,  // 177: gitpod.v1.OrganizationService.GetTermsOfService:input_type -> gitpod.v1.GetTermsOfServiceRequest
+	99,  // 178: gitpod.v1.OrganizationService.UpdateTermsOfService:input_type -> gitpod.v1.UpdateTermsOfServiceRequest
+	101, // 179: gitpod.v1.OrganizationService.AcceptTermsOfService:input_type -> gitpod.v1.AcceptTermsOfServiceRequest
+	104, // 180: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:input_type -> gitpod.v1.ListTermsOfServiceVersionsRequest
+	107, // 181: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:input_type -> gitpod.v1.ListTermsOfServiceAcceptancesRequest
+	109, // 182: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:input_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportRequest
+	111, // 183: gitpod.v1.OrganizationService.SetStripeCustomerID:input_type -> gitpod.v1.SetStripeCustomerIDRequest
+	114, // 184: gitpod.v1.OrganizationService.CreateCustomDomain:input_type -> gitpod.v1.CreateCustomDomainRequest
+	116, // 185: gitpod.v1.OrganizationService.GetCustomDomain:input_type -> gitpod.v1.GetCustomDomainRequest
+	118, // 186: gitpod.v1.OrganizationService.UpdateCustomDomain:input_type -> gitpod.v1.UpdateCustomDomainRequest
+	120, // 187: gitpod.v1.OrganizationService.DeleteCustomDomain:input_type -> gitpod.v1.DeleteCustomDomainRequest
+	13,  // 188: gitpod.v1.OrganizationService.CreateOrganization:output_type -> gitpod.v1.CreateOrganizationResponse
+	15,  // 189: gitpod.v1.OrganizationService.JoinOrganization:output_type -> gitpod.v1.JoinOrganizationResponse
+	19,  // 190: gitpod.v1.OrganizationService.GetOrganization:output_type -> gitpod.v1.GetOrganizationResponse
+	11,  // 191: gitpod.v1.OrganizationService.UpdateOrganization:output_type -> gitpod.v1.UpdateOrganizationResponse
+	21,  // 192: gitpod.v1.OrganizationService.DeleteOrganization:output_type -> gitpod.v1.DeleteOrganizationResponse
+	23,  // 193: gitpod.v1.OrganizationService.ListMembers:output_type -> gitpod.v1.ListMembersResponse
+	25,  // 194: gitpod.v1.OrganizationService.SetRole:output_type -> gitpod.v1.SetRoleResponse
+	30,  // 195: gitpod.v1.OrganizationService.CreateOrganizationInvite:output_type -> gitpod.v1.CreateOrganizationInviteResponse
+	27,  // 196: gitpod.v1.OrganizationService.GetOrganizationInvite:output_type -> gitpod.v1.GetOrganizationInviteResponse
+	32,  // 197: gitpod.v1.OrganizationService.GetOrganizationInviteSummary:output_type -> gitpod.v1.GetOrganizationInviteSummaryResponse
+	17,  // 198: gitpod.v1.OrganizationService.LeaveOrganization:output_type -> gitpod.v1.LeaveOrganizationResponse
+	37,  // 199: gitpod.v1.OrganizationService.CreateSSOConfiguration:output_type -> gitpod.v1.CreateSSOConfigurationResponse
+	40,  // 200: gitpod.v1.OrganizationService.GetSSOConfiguration:output_type -> gitpod.v1.GetSSOConfigurationResponse
+	42,  // 201: gitpod.v1.OrganizationService.ListSSOConfigurations:output_type -> gitpod.v1.ListSSOConfigurationsResponse
+	47,  // 202: gitpod.v1.OrganizationService.DeleteSSOConfiguration:output_type -> gitpod.v1.DeleteSSOConfigurationResponse
+	45,  // 203: gitpod.v1.OrganizationService.UpdateSSOConfiguration:output_type -> gitpod.v1.UpdateSSOConfigurationResponse
+	50,  // 204: gitpod.v1.OrganizationService.CreateSCIMConfiguration:output_type -> gitpod.v1.CreateSCIMConfigurationResponse
+	52,  // 205: gitpod.v1.OrganizationService.GetSCIMConfiguration:output_type -> gitpod.v1.GetSCIMConfigurationResponse
+	54,  // 206: gitpod.v1.OrganizationService.ListSCIMConfigurations:output_type -> gitpod.v1.ListSCIMConfigurationsResponse
+	56,  // 207: gitpod.v1.OrganizationService.UpdateSCIMConfiguration:output_type -> gitpod.v1.UpdateSCIMConfigurationResponse
+	58,  // 208: gitpod.v1.OrganizationService.DeleteSCIMConfiguration:output_type -> gitpod.v1.DeleteSCIMConfigurationResponse
+	60,  // 209: gitpod.v1.OrganizationService.RegenerateSCIMToken:output_type -> gitpod.v1.RegenerateSCIMTokenResponse
+	63,  // 210: gitpod.v1.OrganizationService.CreateDomainVerification:output_type -> gitpod.v1.CreateDomainVerificationResponse
+	65,  // 211: gitpod.v1.OrganizationService.GetDomainVerification:output_type -> gitpod.v1.GetDomainVerificationResponse
+	67,  // 212: gitpod.v1.OrganizationService.ListDomainVerifications:output_type -> gitpod.v1.ListDomainVerificationsResponse
+	69,  // 213: gitpod.v1.OrganizationService.VerifyDomain:output_type -> gitpod.v1.VerifyDomainResponse
+	71,  // 214: gitpod.v1.OrganizationService.DeleteDomainVerification:output_type -> gitpod.v1.DeleteDomainVerificationResponse
+	84,  // 215: gitpod.v1.OrganizationService.GetOrganizationPolicies:output_type -> gitpod.v1.GetOrganizationPoliciesResponse
+	86,  // 216: gitpod.v1.OrganizationService.UpdateOrganizationPolicies:output_type -> gitpod.v1.UpdateOrganizationPoliciesResponse
+	123, // 217: gitpod.v1.OrganizationService.GetOIDCConfig:output_type -> gitpod.v1.GetOIDCConfigResponse
+	125, // 218: gitpod.v1.OrganizationService.UpdateOIDCConfig:output_type -> gitpod.v1.UpdateOIDCConfigResponse
+	91,  // 219: gitpod.v1.OrganizationService.GetAnnouncementBanner:output_type -> gitpod.v1.GetAnnouncementBannerResponse
+	93,  // 220: gitpod.v1.OrganizationService.UpdateAnnouncementBanner:output_type -> gitpod.v1.UpdateAnnouncementBannerResponse
+	98,  // 221: gitpod.v1.OrganizationService.GetTermsOfService:output_type -> gitpod.v1.GetTermsOfServiceResponse
+	100, // 222: gitpod.v1.OrganizationService.UpdateTermsOfService:output_type -> gitpod.v1.UpdateTermsOfServiceResponse
+	102, // 223: gitpod.v1.OrganizationService.AcceptTermsOfService:output_type -> gitpod.v1.AcceptTermsOfServiceResponse
+	105, // 224: gitpod.v1.OrganizationService.ListTermsOfServiceVersions:output_type -> gitpod.v1.ListTermsOfServiceVersionsResponse
+	108, // 225: gitpod.v1.OrganizationService.ListTermsOfServiceAcceptances:output_type -> gitpod.v1.ListTermsOfServiceAcceptancesResponse
+	110, // 226: gitpod.v1.OrganizationService.GetTermsOfServiceAcceptancesExport:output_type -> gitpod.v1.GetTermsOfServiceAcceptancesExportResponse
+	112, // 227: gitpod.v1.OrganizationService.SetStripeCustomerID:output_type -> gitpod.v1.SetStripeCustomerIDResponse
+	115, // 228: gitpod.v1.OrganizationService.CreateCustomDomain:output_type -> gitpod.v1.CreateCustomDomainResponse
+	117, // 229: gitpod.v1.OrganizationService.GetCustomDomain:output_type -> gitpod.v1.GetCustomDomainResponse
+	119, // 230: gitpod.v1.OrganizationService.UpdateCustomDomain:output_type -> gitpod.v1.UpdateCustomDomainResponse
+	121, // 231: gitpod.v1.OrganizationService.DeleteCustomDomain:output_type -> gitpod.v1.DeleteCustomDomainResponse
+	188, // [188:232] is the sub-list for method output_type
+	144, // [144:188] is the sub-list for method input_type
+	144, // [144:144] is the sub-list for extension type_name
+	144, // [144:144] is the sub-list for extension extendee
+	0,   // [0:144] is the sub-list for field type_name
 }
 
 func init() { file_gitpod_v1_organization_proto_init() }
@@ -9451,6 +9473,7 @@ func file_gitpod_v1_organization_proto_init() {
 	file_gitpod_v1_agent_proto_init()
 	file_gitpod_v1_count_proto_init()
 	file_gitpod_v1_environment_proto_init()
+	file_gitpod_v1_login_provider_proto_init()
 	file_gitpod_v1_pagination_proto_init()
 	file_gitpod_v1_user_proto_init()
 	file_gitpod_v1_organization_proto_msgTypes[0].OneofWrappers = []any{}
